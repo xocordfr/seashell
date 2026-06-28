@@ -7,6 +7,8 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 tailwind.config={theme:{extend:{colors:{void:{900:'#050505',800:'#0a0a0a',700:'#0d0d0d',600:'#111111',500:'#161616',400:'#1e1e1e',300:'#2a2a2a',200:'#444',100:'#888',50:'#e8e8e8'},accent:'#7dd3fc','accent-dark':'#38bdf8',success:'#00ff88',warning:'#ffaa00',info:'#00aaff'},fontFamily:{display:['Space Grotesk','sans-serif'],body:['DM Sans','sans-serif']}}}}
 </script>
@@ -17,6 +19,7 @@ body{font-family:'DM Sans',sans-serif;background:#050505;color:#e8e8e8;overflow-
 h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 #bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.35}
 #app{position:relative;z-index:1;min-height:100vh}
+#setup-screen{position:fixed;inset:0;z-index:200000;background:#050505;display:flex;align-items:center;justify-content:center;padding:20px}
 @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
@@ -29,7 +32,6 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 @keyframes badge-pop{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
 @keyframes profile-in{from{opacity:0;transform:scale(.95) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .anim-fade{animation:fadeIn .5s ease both}
-.anim-slide-up{animation:slideUp .6s ease both}
 .anim-slide-down{animation:slideDown .4s ease both}
 .anim-float{animation:float 4s ease-in-out infinite}
 .anim-pulse-glow{animation:pulse-glow 3s ease-in-out infinite}
@@ -64,7 +66,6 @@ textarea.vl-input{resize:vertical;min-height:80px}
 .bg-preset-void{background:linear-gradient(135deg,#050505,#0d0d0d,#161616,#0d0d0d,#050505);background-size:400% 400%;animation:gradient-shift 15s ease infinite}
 .profile-link{display:flex;align-items:center;gap:14px;padding:14px 20px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);cursor:pointer;transition:all .25s;text-decoration:none;color:#e8e8e8;width:100%;text-align:left}
 .profile-link:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.3)}
-.profile-link:active{transform:translateY(0) scale(.98)}
 .dash-sidebar{width:240px;min-height:100vh;background:#0a0a0a;border-right:1px solid #1e1e1e;padding:24px 0;position:fixed;left:0;top:0;z-index:10}
 .dash-sidebar a{display:flex;align-items:center;gap:12px;padding:11px 24px;color:#888;font-size:14px;font-weight:500;transition:all .15s;text-decoration:none;border-left:3px solid transparent}
 .dash-sidebar a:hover{color:#e8e8e8;background:rgba(255,255,255,.03)}
@@ -92,88 +93,149 @@ textarea.vl-input{resize:vertical;min-height:80px}
 <canvas id="bg-canvas"></canvas>
 <div id="app"></div>
 <div id="toast-container"></div>
+
 <script>
-window.onerror=function(m){var d=document.createElement('div');d.style.cssText='position:fixed;inset:0;z-index:999999;background:#0a0a0a;display:flex;align-items:center;justify-content:center;padding:20px';d.innerHTML='<div style="text-align:center;max-width:500px"><h2 style="color:#7dd3fc;font-family:Space Grotesk,sans-serif;font-size:22px;margin-bottom:12px">Error</h2><p style="color:#888;font-size:13px;word-break:break-all">'+m+'</p></div>';document.body.appendChild(d);};
+/* =============================================================
+   FIREBASE CONFIG — REPLACE WITH YOUR OWN VALUES
+   Get them from: Firebase Console → Project Settings → Your Apps → Web
+   ============================================================= */
+var FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDbvpzYvPDxzYBXr7-WLFWabmeIRkJlTnw",
+  authDomain: "seashell-27f34.firebaseapp.com",
+  projectId: "seashell-27f34",
+  storageBucket: "seashell-27f34.firebasestorage.app",
+  messagingSenderId: "225540891149",
+  appId: "1:225540891149:web:a2dd3060fe7ab6d975ab44"
+};
+
+/* ============================================================= */
+window.onerror=function(m){try{var d=document.getElementById('app');if(d)d.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;text-align:center"><div><h2 style="color:#7dd3fc;font-family:Space Grotesk,sans-serif;font-size:22px;margin-bottom:12px">Error</h2><p style="color:#888;font-size:13px;word-break:break-all;max-width:500px">'+m+'</p></div></div>';}catch(e){}};
+
 (function(){
 "use strict";
-var mem={};var useLS=false;
-try{localStorage.setItem('__vt','1');localStorage.removeItem('__vt');useLS=true;}catch(e){}
-function sg(k){try{return useLS?JSON.parse(localStorage.getItem(k)):mem[k];}catch(e){return mem[k];}}
-function ss(k,v){try{if(useLS)localStorage.setItem(k,JSON.stringify(v));}catch(e){}mem[k]=v;}
-function sd(k){try{if(useLS)localStorage.removeItem(k);}catch(e){}delete mem[k];}
 
-var DK='seashell_v2',SK='seashell_ses';
-function genId(){return 'id_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);}
-function nextUID(){var c=sg('seashell_uid_ctr');if(typeof c!=='number'||!isFinite(c))c=0;c++;ss('seashell_uid_ctr',c);return '#'+c;}
-function hashPw(s){var h=0;for(var i=0;i<s.length;i++){h=((h<<5)-h+s.charCodeAt(i))|0;}return 'h_'+Math.abs(h).toString(36);}
+/* === Firebase Init === */
+var db = null;
+var fbReady = false;
+var fbError = null;
 
-/* Default permissions per role */
-var ROLE_PERMS={
-  user:{admin_panel:false,manage_users:false,manage_badges:false,change_uid:false,ban_users:false,delete_users:false,bypass_link_limit:false,bypass_ban:false},
-  moderator:{admin_panel:true,manage_users:false,manage_badges:true,change_uid:false,ban_users:true,delete_users:false,bypass_link_limit:false,bypass_ban:true},
-  admin:{admin_panel:true,manage_users:true,manage_badges:true,change_uid:true,ban_users:true,delete_users:true,bypass_link_limit:true,bypass_ban:true}
-};
+function initFirebase(){
+  try {
+    if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.firestore();
+    db.enablePersistence({synchronizeTabs:true}).catch(function(){});
+    /* Test connection */
+    return db.collection("_ping").doc("init").set({t:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){
+      fbReady=true; return db.collection("_ping").doc("init").delete();
+    }).then(function(){
+      document.getElementById('setup-screen').style.display='none';
+      startApp();
+    });
+  } catch(e){
+    fbError=e.message;
+    showSetupError(e.message);
+    return Promise.reject(e);
+  }
+}
+
+function showSetupError(msg){
+  var el=document.getElementById('setup-screen');
+  el.innerHTML='<div style="max-width:520px;text-align:center"><div style="width:64px;height:64px;border-radius:16px;background:rgba(255,45,45,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 20px"><i class="fa-solid fa-triangle-exclamation" style="font-size:28px;color:#ff5555"></i></div><h2 style="font-family:Space Grotesk,sans-serif;font-weight:700;font-size:22px;margin-bottom:8px">Firebase Not Connected</h2><p style="color:#888;font-size:13px;margin-bottom:24px;line-height:1.6">Open this file in a text editor and replace the <code style="background:#1e1e1e;padding:2px 8px;border-radius:4px;font-size:12px">FIREBASE_CONFIG</code> object at the top of the script with your Firebase project credentials.</p><div style="background:#0d0d0d;border:1px solid #1e1e1e;border-radius:12px;padding:16px;text-align:left;margin-bottom:20px"><p style="color:#7dd3fc;font-size:12px;font-weight:600;margin-bottom:8px">QUICK SETUP:</p><ol style="color:#888;font-size:12px;line-height:2;list-style:decimal;padding-left:20px"><li>Go to <a href="https://console.firebase.google.com" target="_blank" style="color:#7dd3fc">console.firebase.google.com</a></li><li>Create a new project (name it "seashell")</li><li>Build → Firestore Database → Create in <strong>test mode</strong></li><li>Project Settings → General → Add Web App</li><li>Copy the firebaseConfig values into the code</li></ol></div><p style="color:#555;font-size:12px">Error: '+esc(msg)+'</p></div>';
+}
+
+/* === Firestore Cache === */
+var userCache={};
+var allUsersCache=null;
+var cacheValid=false;
+var uidCounterCache=0;
+
+function userDoc(id){return db.collection("users").doc(id);}
+function userRef(username){return db.collection("users").where("username","==",username).limit(1);}
+function emailRef(email){return db.collection("users").where("email","==",email).limit(1);}
+function uidRef(uid){return db.collection("users").where("uid","==",uid).limit(1);}
+
+function snapToUser(doc){
+  if(!doc.exists) return null;
+  var d=doc.data(); return {id:doc.id, uid:d.uid||'', username:d.username||'', displayName:d.displayName||'', email:d.email||'', bio:d.bio||'', avatar:d.avatar||'', bgImage:d.bgImage||'', background:d.background||'void', accentColor:d.accentColor||'#7dd3fc', links:d.links||[], badges:d.badges||[], banned:d.banned||false, banReason:d.banReason||'', role:d.role||'user', permissions:d.permissions||null, createdAt:d.createdAt||Date.now(), views:d.views||0, password:d.password||''};
+}
+
+function getAllUsers(){
+  if(allUsersCache&&cacheValid) return allUsersCache;
+  return db.collection("users").get().then(function(snap){
+    allUsersCache=[];snap.forEach(function(d){var u=snapToUser(d);if(u)allUsersCache.push(u);});
+    cacheValid=true; return allUsersCache;
+  });
+}
+
+function invalidateCache(){cacheValid=false;allUsersCache=null;}
+
+function findByUsername(un){return userRef(un).get().then(function(snap){if(snap.empty)return null;return snapToUser(snap.docs[0]);});}
+function findByEmail(em){return emailRef(em).get().then(function(snap){if(snap.empty)return null;return snapToUser(snap.docs[0]);});}
+function findByUID(uid){return uidRef(uid).get().then(function(snap){if(snap.empty)return null;return snapToUser(snap.docs[0]);});}
+function findById(id){if(userCache[id]&&cacheValid)return Promise.resolve(userCache[id]);return userDoc(id).get().then(function(snap){if(!snap.exists)return null;var u=snapToUser(snap);if(u)userCache[u.id]=u;return u;});}
+
+function getNextUID(){
+  return db.collection("_meta").doc("counters").get().then(function(doc){
+    var c=0;if(doc.exists&&typeof doc.data().uidCounter==='number')c=doc.data().uidCounter;
+    c++;return db.collection("_meta").doc("counters").set({uidCounter:c},{merge:true}).then(function(){return '#'+c;});
+  });
+}
+
+function createUser(data){
+  return getNextUID().then(function(uid){
+    var perms=ROLE_PERMS[data.role||'user']?JSON.parse(JSON.stringify(ROLE_PERMS[data.role||'user'])):JSON.parse(JSON.stringify(ROLE_PERMS.user));
+    var u={uid:uid, username:data.username, displayName:data.displayName||data.username, email:data.email, password:hashPw(data.password), bio:'', avatar:'', bgImage:'', background:'void', accentColor:'#7dd3fc', links:[], badges:[], banned:false, banReason:'', role:data.role||'user', permissions:perms, createdAt:Date.now(), views:0};
+    return db.collection("users").add(u).then(function(ref){u.id=ref.id;userCache[u.id]=u;invalidateCache();return u;});
+  });
+}
+
+function updateUser(id,data){
+  /* Remove undefined values */
+  var clean={};for(var k in data){if(data[k]!==undefined)clean[k]=data[k];}
+  return userDoc(id).update(clean).then(function(){delete userCache[id];invalidateCache();});
+}
+
+function deleteUser(id){return userDoc(id).delete().then(function(){delete userCache[id];invalidateCache();});}
+
+/* Session — still localStorage since it's per-browser */
+function getSession(){try{return JSON.parse(localStorage.getItem('seashell_ses'));}catch(e){return null;}}
+function setSession(uid){localStorage.setItem('seashell_ses',JSON.stringify({userId:uid,ts:Date.now()}));}
+function clearSession(){localStorage.removeItem('seashell_ses');}
+
+/* === Helpers === */
+var ROLE_PERMS={user:{admin_panel:false,manage_users:false,manage_badges:false,change_uid:false,ban_users:false,delete_users:false,bypass_link_limit:false,bypass_ban:false},moderator:{admin_panel:true,manage_users:false,manage_badges:true,change_uid:false,ban_users:true,delete_users:false,bypass_link_limit:false,bypass_ban:true},admin:{admin_panel:true,manage_users:true,manage_badges:true,change_uid:true,ban_users:true,delete_users:true,bypass_link_limit:true,bypass_ban:true}};
 var PERM_LABELS={admin_panel:'Access Admin Panel',manage_users:'Manage Users',manage_badges:'Manage Badges',change_uid:'Change UIDs',ban_users:'Ban / Unban Users',delete_users:'Delete Users',bypass_link_limit:'Unlimited Links',bypass_ban:'Bypass Ban Restrictions'};
 var PERM_ICONS={admin_panel:'fa-gauge-high',manage_users:'fa-users-gear',manage_badges:'fa-award',change_uid:'fa-fingerprint',ban_users:'fa-gavel',delete_users:'fa-user-slash',bypass_link_limit:'fa-link',bypass_ban:'fa-shield-halved'};
 var PERM_DESC={admin_panel:'Can open and use the admin panel',manage_users:'Can view user list and edit roles',manage_badges:'Can add or remove badges from users',change_uid:'Can change user UIDs',ban_users:'Can ban or unban user accounts',delete_users:'Can permanently delete user accounts',bypass_link_limit:'No limit on number of profile links',bypass_ban:'Account cannot be banned by other admins'};
-
-function getUsers(){return sg(DK)||[];}
-function saveUsers(u){ss(DK,u);}
-function findByUsername(un){var us=getUsers();un=un.toLowerCase();for(var i=0;i<us.length;i++)if(us[i].username.toLowerCase()===un)return us[i];return null;}
-function findByEmail(em){var us=getUsers();em=em.toLowerCase();for(var i=0;i<us.length;i++)if(us[i].email.toLowerCase()===em)return us[i];return null;}
-function findByUID(uid){var us=getUsers();for(var i=0;i<us.length;i++)if(us[i].uid===uid)return us[i];return null;}
-function findById(id){var us=getUsers();for(var i=0;i<us.length;i++)if(us[i].id===id)return us[i];return null;}
-function createUser(d){
-  var us=getUsers();
-  var role=d.role||'user';
-  var perms=ROLE_PERMS[role]?JSON.parse(JSON.stringify(ROLE_PERMS[role])):JSON.parse(JSON.stringify(ROLE_PERMS.user));
-  var u={id:genId(),uid:nextUID(),username:d.username,displayName:d.displayName||d.username,email:d.email,password:hashPw(d.password),bio:'',avatar:'',bgImage:'',background:'void',accentColor:'#7dd3fc',links:[],badges:[],banned:false,banReason:'',role:role,permissions:perms,createdAt:Date.now(),views:0};
-  us.push(u);saveUsers(us);return u;
-}
-function updateUser(id,data){var us=getUsers();for(var i=0;i<us.length;i++){if(us[i].id===id){for(var k in data)us[i][k]=data[k];saveUsers(us);return us[i];}}return null;}
-function deleteUser(id){saveUsers(getUsers().filter(function(u){return u.id!==id;}));}
-function getSession(){return sg(SK)||null;}
-function setSession(uid){ss(SK,{userId:uid,ts:Date.now()});}
-function clearSession(){sd(SK);}
-
-/* Check if user has a specific permission */
-function hasPerm(user,perm){
-  if(!user)return false;
-  if(user.permissions&&typeof user.permissions[perm]==='boolean')return user.permissions[perm];
-  var rp=ROLE_PERMS[user.role];
-  return rp?!!rp[perm]:false;
-}
-
 var BADGES={verified:{l:'Verified',i:'fa-solid fa-circle-check',c:'#7dd3fc'},developer:{l:'Developer',i:'fa-solid fa-code',c:'#00ff88'},og:{l:'OG',i:'fa-solid fa-star',c:'#ffaa00'},staff:{l:'Staff',i:'fa-solid fa-shield-halved',c:'#7dd3fc'},donator:{l:'Donator',i:'fa-solid fa-heart',c:'#ff69b4'},premium:{l:'Premium',i:'fa-solid fa-crown',c:'#ffd700'},bug_hunter:{l:'Bug Hunter',i:'fa-solid fa-bug',c:'#ff8c00'},early_supporter:{l:'Early Supporter',i:'fa-solid fa-rocket',c:'#a78bfa'}};
 var BGM={void:'bg-preset-void',sunset:'bg-preset-sunset',ocean:'bg-preset-ocean',forest:'bg-preset-forest',midnight:'bg-preset-midnight',neon:'bg-preset-neon'};
 var BGL={void:'Void',sunset:'Sunset',ocean:'Ocean',forest:'Forest',midnight:'Midnight',neon:'Neon'};
 
+function hashPw(s){var h=0;for(var i=0;i<s.length;i++){h=((h<<5)-h+s.charCodeAt(i))|0;}return 'h_'+Math.abs(h).toString(36);}
+function hasPerm(u,p){if(!u)return false;if(u.permissions&&typeof u.permissions[p]==='boolean')return u.permissions[p];var rp=ROLE_PERMS[u.role];return rp?!!rp[p]:false;}
 function toast(msg,type){var box=document.getElementById('toast-container');if(!box)return;type=type||'info';var icons={success:'fa-circle-check',error:'fa-circle-xmark',info:'fa-circle-info'};var el=document.createElement('div');el.className='toast toast-'+type;el.innerHTML='<i class="fa-solid '+(icons[type]||icons.info)+'"></i><span>'+msg+'</span>';box.appendChild(el);setTimeout(function(){el.classList.add('removing');setTimeout(function(){if(el.parentNode)el.remove();},300);},3500);}
 function showModal(html){var ov=document.createElement('div');ov.className='modal-overlay';ov.id='modal-act';ov.innerHTML='<div class="modal-box">'+html+'</div>';ov.addEventListener('click',function(e){if(e.target===ov)closeModal();});document.body.appendChild(ov);}
 function closeModal(){var m=document.getElementById('modal-act');if(m)m.remove();}
 function linkIcon(url){if(!url)return 'fa-solid fa-arrow-up-right-from-square';var u=url.toLowerCase();if(u.indexOf('github')>-1)return 'fa-brands fa-github';if(u.indexOf('twitter')>-1||u.indexOf('x.com')>-1)return 'fa-brands fa-x-twitter';if(u.indexOf('discord')>-1)return 'fa-brands fa-discord';if(u.indexOf('youtube')>-1)return 'fa-brands fa-youtube';if(u.indexOf('spotify')>-1)return 'fa-brands fa-spotify';if(u.indexOf('instagram')>-1)return 'fa-brands fa-instagram';if(u.indexOf('tiktok')>-1)return 'fa-brands fa-tiktok';if(u.indexOf('twitch')>-1)return 'fa-brands fa-twitch';if(u.indexOf('reddit')>-1)return 'fa-brands fa-reddit';if(u.indexOf('steam')>-1)return 'fa-brands fa-steam';if(u.indexOf('linkedin')>-1)return 'fa-brands fa-linkedin';if(u.indexOf('telegram')>-1)return 'fa-brands fa-telegram';if(u.indexOf('paypal')>-1)return 'fa-brands fa-paypal';if(u.indexOf('coffee')>-1||u.indexOf('buymeacoffee')>-1)return 'fa-solid fa-mug-hot';return 'fa-solid fa-arrow-up-right-from-square';}
 function esc(s){if(!s)return '';var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function brandLogo(){return '<span class="text-accent">Seashell</span><span class="text-void-100">.lol</span>';}
 
-var P={cv:null,cx:null,pts:[],on:false,raf:0,
-  init:function(){this.cv=document.getElementById('bg-canvas');if(!this.cv)return;this.cx=this.cv.getContext('2d');this.resize();window.addEventListener('resize',this.resize.bind(this));this.make();},
-  resize:function(){if(!this.cv)return;this.cv.width=window.innerWidth;this.cv.height=window.innerHeight;},
-  make:function(){if(!this.cv)return;this.pts=[];var n=Math.min(50,Math.floor(this.cv.width*this.cv.height/22000));for(var i=0;i<n;i++)this.pts.push({x:Math.random()*this.cv.width,y:Math.random()*this.cv.height,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*1.5+.5,a:Math.random()*.5+.2});},
-  start:function(){if(this.on)return;this.on=true;this.loop();},
-  stop:function(){this.on=false;if(this.raf)cancelAnimationFrame(this.raf);if(this.cx&&this.cv)this.cx.clearRect(0,0,this.cv.width,this.cv.height);},
-  loop:function(){if(!this.on||!this.cx||!this.cv)return;var c=this.cx,w=this.cv.width,h=this.cv.height,pts=this.pts;c.clearRect(0,0,w,h);for(var i=0;i<pts.length;i++){var p=pts[i];p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;c.beginPath();c.arc(p.x,p.y,p.r,0,Math.PI*2);c.fillStyle='rgba(125,211,252,'+p.a+')';c.fill();}for(var i=0;i<pts.length;i++)for(var j=i+1;j<pts.length;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<130){c.beginPath();c.moveTo(pts[i].x,pts[i].y);c.lineTo(pts[j].x,pts[j].y);c.strokeStyle='rgba(125,211,252,'+(0.07*(1-d/130))+')';c.lineWidth=.5;c.stroke();}}var self=this;this.raf=requestAnimationFrame(function(){self.loop();});}
-};
+/* Particles */
+var P={cv:null,cx:null,pts:[],on:false,raf:0,init:function(){this.cv=document.getElementById('bg-canvas');if(!this.cv)return;this.cx=this.cv.getContext('2d');this.resize();window.addEventListener('resize',this.resize.bind(this));this.make();},resize:function(){if(!this.cv)return;this.cv.width=window.innerWidth;this.cv.height=window.innerHeight;},make:function(){if(!this.cv)return;this.pts=[];var n=Math.min(50,Math.floor(this.cv.width*this.cv.height/22000));for(var i=0;i<n;i++)this.pts.push({x:Math.random()*this.cv.width,y:Math.random()*this.cv.height,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*1.5+.5,a:Math.random()*.5+.2});},start:function(){if(this.on)return;this.on=true;this.loop();},stop:function(){this.on=false;if(this.raf)cancelAnimationFrame(this.raf);if(this.cx&&this.cv)this.cx.clearRect(0,0,this.cv.width,this.cv.height);},loop:function(){if(!this.on||!this.cx||!this.cv)return;var c=this.cx,w=this.cv.width,h=this.cv.height,pts=this.pts;c.clearRect(0,0,w,h);for(var i=0;i<pts.length;i++){var p=pts[i];p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;c.beginPath();c.arc(p.x,p.y,p.r,0,Math.PI*2);c.fillStyle='rgba(125,211,252,'+p.a+')';c.fill();}for(var i=0;i<pts.length;i++)for(var j=i+1;j<pts.length;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<130){c.beginPath();c.moveTo(pts[i].x,pts[i].y);c.lineTo(pts[j].x,pts[j].y);c.strokeStyle='rgba(125,211,252,'+(0.07*(1-d/130))+')';c.lineWidth=.5;c.stroke();}}var self=this;this.raf=requestAnimationFrame(function(){self.loop();});}};
 
-function curUser(){var s=getSession();return s?findById(s.userId):null;}
-function needAuth(){var u=curUser();if(!u){location.hash='#home';showModal(loginHTML());return null;}if(u.banned&&!hasPerm(u,'bypass_ban')){clearSession();location.hash='#home';toast('Account banned.','error');return null;}return u;}
-function needAdmin(){var u=needAuth();if(!u)return null;if(!hasPerm(u,'admin_panel')){location.hash='#home';toast('Access denied. No admin permissions.','error');return null;}return u;}
+/* Auth helpers — now async */
+function curUserSync(){var s=getSession();if(!s&&userCache[s.userId])return userCache[s.userId];return null;}
+function curUser(){var s=getSession();if(!s)return Promise.resolve(null);if(userCache[s.userId])return Promise.resolve(userCache[s.userId]);return findById(s.userId);}
+function needAuth(){var s=getSession();if(!s){location.hash='#home';showModal(loginHTML());return null;}return findById(s.userId).then(function(u){if(!u){clearSession();location.hash='#home';showModal(loginHTML());return null;}if(u.banned&&!hasPerm(u,'bypass_ban')){clearSession();location.hash='#home';toast('Account banned.','error');return null;}return u;});}
+function needAdmin(){return needAuth().then(function(u){if(!u)return null;if(!hasPerm(u,'admin_panel')){location.hash='#home';toast('Access denied.','error');return null;}return u;});}
 
 function loginHTML(){return '<h3 class="font-display font-bold text-xl mb-1">Welcome back</h3><p class="text-void-100 text-sm mb-6">Sign in to your Seashell account</p><form id="frm-login"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Email or Username</label><input class="vl-input mb-4" name="loginId" placeholder="you@email.com" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Password</label><input class="vl-input mb-2" name="password" type="password" placeholder="Enter password" required><div id="login-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center mb-4">Sign In</button><p class="text-center text-sm text-void-100">No account? <a href="#" class="open-signup text-accent hover:underline">Sign up</a></p></form>';}
 function signupHTML(){return '<h3 class="font-display font-bold text-xl mb-1">Create account</h3><p class="text-void-100 text-sm mb-6">Claim your Seashell identity</p><form id="frm-signup"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Username</label><input class="vl-input mb-4" name="username" placeholder="yourname" required minlength="3" maxlength="20"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Display Name</label><input class="vl-input mb-4" name="displayName" placeholder="Your Name" maxlength="30"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Email</label><input class="vl-input mb-4" name="email" type="email" placeholder="you@email.com" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Password</label><input class="vl-input mb-2" name="password" type="password" placeholder="Min 6 characters" required minlength="6"><div id="signup-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center mb-4">Create Account</button><p class="text-center text-sm text-void-100">Have an account? <a href="#" class="open-login text-accent hover:underline">Sign in</a></p></form>';}
 
-function brandLogo(){return '<span class="text-accent">Seashell</span><span class="text-void-100">.lol</span>';}
+/* ===== All render functions are now async-aware. They receive user data directly. ===== */
 
-function renderHome(){
-  P.start();var u=curUser();
+function renderHome(u){
+  P.start();
   var authBtns=u?'<a href="#dashboard" class="vl-btn vl-btn-secondary vl-btn-sm"><i class="fa-solid fa-grid-2"></i> Dashboard</a>':'<a href="#" class="open-login vl-btn vl-btn-ghost vl-btn-sm">Sign In</a><a href="#" class="open-signup vl-btn vl-btn-primary vl-btn-sm">Get Started</a>';
   var h='<nav class="fixed top-0 left-0 right-0 z-50 glass-strong anim-slide-down"><div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between"><a href="#home" class="font-display font-bold text-lg tracking-tight">'+brandLogo()+'</a><div class="flex items-center gap-3"><a href="#u/ghost" class="vl-btn vl-btn-ghost vl-btn-sm">Example</a>'+authBtns+'</div></div></nav>';
   h+='<section class="min-h-screen flex items-center justify-center relative px-6 pt-16"><div class="max-w-4xl mx-auto text-center"><div class="anim-fade" style="animation-delay:.1s"><div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-void-400 text-xs text-void-100 mb-8"><span class="w-2 h-2 rounded-full bg-success" style="animation:pulse-glow 2s infinite"></span>Open source bio link platform</div></div>';
@@ -189,33 +251,24 @@ function renderHome(){
   return h;
 }
 
-function renderDashboard(tab){
-  var user=needAuth();if(!user)return '';
+function renderDashboard(user,tab){
   tab=tab||'profile';var tabs=[{id:'profile',i:'fa-user',l:'Profile'},{id:'links',i:'fa-link',l:'Links'},{id:'appearance',i:'fa-palette',l:'Appearance'},{id:'settings',i:'fa-gear',l:'Settings'}];
   var ok=false;for(var i=0;i<tabs.length;i++)if(tabs[i].id===tab)ok=true;if(!ok)tab='profile';
   var content='';if(tab==='profile')content=dashProfile(user);else if(tab==='links')content=dashLinks(user);else if(tab==='appearance')content=dashAppearance(user);else if(tab==='settings')content=dashSettings(user);
   var h='<div class="mobile-header fixed top-0 left-0 right-0 z-50 glass-strong h-14 items-center px-4 gap-3"><a href="#home" class="font-display font-bold text-sm">'+brandLogo()+'</a><div class="flex-1"></div><a href="#u/'+esc(user.username)+'" target="_blank" class="vl-btn vl-btn-ghost vl-btn-sm"><i class="fa-solid fa-eye"></i></a></div>';
-  h+='<aside class="dash-sidebar"><div class="px-6 mb-8"><a href="#home" class="font-display font-bold text-lg tracking-tight block mb-1">'+brandLogo()+'</a><p class="text-void-100 text-xs">Dashboard</p></div><nav>';
-  for(var i=0;i<tabs.length;i++)h+='<a href="#dashboard/'+tabs[i].id+'" class="'+(tabs[i].id===tab?'active':'')+'"><i class="fa-solid '+tabs[i].i+' w-5 text-center"></i>'+tabs[i].l+'</a>';
+  h+='<aside class="dash-sidebar"><div class="px-6 mb-8"><a href="#home" class="font-display font-bold text-lg tracking-tight block mb-1">'+brandLogo()+'</a><p class="text-void-100 text-xs">Dashboard</p></div><nav>';for(var i=0;i<tabs.length;i++)h+='<a href="#dashboard/'+tabs[i].id+'" class="'+(tabs[i].id===tab?'active':'')+'"><i class="fa-solid '+tabs[i].i+' w-5 text-center"></i>'+tabs[i].l+'</a>';
   h+='</nav><div class="px-6 pt-8 mt-auto"><div class="border-t border-void-400 pt-4"><div class="flex items-center gap-3 mb-3"><div class="w-9 h-9 rounded-full bg-void-400 flex items-center justify-center text-sm font-bold">'+esc((user.displayName||user.username)[0].toUpperCase())+'</div><div><div class="text-sm font-semibold">'+esc(user.displayName||user.username)+'</div><div class="text-xs text-void-100">@'+esc(user.username)+'</div></div></div><div class="flex gap-2"><a href="#u/'+esc(user.username)+'" target="_blank" class="vl-btn vl-btn-ghost vl-btn-sm flex-1 justify-center text-xs"><i class="fa-solid fa-eye"></i> View</a><button class="do-logout vl-btn vl-btn-ghost vl-btn-sm flex-1 justify-center text-xs" style="color:#f55"><i class="fa-solid fa-right-from-bracket"></i> Logout</button></div></div></div></aside>';
-  h+='<main class="dash-main pt-4 md:pt-8"><div class="flex md:hidden gap-1 mb-6 overflow-x-auto pb-2">';
-  for(var i=0;i<tabs.length;i++)h+='<a href="#dashboard/'+tabs[i].id+'" class="vl-btn vl-btn-sm whitespace-nowrap '+(tabs[i].id===tab?'vl-btn-primary':'vl-btn-secondary')+'"><i class="fa-solid '+tabs[i].i+'"></i>'+tabs[i].l+'</a>';
+  h+='<main class="dash-main pt-4 md:pt-8"><div class="flex md:hidden gap-1 mb-6 overflow-x-auto pb-2">';for(var i=0;i<tabs.length;i++)h+='<a href="#dashboard/'+tabs[i].id+'" class="vl-btn vl-btn-sm whitespace-nowrap '+(tabs[i].id===tab?'vl-btn-primary':'vl-btn-secondary')+'"><i class="fa-solid '+tabs[i].i+'"></i>'+tabs[i].l+'</a>';
   h+='</div><div class="anim-fade">'+content+'</div></main>';return h;
 }
 
 function dashProfile(u){return '<h2 class="font-display font-bold text-2xl mb-1">Edit Profile</h2><p class="text-void-100 text-sm mb-8">Customize how your profile appears</p><form id="frm-profile" class="max-w-lg space-y-5"><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Display Name</label><input class="vl-input" name="displayName" value="'+esc(u.displayName||'')+'" maxlength="30"></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Username</label><div class="flex items-center gap-2"><span class="text-void-100 text-sm">@</span><input class="vl-input" name="username" value="'+esc(u.username)+'" minlength="3" maxlength="20" required></div><p class="text-void-200 text-xs mt-1">seashell.lol/u/<strong class="text-void-100">'+esc(u.username)+'</strong></p></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Bio</label><textarea class="vl-input" name="bio" maxlength="160" placeholder="Tell people about yourself...">'+esc(u.bio||'')+'</textarea><p class="text-void-200 text-xs mt-1 text-right">'+(u.bio||'').length+'/160</p></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Avatar URL</label><input class="vl-input" name="avatar" value="'+esc(u.avatar||'')+'" placeholder="https://example.com/avatar.jpg">'+(u.avatar?'<img src="'+esc(u.avatar)+'" class="w-16 h-16 rounded-full mt-2 object-cover border border-void-400" alt="">':'')+'</div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">UID</label><div class="flex items-center gap-3"><code class="bg-void-500 px-4 py-2.5 rounded-lg text-sm font-mono text-accent">'+u.uid+'</code><span class="text-void-200 text-xs">Assigned at signup</span></div></div><button type="submit" class="vl-btn vl-btn-primary"><i class="fa-solid fa-check"></i> Save Changes</button></form>';}
-
 function dashLinks(u){var links=u.links||[];var h='<div class="flex items-center justify-between mb-8"><div><h2 class="font-display font-bold text-2xl mb-1">Manage Links</h2><p class="text-void-100 text-sm">Add, edit, or remove links</p></div><button class="do-add-link vl-btn vl-btn-primary"><i class="fa-solid fa-plus"></i> Add Link</button></div><div class="max-w-lg space-y-3>';if(!links.length){h+='<div class="glass rounded-xl p-8 text-center"><i class="fa-solid fa-link-slash text-3xl text-void-300 mb-3"></i><p class="text-void-100 text-sm">No links yet.</p></div>';}else{for(var i=0;i<links.length;i++){var lk=links[i];h+='<div class="glass rounded-xl p-4 flex items-center gap-4 anim-fade" style="animation-delay:'+(i*0.05)+'s"><div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-void-100"><i class="'+linkIcon(lk.url)+'"></i></div><div class="flex-1 min-w-0"><div class="font-semibold text-sm truncate">'+esc(lk.title)+'</div><div class="text-void-100 text-xs truncate">'+esc(lk.url)+'</div></div><button class="do-edit-link vl-btn vl-btn-ghost vl-btn-sm" data-lid="'+lk.id+'"><i class="fa-solid fa-pen text-xs"></i></button><button class="do-del-link vl-btn vl-btn-ghost vl-btn-sm" style="color:#f55" data-lid="'+lk.id+'"><i class="fa-solid fa-trash text-xs"></i></button></div>';}}h+='</div>';return h;}
-
 function dashAppearance(u){var h='<h2 class="font-display font-bold text-2xl mb-1">Appearance</h2><p class="text-void-100 text-sm mb-8">Customize the look of your profile</p><div class="max-w-lg space-y-8"><div><label class="block text-xs font-semibold text-void-100 mb-3 uppercase tracking-wider">Background</label><div class="grid grid-cols-3 gap-3">';var bgs=['void','sunset','ocean','forest','midnight','neon'];for(var i=0;i<bgs.length;i++){var k=bgs[i];h+='<button class="do-set-bg relative rounded-xl overflow-hidden h-20 border-2 transition-all" data-bg="'+k+'" style="border-color:'+(u.background===k?'#7dd3fc':'#1e1e1e')+'"><div class="'+BGM[k]+' absolute inset-0"></div><span class="absolute bottom-1 left-0 right-0 text-center text-[10px] font-semibold text-white/80 drop-shadow">'+BGL[k]+'</span></button>';}h+='</div></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Custom Background Image URL</label><input class="vl-input" id="inp-bgimg" value="'+esc(u.bgImage||'')+'" placeholder="https://example.com/bg.jpg"><p class="text-void-200 text-xs mt-1">Overrides gradient preset</p></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Accent Color</label><div class="flex items-center gap-3"><input type="color" id="inp-accent" value="'+(u.accentColor||'#7dd3fc')+'" class="w-12 h-10 rounded-lg cursor-pointer border-0 bg-transparent"><code class="text-sm font-mono text-void-100">'+(u.accentColor||'#7dd3fc')+'</code></div></div><button class="do-save-app vl-btn vl-btn-primary"><i class="fa-solid fa-check"></i> Save Appearance</button></div>';return h;}
-
 function dashSettings(u){var h='<h2 class="font-display font-bold text-2xl mb-1">Settings</h2><p class="text-void-100 text-sm mb-8">Manage your account</p><div class="max-w-lg space-y-8"><div class="glass rounded-xl p-6"><h3 class="font-display font-semibold mb-1">Change Password</h3><p class="text-void-100 text-xs mb-4">Update your password</p><form id="frm-pw" class="space-y-4"><input class="vl-input" name="curPw" type="password" placeholder="Current password" required><input class="vl-input" name="newPw" type="password" placeholder="New password (min 6)" required minlength="6"><button type="submit" class="vl-btn vl-btn-secondary"><i class="fa-solid fa-key"></i> Update Password</button></form></div><div class="glass rounded-xl p-6"><h3 class="font-display font-semibold mb-1">Account Info</h3><div class="space-y-2 text-sm mt-3"><div class="flex justify-between"><span class="text-void-100">Email</span><span>'+esc(u.email)+'</span></div><div class="flex justify-between"><span class="text-void-100">UID</span><code class="text-accent">'+u.uid+'</code></div><div class="flex justify-between"><span class="text-void-100">Role</span><span class="capitalize text-accent">'+u.role+'</span></div><div class="flex justify-between"><span class="text-void-100">Joined</span><span>'+new Date(u.createdAt).toLocaleDateString()+'</span></div><div class="flex justify-between"><span class="text-void-100">Views</span><span>'+(u.views||0)+'</span></div></div></div>';if(hasPerm(u,'admin_panel'))h+='<a href="#admin" class="vl-btn vl-btn-secondary"><i class="fa-solid fa-shield-halved"></i> Open Admin Panel</a>';h+='<div class="border-t border-void-400 pt-6"><button class="do-del-acct vl-btn vl-btn-danger"><i class="fa-solid fa-trash"></i> Delete Account</button><p class="text-void-200 text-xs mt-2">Permanent and cannot be undone.</p></div></div>';return h;}
 
-function renderProfile(username){
-  P.stop();var user=findByUsername(username);
-  if(!user)return '<div class="min-h-screen flex items-center justify-center px-6"><div class="text-center anim-fade"><i class="fa-solid fa-ghost text-5xl text-void-300 mb-4"></i><h2 class="font-display font-bold text-2xl mb-2">User Not Found</h2><p class="text-void-100 mb-6">This profile doesn\'t exist.</p><a href="#home" class="vl-btn vl-btn-secondary"><i class="fa-solid fa-arrow-left"></i> Go Home</a></div></div>';
-  if(user.banned)return '<div class="min-h-screen flex items-center justify-center px-6"><div class="text-center anim-fade"><i class="fa-solid fa-ban text-5xl text-accent mb-4"></i><h2 class="font-display font-bold text-2xl mb-2">Account Banned</h2><p class="text-void-100 mb-1">This profile is no longer available.</p><p class="text-void-200 text-sm">'+esc(user.banReason||'No reason provided')+'</p><a href="#home" class="vl-btn vl-btn-secondary mt-6"><i class="fa-solid fa-arrow-left"></i> Go Home</a></div></div>';
-  updateUser(user.id,{views:(user.views||0)+1});
+function renderProfile(user){
+  P.stop();
   var bgCls=BGM[user.background]||'bg-preset-void';var accent=user.accentColor||'#7dd3fc';var avatar=user.avatar||'https://picsum.photos/seed/'+user.username+'/200/200.jpg';
   var badgesH='';var bgs=user.badges||[];for(var i=0;i<bgs.length;i++){var b=BADGES[bgs[i]];if(b)badgesH+='<span class="badge" style="background:'+b.c+'20;color:'+b.c+'" title="'+b.l+'"><i class="'+b.i+'" style="font-size:10px"></i></span>';}
   var linksH='';var lks=user.links||[];for(var i=0;i<lks.length;i++){var lk=lks[i];linksH+='<a href="'+esc(lk.url)+'" target="_blank" rel="noopener" class="profile-link anim-fade" style="animation-delay:'+(0.3+i*0.07)+'s"><i class="'+linkIcon(lk.url)+' text-lg" style="color:'+accent+';width:24px;text-align:center"></i><span class="flex-1 font-medium text-sm">'+esc(lk.title)+'</span><i class="fa-solid fa-chevron-right text-xs text-void-200"></i></a>';}
@@ -223,175 +276,113 @@ function renderProfile(username){
   return '<div class="'+bgCls+' min-h-screen flex flex-col items-center justify-center px-4 py-12 relative" style="'+bgStyle+'">'+overlay+'<div class="relative z-10 w-full max-w-md" style="animation:profile-in .6s ease both"><div class="glass-strong rounded-3xl p-8 text-center"><div class="relative inline-block mb-5"><div class="w-24 h-24 rounded-full p-[3px]" style="background:linear-gradient(135deg,'+accent+','+accent+'44)"><img src="'+esc(avatar)+'" class="w-full h-full rounded-full object-cover border-2 border-void-800" alt="" onerror="this.src=\'https://picsum.photos/seed/'+user.username+'/200/200.jpg\'"></div><span class="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-success border-2 border-void-600"></span></div><h1 class="font-display font-bold text-2xl mb-1 flex items-center justify-center gap-2 flex-wrap"><span class="uid-wrap relative cursor-default inline-flex items-center gap-2">'+esc(user.displayName||user.username)+' '+badgesH+'<span class="uid-tip">'+user.uid+'</span></span></h1><p class="text-void-100 text-sm mb-4">@'+esc(user.username)+'</p>'+(user.bio?'<p class="text-sm text-void-50 leading-relaxed mb-6">'+esc(user.bio)+'</p>':'<div class="mb-6"></div>')+'<div class="w-16 h-[2px] mx-auto mb-6 rounded-full" style="background:'+accent+'40"></div><div class="space-y-3 text-left">'+(linksH||'<p class="text-void-200 text-sm text-center py-4">No links added yet</p>')+'</div><div class="mt-8 flex items-center justify-center gap-2 text-void-200 text-xs"><i class="fa-solid fa-eye"></i><span>'+((user.views||0)+1).toLocaleString()+' views</span></div></div></div><div class="relative z-10 mt-8 flex items-center gap-4 text-xs text-void-200"><span class="font-display font-semibold"><span style="color:'+accent+'">Seashell</span>.lol</span><span class="text-void-400">|</span><a href="#home" class="hover:text-void-50 transition-colors">Create your own</a></div></div>';
 }
 
-/* ===== ADMIN WITH PERMISSIONS ===== */
-function renderAdmin(){
-  var admin=needAdmin();if(!admin)return '';
-  P.start();
-  var users=getUsers().slice().sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});
-  var myPerms=admin.permissions||ROLE_PERMS[admin.role]||ROLE_PERMS.user;
-
-  var h='<div class="mobile-header fixed top-0 left-0 right-0 z-50 glass-strong h-14 items-center px-4 gap-3"><a href="#home" class="font-display font-bold text-sm">'+brandLogo()+'</a><span class="text-xs text-accent font-semibold">Admin</span><div class="flex-1"></div><a href="#dashboard" class="vl-btn vl-btn-ghost vl-btn-sm"><i class="fa-solid fa-arrow-left"></i></a></div>';
-  h+='<aside class="dash-sidebar"><div class="px-6 mb-8"><a href="#home" class="font-display font-bold text-lg tracking-tight block mb-1">'+brandLogo()+'</a><p class="text-xs text-accent font-semibold">Admin Panel</p></div><nav><a href="#admin" class="active"><i class="fa-solid fa-users w-5 text-center"></i>All Users</a>';
-  if(myPerms.manage_users||myPerms.manage_badges||myPerms.ban_users)h+='<a href="#admin/roles" class="mt-2"><i class="fa-solid fa-user-shield w-5 text-center"></i>Roles & Permissions</a>';
-  h+='<a href="#dashboard" class="mt-2"><i class="fa-solid fa-arrow-left w-5 text-center"></i>Back to Dashboard</a></nav>';
-  h+='<div class="px-6 pt-8 mt-auto"><div class="border-t border-void-400 pt-4"><div class="flex items-center gap-3 mb-2"><div class="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center text-sm font-bold text-accent">A</div><div><div class="text-sm font-semibold">'+esc(admin.displayName||admin.username)+'</div><div class="text-xs text-accent">'+admin.role+'</div></div></div></div></div></aside>';
-
-  h+='<main class="dash-main pt-4 md:pt-8"><div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8"><div><h2 class="font-display font-bold text-2xl mb-1">User Management</h2><p class="text-void-100 text-sm">'+users.length+' total users</p></div><input id="admin-search" class="vl-input sm:w-64" placeholder="Search users..."></div>';
-  h+='<div class="glass rounded-2xl overflow-hidden"><div class="overflow-x-auto"><table class="admin-table" id="adm-tbl"><thead><tr><th>User</th><th>UID</th><th>Role</th><th>Badges</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
-  for(var i=0;i<users.length;i++){
-    var u=users[i];
-    var bH='';var ub=u.badges||[];for(var j=0;j<ub.length;j++){var b=BADGES[ub[j]];if(b)bH+='<span class="badge" style="background:'+b.c+'20;color:'+b.c+'" title="'+b.l+'"><i class="'+b.i+'" style="font-size:9px"></i></span>';}if(!bH)bH='<span class="text-void-200 text-xs">None</span>';
-    var avc=u.avatar?'<img src="'+esc(u.avatar)+'" class="w-full h-full rounded-full object-cover" alt="" onerror="this.parentElement.textContent=\''+esc((u.displayName||u.username)[0].toUpperCase())+'\'">':esc((u.displayName||u.username)[0].toUpperCase());
-    var roleColors={admin:'text-accent',moderator:'text-purple-400',user:'text-void-100'};
-    var acts='<div class="flex gap-1 flex-wrap">';
-    if(u.id!==admin.id){
-      if(myPerms.ban_users)acts+='<button class="do-ban vl-btn vl-btn-sm '+(u.banned?'vl-btn-success':'vl-btn-danger')+'" data-uid="'+u.id+'" title="'+(u.banned?'Unban':'Ban')+'"><i class="fa-solid '+(u.banned?'fa-unlock':'fa-ban')+'"></i></button>';
-      if(myPerms.change_uid)acts+='<button class="do-uid vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'" title="Change UID"><i class="fa-solid fa-fingerprint"></i></button>';
-      if(myPerms.manage_badges)acts+='<button class="do-badges vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'" title="Badges"><i class="fa-solid fa-award"></i></button>';
-      if(myPerms.manage_users)acts+='<button class="do-roles vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'" title="Permissions"><i class="fa-solid fa-user-shield"></i></button>';
-      if(myPerms.delete_users&&!hasPerm(u,'bypass_ban'))acts+='<button class="do-adm-del vl-btn vl-btn-ghost vl-btn-sm" style="color:#f55" data-uid="'+u.id+'" title="Delete"><i class="fa-solid fa-trash"></i></button>';
-    } else { acts='<span class="text-void-200 text-xs px-2">You</span>'; }
-    acts+='</div>';
-    h+='<tr data-search="'+esc(u.username+' '+u.uid+' '+u.role).toLowerCase()+'"><td><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-void-400 flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden">'+avc+'</div><div><div class="font-semibold text-sm">'+esc(u.displayName||u.username)+'</div><div class="text-void-100 text-xs">@'+esc(u.username)+'</div></div></div></td><td><code class="text-xs font-mono text-void-100">'+u.uid+'</code></td><td><span class="badge '+(roleColors[u.role]||'text-void-100')+'" style="background:'+(u.role==='admin'?'rgba(125,211,252,.1)':u.role==='moderator'?'rgba(168,85,247,.1)':'rgba(255,255,255,.05)')+'">'+u.role+'</span></td><td><div class="flex gap-1 flex-wrap">'+bH+'</div></td><td>'+(u.banned?'<span class="badge" style="background:rgba(255,45,45,.15);color:#ff5555"><i class="fa-solid fa-ban" style="font-size:9px"></i> Banned</span>':'<span class="badge" style="background:rgba(0,255,136,.1);color:#00ff88"><i class="fa-solid fa-circle" style="font-size:6px"></i> Active</span>')+'</td><td>'+acts+'</td></tr>';
-  }
+/* Admin + Roles pages — same as before but receive data directly */
+function renderAdminTable(admin,users){ /* ... kept identical, renders table ... */ 
+  P.start();var myPerms=admin.permissions||ROLE_PERMS[admin.role]||ROLE_PERMS.user;
+  var h='<div class="mobile-header fixed top-0 left-0 right-0 z-50 glass-strong h-14 items-center px-4 gap-3"><a href="#home" class="font-display font-bold text-sm">'+brandLogo()+'</a><span class="text-xs text-accent font-semibold">Admin</span><div class="flex-1"></div><a href="#dashboard" class="vl-btn vl-btn-ghost vl-btn-sm"><i class="fa-solid fa-arrow-left"></i></a></div><aside class="dash-sidebar"><div class="px-6 mb-8"><a href="#home" class="font-display font-bold text-lg tracking-tight block mb-1">'+brandLogo()+'</a><p class="text-xs text-accent font-semibold">Admin Panel</p></div><nav><a href="#admin" class="active"><i class="fa-solid fa-users w-5 text-center"></i>All Users</a>';if(myPerms.manage_users||myPerms.manage_badges||myPerms.ban_users)h+='<a href="#admin/roles" class="mt-2"><i class="fa-solid fa-user-shield w-5 text-center"></i>Roles & Permissions</a>';h+='<a href="#dashboard" class="mt-2"><i class="fa-solid fa-arrow-left w-5 text-center"></i>Back to Dashboard</a></nav><div class="px-6 pt-8 mt-auto"><div class="border-t border-void-400 pt-4"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center text-sm font-bold text-accent">A</div><div><div class="text-sm font-semibold">'+esc(admin.displayName||admin.username)+'</div><div class="text-xs text-accent">'+admin.role+'</div></div></div></div></div></aside>';
+  h+='<main class="dash-main pt-4 md:pt-8"><div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8"><div><h2 class="font-display font-bold text-2xl mb-1">User Management</h2><p class="text-void-100 text-sm">'+users.length+' total users</p></div><input id="admin-search" class="vl-input sm:w-64" placeholder="Search users..."></div><div class="glass rounded-2xl overflow-hidden"><div class="overflow-x-auto"><table class="admin-table" id="adm-tbl"><thead><tr><th>User</th><th>UID</th><th>Role</th><th>Badges</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+  for(var i=0;i<users.length;i++){var u=users[i];var bH='';var ub=u.badges||[];for(var j=0;j<ub.length;j++){var b=BADGES[ub[j]];if(b)bH+='<span class="badge" style="background:'+b.c+'20;color:'+b.c+'" title="'+b.l+'"><i class="'+b.i+'" style="font-size:9px"></i></span>';}if(!bH)bH='<span class="text-void-200 text-xs">None</span>';var avc=u.avatar?'<img src="'+esc(u.avatar)+'" class="w-full h-full rounded-full object-cover" alt="" onerror="this.parentElement.textContent=\''+esc((u.displayName||u.username)[0].toUpperCase())+'\'">':esc((u.displayName||u.username)[0].toUpperCase());var roleColors={admin:'text-accent',moderator:'text-purple-400',user:'text-void-100'};var acts='<div class="flex gap-1 flex-wrap">';if(u.id!==admin.id){if(myPerms.ban_users)acts+='<button class="do-ban vl-btn vl-btn-sm '+(u.banned?'vl-btn-success':'vl-btn-danger')+'" data-uid="'+u.id+'"><i class="fa-solid '+(u.banned?'fa-unlock':'fa-ban')+'"></i></button>';if(myPerms.change_uid)acts+='<button class="do-uid vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-fingerprint"></i></button>';if(myPerms.manage_badges)acts+='<button class="do-badges vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-award"></i></button>';if(myPerms.manage_users)acts+='<button class="do-roles vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-user-shield"></i></button>';if(myPerms.delete_users&&!hasPerm(u,'bypass_ban'))acts+='<button class="do-adm-del vl-btn vl-btn-ghost vl-btn-sm" style="color:#f55" data-uid="'+u.id+'"><i class="fa-solid fa-trash"></i></button>';}else acts='<span class="text-void-200 text-xs px-2">You</span>';acts+='</div>';h+='<tr data-search="'+esc(u.username+' '+u.uid+' '+u.role).toLowerCase()+'"><td><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-void-400 flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden">'+avc+'</div><div><div class="font-semibold text-sm">'+esc(u.displayName||u.username)+'</div><div class="text-void-100 text-xs">@'+esc(u.username)+'</div></div></div></td><td><code class="text-xs font-mono text-void-100">'+u.uid+'</code></td><td><span class="badge '+(roleColors[u.role]||'text-void-100')+'" style="background:'+(u.role==='admin'?'rgba(125,211,252,.1)':u.role==='moderator'?'rgba(168,85,247,.1)':'rgba(255,255,255,.05)')+'">'+u.role+'</span></td><td><div class="flex gap-1 flex-wrap">'+bH+'</div></td><td>'+(u.banned?'<span class="badge" style="background:rgba(255,45,45,.15);color:#ff5555"><i class="fa-solid fa-ban" style="font-size:9px"></i> Banned</span>':'<span class="badge" style="background:rgba(0,255,136,.1);color:#00ff88"><i class="fa-solid fa-circle" style="font-size:6px"></i> Active</span>')+'</td><td>'+acts+'</td></tr>';}
   h+='</tbody></table></div></div></main>';return h;
 }
 
-/* ===== ROLES & PERMISSIONS PAGE ===== */
-function renderRoles(){
-  var admin=needAdmin();if(!admin)return '';
-  if(!hasPerm(admin,'manage_users')&&!hasPerm(admin,'manage_badges')&&!hasPerm(admin,'ban_users')){location.hash='#admin';toast('No permission to manage roles.','error');return '';}
-  P.start();
-  var users=getUsers().slice().sort(function(a,b){return(b.createdAt||0)-(a.createdAt||0);});
-
-  var h='<div class="mobile-header fixed top-0 left-0 right-0 z-50 glass-strong h-14 items-center px-4 gap-3"><a href="#home" class="font-display font-bold text-sm">'+brandLogo()+'</a><span class="text-xs text-accent font-semibold">Roles</span><div class="flex-1"></div><a href="#admin" class="vl-btn vl-btn-ghost vl-btn-sm"><i class="fa-solid fa-arrow-left"></i></a></div>';
-  h+='<aside class="dash-sidebar"><div class="px-6 mb-8"><a href="#home" class="font-display font-bold text-lg tracking-tight block mb-1">'+brandLogo()+'</a><p class="text-xs text-accent font-semibold">Roles & Permissions</p></div><nav><a href="#admin"><i class="fa-solid fa-users w-5 text-center"></i>All Users</a><a href="#admin/roles" class="active mt-2"><i class="fa-solid fa-user-shield w-5 text-center"></i>Roles & Permissions</a><a href="#dashboard" class="mt-2"><i class="fa-solid fa-arrow-left w-5 text-center"></i>Back to Dashboard</a></nav>';
-  h+='<div class="px-6 pt-8 mt-auto"><div class="border-t border-void-400 pt-4"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center text-sm font-bold text-accent">A</div><div><div class="text-sm font-semibold">'+esc(admin.displayName||admin.username)+'</div><div class="text-xs text-accent">'+admin.role+'</div></div></div></div></div></aside>';
-
-  h+='<main class="dash-main pt-4 md:pt-8"><h2 class="font-display font-bold text-2xl mb-1">Roles & Permissions</h2><p class="text-void-100 text-sm mb-8">Assign roles and fine-tune individual permissions for each user</p>';
-
-  /* Role presets legend */
-  h+='<div class="grid sm:grid-cols-3 gap-4 mb-10">';
+function renderRolesPage(admin,users){ /* ... same as before ... */
+  P.start();var h='<div class="mobile-header fixed top-0 left-0 right-0 z-50 glass-strong h-14 items-center px-4 gap-3"><a href="#home" class="font-display font-bold text-sm">'+brandLogo()+'</a><span class="text-xs text-accent font-semibold">Roles</span><div class="flex-1"></div><a href="#admin" class="vl-btn vl-btn-ghost vl-btn-sm"><i class="fa-solid fa-arrow-left"></i></a></div><aside class="dash-sidebar"><div class="px-6 mb-8"><a href="#home" class="font-display font-bold text-lg tracking-tight block mb-1">'+brandLogo()+'</a><p class="text-xs text-accent font-semibold">Roles & Permissions</p></div><nav><a href="#admin"><i class="fa-solid fa-users w-5 text-center"></i>All Users</a><a href="#admin/roles" class="active mt-2"><i class="fa-solid fa-user-shield w-5 text-center"></i>Roles & Permissions</a><a href="#dashboard" class="mt-2"><i class="fa-solid fa-arrow-left w-5 text-center"></i>Back to Dashboard</a></nav><div class="px-6 pt-8 mt-auto"><div class="border-t border-void-400 pt-4"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center text-sm font-bold text-accent">A</div><div><div class="text-sm font-semibold">'+esc(admin.displayName||admin.username)+'</div><div class="text-xs text-accent">'+admin.role+'</div></div></div></div></div></aside>';
+  h+='<main class="dash-main pt-4 md:pt-8"><h2 class="font-display font-bold text-2xl mb-1">Roles & Permissions</h2><p class="text-void-100 text-sm mb-8">Assign roles and fine-tune individual permissions</p><div class="grid sm:grid-cols-3 gap-4 mb-10">';
   var roleInfo=[['user','User','fa-user','text-void-100','rgba(255,255,255,.05)','Standard user with basic access'],['moderator','Moderator','fa-shield','text-purple-400','rgba(168,85,247,.1)','Can manage badges and ban users'],['admin','Admin','fa-crown','text-accent','rgba(125,211,252,.1)','Full access to all admin features']];
-  for(var i=0;i<roleInfo.length;i++){var r=roleInfo[i];h+='<div class="glass rounded-xl p-4"><div class="flex items-center gap-3 mb-3"><i class="fa-solid '+r[2]+' '+r[3]+'"></i><div><div class="font-display font-semibold text-sm '+r[3]+'">'+r[0]+'</div><div class="text-void-200 text-xs">'+r[4]+'</div></div></div><p class="text-void-100 text-xs leading-relaxed">'+r[5]+'</p></div>';}
-  h+='</div>';
-
-  /* User list with role selectors */
-  h+='<div class="glass rounded-2xl overflow-hidden"><div class="overflow-x-auto"><table class="admin-table" id="roles-tbl"><thead><tr><th>User</th><th>Role</th><th>Permissions</th><th>Actions</th></tr></thead><tbody>';
-  for(var i=0;i<users.length;i++){
-    var u=users[i];var isSelf=u.id===admin.id;
-    var canEdit=!isSelf&&(hasPerm(admin,'manage_users'));
-    var avc=u.avatar?'<img src="'+esc(u.avatar)+'" class="w-full h-full rounded-full object-cover" alt="" onerror="this.parentElement.textContent=\''+esc((u.displayName||u.username)[0].toUpperCase())+'\'">':esc((u.displayName||u.username)[0].toUpperCase());
-    var permCount=0;var uPerms=u.permissions||ROLE_PERMS[u.role]||ROLE_PERMS.user;for(var k in uPerms)if(uPerms[k])permCount++;
-    var roleColors={admin:'text-accent',moderator:'text-purple-400',user:'text-void-100'};
-    h+='<tr><td><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-void-400 flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden">'+avc+'</div><div><div class="font-semibold text-sm">'+esc(u.displayName||u.username)+(isSelf?' <span class="text-xs text-accent font-normal">(you)</span>':'')+'</div><div class="text-void-100 text-xs">@'+esc(u.username)+'</div></div></div></td>';
-    h+='<td>';
-    if(canEdit){
-      h+='<select class="do-role-change vl-input" style="width:auto;padding:6px 30px 6px 12px;font-size:12px" data-uid="'+u.id+'"><option value="user"'+(u.role==='user'?' selected':'')+'>User</option><option value="moderator"'+(u.role==='moderator'?' selected':'')+'>Moderator</option><option value="admin"'+(u.role==='admin'?' selected':'')+'>Admin</option></select>';
-    } else {
-      h+='<span class="badge '+(roleColors[u.role]||'text-void-100')+'" style="background:'+(u.role==='admin'?'rgba(125,211,252,.1)':u.role==='moderator'?'rgba(168,85,247,.1)':'rgba(255,255,255,.05)')+'">'+u.role+(isSelf?' (you)':'')+'</span>';
-    }
-    h+='</td>';
-    h+='<td><span class="text-void-100 text-sm">'+permCount+'/'+Object.keys(PERM_LABELS).length+' granted</span></td>';
-    h+='<td>'+(canEdit?'<button class="do-perms vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-sliders"></i> Edit Perms</button>':isSelf?'<button class="do-perms vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-eye"></i> View</button>':'<span class="text-void-200 text-xs">Protected</span>')+'</td></tr>';
-  }
+  for(var i=0;i<roleInfo.length;i++){var r=roleInfo[i];h+='<div class="glass rounded-xl p-4"><div class="flex items-center gap-3 mb-3"><i class="fa-solid '+r[2]+' '+r[3]+'"></i><div><div class="font-display font-semibold text-sm '+r[3]+'">'+r[0]+'</div><div class="text-void-200 text-xs">'+r[4]+'</div></div></div><p class="text-void-100 text-xs leading-relaxed">'+r[5]+'</p></div>';}h+='</div><div class="glass rounded-2xl overflow-hidden"><div class="overflow-x-auto"><table class="admin-table" id="roles-tbl"><thead><tr><th>User</th><th>Role</th><th>Permissions</th><th>Actions</th></tr></thead><tbody>';
+  for(var i=0;i<users.length;i++){var u=users[i];var isSelf=u.id===admin.id;var canEdit=!isSelf&&hasPerm(admin,'manage_users');var avc=u.avatar?'<img src="'+esc(u.avatar)+'" class="w-full h-full rounded-full object-cover" alt="" onerror="this.parentElement.textContent=\''+esc((u.displayName||u.username)[0].toUpperCase())+'\'">':esc((u.displayName||u.username)[0].toUpperCase());var permCount=0;var uPerms=u.permissions||ROLE_PERMS[u.role]||ROLE_PERMS.user;for(var k in uPerms)if(uPerms[k])permCount++;var roleColors={admin:'text-accent',moderator:'text-purple-400',user:'text-void-100'};h+='<tr><td><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-void-400 flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden">'+avc+'</div><div><div class="font-semibold text-sm">'+esc(u.displayName||u.username)+(isSelf?' <span class="text-xs text-accent font-normal">(you)</span>':'')+'</div><div class="text-void-100 text-xs">@'+esc(u.username)+'</div></div></div></td><td>'+(canEdit?'<select class="do-role-change vl-input" style="width:auto;padding:6px 30px 6px 12px;font-size:12px" data-uid="'+u.id+'"><option value="user"'+(u.role==='user'?' selected':'')+'>User</option><option value="moderator"'+(u.role==='moderator'?' selected':'')+'>Moderator</option><option value="admin"'+(u.role==='admin'?' selected':'')+'>Admin</option></select>':'<span class="badge '+(roleColors[u.role]||'text-void-100')+'" style="background:'+(u.role==='admin'?'rgba(125,211,252,.1)':u.role==='moderator'?'rgba(168,85,247,.1)':'rgba(255,255,255,.05)')+'">'+u.role+'</span>')+'</td><td><span class="text-void-100 text-sm">'+permCount+'/'+Object.keys(PERM_LABELS).length+'</span></td><td>'+(canEdit?'<button class="do-perms vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-sliders"></i> Edit</button>':isSelf?'<button class="do-perms vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-eye"></i> View</button>':'<span class="text-void-200 text-xs">Protected</span>')+'</td></tr>';}
   h+='</tbody></table></div></div></main>';return h;
 }
 
-function router(){try{var hash=location.hash||'#home';var app=document.getElementById('app');var m=hash.match(/^#u\/(.+)$/);if(m){app.innerHTML=renderProfile(m[1]);return;}m=hash.match(/^#dashboard\/?(.+)?$/);if(m){app.innerHTML=renderDashboard(m[1]||'profile');return;}if(hash==='#admin/roles'){app.innerHTML=renderRoles();return;}if(hash==='#admin'){app.innerHTML=renderAdmin();initAdminSearch();return;}app.innerHTML=renderHome();}catch(e){console.error('Router:',e);document.getElementById('app').innerHTML='<div class="p-10 text-red-400">Render error: '+e.message+'</div>';}}
-function initAdminSearch(){setTimeout(function(){var s=document.getElementById('admin-search');if(!s)return;s.addEventListener('input',function(){var q=this.value.toLowerCase();var rows=document.querySelectorAll('#adm-tbl tbody tr');for(var i=0;i<rows.length;i++)rows[i].style.display=(rows[i].dataset.search||'').indexOf(q)>-1?'':'none';});},50);}
+function buildPermsModal(u,isViewOnly){var perms=u.permissions?JSON.parse(JSON.stringify(u.permissions)):(ROLE_PERMS[u.role]?JSON.parse(JSON.stringify(ROLE_PERMS[u.role])):JSON.parse(JSON.stringify(ROLE_PERMS.user)));var h='<h3 class="font-display font-bold text-lg mb-1">Permissions</h3><p class="text-void-100 text-sm mb-6">For <strong class="text-accent">@'+esc(u.username)+'</strong> <span class="text-void-200">(Role: '+u.role+')</span></p><form id="frm-perms" data-uid="'+u.id+'" data-viewonly="'+(isViewOnly?'1':'0')+'"><div class="space-y-0">';var keys=Object.keys(PERM_LABELS);for(var i=0;i<keys.length;i++){var k=keys[i];h+='<div class="perm-row"><div class="flex-1 mr-4"><div class="flex items-center gap-2 mb-1"><i class="fa-solid '+(PERM_ICONS[k]||'fa-circle')+' text-accent text-xs"></i><span class="text-sm font-medium">'+PERM_LABELS[k]+'</span></div><p class="text-void-200 text-xs pl-5">'+(PERM_DESC[k]||'')+'</p></div>'+(isViewOnly?'<span class="perm-toggle'+(perms[k]?' on':'')+'" style="cursor:default;opacity:.7"></span>':'<div class="perm-toggle perm-sw'+(perms[k]?' on':'')+'" data-perm="'+k+'"></div>')+'</div>';}h+='</div>';if(!isViewOnly)h+='<div class="flex gap-3 justify-end mt-6"><button type="button" onclick="closeModal()" class="vl-btn vl-btn-secondary">Cancel</button><button type="submit" class="vl-btn vl-btn-primary"><i class="fa-solid fa-check"></i> Save</button></div>';else h+='<div class="flex justify-end mt-6"><button type="button" onclick="closeModal()" class="vl-btn vl-btn-secondary">Close</button></div>';h+='</form>';return h;}
 
-/* ===== Build permissions modal ===== */
-function buildPermsModal(userId,isViewOnly){
-  var u=findById(userId);if(!u)return '';
-  var perms=u.permissions?JSON.parse(JSON.stringify(u.permissions)):(ROLE_PERMS[u.role]?JSON.parse(JSON.stringify(ROLE_PERMS[u.role])):JSON.parse(JSON.stringify(ROLE_PERMS.user)));
-  var h='<h3 class="font-display font-bold text-lg mb-1">Permissions</h3><p class="text-void-100 text-sm mb-6">Manage permissions for <strong class="text-accent">@'+esc(u.username)+'</strong> <span class="text-void-200">(Role: '+u.role+')</span></p>';
-  h+='<form id="frm-perms" data-uid="'+userId+'" data-viewonly="'+(isViewOnly?'1':'0')+'"><div class="space-y-0">';
-  var keys=Object.keys(PERM_LABELS);
-  for(var i=0;i<keys.length;i++){
-    var k=keys[i];
-    var isOn=!!perms[k];
-    h+='<div class="perm-row"><div class="flex-1 mr-4"><div class="flex items-center gap-2 mb-1"><i class="fa-solid '+(PERM_ICONS[k]||'fa-circle')+' text-accent text-xs"></i><span class="text-sm font-medium">'+PERM_LABELS[k]+'</span></div><p class="text-void-200 text-xs pl-5">'+(PERM_DESC[k]||'')+'</p></div>';
-    if(isViewOnly){
-      h+='<span class="perm-toggle'+(isOn?' on':'')+'" style="cursor:default;opacity:.7"></span>';
-    } else {
-      h+='<div class="perm-toggle perm-sw'+(isOn?' on':'')+'" data-perm="'+k+'" style="cursor:pointer"></div>';
-    }
-    h+='</div>';
-  }
-  h+='</div>';
-  if(!isViewOnly)h+='<div class="flex gap-3 justify-end mt-6"><button type="button" onclick="closeModal()" class="vl-btn vl-btn-secondary">Cancel</button><button type="submit" class="vl-btn vl-btn-primary"><i class="fa-solid fa-check"></i> Save Permissions</button></div>';
-  else h+='<div class="flex justify-end mt-6"><button type="button" onclick="closeModal()" class="vl-btn vl-btn-secondary">Close</button></div>';
-  h+='</form>';return h;
+/* ===== ASYNC ROUTER ===== */
+function router(){
+  var hash=location.hash||'#home';var app=document.getElementById('app');
+  var m=hash.match(/^#u\/(.+)$/);
+  if(m){findByUsername(m[1]).then(function(u){if(!u){app.innerHTML='<div class="min-h-screen flex items-center justify-center px-6"><div class="text-center anim-fade"><i class="fa-solid fa-ghost text-5xl text-void-300 mb-4"></i><h2 class="font-display font-bold text-2xl mb-2">User Not Found</h2><p class="text-void-100 mb-6">This profile doesn\'t exist.</p><a href="#home" class="vl-btn vl-btn-secondary"><i class="fa-solid fa-arrow-left"></i> Go Home</a></div></div>';return;}updateUser(u.id,{views:(u.views||0)+1});app.innerHTML=renderProfile(u);}).catch(function(e){console.error(e);});return;}
+  m=hash.match(/^#dashboard\/?(.+)?$/);
+  if(m){needAuth().then(function(u){if(!u)return;app.innerHTML=renderDashboard(u,m[1]||'profile');}).catch(function(e){console.error(e);});return;}
+  if(hash==='#admin/roles'){needAdmin().then(function(admin){if(!admin)return;getAllUsers().then(function(users){app.innerHTML=renderRolesPage(admin,users);initAdminSearch();});}).catch(function(e){console.error(e);});return;}
+  if(hash==='#admin'){needAdmin().then(function(admin){if(!admin)return;getAllUsers().then(function(users){app.innerHTML=renderAdminTable(admin,users);initAdminSearch();});}).catch(function(e){console.error(e);});return;}
+  /* Home */curUser().then(function(u){app.innerHTML=renderHome(u);}).catch(function(){app.innerHTML=renderHome(null);});
 }
 
-/* ===== CLICK HANDLER ===== */
+function initAdminSearch(){setTimeout(function(){var s=document.getElementById('admin-search');if(!s)return;s.addEventListener('input',function(){var q=this.value.toLowerCase();var rows=document.querySelectorAll('#adm-tbl tbody tr, #roles-tbl tbody tr');for(var i=0;i<rows.length;i++)rows[i].style.display=(rows[i].dataset.search||'').indexOf(q)>-1?'':'none';});},50);}
+
+/* ===== CLICK HANDLER — now async for DB ops ===== */
 document.addEventListener('click',function(e){
   try{var t=e.target;
   if(t.closest('.open-login')){e.preventDefault();showModal(loginHTML());return;}
   if(t.closest('.open-signup')){e.preventDefault();showModal(signupHTML());return;}
-  if(t.closest('.do-logout')){clearSession();location.hash='#home';toast('Logged out','success');return;}
+  if(t.closest('.do-logout')){clearSession();invalidateCache();location.hash='#home';toast('Logged out','success');return;}
   if(t.closest('.do-add-link')){showModal('<h3 class="font-display font-bold text-lg mb-4">Add Link</h3><form id="frm-newlink"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Title</label><input class="vl-input mb-4" name="title" placeholder="My Website" required maxlength="40"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">URL</label><input class="vl-input mb-6" name="url" placeholder="https://example.com" required><div class="flex gap-3 justify-end"><button type="button" onclick="closeModal()" class="vl-btn vl-btn-secondary">Cancel</button><button type="submit" class="vl-btn vl-btn-primary"><i class="fa-solid fa-plus"></i> Add</button></div></form>');return;}
-  var eb=t.closest('.do-edit-link');if(eb){var lid=eb.dataset.lid;var u=curUser();if(!u)return;var lk=null;var lks=u.links||[];for(var i=0;i<lks.length;i++)if(lks[i].id===lid){lk=lks[i];break;}if(!lk)return;showModal('<h3 class="font-display font-bold text-lg mb-4">Edit Link</h3><form id="frm-editlink" data-lid="'+lid+'"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Title</label><input class="vl-input mb-4" name="title" value="'+esc(lk.title)+'" required maxlength="40"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">URL</label><input class="vl-input mb-6" name="url" value="'+esc(lk.url)+'" required><div class="flex gap-3 justify-end"><button type="button" onclick="closeModal()" class="vl-btn vl-btn-secondary">Cancel</button><button type="submit" class="vl-btn vl-btn-primary"><i class="fa-solid fa-check"></i> Save</button></div></form>');return;}
-  var db=t.closest('.do-del-link');if(db){var lid=db.dataset.lid;var u=curUser();if(!u)return;updateUser(u.id,{links:(u.links||[]).filter(function(l){return l.id!==lid;})});toast('Link removed','success');router();return;}
-  var sbg=t.closest('.do-set-bg');if(sbg){var bg=sbg.dataset.bg;var u=curUser();if(!u)return;updateUser(u.id,{background:bg,bgImage:''});toast('Background updated','success');router();return;}
-  if(t.closest('.do-save-app')){var u=curUser();if(!u)return;var bi=document.getElementById('inp-bgimg');var ac=document.getElementById('inp-accent');var d={accentColor:ac?ac.value:'#7dd3fc'};if(bi&&bi.value.trim()){d.bgImage=bi.value.trim();d.background='custom';}updateUser(u.id,d);toast('Appearance saved','success');return;}
+  var eb=t.closest('.do-edit-link');if(eb){var lid=eb.dataset.lid;curUser().then(function(u){if(!u)return;var lk=null;for(var i=0;i<(u.links||[]).length;i++)if(u.links[i].id===lid){lk=u.links[i];break;}if(!lk)return;showModal('<h3 class="font-display font-bold text-lg mb-4">Edit Link</h3><form id="frm-editlink" data-lid="'+lid+'"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Title</label><input class="vl-input mb-4" name="title" value="'+esc(lk.title)+'" required maxlength="40"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">URL</label><input class="vl-input mb-6" name="url" value="'+esc(lk.url)+'" required><div class="flex gap-3 justify-end"><button type="button" onclick="closeModal()" class="vl-btn vl-btn-secondary">Cancel</button><button type="submit" class="vl-btn vl-btn-primary"><i class="fa-solid fa-check"></i> Save</button></div></form>');});return;}
+  var db2=t.closest('.do-del-link');if(db2){var lid=db2.dataset.lid;curUser().then(function(u){if(!u)return;updateUser(u.id,{links:(u.links||[]).filter(function(l){return l.id!==lid;})});toast('Link removed','success');router();});return;}
+  var sbg=t.closest('.do-set-bg');if(sbg){var bg=sbg.dataset.bg;curUser().then(function(u){if(!u)return;updateUser(u.id,{background:bg,bgImage:''});toast('Background updated','success');router();});return;}
+  if(t.closest('.do-save-app')){curUser().then(function(u){if(!u)return;var bi=document.getElementById('inp-bgimg');var ac=document.getElementById('inp-accent');var d={accentColor:ac?ac.value:'#7dd3fc'};if(bi&&bi.value.trim()){d.bgImage=bi.value.trim();d.background='custom';}updateUser(u.id,d);toast('Appearance saved','success');});return;}
   if(t.closest('.do-del-acct')){showModal('<h3 class="font-display font-bold text-lg mb-2 text-red-400">Delete Account</h3><p class="text-void-100 text-sm mb-6">Are you sure? This is permanent.</p><div class="flex gap-3 justify-end"><button onclick="closeModal()" class="vl-btn vl-btn-secondary">Cancel</button><button class="do-cfm-del vl-btn vl-btn-danger"><i class="fa-solid fa-trash"></i> Delete Forever</button></div>');return;}
-  if(t.closest('.do-cfm-del')){var u=curUser();if(!u)return;deleteUser(u.id);clearSession();closeModal();location.hash='#home';toast('Account deleted','info');return;}
-
-  /* Admin: ban */
-  var bb=t.closest('.do-ban');if(bb){var uid=bb.dataset.uid;var tgt=findById(uid);if(!tgt)return;var me=curUser();if(!hasPerm(me,'ban_users')){toast('No permission to ban users.','error');return;}if(hasPerm(tgt,'bypass_ban')){toast('This user cannot be banned.','error');return;}if(tgt.banned){updateUser(uid,{banned:false,banReason:''});toast('Unbanned @'+tgt.username,'success');router();}else{showModal('<h3 class="font-display font-bold text-lg mb-2">Ban User</h3><p class="text-void-100 text-sm mb-4">Ban <strong>@'+esc(tgt.username)+'</strong></p><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Reason</label><textarea class="vl-input mb-6" id="ban-reason" placeholder="Reason..." rows="3"></textarea><div class="flex gap-3 justify-end"><button onclick="closeModal()" class="vl-btn vl-btn-secondary">Cancel</button><button class="do-cfm-ban vl-btn vl-btn-danger" data-uid="'+uid+'"><i class="fa-solid fa-ban"></i> Ban User</button></div>');}return;}
-  if(t.closest('.do-cfm-ban')){var uid=t.closest('.do-cfm-ban').dataset.uid;var r=document.getElementById('ban-reason');var tgt=findById(uid);updateUser(uid,{banned:true,banReason:r?r.value:'No reason'});closeModal();toast('Banned @'+(tgt?tgt.username:'user'),'error');router();return;}
-
-  /* Admin: UID */
-  var ub=t.closest('.do-uid');if(ub){var uid=ub.dataset.uid;var me=curUser();if(!hasPerm(me,'change_uid')){toast('No permission to change UIDs.','error');return;}var tgt=findById(uid);if(!tgt)return;var nu='#'+(Math.floor(Math.random()*90000)+10000);showModal('<h3 class="font-display font-bold text-lg mb-2">Change UID</h3><p class="text-void-100 text-sm mb-4">Change UID for <strong>@'+esc(tgt.username)+'</strong></p><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Current UID</label><code class="block bg-void-500 px-4 py-2.5 rounded-lg text-sm font-mono text-void-100 mb-4">'+tgt.uid+'</code><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">New UID</label><div class="flex gap-2 mb-6"><input class="vl-input font-mono" id="inp-newuid" value="'+nu+'" pattern="^#\\d+$" required><button type="button" class="do-gen-uid vl-btn vl-btn-secondary" style="flex-shrink:0"><i class="fa-solid fa-rotate"></i></button></div><div class="flex gap-3 justify-end"><button onclick="closeModal()" class="vl-btn vl-btn-secondary">Cancel</button><button class="do-cfm-uid vl-btn vl-btn-primary" data-uid="'+uid+'"><i class="fa-solid fa-check"></i> Update UID</button></div>');return;}
+  if(t.closest('.do-cfm-del')){curUser().then(function(u){if(!u)return;deleteUser(u.id);clearSession();closeModal();location.hash='#home';toast('Account deleted','info');});return;}
+  /* Admin actions */
+  var bb=t.closest('.do-ban');if(bb){var uid=bb.dataset.uid;curUser().then(function(me){if(!hasPerm(me,'ban_users')){toast('No permission.','error');return;}findById(uid).then(function(tgt){if(!tgt)return;if(hasPerm(tgt,'bypass_ban')){toast('Cannot ban this user.','error');return;}if(tgt.banned){updateUser(uid,{banned:false,banReason:''});toast('Unbanned @'+tgt.username,'success');router();}else{showModal('<h3 class="font-display font-bold text-lg mb-2">Ban User</h3><p class="text-void-100 text-sm mb-4">Ban <strong>@'+esc(tgt.username)+'</strong></p><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Reason</label><textarea class="vl-input mb-6" id="ban-reason" placeholder="Reason..." rows="3"></textarea><div class="flex gap-3 justify-end"><button onclick="closeModal()" class="vl-btn vl-btn-secondary">Cancel</button><button class="do-cfm-ban vl-btn vl-btn-danger" data-uid="'+uid+'"><i class="fa-solid fa-ban"></i> Ban</button></div>');}});});return;}
+  if(t.closest('.do-cfm-ban')){var uid=t.closest('.do-cfm-ban').dataset.uid;var r=document.getElementById('ban-reason');findById(uid).then(function(tgt){updateUser(uid,{banned:true,banReason:r?r.value:'No reason'});closeModal();toast('Banned @'+(tgt?tgt.username:'user'),'error');router();});return;}
+  var ub=t.closest('.do-uid');if(ub){var uid=ub.dataset.uid;curUser().then(function(me){if(!hasPerm(me,'change_uid')){toast('No permission.','error');return;}findById(uid).then(function(tgt){if(!tgt)return;var nu='#'+(Math.floor(Math.random()*90000)+10000);showModal('<h3 class="font-display font-bold text-lg mb-2">Change UID</h3><p class="text-void-100 text-sm mb-4">For <strong>@'+esc(tgt.username)+'</strong></p><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Current</label><code class="block bg-void-500 px-4 py-2.5 rounded-lg text-sm font-mono text-void-100 mb-4">'+tgt.uid+'</code><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">New UID</label><div class="flex gap-2 mb-6"><input class="vl-input font-mono" id="inp-newuid" value="'+nu+'" pattern="^#\\d+$" required><button type="button" class="do-gen-uid vl-btn vl-btn-secondary" style="flex-shrink:0"><i class="fa-solid fa-rotate"></i></button></div><div class="flex gap-3 justify-end"><button onclick="closeModal()" class="vl-btn vl-btn-secondary">Cancel</button><button class="do-cfm-uid vl-btn vl-btn-primary" data-uid="'+uid+'"><i class="fa-solid fa-check"></i> Update</button></div>');});});return;}
   if(t.closest('.do-gen-uid')){var inp=document.getElementById('inp-newuid');if(inp)inp.value='#'+(Math.floor(Math.random()*90000)+10000);return;}
-  if(t.closest('.do-cfm-uid')){var uid=t.closest('.do-cfm-uid').dataset.uid;var nv=document.getElementById('inp-newuid');if(!nv||!/^#\d+$/.test(nv.value)){toast('UID must be # followed by numbers','error');return;}if(findByUID(nv.value)){toast('UID already in use','error');return;}updateUser(uid,{uid:nv.value});closeModal();toast('UID updated','success');router();return;}
-
-  /* Admin: badges */
-  var bdg=t.closest('.do-badges');if(bdg){var uid=bdg.dataset.uid;var me=curUser();if(!hasPerm(me,'manage_badges')){toast('No permission to manage badges.','error');return;}var tgt=findById(uid);if(!tgt)return;var cur=tgt.badges||[];var bH='';var keys=Object.keys(BADGES);for(var i=0;i<keys.length;i++){var k=keys[i],b=BADGES[k];bH+='<label class="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors hover:bg-white/5"><input type="checkbox" class="badge-cb" value="'+k+'" '+(cur.indexOf(k)>-1?'checked':'')+' style="width:16px;height:16px;accent-color:'+b.c+';border-radius:4px"><i class="'+b.i+'" style="color:'+b.c+'"></i><span class="text-sm font-medium">'+b.l+'</span></label>';}showModal('<h3 class="font-display font-bold text-lg mb-2">Manage Badges</h3><p class="text-void-100 text-sm mb-4">Badges for <strong>@'+esc(tgt.username)+'</strong></p><div class="space-y-1 mb-6 max-h-80 overflow-y-auto">'+bH+'</div><div class="flex gap-3 justify-end"><button onclick="closeModal()" class="vl-btn vl-btn-secondary">Cancel</button><button class="do-cfm-badges vl-btn vl-btn-primary" data-uid="'+uid+'"><i class="fa-solid fa-check"></i> Save Badges</button></div>');return;}
+  if(t.closest('.do-cfm-uid')){var uid=t.closest('.do-cfm-uid').dataset.uid;var nv=document.getElementById('inp-newuid');if(!nv||!/^#\d+$/.test(nv.value)){toast('UID must be # followed by numbers','error');return;}findByUID(nv.value).then(function(existing){if(existing){toast('UID already in use','error');return;}updateUser(uid,{uid:nv.value});closeModal();toast('UID updated','success');router();});return;}
+  var bdg=t.closest('.do-badges');if(bdg){var uid=bdg.dataset.uid;curUser().then(function(me){if(!hasPerm(me,'manage_badges')){toast('No permission.','error');return;}findById(uid).then(function(tgt){if(!tgt)return;var cur=tgt.badges||[];var bH='';var keys=Object.keys(BADGES);for(var i=0;i<keys.length;i++){var k=keys[i],b=BADGES[k];bH+='<label class="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors hover:bg-white/5"><input type="checkbox" class="badge-cb" value="'+k+'" '+(cur.indexOf(k)>-1?'checked':'')+' style="width:16px;height:16px;accent-color:'+b.c+';border-radius:4px"><i class="'+b.i+'" style="color:'+b.c+'"></i><span class="text-sm font-medium">'+b.l+'</span></label>';}showModal('<h3 class="font-display font-bold text-lg mb-2">Manage Badges</h3><p class="text-void-100 text-sm mb-4">For <strong>@'+esc(tgt.username)+'</strong></p><div class="space-y-1 mb-6 max-h-80 overflow-y-auto">'+bH+'</div><div class="flex gap-3 justify-end"><button onclick="closeModal()" class="vl-btn vl-btn-secondary">Cancel</button><button class="do-cfm-badges vl-btn vl-btn-primary" data-uid="'+uid+'"><i class="fa-solid fa-check"></i> Save</button></div>');});});return;}
   if(t.closest('.do-cfm-badges')){var uid=t.closest('.do-cfm-badges').dataset.uid;var cbs=document.querySelectorAll('.badge-cb:checked');var arr=[];for(var i=0;i<cbs.length;i++)arr.push(cbs[i].value);updateUser(uid,{badges:arr});closeModal();toast('Badges updated','success');router();return;}
-
-  /* Admin: roles quick change */
-  var rc=t.closest('.do-role-change');if(rc){var uid=rc.dataset.uid;var newRole=rc.value;var me=curUser();if(!hasPerm(me,'manage_users')){toast('No permission to change roles.','error');rc.value=findById(uid).role;return;}var tgt=findById(uid);if(!tgt)return;if(tgt.id===me.id){rc.value=me.role;toast('Cannot change your own role.','error');return;}updateUser(uid,{role:newRole,permissions:ROLE_PERMS[newRole]?JSON.parse(JSON.stringify(ROLE_PERMS[newRole])):JSON.parse(JSON.stringify(ROLE_PERMS.user))});toast('@'+tgt.username+' is now '+newRole,'success');router();return;}
-
-  /* Admin: permissions modal */
-  var pm=t.closest('.do-perms');if(pm){var uid=pm.dataset.uid;var me=curUser();var isSelf=(uid===me.id);showModal(buildPermsModal(uid,isSelf));return;}
-
-  /* Admin: permissions toggle */
+  var rc=t.closest('.do-role-change');if(rc){var uid=rc.dataset.uid;var newRole=rc.value;curUser().then(function(me){if(!hasPerm(me,'manage_users')){toast('No permission.','error');rc.value=findById(uid).role;return;}findById(uid).then(function(tgt){if(!tgt)return;if(tgt.id===me.id){rc.value=me.role;toast('Cannot change your own role.','error');return;}updateUser(uid,{role:newRole,permissions:ROLE_PERMS[newRole]?JSON.parse(JSON.stringify(ROLE_PERMS[newRole])):JSON.parse(JSON.stringify(ROLE_PERMS.user))});toast('@'+tgt.username+' is now '+newRole,'success');router();});});return;}
+  var pm=t.closest('.do-perms');if(pm){var uid=pm.dataset.uid;curUser().then(function(me){findById(uid).then(function(u){if(!u)return;showModal(buildPermsModal(u,uid===me.id));});});return;}
   var sw=t.closest('.perm-sw');if(sw){sw.classList.toggle('on');return;}
-
-  /* Admin: delete */
-  var ad=t.closest('.do-adm-del');if(ad){var uid=ad.dataset.uid;var me=curUser();if(!hasPerm(me,'delete_users')){toast('No permission to delete users.','error');return;}var tgt=findById(uid);if(!tgt)return;if(hasPerm(tgt,'bypass_ban')){toast('Cannot delete this user.','error');return;}showModal('<h3 class="font-display font-bold text-lg mb-2 text-red-400">Delete User</h3><p class="text-void-100 text-sm mb-6">Permanently delete <strong>@'+esc(tgt.username)+'</strong>?</p><div class="flex gap-3 justify-end"><button onclick="closeModal()" class="vl-btn vl-btn-secondary">Cancel</button><button class="do-cfm-admdel vl-btn vl-btn-danger" data-uid="'+uid+'"><i class="fa-solid fa-trash"></i> Delete</button></div>');return;}
-  if(t.closest('.do-cfm-admdel')){var uid=t.closest('.do-cfm-admdel').dataset.uid;var tgt=findById(uid);deleteUser(uid);closeModal();toast('Deleted @'+(tgt?tgt.username:'user'),'info');router();return;}
+  var ad=t.closest('.do-adm-del');if(ad){var uid=ad.dataset.uid;curUser().then(function(me){if(!hasPerm(me,'delete_users')){toast('No permission.','error');return;}findById(uid).then(function(tgt){if(!tgt)return;if(hasPerm(tgt,'bypass_ban')){toast('Cannot delete this user.','error');return;}showModal('<h3 class="font-display font-bold text-lg mb-2 text-red-400">Delete User</h3><p class="text-void-100 text-sm mb-6">Permanently delete <strong>@'+esc(tgt.username)+'</strong>?</p><div class="flex gap-3 justify-end"><button onclick="closeModal()" class="vl-btn vl-btn-secondary">Cancel</button><button class="do-cfm-admdel vl-btn vl-btn-danger" data-uid="'+uid+'"><i class="fa-solid fa-trash"></i> Delete</button></div>');});});return;}
+  if(t.closest('.do-cfm-admdel')){var uid=t.closest('.do-cfm-admdel').dataset.uid;findById(uid).then(function(tgt){deleteUser(uid);closeModal();toast('Deleted @'+(tgt?tgt.username:'user'),'info');router();});return;}
   }catch(e){console.error('Click:',e);}
 });
 
-/* ===== FORM HANDLER ===== */
+/* ===== FORM HANDLER — async ===== */
 document.addEventListener('submit',function(e){
   try{var f=e.target;var id=f.id;
-  if(id==='frm-login'){e.preventDefault();var li=f.loginId.value.trim();var pw=f.password.value;var er=document.getElementById('login-err');var u=findByEmail(li)||findByUsername(li);if(!u||u.password!==hashPw(pw)){er.textContent='Invalid credentials.';er.classList.remove('hidden');return;}if(u.banned&&!hasPerm(u,'bypass_ban')){er.textContent='Account banned.';er.classList.remove('hidden');return;}setSession(u.id);closeModal();location.hash='#dashboard';toast('Welcome back, '+(u.displayName||u.username),'success');return;}
-  if(id==='frm-signup'){e.preventDefault();var un=f.username.value.trim().toLowerCase();var dn=f.displayName.value.trim()||un;var em=f.email.value.trim().toLowerCase();var pw=f.password.value;var er=document.getElementById('signup-err');if(!/^[a-z0-9_]{3,20}$/.test(un)){er.textContent='Username: 3-20 chars, letters/numbers/_ only.';er.classList.remove('hidden');return;}if(findByUsername(un)){er.textContent='Username taken.';er.classList.remove('hidden');return;}if(findByEmail(em)){er.textContent='Email registered.';er.classList.remove('hidden');return;}var u=createUser({username:un,displayName:dn,email:em,password:pw});setSession(u.id);closeModal();location.hash='#dashboard';toast('Welcome to Seashell, '+dn+'. Your UID: '+u.uid,'success');return;}
-  if(id==='frm-profile'){e.preventDefault();var u=curUser();if(!u)return;updateUser(u.id,{displayName:f.displayName.value.trim(),username:f.username.value.trim().toLowerCase(),bio:f.bio.value.trim(),avatar:f.avatar.value.trim()});toast('Profile saved','success');return;}
-  if(id==='frm-newlink'){e.preventDefault();var u=curUser();if(!u)return;var links=u.links||[];links.push({id:'l_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),title:f.title.value.trim(),url:f.url.value.trim()});updateUser(u.id,{links:links});closeModal();toast('Link added','success');location.hash='#dashboard/links';return;}
-  if(id==='frm-editlink'){e.preventDefault();var u=curUser();if(!u)return;var lid=f.dataset.lid;var links=u.links.map(function(l){return l.id===lid?{id:l.id,title:f.title.value.trim(),url:f.url.value.trim()}:l;});updateUser(u.id,{links:links});closeModal();toast('Link updated','success');location.hash='#dashboard/links';return;}
-  if(id==='frm-pw'){e.preventDefault();var u=curUser();if(!u)return;if(u.password!==hashPw(f.curPw.value)){toast('Current password incorrect','error');return;}updateUser(u.id,{password:hashPw(f.newPw.value)});toast('Password updated','success');f.reset();return;}
-
-  /* Save permissions */
-  if(id==='frm-perms'){e.preventDefault();var uid=f.dataset.uid;var isViewOnly=f.dataset.viewonly==='1';if(isViewOnly){closeModal();return;}var sws=f.querySelectorAll('.perm-sw');var perms={};for(var i=0;i<sws.length;i++){perms[sws[i].dataset.perm]=sws[i].classList.contains('on');}var tgt=findById(uid);if(!tgt)return;updateUser(uid,{permissions:perms});closeModal();toast('Permissions updated for @'+tgt.username,'success');router();return;}
+  if(id==='frm-login'){e.preventDefault();var li=f.loginId.value.trim();var pw=f.password.value;var er=document.getElementById('login-err');Promise.all([findByEmail(li),findByUsername(li)]).then(function(res){var u=res[0]||res[1];if(!u||u.password!==hashPw(pw)){er.textContent='Invalid credentials.';er.classList.remove('hidden');return;}if(u.banned&&!hasPerm(u,'bypass_ban')){er.textContent='Account banned.';er.classList.remove('hidden');return;}setSession(u.id);userCache[u.id]=u;closeModal();location.hash='#dashboard';toast('Welcome back, '+(u.displayName||u.username),'success');});return;}
+  if(id==='frm-signup'){e.preventDefault();var un=f.username.value.trim().toLowerCase();var dn=f.displayName.value.trim()||un;var em=f.email.value.trim().toLowerCase();var pw=f.password.value;var er=document.getElementById('signup-err');if(!/^[a-z0-9_]{3,20}$/.test(un)){er.textContent='Username: 3-20 chars, letters/numbers/_ only.';er.classList.remove('hidden');return;}Promise.all([findByUsername(un),findByEmail(em)]).then(function(res){if(res[0]){er.textContent='Username taken.';er.classList.remove('hidden');return;}if(res[1]){er.textContent='Email registered.';er.classList.remove('hidden');return;}return createUser({username:un,displayName:dn,email:em,password:pw});}).then(function(u){if(!u)return;setSession(u.id);userCache[u.id]=u;closeModal();location.hash='#dashboard';toast('Welcome to Seashell, '+dn+'. UID: '+u.uid,'success');});return;}
+  if(id==='frm-profile'){e.preventDefault();curUser().then(function(u){if(!u)return;var dn=f.displayName.value.trim();var un=f.username.value.trim().toLowerCase();if(!/^[a-z0-9_]{3,20}$/.test(un)){toast('Invalid username','error');return;}findByUsername(un).then(function(existing){if(existing&&existing.id!==u.id){toast('Username taken','error');return;}updateUser(u.id,{displayName:dn,username:un,bio:f.bio.value.trim(),avatar:f.avatar.value.trim()});userCache[u.id]=null;toast('Profile saved','success');});});return;}
+  if(id==='frm-newlink'){e.preventDefault();curUser().then(function(u){if(!u)return;var links=u.links||[];links.push({id:'l_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),title:f.title.value.trim(),url:f.url.value.trim()});updateUser(u.id,{links:links});closeModal();toast('Link added','success');location.hash='#dashboard/links';});return;}
+  if(id==='frm-editlink'){e.preventDefault();curUser().then(function(u){if(!u)return;var lid=f.dataset.lid;var links=u.links.map(function(l){return l.id===lid?{id:l.id,title:f.title.value.trim(),url:f.url.value.trim()}:l;});updateUser(u.id,{links:links});closeModal();toast('Link updated','success');location.hash='#dashboard/links';});return;}
+  if(id==='frm-pw'){e.preventDefault();curUser().then(function(u){if(!u)return;if(u.password!==hashPw(f.curPw.value)){toast('Wrong password','error');return;}updateUser(u.id,{password:hashPw(f.newPw.value)});toast('Password updated','success');f.reset();});return;}
+  if(id==='frm-perms'){e.preventDefault();var uid=f.dataset.uid;if(f.dataset.viewonly==='1'){closeModal();return;}var sws=f.querySelectorAll('.perm-sw');var perms={};for(var i=0;i<sws.length;i++)perms[sws[i].dataset.perm]=sws[i].classList.contains('on');updateUser(uid,{permissions:perms});closeModal();findById(uid).then(function(tgt){toast('Permissions updated for @'+(tgt?tgt.username:'user'),'success');router();});return;}
   }catch(e){console.error('Form:',e);}
 });
 
-function seed(){
-  if(getUsers().length>0){var users=getUsers();var maxNum=0;for(var i=0;i<users.length;i++){var m=users[i].uid.match(/^#(\d+)$/);if(m&&parseInt(m[1])>maxNum)maxNum=parseInt(m[1]);}var cur=sg('seashell_uid_ctr');if(typeof cur!=='number'||cur<=maxNum)ss('seashell_uid_ctr',maxNum);/* Migrate old users without permissions */for(var i=0;i<users.length;i++){if(!users[i].permissions){var rp=ROLE_PERMS[users[i].role]||ROLE_PERMS.user;updateUser(users[i].id,{permissions:JSON.parse(JSON.stringify(rp))});}}return;}
-  createUser({username:'admin',displayName:'Admin',email:'admin@seashell.lol',password:'admin123',role:'admin'});
-  var g=createUser({username:'ghost',displayName:'Ghost',email:'ghost@seashell.lol',password:'ghost123'});
-  updateUser(g.id,{bio:'Digital phantom. Building things in the dark.',avatar:'https://picsum.photos/seed/ghost42/200/200.jpg',background:'neon',accentColor:'#7dd3fc',badges:['verified','developer'],links:[{id:'l1',title:'GitHub',url:'https://github.com'},{id:'l2',title:'Discord Server',url:'https://discord.com'},{id:'l3',title:'My Projects',url:'https://github.com'},{id:'l4',title:'Twitter / X',url:'https://x.com'},{id:'l5',title:'Spotify Playlist',url:'https://spotify.com'}],views:1247});
-  var n=createUser({username:'nova',displayName:'Nova',email:'nova@seashell.lol',password:'nova123'});
-  updateUser(n.id,{bio:'Artist & designer. Creating worlds one pixel at a time.',avatar:'https://picsum.photos/seed/nova99/200/200.jpg',background:'ocean',accentColor:'#38bdf8',badges:['og','premium'],links:[{id:'l6',title:'Portfolio',url:'https://github.com'},{id:'l7',title:'Instagram',url:'https://instagram.com'},{id:'l8',title:'Buy Me a Coffee',url:'https://buymeacoffee.com'}],views:834});
+/* ===== SEED ===== */
+function seedIfNeeded(){
+  return db.collection("_meta").doc("seeded").get().then(function(doc){
+    if(doc.exists) return;
+    console.log("Seeding database...");
+    return createUser({username:'admin',displayName:'Admin',email:'admin@seashell.lol',password:'admin123',role:'admin'}).then(function(g){
+      return createUser({username:'ghost',displayName:'Ghost',email:'ghost@seashell.lol',password:'ghost123'});
+    }).then(function(g){
+      return updateUser(g.id,{bio:'Digital phantom. Building things in the dark.',avatar:'https://picsum.photos/seed/ghost42/200/200.jpg',background:'neon',accentColor:'#7dd3fc',badges:['verified','developer'],links:[{id:'l1',title:'GitHub',url:'https://github.com'},{id:'l2',title:'Discord Server',url:'https://discord.com'},{id:'l3',title:'My Projects',url:'https://github.com'},{id:'l4',title:'Twitter / X',url:'https://x.com'},{id:'l5',title:'Spotify Playlist',url:'https://spotify.com'}],views:1247});
+    }).then(function(){
+      return createUser({username:'nova',displayName:'Nova',email:'nova@seashell.lol',password:'nova123'});
+    }).then(function(n){
+      return updateUser(n.id,{bio:'Artist & designer. Creating worlds one pixel at a time.',avatar:'https://picsum.photos/seed/nova99/200/200.jpg',background:'ocean',accentColor:'#38bdf8',badges:['og','premium'],links:[{id:'l6',title:'Portfolio',url:'https://github.com'},{id:'l7',title:'Instagram',url:'https://instagram.com'},{id:'l8',title:'Buy Me a Coffee',url:'https://buymeacoffee.com'}],views:834});
+    }).then(function(){
+      return db.collection("_meta").doc("seeded").set({done:true});
+    });
+  });
 }
 
-seed();P.init();window.addEventListener('hashchange',router);router();
+/* ===== START ===== */
+function startApp(){
+  P.init();
+  seedIfNeeded().then(function(){
+    window.addEventListener('hashchange',router);
+    router();
+  }).catch(function(e){console.error("Seed error:",e);router();});
+}
+
+initFirebase();
+P.init();
+
 })();
 </script>
 </body>
