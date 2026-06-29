@@ -43,6 +43,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 @keyframes music-eq{0%,100%{height:4px}50%{height:16px}}
 @keyframes music-eq2{0%,100%{height:8px}50%{height:12px}}
 @keyframes music-eq3{0%,100%{height:6px}50%{height:18px}}
+@keyframes check-pop{0%{transform:scale(0)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
 .effect-sparkle{position:relative;display:inline-block}
 .effect-sparkle .sparkle-particle{position:absolute;color:#ffd700;font-size:10px;pointer-events:none;animation:sparkle-float 1.8s ease-in-out infinite}
 .effect-sparkle .sparkle-particle:nth-child(1){top:-12px;left:10%;animation-delay:0s}
@@ -124,14 +125,24 @@ select.vl-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg 
 .perm-toggle.on{background:rgba(125,211,252,.2);border-color:rgba(125,211,252,.4)}
 .perm-toggle::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#555;transition:all .2s}
 .perm-toggle.on::after{left:20px;background:#7dd3fc}
-.perm-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(30,30,30,.5)}
-.perm-row:last-child{border-bottom:none}
 .cb-preview{width:40px;height:40px;border-radius:10px;border:2px solid #1e1e1e;object-fit:cover;background:#0d0d0d;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .cb-preview img{width:100%;height:100%;object-fit:cover;border-radius:8px}
 .fx-opt{cursor:pointer;transition:all .2s;border:2px solid transparent;user-select:none}
 .fx-opt:hover{border-color:rgba(125,211,252,.25);background:rgba(125,211,252,.03)}
 .fx-opt.sel{border-color:#7dd3fc;background:rgba(125,211,252,.08)}
 .fx-preview-box{min-height:48px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+
+/* Badge checkbox grid */
+.badge-check-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.badge-check-card{position:relative;cursor:pointer;user-select:none;border:2px solid #1e1e1e;border-radius:12px;padding:14px 12px;text-align:center;transition:all .25s;background:rgba(255,255,255,.02)}
+.badge-check-card:hover{border-color:#333;background:rgba(255,255,255,.04);transform:translateY(-1px)}
+.badge-check-card.checked{transform:translateY(-1px)}
+.badge-check-card.checked .badge-check-indicator{opacity:1;transform:scale(1)}
+.badge-check-card input{position:absolute;opacity:0;pointer-events:none}
+.badge-check-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:16px;transition:all .25s}
+.badge-check-label{font-size:12px;font-weight:600;transition:color .2s}
+.badge-check-indicator{position:absolute;top:6px;right:6px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(0);transition:all .2s;font-size:9px}
+.badge-check-card.checked .badge-check-indicator i{animation:check-pop .3s ease both}
 </style>
 </head>
 <body>
@@ -237,7 +248,7 @@ function dashProfile(u){return '<h2 class="font-display font-bold text-2xl mb-1"
 function dashLinks(u){var links=u.links||[];var maxLinks=hasPerm(u,'bypass_link_limit')?999:10;var h='<div class="flex items-center justify-between mb-8"><div><h2 class="font-display font-bold text-2xl mb-1">Manage Links</h2><p class="text-void-100 text-sm">'+links.length+'/'+maxLinks+' links used</p></div><button class="vl-btn vl-btn-primary add-link-btn" '+(links.length>=maxLinks?'disabled':'')+'><i class="fa-solid fa-plus"></i> Add Link</button></div>';if(links.length===0){h+='<div class="text-center py-16"><i class="fa-solid fa-link text-4xl text-void-300 mb-4"></i><p class="text-void-100">No links yet. Add your first one!</p></div>';}else{h+='<div class="space-y-3 max-w-lg">';for(var i=0;i<links.length;i++){var lk=links[i];h+='<div class="glass rounded-xl p-4 flex items-center gap-4"><i class="'+linkIcon(lk.url)+' text-lg text-void-100" style="width:24px;text-align:center"></i><div class="flex-1 min-w-0"><div class="font-medium text-sm truncate">'+esc(lk.title)+'</div><div class="text-xs text-void-200 truncate">'+esc(lk.url)+'</div></div><div class="flex gap-2"><button class="vl-btn vl-btn-s vl-btn-sm edit-link-btn" data-idx="'+i+'"><i class="fa-solid fa-pen"></i></button><button class="vl-btn vl-btn-s vl-btn-sm del-link-btn" data-idx="'+i+'" style="color:#f55"><i class="fa-solid fa-trash"></i></button></div></div>';}h+='</div>';}return h;}
 
 function dashBadges(u){
-  var awarded=u.badges||[], hidden=u.hiddenBadges||[], customs=u.customBadges||[];
+  var awarded=u.badges||[],hidden=u.hiddenBadges||[],customs=u.customBadges||[];
   var isPremium=hasBadge(u,'premium');
   var h='<h2 class="font-display font-bold text-2xl mb-1">Badges</h2><p class="text-void-100 text-sm mb-8">Manage your profile badges</p><div class="max-w-lg"><h3 class="font-display font-semibold text-sm uppercase tracking-wider text-void-100 mb-4">Awarded Badges</h3>';
   if(awarded.length===0){h+='<p class="text-void-200 text-sm mb-8">No badges yet.</p>';}
@@ -275,13 +286,27 @@ function adminUsersHTML(){
 }
 
 function adminBadgesHTML(){
-  var h='<div class="mb-6"><h2 class="font-display font-bold text-2xl mb-1">Manage Badges</h2><p class="text-void-100 text-sm">Award or remove badges from users</p></div>';
-  h+='<div class="glass rounded-xl p-6 max-w-lg mb-8"><h3 class="font-display font-semibold mb-4">Award Badge</h3><form id="frm-award-badge"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Username</label><input class="vl-input mb-4" name="username" placeholder="username" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Badge</label><select class="vl-input mb-4" name="badge" required><option value="">Select badge...</option>';
-  var bKeys=Object.keys(BADGES);for(var i=0;i<bKeys.length;i++){var k=bKeys[i];var b=BADGES[k];h+='<option value="'+k+'">'+b.l+'</option>';}
-  h+='</select><div id="award-badge-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary" data-submitting="false"><i class="fa-solid fa-plus"></i> Award Badge</button></form></div>';
-  h+='<div class="glass rounded-xl p-6 max-w-lg"><h3 class="font-display font-semibold mb-4">Remove Badge</h3><form id="frm-remove-badge"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Username</label><input class="vl-input mb-4" name="username" placeholder="username" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Badge</label><select class="vl-input mb-4" name="badge" required><option value="">Select badge...</option>';
-  for(var i=0;i<bKeys.length;i++){var k=bKeys[i];var b=BADGES[k];h+='<option value="'+k+'">'+b.l+'</option>';}
-  h+='</select><div id="remove-badge-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-danger" data-submitting="false"><i class="fa-solid fa-minus"></i> Remove Badge</button></form></div>';
+  var bKeys=Object.keys(BADGES);
+  var h='<div class="mb-8"><h2 class="font-display font-bold text-2xl mb-1">Manage Badges</h2><p class="text-void-100 text-sm">Award or remove badges from any user</p></div>';
+
+  /* Award badges card */
+  h+='<div class="glass rounded-2xl p-6 mb-6"><div class="flex items-center gap-3 mb-5"><div class="w-9 h-9 rounded-xl bg-success/10 flex items-center justify-center"><i class="fa-solid fa-plus text-success"></i></div><div><h3 class="font-display font-semibold">Award Badges</h3><p class="text-void-200 text-xs">Select badges to give to a user</p></div></div>';
+  h+='<form id="frm-award-badge"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Username</label><input class="vl-input mb-5" name="username" placeholder="Enter username..." required>';
+  h+='<div class="badge-check-grid mb-5">';
+  for(var i=0;i<bKeys.length;i++){var k=bKeys[i],b=BADGES[k];
+    h+='<label class="badge-check-card" data-badge-key="'+k+'" data-color="'+b.c+'"><input type="checkbox" name="badge" value="'+k+'"><div class="badge-check-icon" style="background:'+b.c+'15;color:'+b.c+'"><i class="'+b.i+'"></i></div><div class="badge-check-label" style="color:'+b.c+'">'+b.l+'</div><div class="badge-check-indicator" style="background:'+b.c+';color:#050505"><i class="fa-solid fa-check"></i></div></label>';
+  }
+  h+='</div><div id="award-badge-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary" data-submitting="false"><i class="fa-solid fa-plus"></i> Award Selected Badges</button></form></div>';
+
+  /* Remove badges card */
+  h+='<div class="glass rounded-2xl p-6"><div class="flex items-center gap-3 mb-5"><div class="w-9 h-9 rounded-xl bg-red-500/10 flex items-center justify-center"><i class="fa-solid fa-minus text-red-400"></i></div><div><h3 class="font-display font-semibold">Remove Badges</h3><p class="text-void-200 text-xs">Select badges to take away from a user</p></div></div>';
+  h+='<form id="frm-remove-badge"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Username</label><input class="vl-input mb-5" name="username" placeholder="Enter username..." required>';
+  h+='<div class="badge-check-grid mb-5">';
+  for(var i=0;i<bKeys.length;i++){var k=bKeys[i],b=BADGES[k];
+    h+='<label class="badge-check-card" data-badge-key="'+k+'" data-color="'+b.c+'"><input type="checkbox" name="badge" value="'+k+'"><div class="badge-check-icon" style="background:'+b.c+'15;color:'+b.c+'"><i class="'+b.i+'"></i></div><div class="badge-check-label" style="color:'+b.c+'">'+b.l+'</div><div class="badge-check-indicator" style="background:'+b.c+';color:#050505"><i class="fa-solid fa-check"></i></div></label>';
+  }
+  h+='</div><div id="remove-badge-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-danger" data-submitting="false"><i class="fa-solid fa-minus"></i> Remove Selected Badges</button></form></div>';
+
   return h;
 }
 
@@ -308,6 +333,27 @@ function loadAdminUsers(me){
   });
 }
 
+/* Badge checkbox toggle interaction */
+document.addEventListener('change',function(e){
+  if(e.target.type==='checkbox'&&e.target.name==='badge'){
+    var card=e.target.closest('.badge-check-card');
+    if(card){
+      var color=card.dataset.color||'#7dd3fc';
+      if(e.target.checked){
+        card.classList.add('checked');
+        card.style.borderColor=color;
+        card.style.background=color+'12';
+        card.style.boxShadow='0 0 20px '+color+'20';
+      }else{
+        card.classList.remove('checked');
+        card.style.borderColor='#1e1e1e';
+        card.style.background='rgba(255,255,255,.02)';
+        card.style.boxShadow='none';
+      }
+    }
+  }
+});
+
 /* ===== FORM HANDLERS ===== */
 document.addEventListener('submit',function(e){
   if(e.target.id==='frm-signup'){e.preventDefault();var form=e.target,errEl=document.getElementById('signup-err'),btn=form.querySelector('button[type="submit"]');errEl.classList.add('hidden');if(btn.disabled||btn.dataset.submitting==='true')return;var username=form.username.value.trim().toLowerCase(),displayName=form.displayName.value.trim()||username,email=form.email.value.trim().toLowerCase(),password=form.password.value;if(username.length<3||username.length>20){errEl.textContent='Username must be 3-20 characters';errEl.classList.remove('hidden');return;}if(!/^[a-z0-9_]+$/.test(username)){errEl.textContent='Username can only contain letters, numbers, and underscores';errEl.classList.remove('hidden');return;}if(password.length<6){errEl.textContent='Password must be at least 6 characters';errEl.classList.remove('hidden');return;}btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Creating...';findByUsername(username).then(function(ex){if(ex)throw new Error('Username is already taken');return findByEmail(email);}).then(function(ex){if(ex)throw new Error('Email is already registered');return createUser({username:username,displayName:displayName,email:email,password:password});}).then(function(user){if(user){setSession(user.id);closeModal();toast('Account created! Welcome to Seashell.','success');navigateTo('/dashboard');}}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='Create Account';errEl.textContent=err.message||'An error occurred';errEl.classList.remove('hidden');});return;}
@@ -317,8 +363,69 @@ document.addEventListener('submit',function(e){
   if(e.target.id==='frm-addlink'){e.preventDefault();var form=e.target,errEl=document.getElementById('addlink-err'),btn=form.querySelector('button[type="submit"]');errEl.classList.add('hidden');if(btn.disabled||btn.dataset.submitting==='true')return;var s=getSession();if(!s)return;var title=form.title.value.trim(),url=form.url.value.trim();btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Adding...';findById(s.userId).then(function(user){if(!user)throw new Error('Not logged in');var links=user.links||[];var maxLinks=hasPerm(user,'bypass_link_limit')?999:10;if(links.length>=maxLinks)throw new Error('Link limit reached');links.push({title:title,url:url});return updateUser(s.userId,{links:links});}).then(function(){closeModal();toast('Link added!','success');router();}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='Add Link';errEl.textContent=err.message||'Error adding link';errEl.classList.remove('hidden');});return;}
   if(e.target.id==='frm-editlink'){e.preventDefault();var form=e.target,errEl=document.getElementById('editlink-err'),btn=form.querySelector('button[type="submit"]'),idx=parseInt(form.dataset.idx);errEl.classList.add('hidden');if(btn.disabled||btn.dataset.submitting==='true')return;var s=getSession();if(!s)return;var title=form.title.value.trim(),url=form.url.value.trim();btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Saving...';findById(s.userId).then(function(user){if(!user)throw new Error('Not logged in');var links=user.links||[];if(!links[idx])throw new Error('Link not found');links[idx]={title:title,url:url};return updateUser(s.userId,{links:links});}).then(function(){closeModal();toast('Link updated!','success');router();}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='Save Changes';errEl.textContent=err.message||'Error updating link';errEl.classList.remove('hidden');});return;}
   if(e.target.id==='frm-addcbadge'){e.preventDefault();var form=e.target,errEl=document.getElementById('addcbadge-err'),btn=form.querySelector('button[type="submit"]');errEl.classList.add('hidden');if(btn.disabled||btn.dataset.submitting==='true')return;var s=getSession();if(!s)return;var label=form.label.value.trim(),id=form.id.value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'_'),color=form.color.value.trim(),img=form.img.value.trim();btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Adding...';findById(s.userId).then(function(user){if(!user)throw new Error('Not logged in');var customs=user.customBadges||[];customs.push({id:id,l:label,c:color,img:img});return updateUser(s.userId,{customBadges:customs});}).then(function(){closeModal();toast('Custom badge added!','success');router();}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='Add Badge';errEl.textContent=err.message||'Error adding badge';errEl.classList.remove('hidden');});return;}
-  if(e.target.id==='frm-award-badge'){e.preventDefault();var form=e.target,errEl=document.getElementById('award-badge-err'),btn=form.querySelector('button[type="submit"]');errEl.classList.add('hidden');if(btn.disabled||btn.dataset.submitting==='true')return;var username=form.username.value.trim().toLowerCase(),badge=form.badge.value;if(!badge){errEl.textContent='Select a badge';errEl.classList.remove('hidden');return;}btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Awarding...';findByUsername(username).then(function(user){if(!user)throw new Error('User not found');var badges=user.badges||[];if(badges.indexOf(badge)>-1)throw new Error('User already has this badge');badges.push(badge);return updateUser(user.id,{badges:badges});}).then(function(){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='<i class="fa-solid fa-plus"></i> Award Badge';form.reset();toast('Badge awarded!','success');}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='<i class="fa-solid fa-plus"></i> Award Badge';errEl.textContent=err.message||'Error awarding badge';errEl.classList.remove('hidden');});return;}
-  if(e.target.id==='frm-remove-badge'){e.preventDefault();var form=e.target,errEl=document.getElementById('remove-badge-err'),btn=form.querySelector('button[type="submit"]');errEl.classList.add('hidden');if(btn.disabled||btn.dataset.submitting==='true')return;var username=form.username.value.trim().toLowerCase(),badge=form.badge.value;if(!badge){errEl.textContent='Select a badge';errEl.classList.remove('hidden');return;}btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Removing...';findByUsername(username).then(function(user){if(!user)throw new Error('User not found');var badges=user.badges||[];var idx=badges.indexOf(badge);if(idx<0)throw new Error('User does not have this badge');badges.splice(idx,1);return updateUser(user.id,{badges:badges});}).then(function(){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='<i class="fa-solid fa-minus"></i> Remove Badge';form.reset();toast('Badge removed!','success');}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='<i class="fa-solid fa-minus"></i> Remove Badge';errEl.textContent=err.message||'Error removing badge';errEl.classList.remove('hidden');});return;}
+
+  /* Award badges - now reads checkboxes */
+  if(e.target.id==='frm-award-badge'){
+    e.preventDefault();
+    var form=e.target,errEl=document.getElementById('award-badge-err'),btn=form.querySelector('button[type="submit"]');
+    errEl.classList.add('hidden');
+    if(btn.disabled||btn.dataset.submitting==='true')return;
+    var username=form.username.value.trim().toLowerCase();
+    var checked=form.querySelectorAll('input[name="badge"]:checked');
+    var badges=[];
+    for(var i=0;i<checked.length;i++)badges.push(checked[i].value);
+    if(!username){errEl.textContent='Enter a username';errEl.classList.remove('hidden');return;}
+    if(badges.length===0){errEl.textContent='Select at least one badge';errEl.classList.remove('hidden');return;}
+    btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Awarding...';
+    findByUsername(username).then(function(user){
+      if(!user)throw new Error('User not found');
+      var current=user.badges||[];
+      var added=[];var skipped=[];
+      for(var i=0;i<badges.length;i++){if(current.indexOf(badges[i])>-1)skipped.push(badges[i]);else added.push(badges[i]);}
+      if(added.length===0)throw new Error('User already has all selected badge'+(badges.length>1?'s':''));
+      return updateUser(user.id,{badges:current.concat(added)}).then(function(){return{added:added,skipped:skipped};});
+    }).then(function(res){
+      btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='<i class="fa-solid fa-plus"></i> Award Selected Badges';
+      var msg='Awarded '+res.added.length+' badge'+(res.added.length>1?'s':'');
+      if(res.skipped.length>0)msg+=' ('+res.skipped.length+' already had)';
+      toast(msg,'success');
+      form.reset();
+      form.querySelectorAll('.badge-check-card').forEach(function(c){c.classList.remove('checked');c.style.borderColor='#1e1e1e';c.style.background='rgba(255,255,255,.02)';c.style.boxShadow='none';});
+    }).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='<i class="fa-solid fa-plus"></i> Award Selected Badges';errEl.textContent=err.message;errEl.classList.remove('hidden');});
+    return;
+  }
+
+  /* Remove badges - now reads checkboxes */
+  if(e.target.id==='frm-remove-badge'){
+    e.preventDefault();
+    var form=e.target,errEl=document.getElementById('remove-badge-err'),btn=form.querySelector('button[type="submit"]');
+    errEl.classList.add('hidden');
+    if(btn.disabled||btn.dataset.submitting==='true')return;
+    var username=form.username.value.trim().toLowerCase();
+    var checked=form.querySelectorAll('input[name="badge"]:checked');
+    var badges=[];
+    for(var i=0;i<checked.length;i++)badges.push(checked[i].value);
+    if(!username){errEl.textContent='Enter a username';errEl.classList.remove('hidden');return;}
+    if(badges.length===0){errEl.textContent='Select at least one badge';errEl.classList.remove('hidden');return;}
+    btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Removing...';
+    findByUsername(username).then(function(user){
+      if(!user)throw new Error('User not found');
+      var current=user.badges||[];
+      var removed=[];var notFound=[];
+      for(var i=0;i<badges.length;i++){var idx=current.indexOf(badges[i]);if(idx>-1){current.splice(idx,1);removed.push(badges[i]);}else notFound.push(badges[i]);}
+      if(removed.length===0)throw new Error('User does not have any of the selected badges');
+      return updateUser(user.id,{badges:current}).then(function(){return{removed:removed,notFound:notFound};});
+    }).then(function(res){
+      btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='<i class="fa-solid fa-minus"></i> Remove Selected Badges';
+      var msg='Removed '+res.removed.length+' badge'+(res.removed.length>1?'s':'');
+      if(res.notFound.length>0)msg+=' ('+res.notFound.length+' not found)';
+      toast(msg,'success');
+      form.reset();
+      form.querySelectorAll('.badge-check-card').forEach(function(c){c.classList.remove('checked');c.style.borderColor='#1e1e1e';c.style.background='rgba(255,255,255,.02)';c.style.boxShadow='none';});
+    }).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='<i class="fa-solid fa-minus"></i> Remove Selected Badges';errEl.textContent=err.message;errEl.classList.remove('hidden');});
+    return;
+  }
+
   if(e.target.id==='frm-ban-user'){e.preventDefault();var form=e.target,errEl=document.getElementById('ban-err'),btn=form.querySelector('button[type="submit"]'),uid=form.dataset.uid,reason=form.reason.value.trim();errEl.classList.add('hidden');if(btn.disabled||btn.dataset.submitting==='true')return;btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Banning...';updateUser(uid,{banned:true,banReason:reason||'No reason specified'}).then(function(){closeModal();toast('User banned.','success');loadAdminUsers(window._adminMe);}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='<i class="fa-solid fa-gavel"></i> Ban User';errEl.textContent=err.message;errEl.classList.remove('hidden');});return;}
   if(e.target.id==='frm-change-role'){e.preventDefault();var form=e.target,errEl=document.getElementById('role-err'),btn=form.querySelector('button[type="submit"]'),uid=form.dataset.uid,role=form.role.value;errEl.classList.add('hidden');if(btn.disabled||btn.dataset.submitting==='true')return;btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Updating...';var perms=ROLE_PERMS[role]?JSON.parse(JSON.stringify(ROLE_PERMS[role])):JSON.parse(JSON.stringify(ROLE_PERMS.user));updateUser(uid,{role:role,permissions:perms}).then(function(){closeModal();toast('Role updated to '+role+'.','success');loadAdminUsers(window._adminMe);}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='<i class="fa-solid fa-check"></i> Update Role';errEl.textContent=err.message;errEl.classList.remove('hidden');});return;}
 });
@@ -352,7 +459,7 @@ document.addEventListener('click',function(e){
   if(confirmDelBtn&&confirmDelBtn.dataset.submitting!=='true'){confirmDelBtn.disabled=true;confirmDelBtn.dataset.submitting='true';confirmDelBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Deleting...';var s=getSession();if(s){deleteUser(s.userId).then(function(){clearSession();closeModal();toast('Account deleted.','info');navigateTo('/');}).catch(function(err){confirmDelBtn.disabled=false;confirmDelBtn.dataset.submitting='false';confirmDelBtn.innerHTML='<i class="fa-solid fa-trash"></i> Delete';toast('Error: '+err.message,'error');});}return;}
   if(e.target.closest('.cancel-delete-btn')){closeModal();return;}
 
-  /* ===== ADMIN CLICK HANDLERS ===== */
+  /* Admin clicks */
   var adminViewBtn=e.target.closest('.admin-view-btn');
   if(adminViewBtn){var uid=adminViewBtn.dataset.uid;findById(uid).then(function(u){if(u)window.open('/'+u.username,'_blank');});return;}
   var adminBanBtn=e.target.closest('.admin-ban-btn');
@@ -368,13 +475,8 @@ document.addEventListener('click',function(e){
   if(e.target.closest('.cancel-admin-del-btn')){closeModal();return;}
 });
 
-/* Admin search */
 document.addEventListener('input',function(e){
   if(e.target.id==='admin-search'){var q=e.target.value.trim().toLowerCase();var rows=document.querySelectorAll('#admin-users-tbody tr');for(var i=0;i<rows.length;i++){var text=rows[i].textContent.toLowerCase();rows[i].style.display=text.indexOf(q)>-1?'':'none';}}
-});
-
-/* Accent color sync */
-document.addEventListener('input',function(e){
   if(e.target.id==='inp-accent')document.getElementById('inp-accent-text').value=e.target.value;
   if(e.target.id==='inp-accent-text'){var v=e.target.value;if(/^#[0-9a-fA-F]{6}$/.test(v))document.getElementById('inp-accent').value=v;}
 });
@@ -384,40 +486,12 @@ function router(){
   var path=window.location.pathname.replace(/\/+$/,'')||'/';
   var app=document.getElementById('app');
   if(!app)return;
-
   if(path==='/'){curUser().then(function(u){app.innerHTML=renderHome(u);});return;}
-
   if(path==='/s'){findByUsername('s').then(function(u){if(u){app.innerHTML=renderProfile(u);db.collection("users").doc(u.id).update({views:firebase.firestore.FieldValue.increment(1)}).catch(function(){});}else{app.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh"><p class="text-void-100">User not found</p></div>';}});return;}
-
-  /* Admin route MUST come before profile catch-all */
-  if(path.indexOf('/admin')===0){
-    var parts=path.split('/').filter(Boolean);
-    var tab=parts[1]||'users';
-    needAdmin().then(function(u){
-      if(!u)return;
-      window._adminMe=u;
-      app.innerHTML=renderAdmin(u,tab);
-      if(tab==='users')loadAdminUsers(u);
-    });
-    return;
-  }
-
-  if(path.indexOf('/dashboard')===0){
-    var parts=path.split('/').filter(Boolean);
-    var tab=parts[1]||'profile';
-    needAuth().then(function(u){if(!u)return;app.innerHTML=renderDashboard(u,tab);});
-    return;
-  }
-
-  /* Profile page - MUST be last */
+  if(path.indexOf('/admin')===0){var parts=path.split('/').filter(Boolean);var tab=parts[1]||'users';needAdmin().then(function(u){if(!u)return;window._adminMe=u;app.innerHTML=renderAdmin(u,tab);if(tab==='users')loadAdminUsers(u);});return;}
+  if(path.indexOf('/dashboard')===0){var parts=path.split('/').filter(Boolean);var tab=parts[1]||'profile';needAuth().then(function(u){if(!u)return;app.innerHTML=renderDashboard(u,tab);});return;}
   var username=path.slice(1);
-  if(username){
-    var knownRoutes=['admin','dashboard','s'];
-    if(knownRoutes.indexOf(username)>-1){app.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px"><h2 class="font-display text-2xl text-void-100">Page not found</h2><a href="/" class="vl-btn vl-btn-primary"><i class="fa-solid fa-home"></i> Go Home</a></div>';return;}
-    findByUsername(username).then(function(u){if(u){app.innerHTML=renderProfile(u);db.collection("users").doc(u.id).update({views:firebase.firestore.FieldValue.increment(1)}).catch(function(){});}else{app.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px"><h2 class="font-display text-2xl text-void-100">User not found</h2><a href="/" class="vl-btn vl-btn-primary"><i class="fa-solid fa-home"></i> Go Home</a></div>';}});
-    return;
-  }
-
+  if(username){var knownRoutes=['admin','dashboard','s'];if(knownRoutes.indexOf(username)>-1){app.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px"><h2 class="font-display text-2xl text-void-100">Page not found</h2><a href="/" class="vl-btn vl-btn-primary"><i class="fa-solid fa-home"></i> Go Home</a></div>';return;}findByUsername(username).then(function(u){if(u){app.innerHTML=renderProfile(u);db.collection("users").doc(u.id).update({views:firebase.firestore.FieldValue.increment(1)}).catch(function(){});}else{app.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px"><h2 class="font-display text-2xl text-void-100">User not found</h2><a href="/" class="vl-btn vl-btn-primary"><i class="fa-solid fa-home"></i> Go Home</a></div>';}});return;}
   app.innerHTML=renderHome(null);
 }
 
