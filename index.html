@@ -103,7 +103,6 @@ var FIREBASE_CONFIG={apiKey:"AIzaSyDbvpzYvPDxzYBXr7-WLFWabmeIRkJlTnw",authDomain
 window.onerror=function(m){try{var d=document.getElementById('app');if(d)d.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:40px;text-align:center"><h2 style="color:#7dd3fc;font-family:Space Grotesk,sans-serif;font-size:22px;margin-bottom:12px">Error</h2><p style="color:#888;font-size:13px;max-width:500px;word-break:break-all">'+m+'</p></div>';}catch(e){}};
 
 function closeModal(){var m=document.getElementById('modal-act');if(m)m.remove();}
-
 var db=null;
 
 function initFirebase(){
@@ -118,7 +117,6 @@ function initFirebase(){
 function hashPw(s){var h=0;for(var i=0;i<s.length;i++){h=((h<<5)-h+s.charCodeAt(i))|0;}return 'h_'+Math.abs(h).toString(36);}
 function esc(s){if(!s)return '';var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 function brandLogo(){return '<span class="text-accent">Seashell</span><span class="text-void-100">.lol</span>';}
-
 function navigateTo(path){window.history.pushState({},'',path);router();}
 
 function linkIcon(url){if(!url)return 'fa-solid fa-arrow-up-right-from-square';var u=url.toLowerCase();if(u.indexOf('github')>-1)return 'fa-brands fa-github';if(u.indexOf('twitter')>-1||u.indexOf('x.com')>-1)return 'fa-brands fa-x-twitter';if(u.indexOf('discord')>-1)return 'fa-brands fa-discord';if(u.indexOf('youtube')>-1)return 'fa-brands fa-youtube';if(u.indexOf('spotify')>-1)return 'fa-brands fa-spotify';if(u.indexOf('instagram')>-1)return 'fa-brands fa-instagram';if(u.indexOf('tiktok')>-1)return 'fa-brands fa-tiktok';if(u.indexOf('twitch')>-1)return 'fa-brands fa-twitch';if(u.indexOf('reddit')>-1)return 'fa-brands fa-reddit';if(u.indexOf('steam')>-1)return 'fa-brands fa-steam';if(u.indexOf('linkedin')>-1)return 'fa-brands fa-linkedin';if(u.indexOf('telegram')>-1)return 'fa-brands fa-telegram';if(u.indexOf('paypal')>-1)return 'fa-brands fa-paypal';if(u.indexOf('coffee')>-1||u.indexOf('buymeacoffee')>-1)return 'fa-solid fa-mug-hot';return 'fa-solid fa-arrow-up-right-from-square';}
@@ -156,11 +154,13 @@ function curUser(){var s=getSession();if(!s)return Promise.resolve(null);if(user
 function needAuth(){var s=getSession();if(!s){navigateTo('/');showModal(loginHTML());return Promise.resolve(null);}return findById(s.userId).then(function(u){if(!u){clearSession();navigateTo('/');showModal(loginHTML());return null;}if(u.banned&&!hasPerm(u,'bypass_ban')){clearSession();navigateTo('/');toast('Account banned.','error');return null;}return u;});}
 function needAdmin(){return needAuth().then(function(u){if(!u)return null;if(!hasPerm(u,'admin_panel')){navigateTo('/');toast('Access denied.','error');return null;}return u;});}
 
-function isBadgeVisible(user,badgeId){return (user.badges||[]).indexOf(badgeId)>-1 && (user.hiddenBadges||[]).indexOf(badgeId)===-1;}
-
 function getVisibleBadges(user){
-  var awarded=user.badges||[];var hidden=user.hiddenBadges||[];var result=[];
-  for(var i=0;i<awarded.length;i++){if(hidden.indexOf(awarded[i])===-1) result.push(awarded[i]);}
+  var awarded=user.badges||[];
+  var hidden=user.hiddenBadges||[];
+  var result=[];
+  for(var i=0;i<awarded.length;i++){
+    if(hidden.indexOf(awarded[i])===-1) result.push(awarded[i]);
+  }
   return result;
 }
 
@@ -170,13 +170,16 @@ function signupHTML(){return '<h3 class="font-display font-bold text-xl mb-1">Cr
 var P={cv:null,cx:null,pts:[],on:false,raf:0,init:function(){this.cv=document.getElementById('bg-canvas');if(!this.cv)return;this.cx=this.cv.getContext('2d');this.resize();window.addEventListener('resize',this.resize.bind(this));this.make();},resize:function(){if(!this.cv)return;this.cv.width=window.innerWidth;this.cv.height=window.innerHeight;},make:function(){if(!this.cv)return;this.pts=[];var n=Math.min(50,Math.floor(this.cv.width*this.cv.height/22000));for(var i=0;i<n;i++)this.pts.push({x:Math.random()*this.cv.width,y:Math.random()*this.cv.height,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*1.5+.5,a:Math.random()*.5+.2});},start:function(){if(this.on)return;this.on=true;this.loop();},stop:function(){this.on=false;if(this.raf)cancelAnimationFrame(this.raf);if(this.cx&&this.cv)this.cx.clearRect(0,0,this.cv.width,this.cv.height);},loop:function(){if(!this.on||!this.cx||!this.cv)return;var c=this.cx,w=this.cv.width,h=this.cv.height,pts=this.pts;c.clearRect(0,0,w,h);for(var i=0;i<pts.length;i++){var p=pts[i];p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;c.beginPath();c.arc(p.x,p.y,p.r,0,Math.PI*2);c.fillStyle='rgba(125,211,252,'+p.a+')';c.fill();}for(var i=0;i<pts.length;i++)for(var j=i+1;j<pts.length;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<130){c.beginPath();c.moveTo(pts[i].x,pts[i].y);c.lineTo(pts[j].x,pts[j].y);c.strokeStyle='rgba(125,211,252,'+(0.07*(1-d/130))+')';c.lineWidth=.5;c.stroke();}}var self=this;this.raf=requestAnimationFrame(function(){self.loop();});}};
 
 function renderBadgePill(key,user){
+  // Check custom badges first
   var customs=user.customBadges||[];
   for(var j=0;j<customs.length;j++){
     if(customs[j].id===key){
       var cb=customs[j];
+      if(!cb.img) return '';
       return '<span class="badge" style="background:'+cb.c+'20;color:'+cb.c+'" title="'+esc(cb.l)+'"><img src="'+esc(cb.img)+'" style="width:10px;height:10px;border-radius:50%;object-fit:cover" alt=""></span>';
     }
   }
+  // Then built-in badges
   var b=BADGES[key];
   if(b) return '<span class="badge" style="background:'+b.c+'20;color:'+b.c+'" title="'+esc(b.l)+'"><i class="'+b.i+'" style="font-size:10px"></i></span>';
   return '';
@@ -184,7 +187,7 @@ function renderBadgePill(key,user){
 
 function renderProfile(user){P.stop();var bgCls=BGM[user.background]||'bg-preset-void';var accent=user.accentColor||'#7dd3fc';var avatar=user.avatar||'https://picsum.photos/seed/'+user.username+'/200/200.jpg';var visible=getVisibleBadges(user);var badgesH='';for(var i=0;i<visible.length;i++){badgesH+=renderBadgePill(visible[i],user);}var linksH='';var lks=user.links||[];for(var i=0;i<lks.length;i++){var lk=lks[i];linksH+='<a href="'+esc(lk.url)+'" target="_blank" rel="noopener" class="profile-link anim-fade" style="animation-delay:'+(0.3+i*0.07)+'s"><i class="'+linkIcon(lk.url)+' text-lg" style="color:'+accent+';width:24px;text-align:center"></i><span class="flex-1 font-medium text-sm">'+esc(lk.title)+'</span><i class="fa-solid fa-chevron-right text-xs text-void-200"></i></a>';}var bgStyle=user.bgImage?'background-image:url(\''+esc(user.bgImage)+'\');background-size:cover;background-position:center;':'';var overlay=user.bgImage?'<div class="absolute inset-0 bg-black/60"></div>':'';return '<div class="'+bgCls+' min-h-screen flex flex-col items-center justify-center px-4 py-12 relative" style="'+bgStyle+'">'+overlay+'<div class="relative z-10 w-full max-w-md" style="animation:profile-in .6s ease both"><div class="glass-strong rounded-3xl p-8 text-center"><div class="relative inline-block mb-5"><div class="w-24 h-24 rounded-full p-[3px]" style="background:linear-gradient(135deg,'+accent+','+accent+'44)"><img src="'+esc(avatar)+'" class="w-full h-full rounded-full object-cover border-2 border-void-800" alt="" onerror="this.src=\'https://picsum.photos/seed/'+user.username+'/200/200.jpg\'"></div><span class="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-success border-2 border-void-600"></span></div><h1 class="font-display font-bold text-2xl mb-1 flex items-center justify-center gap-2 flex-wrap"><span class="uid-wrap relative cursor-default inline-flex items-center gap-2">'+esc(user.displayName||user.username)+' '+badgesH+'<span class="uid-tip">'+user.uid+'</span></span></h1><p class="text-void-100 text-sm mb-4">@'+esc(user.username)+'</p>'+(user.bio?'<p class="text-sm text-void-50 leading-relaxed mb-6">'+esc(user.bio)+'</p>':'<div class="mb-6"></div>')+'<div class="w-16 h-[2px] mx-auto mb-6 rounded-full" style="background:'+accent+'40"></div><div class="space-y-3 text-left">'+(linksH||'<p class="text-void-200 text-sm text-center py-4">No links yet</p>')+'</div><div class="mt-8 flex items-center justify-center gap-2 text-void-200 text-xs"><i class="fa-solid fa-eye"></i><span>'+((user.views||0)+1).toLocaleString()+' views</span></div></div></div><div class="relative z-10 mt-8 flex items-center gap-4 text-xs text-void-200"><span class="font-display font-semibold"><span style="color:'+accent+'">Seashell</span>.lol</span><span class="text-void-400">|</span><a href="/" class="hover:text-void-50 transition-colors">Create your own</a></div></div>';}
 
-function renderHome(u){P.start();var authBtns=u?'<a href="/dashboard" class="vl-btn vl-btn-secondary vl-btn-sm"><i class="fa-solid fa-table-cells"></i> Dashboard</a>':'<a href="#" class="open-login vl-btn vl-btn-s vl-btn-sm">Sign In</a><a href="#" class="open-signup vl-btn vl-btn-primary vl-btn-sm">Get Started</a>';var h='<nav class="fixed top-0 left-0 right-0 z-50 glass-strong anim-slide-down"><div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between"><a href="/" class="font-display font-bold text-lg tracking-tight">'+brandLogo()+'</a><div class="flex items-center gap-3"><a href="/s" class="vl-btn vl-btn-s vl-btn-sm">Example</a>'+authBtns+'</div></div></nav>';h+='<section class="min-h-screen flex items-center justify-center relative px-6 pt-16"><div class="max-w-4xl mx-auto text-center"><div class="anim-fade" style="animation-delay:.1s"><div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-void-400 text-xs text-void-100 mb-8"><span class="w-2 h-2 rounded-full bg-success" style="animation:pulse-glow 2s infinite"></span> Online</div></div>';h+='<h1 class="font-display font-bold text-5xl md:text-7xl lg:text-8xl leading-none mb-6 anim-fade" style="animation-delay:.2s">Seashell.lol<br><span class="bg-gradient-to-r from-accent via-sky-300 to-cyan-300 bg-clip-text text-transparent" style="animation:glitch 4s ease-in-out infinite">Your link, your way.</span></h1>';h+='<p class="text-void-100 text-lg md:text-xl max-w-xl mx-auto mb-10 anim-fade" style="animation-delay:.35s">Create a stunning profile page with all your links, badges, and social presence.</p>';h+='<div class="flex flex-col sm:flex-row items-center justify-center gap-4 anim-fade" style="animation-delay:.5s"><a href="#" class="open-signup vl-btn vl-btn-primary text-base px-8 py-3"><i class="fa-solid fa-bolt"></i> Create Your Link</a><a href="/s" class="vl-btn vl-btn-secondary text-base px-8 py-3"><i class="fa-solid fa-eye"></i> See Example</a></div>';h+='<div class="mt-16 anim-fade anim-float anim-pulse-glow" style="animation-delay:.7s"><div class="glass rounded-2xl p-6 max-w-sm mx-auto"><div class="flex items-center gap-4 mb-4"><img src="https://cdn.discordapp.com/attachments/1520286517874921603/1520952429699666153/content.png?ex=6a4310d5&is=6a41bf55&hm=2bd8dacc4c56874c397a9aca939cc9281fdd3815db8d6ae34248846902a79545&" class="w-14 h-14 rounded-full object-cover border-2" style="border-color:rgba(125,211,252,.3)" alt=""><div class="text-left"><div class="font-display font-bold flex items-center gap-2">s <i class="fa-solid fa-circle-check text-info text-xs"></i></div><div class="text-void-100 text-sm">@s</div></div></div><p class="text-sm text-void-100 text-left mb-4">She sells sea shells by the sea shore.</p><div class="space-y-2"><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-github text-void-100"></i> GitHub</div><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-discord text-void-100"></i> Discord Server</div><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-x-twitter text-void-100"></i> Twitter / X</div></div></div></div></div></div></section>';var feats=[['fa-palette','Custom Themes','Choose from stunning gradient backgrounds'],['fa-shield-halved','Unique Badges','Get verified with collectible profile badges'],['fa-chart-line','View Analytics','Track profile visits in real time'],['fa-bolt','Instant Setup','Create your page in under 60 seconds']];h+='<section class="py-24 px-6"><div class="max-w-5xl mx-auto"><h2 class="font-display font-bold text-3xl md:text-4xl text-center mb-4">Everything you need</h2><p class="text-void-100 text-center mb-16 max-w-lg mx-auto">Powerful features to make your bio link stand out</p><div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">';for(var i=0;i<feats.length;i++){var f=feats[i];h+='<div class="glass rounded-2xl p-6 hover:border-accent/20 transition-all duration-300 hover:-translate-y-1 anim-fade" style="animation-delay:'+(0.1+i*0.1)+'s"><div class="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center mb-4"><i class="fa-solid '+f[0]+' text-accent"></i></div><h3 class="font-display font-semibold text-base mb-2">'+f[1]+'</h3><p class="text-void-100 text-sm leading-relaxed">'+f[2]+'</p></div>';}h+='</div></div></section><section class="py-24 px-6"><div class="max-w-2xl mx-auto text-center"><h2 class="font-display font-bold text-3xl md:text-4xl mb-4">Ready to claim your link?</h2><p class="text-void-100 mb-8">Join thousands of creators who use Seashell.</p><a href="#" class="open-signup vl-btn vl-btn-primary text-base px-10 py-3"><i class="fa-solid fa-rocket"></i> Get Started Free</a></div></section>';h+='<footer class="border-t border-void-400 py-8 px-6"><div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4"><span class="font-display font-bold text-sm">'+brandLogo()+'</span><span class="text-void-100 text-xs">&copy; '+new Date().getFullYear()+' Seashell.lol</span></div></footer>';return h;}
+function renderHome(u){P.start();var authBtns=u?'<a href="/dashboard" class="vl-btn vl-btn-secondary vl-btn-sm"><i class="fa-solid fa-table-cells"></i> Dashboard</a>':'<a href="#" class="open-login vl-btn vl-btn-s vl-btn-sm">Sign In</a><a href="#" class="open-signup vl-btn vl-btn-primary vl-btn-sm">Get Started</a>';var h='<nav class="fixed top-0 left-0 right-0 z-50 glass-strong anim-slide-down"><div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between"><a href="/" class="font-display font-bold text-lg tracking-tight">'+brandLogo()+'</a><div class="flex items-center gap-3"><a href="/s" class="vl-btn vl-btn-s vl-btn-sm">Example</a>'+authBtns+'</div></div></nav>';h+='<section class="min-h-screen flex items-center justify-center relative px-6 pt-16"><div class="max-w-4xl mx-auto text-center"><div class="anim-fade" style="animation-delay:.1s"><div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-void-400 text-xs text-void-100 mb-8"><span class="w-2 h-2 rounded-full bg-success" style="animation:pulse-glow 2s infinite"></span> Online</div></div>';h+='<h1 class="font-display font-bold text-5xl md:text-7xl lg:text-8xl leading-none mb-6 anim-fade" style="animation-delay:.2s">Seashell.lol<br><span class="bg-gradient-to-r from-accent via-sky-300 to-cyan-300 bg-clip-text text-transparent" style="animation:glitch 4s ease-in-out infinite">Your link, your way.</span></h1>';h+='<p class="text-void-100 text-lg md:text-xl max-w-xl mx-auto mb-10 anim-fade" style="animation-delay:.35s">Create a stunning profile page with all your links, badges, and social presence.</p>';h+='<div class="flex flex-col sm:flex-row items-center justify-center gap-4 anim-fade" style="animation-delay:.5s"><a href="#" class="open-signup vl-btn vl-btn-primary text-base px-8 py-3"><i class="fa-solid fa-bolt"></i> Create Your Link</a><a href="/s" class="vl-btn vl-btn-secondary text-base px-8 py-3"><i class="fa-solid fa-eye"></i> See Example</a></div>';h+='<div class="mt-16 anim-fade anim-float anim-pulse-glow" style="animation-delay:.7s"><div class="glass rounded-2xl p-6 max-w-sm mx-auto"><div class="flex items-center gap-4 mb-4"><img src="https://cdn.discordapp.com/attachments/1520286517874921603/1520952429699666153/content.png?ex=6a4310d5&is=6a41bf55&hm=2bd8dacc4c56874c397a9aca939cc9281fdd3815db8d6ae34248846902a79545&" class="w-14 h-14 rounded-full object-cover border-2" style="border-color:rgba(125,211,252,.3)" alt=""><div class="text-left"><div class="font-display font-bold flex items-center gap-2">s <i class="fa-solid fa-circle-check text-info text-xs"></i></div><div class="text-void-100 text-sm">@s</div></div></div><p class="text-sm text-void-100 text-left mb-4">She sells sea shells by the sea shore.</p><div class="space-y-2"><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-github text-void-100"></i> GitHub</div><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-discord text-void-100"></i> Discord Server</div><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-x-twitter text-void-100"></i> Twitter / X</div></div></div></div></div></div></div></section>';var feats=[['fa-palette','Custom Themes','Choose from stunning gradient backgrounds'],['fa-shield-halved','Unique Badges','Get verified with collectible profile badges'],['fa-chart-line','View Analytics','Track profile visits in real time'],['fa-bolt','Instant Setup','Create your page in under 60 seconds']];h+='<section class="py-24 px-6"><div class="max-w-5xl mx-auto"><h2 class="font-display font-bold text-3xl md:text-4xl text-center mb-4">Everything you need</h2><p class="text-void-100 text-center mb-16 max-w-lg mx-auto">Powerful features to make your bio link stand out</p><div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">';for(var i=0;i<feats.length;i++){var f=feats[i];h+='<div class="glass rounded-2xl p-6 hover:border-accent/20 transition-all duration-300 hover:-translate-y-1 anim-fade" style="animation-delay:'+(0.1+i*0.1)+'s"><div class="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center mb-4"><i class="fa-solid '+f[0]+' text-accent"></i></div><h3 class="font-display font-semibold text-base mb-2">'+f[1]+'</h3><p class="text-void-100 text-sm leading-relaxed">'+f[2]+'</p></div>';}h+='</div></div></section><section class="py-24 px-6"><div class="max-w-2xl mx-auto text-center"><h2 class="font-display font-bold text-3xl md:text-4xl mb-4">Ready to claim your link?</h2><p class="text-void-100 mb-8">Join thousands of creators who use Seashell.</p><a href="#" class="open-signup vl-btn vl-btn-primary text-base px-10 py-3"><i class="fa-solid fa-rocket"></i> Get Started Free</a></div></section>';h+='<footer class="border-t border-void-400 py-8 px-6"><div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4"><span class="font-display font-bold text-sm">'+brandLogo()+'</span><span class="text-void-100 text-xs">&copy; '+new Date().getFullYear()+' Seashell.lol</span></div></footer>';return h;}
 
 function renderDashboard(user,tab){tab=tab||'profile';var tabs=[{id:'profile',i:'fa-user',l:'Profile'},{id:'links',i:'fa-link',l:'Links'},{id:'badges',i:'fa-award',l:'Badges'},{id:'appearance',i:'fa-palette',l:'Appearance'},{id:'settings',i:'fa-gear',l:'Settings'}];var ok=false;for(var i=0;i<tabs.length;i++)if(tabs[i].id===tab)ok=true;if(!ok)tab='profile';var content='';if(tab==='profile')content=dashProfile(user);else if(tab==='links')content=dashLinks(user);else if(tab==='badges')content=dashBadges(user);else if(tab==='appearance')content=dashAppearance(user);else if(tab==='settings')content=dashSettings(user);var h='<div class="mobile-header fixed top-0 left-0 right-0 z-50 glass-strong h-14 items-center px-4 gap-3"><a href="/" class="font-display font-bold text-sm">'+brandLogo()+'</a><div class="flex-1"></div><a href="/'+esc(user.username)+'" target="_blank" class="vl-btn vl-btn-s vl-btn-sm"><i class="fa-solid fa-eye"></i></a></div>';h+='<aside class="dash-sidebar"><div class="px-6 mb-8"><a href="/" class="font-display font-bold text-lg tracking-tight block mb-1">'+brandLogo()+'</a><p class="text-void-100 text-xs">Dashboard</p></div><nav>';for(var i=0;i<tabs.length;i++)h+='<a href="/dashboard/'+tabs[i].id+'" class="'+(tabs[i].id===tab?'active':'')+'"><i class="fa-solid '+tabs[i].i+' w-5 text-center"></i>'+tabs[i].l+'</a>';h+='</nav><div class="px-6 pt-8 mt-auto"><div class="border-t border-void-400 pt-4"><div class="flex items-center gap-3 mb-3"><div class="w-9 h-9 rounded-full bg-void-400 flex items-center justify-center text-sm font-bold">'+esc((user.displayName||user.username)[0].toUpperCase())+'</div><div><div class="text-sm font-semibold">'+esc(user.displayName||user.username)+'</div><div class="text-xs text-void-100">@'+esc(user.username)+'</div></div></div><div class="flex gap-2"><a href="/'+esc(user.username)+'" target="_blank" class="vl-btn vl-btn-s vl-btn-sm flex-1 justify-center text-xs"><i class="fa-solid fa-eye"></i> View</a><button class="do-logout vl-btn vl-btn-s vl-btn-sm flex-1 justify-center text-xs" style="color:#f55"><i class="fa-solid fa-right-from-bracket"></i> Logout</button></div></div></div></aside>';h+='<main class="dash-main pt-4 md:pt-8"><div class="flex md:hidden gap-1 mb-6 overflow-x-auto pb-2">';for(var i=0;i<tabs.length;i++)h+='<a href="/dashboard/'+tabs[i].id+'" class="vl-btn vl-btn-sm whitespace-nowrap '+(tabs[i].id===tab?'vl-btn-primary':'vl-btn-secondary')+'"><i class="fa-solid '+tabs[i].i+'"></i>'+tabs[i].l+'</a>';h+='</div><div class="anim-fade">'+content+'</div></main>';return h;}
 
@@ -242,7 +245,7 @@ function dashBadges(u){
   return h;
 }
 
-function dashAppearance(u){var h='<h2 class="font-display font-bold text-2xl mb-1">Appearance</h2><p class="text-void-100 text-sm mb-8">Customize the look of your profile</p><div class="max-w-lg space-y-8"><div><label class="block text-xs font-semibold text-void-100 mb-3 uppercase tracking-wider">Background</label><div class="grid grid-cols-3 gap-3">';var bgs=['void','sunset','ocean','forest','midnight','neon'];for(var i=0;i<bgs.length;i++){var k=bgs[i];h+='<button class="do-set-bg relative rounded-xl overflow-hidden h-20 border-2 transition-all" data-bg="'+k+'" style="border-color:'+(u.background===k?'#7dd3fc':'#1e1e1e')+'"><div class="'+BGM[k]+' absolute inset-0"></div><span class="absolute bottom-1 left-0 right-0 text-center text-[10px] font-semibold text-white/80 drop-shadow">'+BGL[k]+'</span></button>';}h+='</div></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Background Image URL</label><input class="vl-input" id="inp-bgimg" value="'+esc(u.bgImage||'')+'" placeholder="https://example.com/bg.jpg"></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Accent Color</label><div class="flex items-center gap-3"><input type="color" id="inp-accent" value="'+(u.accentColor||'#7dd3fc')+'" class="w-12 h-10 rounded-lg cursor-pointer border-0 bg-transparent"><code class="text-sm font-mono text-void-100">'+(u.accentColor||'#7dd3fc')+'</code></div></div><button class="do-save-app vl-btn vl-btn-primary"><i class="fa-solid fa-check"></i> Save Appearance</button></div>';return h;}
+function dashAppearance(u){var h='<h2 class="font-display font-bold text-2xl mb-1">Appearance</h2><p class="text-void-100 text-sm mb-8">Customize the look of your profile</p><div class="max-w-lg space-y-8"><div><label class="block text-xs font-semibold text-void-100 mb-3 uppercase tracking-wider">Background</label><div class="grid grid-cols-3 gap-3">';var bgs=['void','sunset','ocean','forest','midnight','neon'];for(var i=0;i<bgs.length;i++){var k=bgs[i];h+='<button class="do-set-bg relative rounded-xl overflow-hidden h-20 border-2 transition-all" data-bg="'+k+'" style="border-color:'+(u.background===k?'#7dd3fc':'#1e1e1e')+'"><div class="'+BGM[k]+' absolute inset-0"></div><span class="absolute bottom-1 left-0 right-0 text-center text-[10px] font-semibold text-white/80 drop-shadow">'+BGL[k]+'</span></button>';}h+='</div></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Background Image URL</label><input class="vl-input" id="inp-bgimg" value="'+esc(u.bgImage||'')+'" placeholder="https://example.com/bg.jpg"></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Accent Color</label><div class="flex items-center gap-3"><input type="color" id="inp-accent" value="'+(u.accentColor||'#7dd3fc')+'" class="w-12 h-10 rounded-lg cursor:pointer border-0 bg-transparent"><code class="text-sm font-mono text-void-100">'+(u.accentColor||'#7dd3fc')+'</code></div></div><button class="do-save-app vl-btn vl-btn-primary"><i class="fa-solid fa-check"></i> Save Appearance</button></div>';return h;}
 
 function dashSettings(u){var h='<h2 class="font-display font-bold text-2xl mb-1">Settings</h2><p class="text-void-100 text-sm mb-8">Manage your account</p><div class="max-w-lg space-y-8"><div class="glass rounded-xl p-6"><h3 class="font-display font-semibold mb-1">Change Password</h3><p class="text-void-100 text-xs mb-4">Update your password</p><form id="frm-pw" class="space-y-4"><input class="vl-input" name="curPw" type="password" placeholder="Current password" required><input class="vl-input" name="newPw" type="password" placeholder="New password (min 6)" required minlength="6"><button type="submit" class="vl-btn vl-btn-secondary"><i class="fa-solid fa-key"></i> Update Password</button></form></div><div class="glass rounded-xl p-6"><h3 class="font-display font-semibold mb-1">Account Info</h3><div class="space-y-2 text-sm mt-3"><div class="flex justify-between"><span class="text-void-100">Email</span><span>'+esc(u.email)+'</span></div><div class="flex justify-between"><span class="text-void-100">UID</span><code class="text-accent">'+u.uid+'</code></div><div class="flex justify-between"><span class="text-void-100">Role</span><span class="capitalize text-accent">'+u.role+'</span></div><div class="flex justify-between"><span class="text-void-100">Joined</span><span>'+new Date(u.createdAt).toLocaleDateString()+'</span></div><div class="flex justify-between"><span class="text-void-100">Views</span><span>'+(u.views||0)+'</span></div></div></div>';if(hasPerm(u,'admin_panel'))h+='<a href="/admin" class="vl-btn vl-btn-secondary"><i class="fa-solid fa-shield-halved"></i> Open Admin Panel</a>';h+='<div class="border-t border-void-400 pt-6"><button class="do-del-acct vl-btn vl-btn-danger"><i class="fa-solid fa-trash"></i> Delete Account</button></div></div>';return h;}
 
@@ -294,7 +297,7 @@ function bindEvents(){
       e.preventDefault();var ses=getSession();if(!ses)return;var curPw=frm.querySelector('[name=curPw]').value;var newPw=frm.querySelector('[name=newPw]').value;if(newPw.length<6){toast('Password must be at least 6 characters.','error');return;}findById(ses.userId).then(function(u){if(!u)return;if(u.password!==hashPw(curPw)){toast('Current password incorrect.','error');return;}updateUser(u.id,{password:hashPw(newPw)}).then(function(){toast('Password updated!','success');frm.reset();});});return;
     }
 
-    // Custom badge form — image only, no icon picker
+    // Custom badge form — FIX: also add badge id to the badges array
     if(frm.id==='frm-custom-badge'){
       e.preventDefault();var ses=getSession();if(!ses)return;
       var name=frm.querySelector('[name=cbName]').value.trim();
@@ -310,7 +313,10 @@ function bindEvents(){
         if(customs.length>=5){errEl.textContent='Maximum 5 custom badges allowed.';errEl.classList.remove('hidden');return;}
         var newBadge={id:'cb_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),l:name,i:'',c:color,img:imgUrl};
         customs.push(newBadge);
-        updateUser(u.id,{customBadges:customs}).then(function(){closeModal();toast('Custom badge created!','success');router();});
+        // FIX: also add the custom badge id to the badges array so it renders on the profile
+        var badges=u.badges||[];
+        badges.push(newBadge.id);
+        updateUser(u.id,{customBadges:customs, badges:badges}).then(function(){closeModal();toast('Custom badge created!','success');router();});
       });
       return;
     }
@@ -322,15 +328,12 @@ function bindEvents(){
     el=e.target.closest('.do-logout');
     if(el){e.preventDefault();clearSession();toast('Logged out.','info');navigateTo('/');return;}
 
-    // Dashboard badge toggles — built-in
     el=e.target.closest('#dash-badges-built .perm-toggle');
     if(el){el.classList.toggle('on');var label=el.parentElement.querySelector('.text-xs');if(label){label.textContent=el.classList.contains('on')?'Visible':'Hidden';label.className='text-xs '+(el.classList.contains('on')?'text-success':'text-void-200');}return;}
 
-    // Dashboard badge toggles — custom
     el=e.target.closest('#dash-custom-badges .perm-toggle');
     if(el){el.classList.toggle('on');var label=el.parentElement.querySelector('.text-xs');if(label){label.textContent=el.classList.contains('on')?'Visible':'Hidden';label.className='text-xs '+(el.classList.contains('on')?'text-success':'text-void-200');}return;}
 
-    // Save dashboard badge visibility
     el=e.target.closest('.do-save-dash-badges');
     if(el){
       var ses=getSession();if(!ses)return;
@@ -344,7 +347,6 @@ function bindEvents(){
       return;
     }
 
-    // Add custom badge — image/GIF only modal
     el=e.target.closest('.do-add-custom-badge');
     if(el){
       showModal(
@@ -358,7 +360,7 @@ function bindEvents(){
           '<p class="text-void-200 text-xs mb-4">Use a direct link to a PNG, GIF, or WebP image. Square images work best.</p>'+
           '<div id="cb-preview-area" class="mb-4" style="display:none">'+
             '<label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Preview</label>'+
-            '<div class="cb-preview" style="width:48px;height:48px;border-radius:12px;border:2px solid #2a2a2a;overflow:hidden">'+
+            '<div style="width:48px;height:48px;border-radius:12px;border:2px solid #2a2a2a;overflow:hidden">'+
               '<img id="cb-preview-img" src="" style="width:100%;height:100%;object-fit:cover" alt="" onerror="this.parentElement.style.display=\'none\'">'+
             '</div>'+
           '</div>'+
@@ -372,7 +374,6 @@ function bindEvents(){
           '<button type="submit" class="vl-btn vl-btn-primary w-full justify-center"><i class="fa-solid fa-plus"></i> Create Badge</button>'+
         '</form>'
       );
-      // Live preview on image URL input
       setTimeout(function(){
         var imgInput=document.querySelector('#frm-custom-badge [name=cbImg]');
         var previewArea=document.getElementById('cb-preview-area');
@@ -381,26 +382,17 @@ function bindEvents(){
         if(imgInput){
           imgInput.addEventListener('input',function(){
             var url=this.value.trim();
-            if(url){
-              previewImg.src=url;
-              previewArea.style.display='block';
-              previewImg.onerror=function(){previewArea.style.display='none';};
-            } else {
-              previewArea.style.display='none';
-            }
+            if(url){previewImg.src=url;previewArea.style.display='block';previewImg.onerror=function(){previewArea.style.display='none';};}
+            else{previewArea.style.display='none';}
           });
         }
         if(colorInput){
-          colorInput.addEventListener('input',function(){
-            var code=this.parentElement.querySelector('code');
-            if(code)code.textContent=this.value;
-          });
+          colorInput.addEventListener('input',function(){var code=this.parentElement.querySelector('code');if(code)code.textContent=this.value;});
         }
       },50);
       return;
     }
 
-    // Delete custom badge
     el=e.target.closest('.do-del-custom-badge');
     if(el){
       var cbid=el.getAttribute('data-cbid');var ses=getSession();if(!ses)return;
@@ -408,7 +400,9 @@ function bindEvents(){
         if(!u)return;
         var customs=(u.customBadges||[]).filter(function(c){return c.id!==cbid;});
         var hidden=(u.hiddenBadges||[]).filter(function(h){return h!==cbid;});
-        updateUser(u.id,{customBadges:customs,hiddenBadges:hidden}).then(function(){toast('Custom badge deleted.','info');router();});
+        // Also remove from badges array
+        var badges=(u.badges||[]).filter(function(b){return b!==cbid;});
+        updateUser(u.id,{customBadges:customs,hiddenBadges:hidden,badges:badges}).then(function(){toast('Custom badge deleted.','info');router();});
       });
       return;
     }
@@ -440,7 +434,6 @@ function bindEvents(){
     el=e.target.closest('.do-uid');
     if(el){var uid=el.getAttribute('data-uid');findById(uid).then(function(target){if(!target)return;showModal('<h3 class="font-display font-bold text-xl mb-1">Change UID</h3><p class="text-void-100 text-sm mb-4">Current: <code class="text-accent">'+target.uid+'</code></p><form id="frm-uid"><input class="vl-input mb-4" name="newUid" placeholder="#123" required><div id="uid-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center">Update UID</button></form>');setTimeout(function(){var f=document.getElementById('frm-uid');if(f)f.addEventListener('submit',function(ev){ev.preventDefault();var newUid=f.querySelector('[name=newUid]').value.trim();var errEl=f.querySelector('#uid-err');if(!/^#\d+$/.test(newUid)){errEl.textContent='UID must be #123 format';errEl.classList.remove('hidden');return;}findByUID(newUid).then(function(ex){if(ex){errEl.textContent='UID already in use.';errEl.classList.remove('hidden');return;}updateUser(uid,{uid:newUid}).then(function(){closeModal();toast('UID updated!','success');router();});});});},50);});return;}
 
-    // Admin: manage badges
     el=e.target.closest('.do-badges');
     if(el){
       var uid=el.getAttribute('data-uid');
@@ -463,7 +456,6 @@ function bindEvents(){
 
     el=e.target.closest('#badge-list .perm-toggle');
     if(el){el.classList.toggle('on');return;}
-
     el=e.target.closest('#admin-custom-badges .perm-toggle');
     if(el){el.classList.toggle('on');return;}
 
