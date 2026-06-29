@@ -31,135 +31,36 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 @keyframes toast-out{from{transform:translateX(0);opacity:1}to{transform:translateX(120%);opacity:0}}
 @keyframes badge-pop{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
 @keyframes profile-in{from{opacity:0;transform:scale(.95) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes sparkle-spin{0%{opacity:0;transform:scale(0) rotate(0deg)}50%{opacity:1;transform:scale(1.2) rotate(180deg)}100%{opacity:0;transform:scale(0) rotate(360deg)}}
+@keyframes sparkle-float{0%,100%{transform:translateY(0) scale(0);opacity:0}10%{opacity:1;transform:translateY(0) scale(1)}90%{opacity:0.6;transform:translateY(-12px) scale(0.8)}100%{transform:translateY(-16px) scale(0);opacity:0}}
+@keyframes neon-flicker{0%,19%,21%,23%,25%,54%,56%,100%{text-shadow:0 0 7px #fff,0 0 10px #fff,0 0 21px #fff,0 0 42px #7dd3fc,0 0 82px #7dd3fc,0 0 92px #7dd3fc}20%,24%,55%{text-shadow:0 0 4px #fff,0 0 7px #fff}}
+@keyframes rainbow-cycle{0%{color:#ff0040}14%{color:#ff8800}28%{color:#ffe600}42%{color:#00ff66}57%{color:#00ccff}71%{color:#6644ff}85%{color:#cc00ff}100%{color:#ff0040}}
+@keyframes matrix-drip{0%,100%{text-shadow:0 0 2px #0f0,0 0 6px #0f0,0 0 0 transparent}25%{text-shadow:0 0 4px #0f0,0 0 12px #0f0,0 3px 6px rgba(0,255,0,0.4)}50%{text-shadow:0 0 2px #0f0,0 0 6px #0f0,0 -2px 4px rgba(0,255,0,0.3)}75%{text-shadow:0 0 6px #0f0,0 0 16px #0f0,0 2px 8px rgba(0,255,0,0.5)}}
+@keyframes typewrite{from{width:0}to{width:100%}}
+@keyframes blink-caret{from,to{border-color:transparent}50%{border-color:#7dd3fc}}
+@keyframes fire-flicker{0%,100%{text-shadow:0 0 4px #ff3300,0 0 8px #ff3300,0 -2px 4px #ff6600,0 -4px 8px #ff9900,0 -6px 12px #ffcc00}30%{text-shadow:0 0 6px #ff2200,0 0 12px #ff4400,0 -3px 6px #ff6600,0 -5px 10px #ff8800,0 -8px 16px #ffaa00}60%{text-shadow:0 0 3px #ff4400,0 0 6px #ff5500,0 -1px 3px #ff7700,0 -3px 6px #ff9900,0 -5px 10px #ffbb00}80%{text-shadow:0 0 8px #ff1100,0 0 16px #ff3300,0 -4px 8px #ff5500,0 -7px 14px #ff7700,0 -10px 20px #ffaa00}}
+@keyframes aura-pulse{0%,100%{filter:drop-shadow(0 0 6px rgba(125,211,252,0.6)) drop-shadow(0 0 12px rgba(125,211,252,0.3))}50%{filter:drop-shadow(0 0 12px rgba(125,211,252,0.8)) drop-shadow(0 0 24px rgba(125,211,252,0.5)) drop-shadow(0 0 36px rgba(167,139,250,0.3))}}
+@keyframes wave-offset{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 
-/* Display Name Effects */
-@keyframes sparkle {
-  0% { opacity: 0; transform: scale(0) rotate(0deg); }
-  50% { opacity: 1; transform: scale(1) rotate(180deg); }
-  100% { opacity: 0; transform: scale(0) rotate(360deg); }
-}
-
-@keyframes neon-flicker {
-  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-    text-shadow: 
-      0 0 7px #fff,
-      0 0 10px #fff,
-      0 0 21px #fff,
-      0 0 42px #7dd3fc,
-      0 0 82px #7dd3fc,
-      0 0 92px #7dd3fc,
-      0 0 102px #7dd3fc,
-      0 0 151px #7dd3fc;
-  }
-  20%, 24%, 55% {
-    text-shadow: none;
-  }
-}
-
-@keyframes rainbow {
-  0% { color: #ff0000; }
-  16% { color: #ff8800; }
-  33% { color: #ffff00; }
-  50% { color: #00ff00; }
-  66% { color: #0088ff; }
-  83% { color: #8800ff; }
-  100% { color: #ff0000; }
-}
-
-@keyframes matrix-rain {
-  0% { text-shadow: 0 0 2px #0f0, 0 0 5px #0f0; }
-  25% { text-shadow: 0 0 5px #0f0, 0 0 10px #0f0, 0 2px 5px #0f0; }
-  50% { text-shadow: 0 0 2px #0f0, 0 0 5px #0f0, 0 -2px 5px #0f0; }
-  75% { text-shadow: 0 0 5px #0f0, 0 0 10px #0f0, 0 2px 5px #0f0; }
-  100% { text-shadow: 0 0 2px #0f0, 0 0 5px #0f0; }
-}
-
-@keyframes typewriter {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
-@keyframes fire-glow {
-  0%, 100% { 
-    text-shadow: 0 0 5px #ff3300, 0 0 10px #ff3300, 0 -2px 5px #ff6600, 0 -4px 10px #ff9900;
-  }
-  25% { 
-    text-shadow: 0 0 10px #ff3300, 0 0 20px #ff3300, 0 -3px 10px #ff6600, 0 -6px 15px #ff9900;
-  }
-  50% { 
-    text-shadow: 0 0 5px #ff3300, 0 0 10px #ff3300, 0 -2px 5px #ff6600, 0 -4px 10px #ff9900;
-  }
-  75% { 
-    text-shadow: 0 0 15px #ff3300, 0 0 30px #ff3300, 0 -4px 15px #ff6600, 0 -8px 20px #ff9900;
-  }
-}
-
-.effect-sparkle {
-  position: relative;
-  display: inline-block;
-}
-
-.effect-sparkle::before,
-.effect-sparkle::after {
-  content: '✦';
-  position: absolute;
-  color: #ffd700;
-  font-size: 0.5em;
-  animation: sparkle 1.5s infinite;
-}
-
-.effect-sparkle::before {
-  top: -0.5em;
-  left: 0;
-  animation-delay: 0s;
-}
-
-.effect-sparkle::after {
-  bottom: -0.5em;
-  right: 0;
-  animation-delay: 0.75s;
-}
-
-.effect-glitch {
-  animation: glitch 3s ease-in-out infinite;
-}
-
-.effect-glow {
-  text-shadow: 0 0 10px rgba(125, 211, 252, 0.7), 0 0 20px rgba(125, 211, 252, 0.5), 0 0 30px rgba(125, 211, 252, 0.3);
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-.effect-neon {
-  animation: neon-flicker 1.5s infinite alternate;
-  color: #fff;
-}
-
-.effect-rainbow {
-  animation: rainbow 5s linear infinite;
-}
-
-.effect-matrix {
-  color: #00ff00;
-  animation: matrix-rain 2s ease-in-out infinite;
-  font-family: monospace;
-}
-
-.effect-typewriter {
-  overflow: hidden;
-  white-space: nowrap;
-  border-right: 2px solid #7dd3fc;
-  animation: typewriter 3s steps(30, end) infinite, blink-caret 0.75s step-end infinite;
-}
-
-.effect-fire {
-  color: #ff6600;
-  animation: fire-glow 2s ease-in-out infinite;
-}
-
-@keyframes blink-caret {
-  from, to { border-color: transparent; }
-  50% { border-color: #7dd3fc; }
-}
+.effect-none{}
+.effect-sparkle{position:relative;display:inline-block}
+.effect-sparkle .sparkle-particle{position:absolute;color:#ffd700;font-size:10px;pointer-events:none;animation:sparkle-float 1.8s ease-in-out infinite}
+.effect-sparkle .sparkle-particle:nth-child(1){top:-12px;left:10%;animation-delay:0s}
+.effect-sparkle .sparkle-particle:nth-child(2){top:-8px;right:15%;animation-delay:0.4s;font-size:8px}
+.effect-sparkle .sparkle-particle:nth-child(3){bottom:-10px;left:30%;animation-delay:0.8s;font-size:12px}
+.effect-sparkle .sparkle-particle:nth-child(4){bottom:-6px;right:25%;animation-delay:1.2s;font-size:7px}
+.effect-sparkle .sparkle-particle:nth-child(5){top:-6px;left:55%;animation-delay:0.2s;font-size:9px}
+.effect-sparkle .sparkle-particle:nth-child(6){bottom:-12px;left:65%;animation-delay:1s;font-size:11px}
+.effect-glitch{animation:glitch 3s ease-in-out infinite}
+.effect-glow{text-shadow:0 0 10px rgba(125,211,252,0.7),0 0 20px rgba(125,211,252,0.5),0 0 30px rgba(125,211,252,0.3);animation:pulse-glow 2s ease-in-out infinite}
+.effect-neon{color:#fff;animation:neon-flicker 1.5s infinite alternate}
+.effect-rainbow{animation:rainbow-cycle 4s linear infinite;background-clip:text;-webkit-background-clip:text}
+.effect-matrix{color:#00ff00;animation:matrix-drip 2s ease-in-out infinite;font-family:'Space Grotesk',monospace}
+.effect-typewriter{overflow:hidden;white-space:nowrap;border-right:2px solid #7dd3fc;animation:typewrite 3s steps(30,end) infinite,blink-caret 0.75s step-end infinite;display:inline-block}
+.effect-fire{color:#ff7700;animation:fire-flicker 1.5s ease-in-out infinite}
+.effect-aura{animation:aura-pulse 2.5s ease-in-out infinite}
+.effect-wave{display:inline-flex}
+.effect-wave span{display:inline-block;animation:wave-offset 1.2s ease-in-out infinite}
 
 .anim-fade{animation:fadeIn .5s ease both}
 .anim-slide-down{animation:slideDown .4s ease both}
@@ -221,9 +122,10 @@ select.vl-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg 
 .cb-preview{width:40px;height:40px;border-radius:10px;border:2px solid #1e1e1e;object-fit:cover;background:#0d0d0d;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .cb-preview img{width:100%;height:100%;object-fit:cover;border-radius:8px}
 .cb-preview .placeholder-icon{color:#333;font-size:16px}
-.effect-option {cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
-.effect-option:hover { border-color: rgba(125,211,252,0.3); }
-.effect-option.selected { border-color: #7dd3fc; }
+.fx-opt{cursor:pointer;transition:all .2s;border:2px solid transparent;user-select:none}
+.fx-opt:hover{border-color:rgba(125,211,252,.25);background:rgba(125,211,252,.03)}
+.fx-opt.sel{border-color:#7dd3fc;background:rgba(125,211,252,.08)}
+.fx-preview-box{min-height:48px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 </style>
 </head>
 <body>
@@ -231,191 +133,338 @@ select.vl-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg 
 <div id="app"></div>
 <div id="toast-container"></div>
 <script>
-// All the previous JavaScript code remains the same until we get to the dashAppearance function
+var FIREBASE_CONFIG={apiKey:"AIzaSyDbvpzYvPDxzYBXr7-WLFWabmeIRkJlTnw",authDomain:"seashell-27f34.firebaseapp.com",projectId:"seashell-27f34",storageBucket:"seashell-27f34.firebasestorage.app",messagingSenderId:"225540891149",appId:"1:225540891149:web:a2dd3060fe7ab6d975ab44"};
 
-// Display name effects configuration
-var DISPLAY_EFFECTS = {
-  none: { name: 'None', icon: 'fa-ban', class: '' },
-  sparkle: { name: 'Sparkles', icon: 'fa-sparkles', class: 'effect-sparkle' },
-  glitch: { name: 'Glitch', icon: 'fa-bug', class: 'effect-glitch' },
-  glow: { name: 'Glow', icon: 'fa-sun', class: 'effect-glow' },
-  neon: { name: 'Neon', icon: 'fa-lightbulb', class: 'effect-neon' },
-  rainbow: { name: 'Rainbow', icon: 'fa-rainbow', class: 'effect-rainbow' },
-  matrix: { name: 'Matrix', icon: 'fa-terminal', class: 'effect-matrix' },
-  typewriter: { name: 'Typewriter', icon: 'fa-keyboard', class: 'effect-typewriter' },
-  fire: { name: 'Fire', icon: 'fa-fire', class: 'effect-fire' }
+window.onerror=function(m){try{var d=document.getElementById('app');if(d)d.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:40px;text-align:center"><h2 style="color:#7dd3fc;font-family:Space Grotesk,sans-serif;font-size:22px;margin-bottom:12px">Error</h2><p style="color:#888;font-size:13px;max-width:500px;word-break:break-all">'+m+'</p></div>';}catch(e){}};
+
+function closeModal(){var m=document.getElementById('modal-act');if(m)m.remove();}
+var db=null;
+
+function initFirebase(){
+  if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
+  db=firebase.firestore();
+  db.enablePersistence({synchronizeTabs:true}).catch(function(){});
+  return db.collection("_ping").doc("init").set({t:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){
+    return db.collection("_ping").doc("init").delete();
+  });
+}
+
+function hashPw(s){var h=0;for(var i=0;i<s.length;i++){h=((h<<5)-h+s.charCodeAt(i))|0;}return 'h_'+Math.abs(h).toString(36);}
+function esc(s){if(!s)return '';var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function brandLogo(){return '<span class="text-accent">Seashell</span><span class="text-void-100">.lol</span>';}
+function navigateTo(path){window.history.pushState({},'',path);router();}
+
+function linkIcon(url){if(!url)return 'fa-solid fa-arrow-up-right-from-square';var u=url.toLowerCase();if(u.indexOf('github')>-1)return 'fa-brands fa-github';if(u.indexOf('twitter')>-1||u.indexOf('x.com')>-1)return 'fa-brands fa-x-twitter';if(u.indexOf('discord')>-1)return 'fa-brands fa-discord';if(u.indexOf('youtube')>-1)return 'fa-brands fa-youtube';if(u.indexOf('spotify')>-1)return 'fa-brands fa-spotify';if(u.indexOf('instagram')>-1)return 'fa-brands fa-instagram';if(u.indexOf('tiktok')>-1)return 'fa-brands fa-tiktok';if(u.indexOf('twitch')>-1)return 'fa-brands fa-twitch';if(u.indexOf('reddit')>-1)return 'fa-brands fa-reddit';if(u.indexOf('steam')>-1)return 'fa-brands fa-steam';if(u.indexOf('linkedin')>-1)return 'fa-brands fa-linkedin';if(u.indexOf('telegram')>-1)return 'fa-brands fa-telegram';if(u.indexOf('paypal')>-1)return 'fa-brands fa-paypal';if(u.indexOf('coffee')>-1||u.indexOf('buymeacoffee')>-1)return 'fa-solid fa-mug-hot';return 'fa-solid fa-arrow-up-right-from-square';}
+
+function toast(msg,type){var box=document.getElementById('toast-container');if(!box)return;type=type||'info';var icons={success:'fa-circle-check',error:'fa-circle-xmark',info:'fa-circle-info'};var el=document.createElement('div');el.className='toast toast-'+type;el.innerHTML='<i class="fa-solid '+(icons[type]||icons.info)+'"></i><span>'+msg+'</span>';box.appendChild(el);setTimeout(function(){el.classList.add('removing');setTimeout(function(){if(el.parentNode)el.remove();},300);},3500);}
+
+function showModal(html){closeModal();var ov=document.createElement('div');ov.className='modal-overlay';ov.id='modal-act';ov.innerHTML='<div class="modal-box">'+html+'</div>';ov.addEventListener('click',function(e){if(e.target===ov)closeModal();});document.body.appendChild(ov);}
+
+var ROLE_PERMS={user:{admin_panel:false,manage_users:false,manage_badges:false,change_uid:false,ban_users:false,delete_users:false,bypass_link_limit:false,bypass_ban:false},moderator:{admin_panel:true,manage_users:false,manage_badges:true,change_uid:false,ban_users:true,delete_users:false,bypass_link_limit:false,bypass_ban:true},admin:{admin_panel:true,manage_users:true,manage_badges:true,change_uid:true,ban_users:true,delete_users:true,bypass_link_limit:true,bypass_ban:true}};
+var PERM_LABELS={admin_panel:'Access Admin Panel',manage_users:'Manage Users',manage_badges:'Manage Badges',change_uid:'Change UIDs',ban_users:'Ban / Unban Users',delete_users:'Delete Users',bypass_link_limit:'Unlimited Links',bypass_ban:'Bypass Ban Restrictions'};
+var PERM_ICONS={admin_panel:'fa-gauge-high',manage_users:'fa-users-gear',manage_badges:'fa-award',change_uid:'fa-fingerprint',ban_users:'fa-gavel',delete_users:'fa-user-slash',bypass_link_limit:'fa-link',bypass_ban:'fa-shield-halved'};
+var PERM_DESC={admin_panel:'Can open and use the admin panel',manage_users:'Can view user list and edit roles',manage_badges:'Can add or remove badges from users',change_uid:'Can change user UIDs',ban_users:'Can ban or unban user accounts',delete_users:'Can permanently delete user accounts',bypass_link_limit:'No limit on number of profile links',bypass_ban:'Account cannot be banned by other admins'};
+var BADGES={verified:{l:'Verified',i:'fa-solid fa-circle-check',c:'#7dd3fc'},developer:{l:'Developer',i:'fa-solid fa-code',c:'#00ff88'},og:{l:'OG',i:'fa-solid fa-star',c:'#ffaa00'},staff:{l:'Staff',i:'fa-solid fa-shield-halved',c:'#7dd3fc'},donator:{l:'Donator',i:'fa-solid fa-heart',c:'#ff69b4'},premium:{l:'Premium',i:'fa-solid fa-crown',c:'#ffd700'},bug_hunter:{l:'Bug Hunter',i:'fa-solid fa-bug',c:'#ff8c00'},early_supporter:{l:'Early Supporter',i:'fa-solid fa-rocket',c:'#a78bfa'}};
+var BGM={void:'bg-preset-void',sunset:'bg-preset-sunset',ocean:'bg-preset-ocean',forest:'bg-preset-forest',midnight:'bg-preset-midnight',neon:'bg-preset-neon'};
+var BGL={void:'Void',sunset:'Sunset',ocean:'Ocean',forest:'Forest',midnight:'Midnight',neon:'Neon'};
+
+/* ===== DISPLAY NAME EFFECTS ===== */
+var DISPLAY_EFFECTS={
+  none:{name:'None',icon:'fa-ban',cls:''},
+  sparkle:{name:'Sparkles',icon:'fa-sparkles',cls:'effect-sparkle',sparkles:true},
+  glitch:{name:'Glitch',icon:'fa-bug',cls:'effect-glitch'},
+  glow:{name:'Glow',icon:'fa-sun',cls:'effect-glow'},
+  neon:{name:'Neon',icon:'fa-lightbulb',cls:'effect-neon'},
+  rainbow:{name:'Rainbow',icon:'fa-rainbow',cls:'effect-rainbow'},
+  matrix:{name:'Matrix',icon:'fa-terminal',cls:'effect-matrix'},
+  typewriter:{name:'Typewriter',icon:'fa-keyboard',cls:'effect-typewriter'},
+  fire:{name:'Fire',icon:'fa-fire',cls:'effect-fire'},
+  aura:{name:'Aura',icon:'fa-circle-radiation',cls:'effect-aura'},
+  wave:{name:'Wave',icon:'fa-water',cls:'effect-wave',wave:true}
 };
 
-// Modified dashAppearance function to include display name effects
-function dashAppearance(u) {
-  var currentEffect = u.displayNameEffect || 'none';
-  var h = '<h2 class="font-display font-bold text-2xl mb-1">Appearance</h2>';
-  h += '<p class="text-void-100 text-sm mb-8">Customize the look of your profile</p>';
-  h += '<div class="max-w-lg space-y-8">';
-  
-  // Display Name Effects Section
-  h += '<div>';
-  h += '<label class="block text-xs font-semibold text-void-100 mb-3 uppercase tracking-wider">Display Name Effect</label>';
-  h += '<div class="grid grid-cols-2 sm:grid-cols-3 gap-3">';
-  
-  for (var key in DISPLAY_EFFECTS) {
-    var effect = DISPLAY_EFFECTS[key];
-    var isSelected = currentEffect === key;
-    h += '<button class="effect-option glass rounded-xl p-3 flex flex-col items-center gap-2 ' + (isSelected ? 'selected' : '') + '" data-effect="' + key + '">';
-    h += '<i class="fa-solid ' + effect.icon + ' text-lg ' + (isSelected ? 'text-accent' : 'text-void-100') + '"></i>';
-    h += '<span class="text-xs font-medium">' + effect.name + '</span>';
-    h += '</button>';
+function buildEffectHTML(text,effectKey){
+  var fx=DISPLAY_EFFECTS[effectKey]||DISPLAY_EFFECTS.none;
+  if(!fx.cls)return esc(text);
+  if(fx.sparkles){
+    var sp='';
+    for(var i=0;i<6;i++)sp+='<span class="sparkle-particle">&#10022;</span>';
+    return '<span class="'+fx.cls+'">'+sp+esc(text)+'</span>';
   }
-  
-  h += '</div>';
-  h += '<div class="mt-4 p-4 glass rounded-xl">';
-  h += '<p class="text-xs text-void-200 mb-2">Preview:</p>';
-  h += '<div class="text-xl font-display font-bold ' + (DISPLAY_EFFECTS[currentEffect].class || '') + '">' + esc(u.displayName || u.username) + '</div>';
-  h += '</div>';
-  h += '</div>';
-  
-  // Background Section
-  h += '<div>';
-  h += '<label class="block text-xs font-semibold text-void-100 mb-3 uppercase tracking-wider">Background</label>';
-  h += '<div class="grid grid-cols-3 gap-3">';
-  
-  var bgs = ['void', 'sunset', 'ocean', 'forest', 'midnight', 'neon'];
-  for (var i = 0; i < bgs.length; i++) {
-    var k = bgs[i];
-    h += '<button class="do-set-bg relative rounded-xl overflow-hidden h-20 border-2 transition-all" data-bg="' + k + '" style="border-color:' + (u.background === k ? '#7dd3fc' : '#1e1e1e') + '">';
-    h += '<div class="' + BGM[k] + ' absolute inset-0"></div>';
-    h += '<span class="absolute bottom-1 left-0 right-0 text-center text-[10px] font-semibold text-white/80 drop-shadow">' + BGL[k] + '</span>';
-    h += '</button>';
+  if(fx.wave){
+    var chars=esc(text).split('');
+    var w='';
+    for(var i=0;i<chars.length;i++){
+      w+='<span style="animation-delay:'+(i*0.08)+'s">'+chars[i]+'</span>';
+    }
+    return '<span class="'+fx.cls+'">'+w+'</span>';
   }
-  
-  h += '</div></div>';
-  
-  // Background Image Section
-  h += '<div>';
-  h += '<label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Background Image URL</label>';
-  h += '<input class="vl-input" id="inp-bgimg" value="' + esc(u.bgImage || '') + '" placeholder="https://example.com/bg.jpg">';
-  h += '</div>';
-  
-  // Accent Color Section
-  h += '<div>';
-  h += '<label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Accent Color</label>';
-  h += '<div class="flex items-center gap-3">';
-  h += '<input type="color" id="inp-accent" value="' + (u.accentColor || '#7dd3fc') + '" class="w-12 h-10 rounded-lg cursor:pointer border-0 bg-transparent">';
-  h += '<code class="text-sm font-mono text-void-100">' + (u.accentColor || '#7dd3fc') + '</code>';
-  h += '</div></div>';
-  
-  h += '<button class="do-save-app vl-btn vl-btn-primary"><i class="fa-solid fa-check"></i> Save Appearance</button>';
-  h += '</div>';
-  
+  return '<span class="'+fx.cls+'">'+esc(text)+'</span>';
+}
+
+/* ===== END DISPLAY NAME EFFECTS ===== */
+
+var userCache={};var allUsersCache=null;var cacheValid=false;
+
+function snapToUser(doc){if(!doc.exists)return null;var d=doc.data();return{id:doc.id,uid:d.uid||'',username:d.username||'',displayName:d.displayName||'',email:d.email||'',bio:d.bio||'',avatar:d.avatar||'',bgImage:d.bgImage||'',background:d.background||'void',accentColor:d.accentColor||'#7dd3fc',links:d.links||[],badges:d.badges||[],hiddenBadges:d.hiddenBadges||[],customBadges:d.customBadges||[],banned:d.banned||false,banReason:d.banReason||'',role:d.role||'user',permissions:d.permissions||null,createdAt:d.createdAt||Date.now(),views:d.views||0,password:d.password||'',displayNameEffect:d.displayNameEffect||'none'};}
+function getAllUsers(){if(allUsersCache&&cacheValid)return Promise.resolve(allUsersCache);return db.collection("users").get().then(function(s){allUsersCache=[];s.forEach(function(d){var u=snapToUser(d);if(u)allUsersCache.push(u);});cacheValid=true;return allUsersCache;});}
+function invalidateCache(){cacheValid=false;allUsersCache=null;}
+function findByUsername(un){invalidateCache();return db.collection("users").where("username","==",un).limit(1).get().then(function(s){return s.empty?null:snapToUser(s.docs[0]);});}
+function findByEmail(em){invalidateCache();return db.collection("users").where("email","==",em).limit(1).get().then(function(s){return s.empty?null:snapToUser(s.docs[0]);});}
+function findByUID(uid){return db.collection("users").where("uid","==",uid).limit(1).get().then(function(s){return s.empty?null:snapToUser(s.docs[0]);});}
+function findById(id){if(userCache[id])return Promise.resolve(userCache[id]);return db.collection("users").doc(id).get().then(function(s){if(!s.exists)return null;var u=snapToUser(s);if(u)userCache[u.id]=u;return u;});}
+function getNextUID(){return db.collection("_meta").doc("counters").get().then(function(d){var c=0;if(d.exists&&typeof d.data().uidCounter==='number')c=d.data().uidCounter;c++;return db.collection("_meta").doc("counters").set({uidCounter:c},{merge:true}).then(function(){return '#'+c;});});}
+function createUser(data){return getNextUID().then(function(uid){var perms=ROLE_PERMS[data.role||'user']?JSON.parse(JSON.stringify(ROLE_PERMS[data.role||'user'])):JSON.parse(JSON.stringify(ROLE_PERMS.user));var u={uid:uid,username:data.username,displayName:data.displayName||data.username,email:data.email,password:hashPw(data.password),bio:'',avatar:'',bgImage:'',background:'void',accentColor:'#7dd3fc',links:[],badges:[],hiddenBadges:[],customBadges:[],banned:false,banReason:'',role:data.role||'user',permissions:perms,createdAt:Date.now(),views:0,displayNameEffect:'none'};return db.collection("users").add(u).then(function(ref){u.id=ref.id;userCache[u.id]=u;invalidateCache();return u;});});}
+function updateUser(id,data){var clean={};for(var k in data){if(data[k]!==undefined)clean[k]=data[k];}delete userCache[id];invalidateCache();return db.collection("users").doc(id).update(clean);}
+function deleteUser(id){delete userCache[id];invalidateCache();return db.collection("users").doc(id).delete();}
+function getSession(){try{return JSON.parse(localStorage.getItem('seashell_ses'));}catch(e){return null;}}
+function setSession(uid){localStorage.setItem('seashell_ses',JSON.stringify({userId:uid,ts:Date.now()}));}
+function clearSession(){localStorage.removeItem('seashell_ses');}
+function hasPerm(u,p){if(!u)return false;if(u.permissions&&typeof u.permissions[p]==='boolean')return u.permissions[p];var rp=ROLE_PERMS[u.role];return rp?!!rp[p]:false;}
+function curUser(){var s=getSession();if(!s)return Promise.resolve(null);if(userCache[s.userId])return Promise.resolve(userCache[s.userId]);return findById(s.userId);}
+function needAuth(){var s=getSession();if(!s){navigateTo('/');showModal(loginHTML());return Promise.resolve(null);}return findById(s.userId).then(function(u){if(!u){clearSession();navigateTo('/');showModal(loginHTML());return null;}if(u.banned&&!hasPerm(u,'bypass_ban')){clearSession();navigateTo('/');toast('Account banned.','error');return null;}return u;});}
+function needAdmin(){return needAuth().then(function(u){if(!u)return null;if(!hasPerm(u,'admin_panel')){navigateTo('/');toast('Access denied.','error');return null;}return u;});}
+
+function getVisibleBadges(user){
+  var awarded=user.badges||[];
+  var hidden=user.hiddenBadges||[];
+  var result=[];
+  for(var i=0;i<awarded.length;i++){
+    if(hidden.indexOf(awarded[i])===-1) result.push(awarded[i]);
+  }
+  return result;
+}
+
+function loginHTML(){return '<h3 class="font-display font-bold text-xl mb-1">Welcome back</h3><p class="text-void-100 text-sm mb-6">Sign in to your Seashell account</p><form id="frm-login"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Email or Username</label><input class="vl-input mb-4" name="loginId" placeholder="you@email.com" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Password</label><input class="vl-input mb-2" name="password" type="password" placeholder="Enter password" required><div id="login-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center mb-4">Sign In</button><p class="text-center text-sm text-void-100">No account? <a href="#" class="open-signup text-accent hover:underline">Sign up</a></p></form>';}
+function signupHTML(){return '<h3 class="font-display font-bold text-xl mb-1">Create account</h3><p class="text-void-100 text-sm mb-6">Claim your Seashell identity</p><form id="frm-signup"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Username</label><input class="vl-input mb-4" name="username" placeholder="yourname" required minlength="3" maxlength="20"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Display Name</label><input class="vl-input mb-4" name="displayName" placeholder="Your Name" maxlength="30"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Email</label><input class="vl-input mb-4" name="email" type="email" placeholder="you@email.com" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Password</label><input class="vl-input mb-2" name="password" type="password" placeholder="Min 6 characters" required minlength="6"><div id="signup-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center mb-4">Create Account</button><p class="text-center text-sm text-void-100">Have an account? <a href="#" class="open-login text-accent hover:underline">Sign in</a></p></form>';}
+
+var P={cv:null,cx:null,pts:[],on:false,raf:0,init:function(){this.cv=document.getElementById('bg-canvas');if(!this.cv)return;this.cx=this.cv.getContext('2d');this.resize();window.addEventListener('resize',this.resize.bind(this));this.make();},resize:function(){if(!this.cv)return;this.cv.width=window.innerWidth;this.cv.height=window.innerHeight;},make:function(){if(!this.cv)return;this.pts=[];var n=Math.min(50,Math.floor(this.cv.width*this.cv.height/22000));for(var i=0;i<n;i++)this.pts.push({x:Math.random()*this.cv.width,y:Math.random()*this.cv.height,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*1.5+.5,a:Math.random()*.5+.2});},start:function(){if(this.on)return;this.on=true;this.loop();},stop:function(){this.on=false;if(this.raf)cancelAnimationFrame(this.raf);if(this.cx&&this.cv)this.cx.clearRect(0,0,this.cv.width,this.cv.height);},loop:function(){if(!this.on||!this.cx||!this.cv)return;var c=this.cx,w=this.cv.width,h=this.cv.height,pts=this.pts;c.clearRect(0,0,w,h);for(var i=0;i<pts.length;i++){var p=pts[i];p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;c.beginPath();c.arc(p.x,p.y,p.r,0,Math.PI*2);c.fillStyle='rgba(125,211,252,'+p.a+')';c.fill();}for(var i=0;i<pts.length;i++)for(var j=i+1;j<pts.length;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<130){c.beginPath();c.moveTo(pts[i].x,pts[i].y);c.lineTo(pts[j].x,pts[j].y);c.strokeStyle='rgba(125,211,252,'+(0.07*(1-d/130))+')';c.lineWidth=.5;c.stroke();}}var self=this;this.raf=requestAnimationFrame(function(){self.loop();});}};
+
+function renderBadgePill(key,user){
+  var customs=user.customBadges||[];
+  for(var j=0;j<customs.length;j++){
+    if(customs[j].id===key){
+      var cb=customs[j];
+      if(!cb.img) return '';
+      return '<span class="badge" style="background:'+cb.c+'20;color:'+cb.c+'" title="'+esc(cb.l)+'"><img src="'+esc(cb.img)+'" style="width:10px;height:10px;border-radius:50%;object-fit:cover" alt=""></span>';
+    }
+  }
+  var b=BADGES[key];
+  if(b) return '<span class="badge" style="background:'+b.c+'20;color:'+b.c+'" title="'+esc(b.l)+'"><i class="'+b.i+'" style="font-size:10px"></i></span>';
+  return '';
+}
+
+function renderProfile(user){P.stop();var bgCls=BGM[user.background]||'bg-preset-void';var accent=user.accentColor||'#7dd3fc';var avatar=user.avatar||'https://picsum.photos/seed/'+user.username+'/200/200.jpg';var visible=getVisibleBadges(user);var badgesH='';for(var i=0;i<visible.length;i++){badgesH+=renderBadgePill(visible[i],user);}var linksH='';var lks=user.links||[];for(var i=0;i<lks.length;i++){var lk=lks[i];linksH+='<a href="'+esc(lk.url)+'" target="_blank" rel="noopener" class="profile-link anim-fade" style="animation-delay:'+(0.3+i*0.07)+'s"><i class="'+linkIcon(lk.url)+' text-lg" style="color:'+accent+';width:24px;text-align:center"></i><span class="flex-1 font-medium text-sm">'+esc(lk.title)+'</span><i class="fa-solid fa-chevron-right text-xs text-void-200"></i></a>';}var bgStyle=user.bgImage?'background-image:url(\''+esc(user.bgImage)+'\');background-size:cover;background-position:center;':'';var overlay=user.bgImage?'<div class="absolute inset-0 bg-black/60"></div>':'';var dnEffect=buildEffectHTML(user.displayName||user.username,user.displayNameEffect||'none');return '<div class="'+bgCls+' min-h-screen flex flex-col items-center justify-center px-4 py-12 relative" style="'+bgStyle+'">'+overlay+'<div class="relative z-10 w-full max-w-md" style="animation:profile-in .6s ease both"><div class="glass-strong rounded-3xl p-8 text-center"><div class="relative inline-block mb-5"><div class="w-24 h-24 rounded-full p-[3px]" style="background:linear-gradient(135deg,'+accent+','+accent+'44)"><img src="'+esc(avatar)+'" class="w-full h-full rounded-full object-cover border-2 border-void-800" alt="" onerror="this.src=\'https://picsum.photos/seed/'+user.username+'/200/200.jpg\'"></div><span class="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-success border-2 border-void-600"></span></div><h1 class="font-display font-bold text-2xl mb-1 flex items-center justify-center gap-2 flex-wrap"><span class="uid-wrap relative cursor-default inline-flex items-center gap-2">'+dnEffect+' '+badgesH+'<span class="uid-tip">'+user.uid+'</span></span></h1><p class="text-void-100 text-sm mb-4">@'+esc(user.username)+'</p>'+(user.bio?'<p class="text-sm text-void-50 leading-relaxed mb-6">'+esc(user.bio)+'</p>':'<div class="mb-6"></div>')+'<div class="w-16 h-[2px] mx-auto mb-6 rounded-full" style="background:'+accent+'40"></div><div class="space-y-3 text-left">'+(linksH||'<p class="text-void-200 text-sm text-center py-4">No links yet</p>')+'</div><div class="mt-8 flex items-center justify-center gap-2 text-void-200 text-xs"><i class="fa-solid fa-eye"></i><span>'+((user.views||0)+1).toLocaleString()+' views</span></div></div></div><div class="relative z-10 mt-8 flex items-center gap-4 text-xs text-void-200"><span class="font-display font-semibold"><span style="color:'+accent+'">Seashell</span>.lol</span><span class="text-void-400">|</span><a href="/" class="hover:text-void-50 transition-colors">Create your own</a></div></div>';}
+
+function renderHome(u){P.start();var authBtns=u?'<a href="/dashboard" class="vl-btn vl-btn-secondary vl-btn-sm"><i class="fa-solid fa-table-cells"></i> Dashboard</a>':'<a href="#" class="open-login vl-btn vl-btn-s vl-btn-sm">Sign In</a><a href="#" class="open-signup vl-btn vl-btn-primary vl-btn-sm">Get Started</a>';var h='<nav class="fixed top-0 left-0 right-0 z-50 glass-strong anim-slide-down"><div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between"><a href="/" class="font-display font-bold text-lg tracking-tight">'+brandLogo()+'</a><div class="flex items-center gap-3"><a href="/s" class="vl-btn vl-btn-s vl-btn-sm">Example</a>'+authBtns+'</div></div></nav>';h+='<section class="min-h-screen flex items-center justify-center relative px-6 pt-16"><div class="max-w-4xl mx-auto text-center"><div class="anim-fade" style="animation-delay:.1s"><div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-void-400 text-xs text-void-100 mb-8"><span class="w-2 h-2 rounded-full bg-success" style="animation:pulse-glow 2s infinite"></span> :3</div></div>';h+='<h1 class="font-display font-bold text-5xl md:text-7xl lg:text-8xl leading-none mb-6 anim-fade" style="animation-delay:.2s">Seashell.lol<br><span class="bg-gradient-to-r from-accent via-sky-300 to-cyan-300 bg-clip-text text-transparent" style="animation:glitch 4s ease-in-out infinite"></span></h1>';h+='<p class="text-void-100 text-lg md:text-xl max-w-xl mx-auto mb-10 anim-fade" style="animation-delay:.35s">Create a stunning profile page with all your links, badges, and social presence.</p>';h+='<div class="flex flex-col sm:flex-row items-center justify-center gap-4 anim-fade" style="animation-delay:.5s"><a href="#" class="open-signup vl-btn vl-btn-primary text-base px-8 py-3"><i class="fa-solid fa-bolt"></i> Create Your Link</a><a href="/s" class="vl-btn vl-btn-secondary text-base px-8 py-3"><i class="fa-solid fa-eye"></i> See Example</a></div>';h+='<div class="mt-16 anim-fade anim-float anim-pulse-glow" style="animation-delay:.7s"><div class="glass rounded-2xl p-6 max-w-sm mx-auto"><div class="flex items-center gap-4 mb-4"><img src="https://cdn.discordapp.com/attachments/1520286517874921603/1520952429699666153/content.png?ex=6a4310d5&is=6a41bf55&hm=2bd8dacc4c56874c397a9aca939cc9281fdd3815db8d6ae34248846902a79545&" class="w-14 h-14 rounded-full object-cover border-2" style="border-color:rgba(125,211,252,.3)" alt=""><div class="text-left"><div class="font-display font-bold flex items-center gap-2">s <i class="fa-solid fa-circle-check text-info text-xs"></i></div><div class="text-void-100 text-sm">@s</div></div></div><p class="text-sm text-void-100 text-left mb-4">She sells sea shells by the sea shore.</p><div class="space-y-2"><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-github text-void-100"></i> GitHub</div><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-discord text-void-100"></i> Discord Server</div><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-x-twitter text-void-100"></i> Twitter / X</div></div></div></div></div></div></div></section>';var feats=[['fa-palette','Custom Themes','Choose from stunning gradient backgrounds'],['fa-shield-halved','Unique Badges','Get verified with collectible profile badges'],['fa-chart-line','View Analytics','Track profile visits in real time'],['fa-bolt','Instant Setup','Create your page in under 60 seconds']];h+='<section class="py-24 px-6"><div class="max-w-5xl mx-auto"><h2 class="font-display font-bold text-3xl md:text-4xl text-center mb-4">Everything you need</h2><p class="text-void-100 text-center mb-16 max-w-lg mx-auto">Powerful features to make your bio link stand out</p><div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">';for(var i=0;i<feats.length;i++){var f=feats[i];h+='<div class="glass rounded-2xl p-6 hover:border-accent/20 transition-all duration-300 hover:-translate-y-1 anim-fade" style="animation-delay:'+(0.1+i*0.1)+'s"><div class="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center mb-4"><i class="fa-solid '+f[0]+' text-accent"></i></div><h3 class="font-display font-semibold text-base mb-2">'+f[1]+'</h3><p class="text-void-100 text-sm leading-relaxed">'+f[2]+'</p></div>';}h+='</div></div></section><section class="py-24 px-6"><div class="max-w-2xl mx-auto text-center"><h2 class="font-display font-bold text-3xl md:text-4xl mb-4">Ready to claim your link?</h2><p class="text-void-100 mb-8">Join thousands of creators who use Seashell.</p><a href="#" class="open-signup vl-btn vl-btn-primary text-base px-10 py-3"><i class="fa-solid fa-rocket"></i> Get Started Free</a></div></section>';h+='<footer class="border-t border-void-400 py-8 px-6"><div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4"><span class="font-display font-bold text-sm">'+brandLogo()+'</span><span class="text-void-100 text-xs">&copy; '+new Date().getFullYear()+' Seashell.lol</span></div></footer>';return h;}
+
+function renderDashboard(user,tab){tab=tab||'profile';var tabs=[{id:'profile',i:'fa-user',l:'Profile'},{id:'links',i:'fa-link',l:'Links'},{id:'badges',i:'fa-award',l:'Badges'},{id:'appearance',i:'fa-palette',l:'Appearance'},{id:'settings',i:'fa-gear',l:'Settings'}];var ok=false;for(var i=0;i<tabs.length;i++)if(tabs[i].id===tab)ok=true;if(!ok)tab='profile';var content='';if(tab==='profile')content=dashProfile(user);else if(tab==='links')content=dashLinks(user);else if(tab==='badges')content=dashBadges(user);else if(tab==='appearance')content=dashAppearance(user);else if(tab==='settings')content=dashSettings(user);var h='<div class="mobile-header fixed top-0 left-0 right-0 z-50 glass-strong h-14 items-center px-4 gap-3"><a href="/" class="font-display font-bold text-sm">'+brandLogo()+'</a><div class="flex-1"></div><a href="/'+esc(user.username)+'" target="_blank" class="vl-btn vl-btn-s vl-btn-sm"><i class="fa-solid fa-eye"></i></a></div>';h+='<aside class="dash-sidebar"><div class="px-6 mb-8"><a href="/" class="font-display font-bold text-lg tracking-tight block mb-1">'+brandLogo()+'</a><p class="text-void-100 text-xs">Dashboard</p></div><nav>';for(var i=0;i<tabs.length;i++)h+='<a href="/dashboard/'+tabs[i].id+'" class="'+(tabs[i].id===tab?'active':'')+'"><i class="fa-solid '+tabs[i].i+' w-5 text-center"></i>'+tabs[i].l+'</a>';h+='</nav><div class="px-6 pt-8 mt-auto"><div class="border-t border-void-400 pt-4"><div class="flex items-center gap-3 mb-3"><div class="w-9 h-9 rounded-full bg-void-400 flex items-center justify-center text-sm font-bold">'+esc((user.displayName||user.username)[0].toUpperCase())+'</div><div><div class="text-sm font-semibold">'+esc(user.displayName||user.username)+'</div><div class="text-xs text-void-100">@'+esc(user.username)+'</div></div></div><div class="flex gap-2"><a href="/'+esc(user.username)+'" target="_blank" class="vl-btn vl-btn-s vl-btn-sm flex-1 justify-center text-xs"><i class="fa-solid fa-eye"></i> View</a><button class="do-logout vl-btn vl-btn-s vl-btn-sm flex-1 justify-center text-xs" style="color:#f55"><i class="fa-solid fa-right-from-bracket"></i> Logout</button></div></div></div></aside>';h+='<main class="dash-main pt-4 md:pt-8"><div class="flex md:hidden gap-1 mb-6 overflow-x-auto pb-2">';for(var i=0;i<tabs.length;i++)h+='<a href="/dashboard/'+tabs[i].id+'" class="vl-btn vl-btn-sm whitespace-nowrap '+(tabs[i].id===tab?'vl-btn-primary':'vl-btn-secondary')+'"><i class="fa-solid '+tabs[i].i+'"></i>'+tabs[i].l+'</a>';h+='</div><div class="anim-fade">'+content+'</div></main>';return h;}
+
+function dashProfile(u){return '<h2 class="font-display font-bold text-2xl mb-1">Edit Profile</h2><p class="text-void-100 text-sm mb-8">Customize how your profile appears</p><form id="frm-profile" class="max-w-lg space-y-5"><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Display Name</label><input class="vl-input" name="displayName" value="'+esc(u.displayName||'')+'" maxlength="30"></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Username</label><div class="flex items-center gap-2"><span class="text-void-100 text-sm">@</span><input class="vl-input" name="username" value="'+esc(u.username)+'" minlength="3" maxlength="20" required></div><p class="text-void-200 text-xs mt-1">seashell.lol/<strong class="text-void-100">'+esc(u.username)+'</strong></p></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Bio</label><textarea class="vl-input" name="bio" maxlength="160" placeholder="Tell people about yourself...">'+esc(u.bio||'')+'</textarea></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Avatar URL</label><input class="vl-input" name="avatar" value="'+esc(u.avatar||'')+'" placeholder="https://example.com/avatar.jpg">'+(u.avatar?'<img src="'+esc(u.avatar)+'" class="w-16 h-16 rounded-full mt-2 object-cover border border-void-400" alt="">':'')+'</div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">UID</label><div class="flex items-center gap-3"><code class="bg-void-500 px-4 py-2.5 rounded-lg text-sm font-mono text-accent">'+u.uid+'</code></div></div><button type="submit" class="vl-btn vl-btn-primary"><i class="fa-solid fa-check"></i> Save Changes</button></form>';}
+
+function dashLinks(u){var links=u.links||[];var h='<div class="flex items-center justify-between mb-8"><div><h2 class="font-display font-bold text-2xl mb-1">Manage Links</h2><p class="text-void-100 text-sm">Add, edit, or remove links</p></div><button class="do-add-link vl-btn vl-btn-primary"><i class="fa-solid fa-plus"></i> Add Link</button></div><div class="max-w-lg space-y-3">';if(!links.length){h+='<div class="glass rounded-xl p-8 text-center"><i class="fa-solid fa-link-slash text-3xl text-void-300 mb-3"></i><p class="text-void-100 text-sm">No links yet.</p></div>';}else{for(var i=0;i<links.length;i++){var lk=links[i];h+='<div class="glass rounded-xl p-4 flex items-center gap-4 anim-fade" style="animation-delay:'+(i*0.05)+'s"><div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-void-100"><i class="'+linkIcon(lk.url)+'"></i></div><div class="flex-1 min-w-0"><div class="font-semibold text-sm truncate">'+esc(lk.title)+'</div><div class="text-void-100 text-xs truncate">'+esc(lk.url)+'</div></div><button class="do-edit-link vl-btn vl-btn-s vl-btn-sm" data-lid="'+lk.id+'"><i class="fa-solid fa-pen text-xs"></i></button><button class="do-del-link vl-btn vl-btn-s vl-btn-sm" style="color:#f55" data-lid="'+lk.id+'"><i class="fa-solid fa-trash text-xs"></i></button></div>';}}h+='</div>';return h;}
+
+function dashBadges(u){
+  var hasPremium=(u.badges||[]).indexOf('premium')>-1;
+  var awarded=u.badges||[];
+  var hidden=u.hiddenBadges||[];
+  var customs=u.customBadges||[];
+  var h='<h2 class="font-display font-bold text-2xl mb-1">Badges</h2><p class="text-void-100 text-sm mb-8">Toggle badge visibility on your profile. Built-in badges are awarded by staff.</p>';
+  var builtInAwarded=[];
+  for(var i=0;i<awarded.length;i++){if(BADGES[awarded[i]]) builtInAwarded.push(awarded[i]);}
+  h+='<div class="glass rounded-xl p-6 mb-6"><h3 class="font-display font-semibold text-base mb-1 flex items-center gap-2"><i class="fa-solid fa-award text-accent text-sm"></i> Your Badges</h3><p class="text-void-200 text-xs mb-4">These badges were awarded to you. Toggle them to show or hide on your profile.</p>';
+  if(builtInAwarded.length===0 && customs.length===0){
+    h+='<div class="text-center py-8"><i class="fa-solid fa-award text-2xl text-void-300 mb-3"></i><p class="text-void-100 text-sm">No badges yet. Badges are awarded by staff.</p></div>';
+  } else {
+    if(builtInAwarded.length>0){
+      h+='<div id="dash-badges-built">';
+      for(var i=0;i<builtInAwarded.length;i++){
+        var k=builtInAwarded[i];var b=BADGES[k];var vis=hidden.indexOf(k)===-1;
+        h+='<div class="perm-row"><div class="flex items-center gap-3"><i class="'+b.i+'" style="color:'+b.c+'"></i><div><span class="text-sm font-medium">'+b.l+'</span></div></div><div class="flex items-center gap-3"><span class="text-xs '+(vis?'text-success':'text-void-200')+'">'+(vis?'Visible':'Hidden')+'</span><div class="perm-toggle '+(vis?'on':'')+'" data-badge="'+k+'"></div></div></div>';
+      }
+      h+='</div>';
+    }
+  }
+  h+='</div>';
+  if(builtInAwarded.length>0 || customs.length>0){
+    h+='<button class="do-save-dash-badges vl-btn vl-btn-primary mb-8"><i class="fa-solid fa-check"></i> Save Visibility</button>';
+  }
+  if(hasPremium){
+    h+='<div class="glass rounded-xl p-6"><div class="flex items-center justify-between mb-4"><div><h3 class="font-display font-semibold text-base flex items-center gap-2"><i class="fa-solid fa-crown text-warning text-sm"></i> Custom Badges</h3><p class="text-void-200 text-xs mt-1">Create up to 5 custom badges using images or GIFs.</p></div><button class="do-add-custom-badge vl-btn vl-btn-primary vl-btn-sm"><i class="fa-solid fa-plus"></i> Create Badge</button></div>';
+    if(!customs.length){
+      h+='<div class="text-center py-8"><i class="fa-solid fa-image text-2xl text-void-300 mb-3"></i><p class="text-void-100 text-sm">No custom badges yet.</p></div>';
+    } else {
+      h+='<div id="dash-custom-badges">';
+      for(var i=0;i<customs.length;i++){
+        var cb=customs[i];var vis=hidden.indexOf(cb.id)===-1;
+        h+='<div class="perm-row"><div class="flex items-center gap-3"><div class="w-7 h-7 rounded-md overflow-hidden flex-shrink-0"><img src="'+esc(cb.img)+'" class="w-full h-full object-cover" alt="" onerror="this.style.display=\'none\'"></div><div><span class="text-sm font-medium">'+esc(cb.l)+'</span><span class="badge ml-2" style="background:rgba(255,255,255,.05);color:#666;font-size:9px">Custom</span></div></div><div class="flex items-center gap-2"><span class="text-xs '+(vis?'text-success':'text-void-200')+' mr-1">'+(vis?'Visible':'Hidden')+'</span><div class="perm-toggle '+(vis?'on':'')+'" data-badge="'+cb.id+'"></div><button class="do-del-custom-badge vl-btn vl-btn-s vl-btn-sm" style="color:#f55" data-cbid="'+cb.id+'"><i class="fa-solid fa-trash text-xs"></i></button></div></div>';
+      }
+      h+='</div>';
+    }
+    h+='</div><button class="do-save-dash-badges vl-btn vl-btn-primary mt-4"><i class="fa-solid fa-check"></i> Save Visibility</button>';
+  } else {
+    h+='<div class="glass rounded-xl p-6"><div class="flex items-center gap-4"><div class="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center"><i class="fa-solid fa-crown text-warning text-lg"></i></div><div><p class="font-display font-semibold text-sm">Premium Required</p><p class="text-void-100 text-xs mt-0.5">Get the Premium badge to unlock custom badges. Contact an admin to upgrade.</p></div></div></div>';
+  }
   return h;
 }
 
-// Modified renderProfile function to apply display name effects
-function renderProfile(user) {
-  P.stop();
-  var bgCls = BGM[user.background] || 'bg-preset-void';
-  var accent = user.accentColor || '#7dd3fc';
-  var avatar = user.avatar || 'https://picsum.photos/seed/' + user.username + '/200/200.jpg';
-  var visible = getVisibleBadges(user);
-  var displayNameEffect = user.displayNameEffect || 'none';
-  var effectClass = DISPLAY_EFFECTS[displayNameEffect] ? DISPLAY_EFFECTS[displayNameEffect].class : '';
-  
-  var badgesH = '';
-  for (var i = 0; i < visible.length; i++) {
-    badgesH += renderBadgePill(visible[i], user);
+/* ===== MODIFIED dashAppearance WITH EFFECTS ===== */
+function dashAppearance(u){
+  var curFx=u.displayNameEffect||'none';
+  var dn=u.displayName||u.username;
+  var h='<h2 class="font-display font-bold text-2xl mb-1">Appearance</h2><p class="text-void-100 text-sm mb-8">Customize the look of your profile</p><div class="max-w-lg space-y-8">';
+
+  // Display Name Effect
+  h+='<div><label class="block text-xs font-semibold text-void-100 mb-3 uppercase tracking-wider">Display Name Effect</label>';
+  h+='<div class="grid grid-cols-3 sm:grid-cols-4 gap-2" id="fx-grid">';
+  for(var key in DISPLAY_EFFECTS){
+    var fx=DISPLAY_EFFECTS[key];
+    var isSel=curFx===key;
+    h+='<button class="fx-opt glass rounded-xl p-3 flex flex-col items-center gap-2 '+(isSel?'sel':'')+'" data-fx="'+key+'">';
+    h+='<i class="fa-solid '+fx.icon+' text-base '+(isSel?'text-accent':'text-void-100')+'"></i>';
+    h+='<span class="text-[11px] font-medium leading-tight text-center">'+fx.name+'</span>';
+    h+='</button>';
   }
-  
-  var linksH = '';
-  var lks = user.links || [];
-  for (var i = 0; i < lks.length; i++) {
-    var lk = lks[i];
-    linksH += '<a href="' + esc(lk.url) + '" target="_blank" rel="noopener" class="profile-link anim-fade" style="animation-delay:' + (0.3 + i * 0.07) + 's"><i class="' + linkIcon(lk.url) + ' text-lg" style="color:' + accent + ';width:24px;text-align:center"></i><span class="flex-1 font-medium text-sm">' + esc(lk.title) + '</span><i class="fa-solid fa-chevron-right text-xs text-void-200"></i></a>';
-  }
-  
-  var bgStyle = user.bgImage ? 'background-image:url(\'' + esc(user.bgImage) + '\');background-size:cover;background-position:center;' : '';
-  var overlay = user.bgImage ? '<div class="absolute inset-0 bg-black/60"></div>' : '';
-  
-  return '<div class="' + bgCls + ' min-h-screen flex flex-col items-center justify-center px-4 py-12 relative" style="' + bgStyle + '">' + overlay + '<div class="relative z-10 w-full max-w-md" style="animation:profile-in .6s ease both"><div class="glass-strong rounded-3xl p-8 text-center"><div class="relative inline-block mb-5"><div class="w-24 h-24 rounded-full p-[3px]" style="background:linear-gradient(135deg,' + accent + ',' + accent + '44)"><img src="' + esc(avatar) + '" class="w-full h-full rounded-full object-cover border-2 border-void-800" alt="" onerror="this.src=\'https://picsum.photos/seed/' + user.username + '/200/200.jpg\'"></div><span class="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-success border-2 border-void-600"></span></div><h1 class="font-display font-bold text-2xl mb-1 flex items-center justify-center gap-2 flex-wrap"><span class="uid-wrap relative cursor-default inline-flex items-center gap-2"><span class="' + effectClass + '">' + esc(user.displayName || user.username) + '</span> ' + badgesH + '<span class="uid-tip">' + user.uid + '</span></span></h1><p class="text-void-100 text-sm mb-4">@' + esc(user.username) + '</p>' + (user.bio ? '<p class="text-sm text-void-50 leading-relaxed mb-6">' + esc(user.bio) + '</p>' : '<div class="mb-6"></div>') + '<div class="w-16 h-[2px] mx-auto mb-6 rounded-full" style="background:' + accent + '40"></div><div class="space-y-3 text-left">' + (linksH || '<p class="text-void-200 text-sm text-center py-4">No links yet</p>') + '</div><div class="mt-8 flex items-center justify-center gap-2 text-void-200 text-xs"><i class="fa-solid fa-eye"></i><span>' + ((user.views || 0) + 1).toLocaleString() + ' views</span></div></div></div><div class="relative z-10 mt-8 flex items-center gap-4 text-xs text-void-200"><span class="font-display font-semibold"><span style="color:' + accent + '">Seashell</span>.lol</span><span class="text-void-400">|</span><a href="/" class="hover:text-void-50 transition-colors">Create your own</a></div></div>';
+  h+='</div>';
+
+  // Live preview
+  h+='<div class="mt-4 glass rounded-xl p-5"><p class="text-xs text-void-200 mb-3 uppercase tracking-wider font-semibold">Preview</p>';
+  h+='<div class="fx-preview-box text-xl font-display font-bold" id="fx-preview">'+buildEffectHTML(dn,curFx)+'</div>';
+  h+='</div></div>';
+
+  // Background
+  h+='<div><label class="block text-xs font-semibold text-void-100 mb-3 uppercase tracking-wider">Background</label><div class="grid grid-cols-3 gap-3">';
+  var bgs=['void','sunset','ocean','forest','midnight','neon'];
+  for(var i=0;i<bgs.length;i++){var k=bgs[i];h+='<button class="do-set-bg relative rounded-xl overflow-hidden h-20 border-2 transition-all" data-bg="'+k+'" style="border-color:'+(u.background===k?'#7dd3fc':'#1e1e1e')+'"><div class="'+BGM[k]+' absolute inset-0"></div><span class="absolute bottom-1 left-0 right-0 text-center text-[10px] font-semibold text-white/80 drop-shadow">'+BGL[k]+'</span></button>';}
+  h+='</div></div>';
+
+  // Background Image
+  h+='<div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Background Image URL</label><input class="vl-input" id="inp-bgimg" value="'+esc(u.bgImage||'')+'" placeholder="https://example.com/bg.jpg"></div>';
+
+  // Accent Color
+  h+='<div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Accent Color</label><div class="flex items-center gap-3"><input type="color" id="inp-accent" value="'+(u.accentColor||'#7dd3fc')+'" class="w-12 h-10 rounded-lg cursor:pointer border-0 bg-transparent"><code class="text-sm font-mono text-void-100" id="accent-code">'+(u.accentColor||'#7dd3fc')+'</code></div></div>';
+
+  h+='<button class="do-save-app vl-btn vl-btn-primary"><i class="fa-solid fa-check"></i> Save Appearance</button></div>';
+  return h;
+}
+/* ===== END MODIFIED dashAppearance ===== */
+
+function dashSettings(u){var h='<h2 class="font-display font-bold text-2xl mb-1">Settings</h2><p class="text-void-100 text-sm mb-8">Manage your account</p><div class="max-w-lg space-y-8"><div class="glass rounded-xl p-6"><h3 class="font-display font-semibold mb-1">Change Password</h3><p class="text-void-100 text-xs mb-4">Update your password</p><form id="frm-pw" class="space-y-4"><input class="vl-input" name="curPw" type="password" placeholder="Current password" required><input class="vl-input" name="newPw" type="password" placeholder="New password (min 6)" required minlength="6"><button type="submit" class="vl-btn vl-btn-secondary"><i class="fa-solid fa-key"></i> Update Password</button></form></div><div class="glass rounded-xl p-6"><h3 class="font-display font-semibold mb-1">Account Info</h3><div class="space-y-2 text-sm mt-3"><div class="flex justify-between"><span class="text-void-100">Email</span><span>'+esc(u.email)+'</span></div><div class="flex justify-between"><span class="text-void-100">UID</span><code class="text-accent">'+u.uid+'</code></div><div class="flex justify-between"><span class="text-void-100">Role</span><span class="capitalize text-accent">'+u.role+'</span></div><div class="flex justify-between"><span class="text-void-100">Joined</span><span>'+new Date(u.createdAt).toLocaleDateString()+'</span></div><div class="flex justify-between"><span class="text-void-100">Views</span><span>'+(u.views||0)+'</span></div></div></div>';if(hasPerm(u,'admin_panel'))h+='<a href="/admin" class="vl-btn vl-btn-secondary"><i class="fa-solid fa-shield-halved"></i> Open Admin Panel</a>';h+='<div class="border-t border-void-400 pt-6"><button class="do-del-acct vl-btn vl-btn-danger"><i class="fa-solid fa-trash"></i> Delete Account</button></div></div>';return h;}
+
+function getUserBadgeHtml(user){var visible=getVisibleBadges(user);if(!visible.length) return '<span class="text-void-200 text-xs">None</span>';var bH='';for(var j=0;j<visible.length;j++){bH+=renderBadgePill(visible[j],user);}return bH;}
+
+function renderAdminTable(admin,users){P.start();var myPerms=admin.permissions||ROLE_PERMS[admin.role]||ROLE_PERMS.user;var h='<div class="mobile-header fixed top-0 left-0 right-0 z-50 glass-strong h-14 items-center px-4 gap-3"><a href="/" class="font-display font-bold text-sm">'+brandLogo()+'</a><span class="text-xs text-accent font-semibold">Admin</span><div class="flex-1"></div><a href="/dashboard" class="vl-btn vl-btn-s vl-btn-sm"><i class="fa-solid fa-arrow-left"></i></a></div><aside class="dash-sidebar"><div class="px-6 mb-8"><a href="/" class="font-display font-bold text-lg tracking-tight block mb-1">'+brandLogo()+'</a><p class="text-xs text-accent font-semibold">Admin Panel</p></div><nav><a href="/admin" class="active"><i class="fa-solid fa-users w-5 text-center"></i>All Users</a>';if(myPerms.manage_users||myPerms.manage_badges||myPerms.ban_users)h+='<a href="/admin/roles" class="mt-2"><i class="fa-solid fa-user-shield w-5 text-center"></i>Roles & Permissions</a>';h+='<a href="/dashboard" class="mt-2"><i class="fa-solid fa-arrow-left w-5 text-center"></i>Back to Dashboard</a></nav><div class="px-6 pt-8 mt-auto"><div class="border-t border-void-400 pt-4"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center text-sm font-bold text-accent">A</div><div><div class="text-sm font-semibold">'+esc(admin.displayName||admin.username)+'</div><div class="text-xs text-accent">'+admin.role+'</div></div></div></div></div></aside>';h+='<main class="dash-main pt-4 md:pt-8"><div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8"><div><h2 class="font-display font-bold text-2xl mb-1">User Management</h2><p class="text-void-100 text-sm">'+users.length+' total users</p></div><input id="admin-search" class="vl-input sm:w-64" placeholder="Search users..."></div><div class="glass rounded-2xl overflow-hidden"><div class="overflow-x-auto"><table class="admin-table" id="adm-tbl"><thead><tr><th>User</th><th>UID</th><th>Role</th><th>Badges</th><th>Status</th><th>Actions</th></tr></thead><tbody>';for(var i=0;i<users.length;i++){var u=users[i];var avc=u.avatar?'<img src="'+esc(u.avatar)+'" class="w-full h-full rounded-full object-cover" alt="">':esc((u.displayName||u.username)[0].toUpperCase());var rc={admin:'text-accent',moderator:'text-purple-400',user:'text-void-100'};var acts='<div class="flex gap-1 flex-wrap">';if(u.id!==admin.id){if(myPerms.ban_users)acts+='<button class="do-ban vl-btn vl-btn-sm '+(u.banned?'vl-btn-success':'vl-btn-danger')+'" data-uid="'+u.id+'"><i class="fa-solid '+(u.banned?'fa-unlock':'fa-ban')+'"></i></button>';if(myPerms.change_uid)acts+='<button class="do-uid vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-fingerprint"></i></button>';if(myPerms.manage_badges)acts+='<button class="do-badges vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-award"></i></button>';if(myPerms.manage_users)acts+='<button class="do-role vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-user-shield"></i></button>';if(myPerms.delete_users)acts+='<button class="do-del-user vl-btn vl-btn-danger vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-trash"></i></button>';}acts+='</div>';h+='<tr data-uname="'+esc(u.username)+'"><td><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-void-400 flex items-center justify-center text-sm font-bold overflow-hidden flex-shrink-0">'+avc+'</div><div class="min-w-0"><div class="font-semibold text-sm truncate">'+esc(u.displayName||u.username)+'</div><div class="text-void-200 text-xs truncate">'+esc(u.email)+'</div></div></div></td><td><code class="text-accent text-xs">'+u.uid+'</code></td><td><span class="text-xs font-semibold uppercase '+rc[u.role]+'">'+u.role+'</span></td><td>'+getUserBadgeHtml(u)+'</td><td>'+(u.banned?'<span class="badge" style="background:rgba(255,45,45,.15);color:#ff5555"><i class="fa-solid fa-ban" style="font-size:9px"></i> Banned</span>':'<span class="badge" style="background:rgba(0,255,136,.1);color:#00ff88">Active</span>')+'</td><td>'+acts+'</td></tr>';}h+='</tbody></table></div></div></main>';return h;}
+
+function router(){var app=document.getElementById('app');if(!app)return;var path=window.location.pathname||'/';if(path==='/'||path==='/index.html'){curUser().then(function(u){app.innerHTML=renderHome(u);bindHome();});}
+else if(path.startsWith('/dashboard')){var parts=path.split('/');var tab=parts[2]||'profile';needAuth().then(function(u){if(!u){app.innerHTML=renderHome(null);bindHome();return;}app.innerHTML=renderDashboard(u,tab);bindDash(u);});}
+else if(path.startsWith('/admin')){needAdmin().then(function(a){if(!a){app.innerHTML=renderHome(null);bindHome();return;}getAllUsers().then(function(users){app.innerHTML=renderAdminTable(a,users);bindAdmin(a);});});}
+else{var slug=path.slice(1).replace(/\/$/,'');if(!slug){app.innerHTML=renderHome(null);bindHome();return;}findByUsername(slug).then(function(u){if(!u){app.innerHTML='<div class="min-h-screen flex items-center justify-center px-6"><div class="text-center"><h2 class="font-display font-bold text-3xl mb-3">User not found</h2><p class="text-void-100 mb-6">This profile doesn\'t exist.</p><a href="/" class="vl-btn vl-btn-primary">Go Home</a></div></div>';return;}if(u.id){db.collection("users").doc(u.id).update({views:firebase.firestore.FieldValue.increment(1)}).catch(function(){});}app.innerHTML=renderProfile(u);});}}
+
+function bindHome(){document.addEventListener('click',function h(e){var ln=e.target.closest('.open-login');if(ln){e.preventDefault();showModal(loginHTML());bindLogin();return;}var sn=e.target.closest('.open-signup');if(sn){e.preventDefault();showModal(signupHTML());bindSignup();return;}});}
+
+function bindLogin(){var f=document.getElementById('frm-login');if(!f)return;f.onsubmit=function(e){e.preventDefault();var fd=new FormData(f);var lid=fd.get('loginId').trim();var pw=fd.get('password');var err=document.getElementById('login-err');if(!lid||!pw){err.textContent='All fields required.';err.classList.remove('hidden');return;}findByEmail(lid).then(function(u){if(!u)return findByUsername(lid);return u;}).then(function(u){if(!u||u.password!==hashPw(pw)){err.textContent='Invalid credentials.';err.classList.remove('hidden');return;}if(u.banned&&!hasPerm(u,'bypass_ban')){err.textContent='Account is banned.';err.classList.remove('hidden');return;}setSession(u.id);closeModal();navigateTo('/dashboard');toast('Welcome back!','success');}).catch(function(er){err.textContent='Login failed.';err.classList.remove('hidden');});};}
+
+function bindSignup(){var f=document.getElementById('frm-signup');if(!f)return;f.onsubmit=function(e){e.preventDefault();var fd=new FormData(f);var un=fd.get('username').trim().toLowerCase();var dn=fd.get('displayName').trim();var em=fd.get('email').trim();var pw=fd.get('password');var err=document.getElementById('signup-err');if(!un||!em||!pw){err.textContent='All fields required.';err.classList.remove('hidden');return;}if(un.length<3||!/^[a-z0-9_]+$/.test(un)){err.textContent='Username: 3-20 chars, lowercase, numbers, underscores only.';err.classList.remove('hidden');return;}findByUsername(un).then(function(exists){if(exists){err.textContent='Username already taken.';err.classList.remove('hidden');return null;}return findByEmail(em);}).then(function(exists){if(exists===null)return;if(exists){err.textContent='Email already registered.';err.classList.remove('hidden');return;}createUser({username:un,displayName:dn||un,email:em,password:pw}).then(function(u){setSession(u.id);closeModal();navigateTo('/dashboard');toast('Account created!','success');}).catch(function(er){err.textContent='Signup failed: '+er.message;err.classList.remove('hidden');});}).catch(function(er){err.textContent='Error: '+er.message;err.classList.remove('hidden');});};}
+
+function bindDash(u){
+  // Profile form
+  var pf=document.getElementById('frm-profile');
+  if(pf){pf.onsubmit=function(e){e.preventDefault();var fd=new FormData(pf);var dn=fd.get('displayName').trim();var un=fd.get('username').trim().toLowerCase();var bio=fd.get('bio').trim();var av=fd.get('avatar').trim();if(!un||un.length<3||!/^[a-z0-9_]+$/.test(un)){toast('Invalid username.','error');return;}if(un!==u.username){findByUsername(un).then(function(ex){if(ex){toast('Username taken.','error');return;}updateUser(u.id,{displayName:dn,username:un,bio:bio,avatar:av}).then(function(){toast('Profile saved!','success');navigateTo('/dashboard/profile');}).catch(function(er){toast('Error: '+er.message,'error');});});}else{updateUser(u.id,{displayName:dn,bio:bio,avatar:av}).then(function(){toast('Profile saved!','success');}).catch(function(er){toast('Error: '+er.message,'error');});}};}
+
+  // Password form
+  var pwf=document.getElementById('frm-pw');
+  if(pwf){pwf.onsubmit=function(e){e.preventDefault();var fd=new FormData(pwf);var cur=fd.get('curPw');var nw=fd.get('newPw');if(hashPw(cur)!==u.password){toast('Wrong current password.','error');return;}updateUser(u.id,{password:hashPw(nw)}).then(function(){toast('Password updated!','success');pwf.reset();}).catch(function(er){toast('Error: '+er.message,'error');});};}
+
+  // Effect selection
+  var fxGrid=document.getElementById('fx-grid');
+  if(fxGrid){fxGrid.addEventListener('click',function(e){var btn=e.target.closest('.fx-opt');if(!btn)return;var key=btn.getAttribute('data-fx');var preview=document.getElementById('fx-preview');if(!preview)return;var dn=u.displayName||u.username;preview.innerHTML=buildEffectHTML(dn,key);var allBtns=fxGrid.querySelectorAll('.fx-opt');for(var i=0;i<allBtns.length;i++){allBtns[i].classList.remove('sel');var ic=allBtns[i].querySelector('i');if(ic){ic.classList.remove('text-accent');ic.classList.add('text-void-100');}}btn.classList.add('sel');var ic=btn.querySelector('i');if(ic){ic.classList.remove('text-void-100');ic.classList.add('text-accent');}});}
+
+  // Accent color live update
+  var acInp=document.getElementById('inp-accent');
+  var acCode=document.getElementById('accent-code');
+  if(acInp&&acCode){acInp.addEventListener('input',function(){acCode.textContent=acInp.value;});}
 }
 
-// Event handler for display name effect selection
-document.addEventListener('click', function(e) {
-  var effectBtn = e.target.closest('.effect-option');
-  if (effectBtn) {
-    // Remove selected class from all effect options
-    var allEffects = document.querySelectorAll('.effect-option');
-    allEffects.forEach(function(btn) {
-      btn.classList.remove('selected');
-      var icon = btn.querySelector('i');
-      if (icon) {
-        icon.classList.remove('text-accent');
-        icon.classList.add('text-void-100');
-      }
-    });
-    
-    // Add selected class to clicked effect
-    effectBtn.classList.add('selected');
-    var icon = effectBtn.querySelector('i');
-    if (icon) {
-      icon.classList.remove('text-void-100');
-      icon.classList.add('text-accent');
-    }
-    
-    // Update preview
-    var effectKey = effectBtn.getAttribute('data-effect');
-    var previewDiv = document.querySelector('.effect-option').parentElement.nextElementSibling.querySelector('div:last-child');
-    if (previewDiv) {
-      // Remove all effect classes
-      for (var key in DISPLAY_EFFECTS) {
-        if (DISPLAY_EFFECTS[key].class) {
-          previewDiv.classList.remove(DISPLAY_EFFECTS[key].class);
-        }
-      }
-      // Add new effect class if not "none"
-      if (DISPLAY_EFFECTS[effectKey].class) {
-        previewDiv.classList.add(DISPLAY_EFFECTS[effectKey].class);
-      }
-    }
-  }
+/* ===== EVENT DELEGATION FOR ALL CLICKS ===== */
+document.addEventListener('click',function(e){
+  // Logout
+  if(e.target.closest('.do-logout')){e.preventDefault();clearSession();navigateTo('/');toast('Logged out.','info');return;}
+
+  // Set background
+  var bgBtn=e.target.closest('.do-set-bg');
+  if(bgBtn){var allBg=document.querySelectorAll('.do-set-bg');for(var i=0;i<allBg.length;i++)allBg[i].style.borderColor='#1e1e1e';bgBtn.style.borderColor='#7dd3fc';return;}
+
+  // Save appearance
+  if(e.target.closest('.do-save-app')){
+    needAuth().then(function(u){if(!u)return;
+      var bgImg=document.getElementById('inp-bgimg');var acInp=document.getElementById('inp-accent');
+      var selFx=document.querySelector('.fx-opt.sel');
+      var fx=selFx?selFx.getAttribute('data-fx'):'none';
+      var selBg=document.querySelector('.do-set-bg[style*="border-color: rgb(125, 211, 252)"],.do-set-bg[style*="border-color:#7dd3fc"]');
+      var bg=selBg?selBg.getAttribute('data-bg'):u.background;
+      var updates={bgImage:bgImg?bgImg.value.trim():'',accentColor:acInp?acInp.value:u.accentColor,background:bg,displayNameEffect:fx};
+      updateUser(u.id,updates).then(function(){toast('Appearance saved!','success');}).catch(function(er){toast('Error: '+er.message,'error');});
+    });return;}
+
+  // Add link
+  if(e.target.closest('.do-add-link')){showModal('<h3 class="font-display font-bold text-xl mb-4">Add Link</h3><form id="frm-add-link" class="space-y-4"><input class="vl-input" name="title" placeholder="Link title" required><input class="vl-input" name="url" placeholder="https://example.com" required><div class="flex gap-2 justify-end"><button type="button" class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="vl-btn vl-btn-primary">Add</button></div></form>');document.getElementById('frm-add-link').onsubmit=function(ev){ev.preventDefault();var fd=new FormData(this);needAuth().then(function(u){if(!u)return;var links=u.links||[];links.push({id:Date.now().toString(36),title:fd.get('title').trim(),url:fd.get('url').trim()});if(!hasPerm(u,'bypass_link_limit')&&links.length>10){toast('Max 10 links.','error');return;}updateUser(u.id,{links:links}).then(function(){closeModal();navigateTo('/dashboard/links');toast('Link added!','success');}).catch(function(er){toast('Error: '+er.message,'error');});});};return;}
+
+  // Edit link
+  var editBtn=e.target.closest('.do-edit-link');
+  if(editBtn){var lid=editBtn.getAttribute('data-lid');needAuth().then(function(u){if(!u)return;var lk=null;var links=u.links||[];for(var i=0;i<links.length;i++){if(links[i].id===lid){lk=links[i];break;}}if(!lk)return;showModal('<h3 class="font-display font-bold text-xl mb-4">Edit Link</h3><form id="frm-edit-link" class="space-y-4"><input class="vl-input" name="title" value="'+esc(lk.title)+'" required><input class="vl-input" name="url" value="'+esc(lk.url)+'" required><input type="hidden" name="lid" value="'+lid+'"><div class="flex gap-2 justify-end"><button type="button" class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="vl-btn vl-btn-primary">Save</button></div></form>');document.getElementById('frm-edit-link').onsubmit=function(ev){ev.preventDefault();var fd=new FormData(this);var newLinks=[];for(var i=0;i<links.length;i++){if(links[i].id===fd.get('lid'))newLinks.push({id:links[i].id,title:fd.get('title').trim(),url:fd.get('url').trim()});else newLinks.push(links[i]);}updateUser(u.id,{links:newLinks}).then(function(){closeModal();navigateTo('/dashboard/links');toast('Link updated!','success');}).catch(function(er){toast('Error: '+er.message,'error');});};});return;}
+
+  // Delete link
+  var delBtn=e.target.closest('.do-del-link');
+  if(delBtn){var lid=delBtn.getAttribute('data-lid');needAuth().then(function(u){if(!u)return;var links=(u.links||[]).filter(function(l){return l.id!==lid;});updateUser(u.id,{links:links}).then(function(){navigateTo('/dashboard/links');toast('Link removed.','success');}).catch(function(er){toast('Error: '+er.message,'error');});});return;}
+
+  // Save badge visibility
+  if(e.target.closest('.do-save-dash-badges')){needAuth().then(function(u){if(!u)return;var awarded=u.badges||[];var customs=u.customBadges||[];var hidden=[];var toggles=document.querySelectorAll('.perm-toggle[data-badge]');for(var i=0;i<toggles.length;i++){var t=toggles[i];if(!t.classList.contains('on'))hidden.push(t.getAttribute('data-badge'));}updateUser(u.id,{hiddenBadges:hidden}).then(function(){toast('Badge visibility saved!','success');}).catch(function(er){toast('Error: '+er.message,'error');});});return;}
+
+  // Toggle perm toggles (visual only until save)
+  var ptog=e.target.closest('.perm-toggle');
+  if(ptog){ptog.classList.toggle('on');var row=ptog.closest('.perm-row');if(row){var lbl=row.querySelector('.text-xs.text-success,.text-xs.text-void-200');if(lbl){lbl.textContent=ptog.classList.contains('on')?'Visible':'Hidden';lbl.className='text-xs '+(ptog.classList.contains('on')?'text-success':'text-void-200');}}return;}
+
+  // Add custom badge
+  if(e.target.closest('.do-add-custom-badge')){needAuth().then(function(u){if(!u)return;var customs=u.customBadges||[];if(customs.length>=5){toast('Max 5 custom badges.','error');return;}showModal('<h3 class="font-display font-bold text-xl mb-4">Create Custom Badge</h3><form id="frm-cb" class="space-y-4"><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Label</label><input class="vl-input" name="label" placeholder="My Badge" required maxlength="20"></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Image URL</label><input class="vl-input" name="img" placeholder="https://example.com/badge.png" required></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Color</label><input type="color" name="color" value="#7dd3fc" class="w-12 h-10 rounded-lg cursor:pointer border-0 bg-transparent"></div><div class="flex gap-2 justify-end"><button type="button" class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="vl-btn vl-btn-primary">Create</button></div></form>');document.getElementById('frm-cb').onsubmit=function(ev){ev.preventDefault();var fd=new FormData(this);customs.push({id:'cb_'+Date.now().toString(36),l:fd.get('label').trim(),img:fd.get('img').trim(),c:fd.get('color')});updateUser(u.id,{customBadges:customs}).then(function(){closeModal();navigateTo('/dashboard/badges');toast('Badge created!','success');}).catch(function(er){toast('Error: '+er.message,'error');});};});return;}
+
+  // Delete custom badge
+  var dcb=e.target.closest('.do-del-custom-badge');
+  if(dcb){var cbid=dcb.getAttribute('data-cbid');needAuth().then(function(u){if(!u)return;var customs=(u.customBadges||[]).filter(function(b){return b.id!==cbid;});var hidden=(u.hiddenBadges||[]).filter(function(b){return b!==cbid;});updateUser(u.id,{customBadges:customs,hiddenBadges:hidden}).then(function(){navigateTo('/dashboard/badges');toast('Badge deleted.','success');}).catch(function(er){toast('Error: '+er.message,'error');});});return;}
+
+  // Delete account
+  if(e.target.closest('.do-del-acct')){showModal('<h3 class="font-display font-bold text-xl mb-2" style="color:#ff5555">Delete Account</h3><p class="text-void-100 text-sm mb-6">This is permanent and cannot be undone. All your data will be erased.</p><div class="flex gap-2 justify-end"><button class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button class="do-confirm-del vl-btn vl-btn-danger">Delete Forever</button></div>');document.querySelector('.do-confirm-del').onclick=function(){needAuth().then(function(u){if(!u)return;deleteUser(u.id).then(function(){clearSession();closeModal();navigateTo('/');toast('Account deleted.','info');}).catch(function(er){toast('Error: '+er.message,'error');});});};return;}
+
+  // Admin: ban
+  var banBtn=e.target.closest('.do-ban');
+  if(banBtn){var uid=banBtn.getAttribute('data-uid');needAdmin().then(function(a){if(!a)return;findById(uid).then(function(tu){if(!tu)return;var nb=!tu.banned;var reason=nb?'':'Violated terms';updateUser(uid,{banned:nb,banReason:reason}).then(function(){navigateTo('/admin');toast(nb?'User banned.':'User unbanned.','success');}).catch(function(er){toast('Error: '+er.message,'error');});});});return;}
+
+  // Admin: change UID
+  var uidBtn=e.target.closest('.do-uid');
+  if(uidBtn){var uid=uidBtn.getAttribute('data-uid');needAdmin().then(function(a){if(!a)return;findById(uid).then(function(tu){if(!tu)return;showModal('<h3 class="font-display font-bold text-xl mb-4">Change UID</h3><p class="text-void-100 text-sm mb-4">Current: <code class="text-accent">'+tu.uid+'</code></p><form id="frm-uid" class="space-y-4"><input class="vl-input" name="newUid" placeholder="#123" required pattern="^#\\d+$"><div class="flex gap-2 justify-end"><button type="button" class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="vl-btn vl-btn-primary">Change</button></div></form>');document.getElementById('frm-uid').onsubmit=function(ev){ev.preventDefault();var fd=new FormData(this);updateUser(uid,{uid:fd.get('newUid').trim()}).then(function(){closeModal();navigateTo('/admin');toast('UID updated.','success');}).catch(function(er){toast('Error: '+er.message,'error');});};});});return;}
+
+  // Admin: manage badges
+  var badgeBtn=e.target.closest('.do-badges');
+  if(badgeBtn){var uid=badgeBtn.getAttribute('data-uid');needAdmin().then(function(a){if(!a)return;findById(uid).then(function(tu){if(!tu)return;var h='<h3 class="font-display font-bold text-xl mb-4">Manage Badges</h3><p class="text-void-100 text-sm mb-4">'+esc(tu.displayName||tu.username)+'\'s badges</p><div class="space-y-2 mb-6">';for(var k in BADGES){var b=BADGES[k];var has=(tu.badges||[]).indexOf(k)>-1;h+='<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer"><input type="checkbox" name="badge" value="'+k+'" '+(has?'checked':'')+' class="accent-sky-400"><i class="'+b.i+'" style="color:'+b.c+'"></i><span class="text-sm">'+b.l+'</span></label>';}h+='</div><div class="flex gap-2 justify-end"><button type="button" class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="vl-btn vl-btn-primary" id="do-save-badges-admin">Save</button></div>';showModal(h);document.getElementById('do-save-badges-admin').onclick=function(ev){ev.preventDefault();var cbs=document.querySelectorAll('input[name="badge"]:checked');var nb=[];for(var i=0;i<cbs.length;i++)nb.push(cbs[i].value);updateUser(uid,{badges:nb}).then(function(){closeModal();navigateTo('/admin');toast('Badges updated.','success');}).catch(function(er){toast('Error: '+er.message,'error');});};});});return;}
+
+  // Admin: change role
+  var roleBtn=e.target.closest('.do-role');
+  if(roleBtn){var uid=roleBtn.getAttribute('data-uid');needAdmin().then(function(a){if(!a)return;findById(uid).then(function(tu){if(!tu)return;showModal('<h3 class="font-display font-bold text-xl mb-4">Change Role</h3><p class="text-void-100 text-sm mb-4">'+esc(tu.displayName||tu.username)+' — current: <span class="text-accent capitalize">'+tu.role+'</span></p><form id="frm-role" class="space-y-4"><select class="vl-input" name="role"><option value="user" '+(tu.role==='user'?'selected':'')+'>User</option><option value="moderator" '+(tu.role==='moderator'?'selected':'')+'>Moderator</option><option value="admin" '+(tu.role==='admin'?'selected':'')+'>Admin</option></select><div class="flex gap-2 justify-end"><button type="button" class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="vl-btn vl-btn-primary">Save</button></div></form>');document.getElementById('frm-role').onsubmit=function(ev){ev.preventDefault();var fd=new FormData(this);var nr=fd.get('role');var perms=JSON.parse(JSON.stringify(ROLE_PERMS[nr]||ROLE_PERMS.user));updateUser(uid,{role:nr,permissions:perms}).then(function(){closeModal();navigateTo('/admin');toast('Role updated.','success');}).catch(function(er){toast('Error: '+er.message,'error');});};});});return;}
+
+  // Admin: delete user
+  var delUserBtn=e.target.closest('.do-del-user');
+  if(delUserBtn){var uid=delUserBtn.getAttribute('data-uid');needAdmin().then(function(a){if(!a)return;showModal('<h3 class="font-display font-bold text-xl mb-2" style="color:#ff5555">Delete User</h3><p class="text-void-100 text-sm mb-6">Permanently delete this user and all their data?</p><div class="flex gap-2 justify-end"><button class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button class="do-confirm-del-user vl-btn vl-btn-danger" data-uid="'+uid+'">Delete</button></div>');document.querySelector('.do-confirm-del-user').onclick=function(){deleteUser(uid).then(function(){closeModal();navigateTo('/admin');toast('User deleted.','success');}).catch(function(er){toast('Error: '+er.message,'error');});};});return;}
+
+  // Admin search
 });
 
-// Modified save appearance handler to include display name effect
-var originalSaveApp = function() {
-  // This will be overridden by the event listener
-};
-
-document.addEventListener('click', function(e) {
-  if (e.target.closest('.do-save-app')) {
-    needAuth().then(function(u) {
-      if (!u) return;
-      
-      var bgImg = document.getElementById('inp-bgimg').value.trim();
-      var accent = document.getElementById('inp-accent').value;
-      var selectedEffect = document.querySelector('.effect-option.selected');
-      var effect = selectedEffect ? selectedEffect.getAttribute('data-effect') : 'none';
-      
-      var updates = {
-        bgImage: bgImg,
-        accentColor: accent,
-        displayNameEffect: effect
-      };
-      
-      // Find selected background
-      var bgBtn = document.querySelector('.do-set-bg[style*="border-color:#7dd3fc"]');
-      if (bgBtn) {
-        updates.background = bgBtn.getAttribute('data-bg');
-      }
-      
-      updateUser(u.id, updates).then(function() {
-        toast('Appearance updated!', 'success');
-      }).catch(function(err) {
-        toast('Failed to save: ' + err.message, 'error');
-      });
-    });
-  }
+document.addEventListener('input',function(e){
+  if(e.target.id==='admin-search'){var q=e.target.value.toLowerCase();var rows=document.querySelectorAll('#adm-tbl tbody tr');for(var i=0;i<rows.length;i++){var name=rows[i].getAttribute('data-uname')||'';rows[i].style.display=name.toLowerCase().indexOf(q)>-1?'':'none';}}
 });
 
-// The rest of the JavaScript remains the same
+window.addEventListener('popstate',function(){router();});
+
+P.init();
+initFirebase().then(function(){router();}).catch(function(err){document.getElementById('app').innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:40px;text-align:center"><h2 style="color:#ff5555;font-family:Space Grotesk,sans-serif;font-size:22px;margin-bottom:12px">Connection Error</h2><p style="color:#888;font-size:13px;max-width:500px">Could not connect to the database. Please check your internet connection and try again.</p></div>';});
 </script>
 </body>
 </html>
