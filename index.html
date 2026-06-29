@@ -88,9 +88,9 @@ select.vl-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg 
 .perm-toggle.on::after{left:20px;background:#7dd3fc}
 .perm-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(30,30,30,.5)}
 .perm-row:last-child{border-bottom:none}
-.icon-pick{width:40px;height:40px;border-radius:10px;border:2px solid #1e1e1e;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;font-size:16px;color:#888;background:rgba(255,255,255,.03)}
-.icon-pick:hover{border-color:#444;color:#e8e8e8}
-.icon-pick.sel{border-color:#7dd3fc;color:#7dd3fc;background:rgba(125,211,252,.08)}
+.cb-preview{width:40px;height:40px;border-radius:10px;border:2px solid #1e1e1e;object-fit:cover;background:#0d0d0d;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.cb-preview img{width:100%;height:100%;object-fit:cover;border-radius:8px}
+.cb-preview .placeholder-icon{color:#333;font-size:16px}
 </style>
 </head>
 <body>
@@ -127,8 +127,6 @@ function toast(msg,type){var box=document.getElementById('toast-container');if(!
 
 function showModal(html){closeModal();var ov=document.createElement('div');ov.className='modal-overlay';ov.id='modal-act';ov.innerHTML='<div class="modal-box">'+html+'</div>';ov.addEventListener('click',function(e){if(e.target===ov)closeModal();});document.body.appendChild(ov);}
 
-var ICON_OPTIONS=['fa-solid fa-fire','fa-solid fa-bolt','fa-solid fa-gem','fa-solid fa-heart','fa-solid fa-star','fa-solid fa-crown','fa-solid fa-rocket','fa-solid fa-code','fa-solid fa-music','fa-solid fa-gamepad','fa-solid fa-palette','fa-solid fa-wand-magic-sparkles','fa-solid fa-dragon','fa-solid fa-ghost','fa-solid fa-skull','fa-solid fa-shield','fa-solid fa-diamond','fa-solid fa-feather','fa-solid fa-leaf','fa-solid fa-snowflake','fa-solid fa-sun','fa-solid fa-moon','fa-solid fa-cloud','fa-solid fa-mountain','fa-solid fa-fish','fa-solid fa-dove','fa-solid fa-cat','fa-solid fa-dog','fa-solid fa-hat-wizard','fa-solid fa-wand-sparkles'];
-
 var ROLE_PERMS={user:{admin_panel:false,manage_users:false,manage_badges:false,change_uid:false,ban_users:false,delete_users:false,bypass_link_limit:false,bypass_ban:false},moderator:{admin_panel:true,manage_users:false,manage_badges:true,change_uid:false,ban_users:true,delete_users:false,bypass_link_limit:false,bypass_ban:true},admin:{admin_panel:true,manage_users:true,manage_badges:true,change_uid:true,ban_users:true,delete_users:true,bypass_link_limit:true,bypass_ban:true}};
 var PERM_LABELS={admin_panel:'Access Admin Panel',manage_users:'Manage Users',manage_badges:'Manage Badges',change_uid:'Change UIDs',ban_users:'Ban / Unban Users',delete_users:'Delete Users',bypass_link_limit:'Unlimited Links',bypass_ban:'Bypass Ban Restrictions'};
 var PERM_ICONS={admin_panel:'fa-gauge-high',manage_users:'fa-users-gear',manage_badges:'fa-award',change_uid:'fa-fingerprint',ban_users:'fa-gavel',delete_users:'fa-user-slash',bypass_link_limit:'fa-link',bypass_ban:'fa-shield-halved'};
@@ -158,20 +156,11 @@ function curUser(){var s=getSession();if(!s)return Promise.resolve(null);if(user
 function needAuth(){var s=getSession();if(!s){navigateTo('/');showModal(loginHTML());return Promise.resolve(null);}return findById(s.userId).then(function(u){if(!u){clearSession();navigateTo('/');showModal(loginHTML());return null;}if(u.banned&&!hasPerm(u,'bypass_ban')){clearSession();navigateTo('/');toast('Account banned.','error');return null;}return u;});}
 function needAdmin(){return needAuth().then(function(u){if(!u)return null;if(!hasPerm(u,'admin_panel')){navigateTo('/');toast('Access denied.','error');return null;}return u;});}
 
-// Check if a badge is visible (awarded AND not hidden)
-function isBadgeVisible(user,badgeId){
-  return (user.badges||[]).indexOf(badgeId)>-1 && (user.hiddenBadges||[]).indexOf(badgeId)===-1;
-}
+function isBadgeVisible(user,badgeId){return (user.badges||[]).indexOf(badgeId)>-1 && (user.hiddenBadges||[]).indexOf(badgeId)===-1;}
 
-// Get the visible badge list for rendering on profiles
 function getVisibleBadges(user){
-  var awarded=user.badges||[];
-  var hidden=user.hiddenBadges||[];
-  var customs=user.customBadges||[];
-  var result=[];
-  for(var i=0;i<awarded.length;i++){
-    if(hidden.indexOf(awarded[i])===-1) result.push(awarded[i]);
-  }
+  var awarded=user.badges||[];var hidden=user.hiddenBadges||[];var result=[];
+  for(var i=0;i<awarded.length;i++){if(hidden.indexOf(awarded[i])===-1) result.push(awarded[i]);}
   return result;
 }
 
@@ -180,14 +169,12 @@ function signupHTML(){return '<h3 class="font-display font-bold text-xl mb-1">Cr
 
 var P={cv:null,cx:null,pts:[],on:false,raf:0,init:function(){this.cv=document.getElementById('bg-canvas');if(!this.cv)return;this.cx=this.cv.getContext('2d');this.resize();window.addEventListener('resize',this.resize.bind(this));this.make();},resize:function(){if(!this.cv)return;this.cv.width=window.innerWidth;this.cv.height=window.innerHeight;},make:function(){if(!this.cv)return;this.pts=[];var n=Math.min(50,Math.floor(this.cv.width*this.cv.height/22000));for(var i=0;i<n;i++)this.pts.push({x:Math.random()*this.cv.width,y:Math.random()*this.cv.height,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*1.5+.5,a:Math.random()*.5+.2});},start:function(){if(this.on)return;this.on=true;this.loop();},stop:function(){this.on=false;if(this.raf)cancelAnimationFrame(this.raf);if(this.cx&&this.cv)this.cx.clearRect(0,0,this.cv.width,this.cv.height);},loop:function(){if(!this.on||!this.cx||!this.cv)return;var c=this.cx,w=this.cv.width,h=this.cv.height,pts=this.pts;c.clearRect(0,0,w,h);for(var i=0;i<pts.length;i++){var p=pts[i];p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;c.beginPath();c.arc(p.x,p.y,p.r,0,Math.PI*2);c.fillStyle='rgba(125,211,252,'+p.a+')';c.fill();}for(var i=0;i<pts.length;i++)for(var j=i+1;j<pts.length;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<130){c.beginPath();c.moveTo(pts[i].x,pts[i].y);c.lineTo(pts[j].x,pts[j].y);c.strokeStyle='rgba(125,211,252,'+(0.07*(1-d/130))+')';c.lineWidth=.5;c.stroke();}}var self=this;this.raf=requestAnimationFrame(function(){self.loop();});}};
 
-// Render a single badge pill for a badge key (built-in or custom)
 function renderBadgePill(key,user){
   var customs=user.customBadges||[];
   for(var j=0;j<customs.length;j++){
     if(customs[j].id===key){
       var cb=customs[j];
-      var cbIcon=cb.img?'<img src="'+esc(cb.img)+'" style="width:10px;height:10px;border-radius:50%;object-fit:cover" alt="">':'<i class="'+cb.i+'" style="font-size:10px"></i>';
-      return '<span class="badge" style="background:'+cb.c+'20;color:'+cb.c+'" title="'+esc(cb.l)+'">'+cbIcon+'</span>';
+      return '<span class="badge" style="background:'+cb.c+'20;color:'+cb.c+'" title="'+esc(cb.l)+'"><img src="'+esc(cb.img)+'" style="width:10px;height:10px;border-radius:50%;object-fit:cover" alt=""></span>';
     }
   }
   var b=BADGES[key];
@@ -212,11 +199,8 @@ function dashBadges(u){
   var customs=u.customBadges||[];
   var h='<h2 class="font-display font-bold text-2xl mb-1">Badges</h2><p class="text-void-100 text-sm mb-8">Toggle badge visibility on your profile. Built-in badges are awarded by staff.</p>';
 
-  // Only show built-in badges the user has actually been awarded
   var builtInAwarded=[];
-  for(var i=0;i<awarded.length;i++){
-    if(BADGES[awarded[i]]) builtInAwarded.push(awarded[i]);
-  }
+  for(var i=0;i<awarded.length;i++){if(BADGES[awarded[i]]) builtInAwarded.push(awarded[i]);}
 
   h+='<div class="glass rounded-xl p-6 mb-6"><h3 class="font-display font-semibold text-base mb-1 flex items-center gap-2"><i class="fa-solid fa-award text-accent text-sm"></i> Your Badges</h3><p class="text-void-200 text-xs mb-4">These badges were awarded to you. Toggle them to show or hide on your profile.</p>';
 
@@ -226,9 +210,7 @@ function dashBadges(u){
     if(builtInAwarded.length>0){
       h+='<div id="dash-badges-built">';
       for(var i=0;i<builtInAwarded.length;i++){
-        var k=builtInAwarded[i];
-        var b=BADGES[k];
-        var vis=hidden.indexOf(k)===-1; // visible if NOT in hidden
+        var k=builtInAwarded[i];var b=BADGES[k];var vis=hidden.indexOf(k)===-1;
         h+='<div class="perm-row"><div class="flex items-center gap-3"><i class="'+b.i+'" style="color:'+b.c+'"></i><div><span class="text-sm font-medium">'+b.l+'</span></div></div><div class="flex items-center gap-3"><span class="text-xs '+(vis?'text-success':'text-void-200')+'">'+(vis?'Visible':'Hidden')+'</span><div class="perm-toggle '+(vis?'on':'')+'" data-badge="'+k+'"></div></div></div>';
       }
       h+='</div>';
@@ -240,18 +222,15 @@ function dashBadges(u){
     h+='<button class="do-save-dash-badges vl-btn vl-btn-primary mb-8"><i class="fa-solid fa-check"></i> Save Visibility</button>';
   }
 
-  // Custom badges section (premium only)
   if(hasPremium){
-    h+='<div class="glass rounded-xl p-6"><div class="flex items-center justify-between mb-4"><div><h3 class="font-display font-semibold text-base flex items-center gap-2"><i class="fa-solid fa-crown text-warning text-sm"></i> Custom Badges</h3><p class="text-void-200 text-xs mt-1">Create up to 5 custom badges for your profile.</p></div><button class="do-add-custom-badge vl-btn vl-btn-primary vl-btn-sm"><i class="fa-solid fa-plus"></i> Create Badge</button></div>';
+    h+='<div class="glass rounded-xl p-6"><div class="flex items-center justify-between mb-4"><div><h3 class="font-display font-semibold text-base flex items-center gap-2"><i class="fa-solid fa-crown text-warning text-sm"></i> Custom Badges</h3><p class="text-void-200 text-xs mt-1">Create up to 5 custom badges using images or GIFs.</p></div><button class="do-add-custom-badge vl-btn vl-btn-primary vl-btn-sm"><i class="fa-solid fa-plus"></i> Create Badge</button></div>';
     if(!customs.length){
-      h+='<div class="text-center py-8"><i class="fa-solid fa-wand-magic-sparkles text-2xl text-void-300 mb-3"></i><p class="text-void-100 text-sm">No custom badges yet. Create your first one!</p></div>';
+      h+='<div class="text-center py-8"><i class="fa-solid fa-image text-2xl text-void-300 mb-3"></i><p class="text-void-100 text-sm">No custom badges yet. Upload an image or GIF to create one!</p></div>';
     } else {
       h+='<div id="dash-custom-badges">';
       for(var i=0;i<customs.length;i++){
-        var cb=customs[i];
-        var vis=hidden.indexOf(cb.id)===-1;
-        var cbIconHtml=cb.img?'<img src="'+esc(cb.img)+'" style="width:18px;height:18px;border-radius:50%;object-fit:cover" alt="">':'<i class="'+cb.i+'" style="color:'+cb.c+'"></i>';
-        h+='<div class="perm-row"><div class="flex items-center gap-3">'+cbIconHtml+'<div><span class="text-sm font-medium">'+esc(cb.l)+'</span><span class="badge ml-2" style="background:rgba(255,255,255,.05);color:#666;font-size:9px">Custom</span></div></div><div class="flex items-center gap-2"><span class="text-xs '+(vis?'text-success':'text-void-200')+' mr-1">'+(vis?'Visible':'Hidden')+'</span><div class="perm-toggle '+(vis?'on':'')+'" data-badge="'+cb.id+'"></div><button class="do-del-custom-badge vl-btn vl-btn-s vl-btn-sm" style="color:#f55" data-cbid="'+cb.id+'"><i class="fa-solid fa-trash text-xs"></i></button></div></div>';
+        var cb=customs[i];var vis=hidden.indexOf(cb.id)===-1;
+        h+='<div class="perm-row"><div class="flex items-center gap-3"><div class="w-7 h-7 rounded-md overflow-hidden flex-shrink-0"><img src="'+esc(cb.img)+'" class="w-full h-full object-cover" alt="" onerror="this.style.display=\'none\'"></div><div><span class="text-sm font-medium">'+esc(cb.l)+'</span><span class="badge ml-2" style="background:rgba(255,255,255,.05);color:#666;font-size:9px">Custom</span></div></div><div class="flex items-center gap-2"><span class="text-xs '+(vis?'text-success':'text-void-200')+' mr-1">'+(vis?'Visible':'Hidden')+'</span><div class="perm-toggle '+(vis?'on':'')+'" data-badge="'+cb.id+'"></div><button class="do-del-custom-badge vl-btn vl-btn-s vl-btn-sm" style="color:#f55" data-cbid="'+cb.id+'"><i class="fa-solid fa-trash text-xs"></i></button></div></div>';
       }
       h+='</div>';
     }
@@ -267,14 +246,7 @@ function dashAppearance(u){var h='<h2 class="font-display font-bold text-2xl mb-
 
 function dashSettings(u){var h='<h2 class="font-display font-bold text-2xl mb-1">Settings</h2><p class="text-void-100 text-sm mb-8">Manage your account</p><div class="max-w-lg space-y-8"><div class="glass rounded-xl p-6"><h3 class="font-display font-semibold mb-1">Change Password</h3><p class="text-void-100 text-xs mb-4">Update your password</p><form id="frm-pw" class="space-y-4"><input class="vl-input" name="curPw" type="password" placeholder="Current password" required><input class="vl-input" name="newPw" type="password" placeholder="New password (min 6)" required minlength="6"><button type="submit" class="vl-btn vl-btn-secondary"><i class="fa-solid fa-key"></i> Update Password</button></form></div><div class="glass rounded-xl p-6"><h3 class="font-display font-semibold mb-1">Account Info</h3><div class="space-y-2 text-sm mt-3"><div class="flex justify-between"><span class="text-void-100">Email</span><span>'+esc(u.email)+'</span></div><div class="flex justify-between"><span class="text-void-100">UID</span><code class="text-accent">'+u.uid+'</code></div><div class="flex justify-between"><span class="text-void-100">Role</span><span class="capitalize text-accent">'+u.role+'</span></div><div class="flex justify-between"><span class="text-void-100">Joined</span><span>'+new Date(u.createdAt).toLocaleDateString()+'</span></div><div class="flex justify-between"><span class="text-void-100">Views</span><span>'+(u.views||0)+'</span></div></div></div>';if(hasPerm(u,'admin_panel'))h+='<a href="/admin" class="vl-btn vl-btn-secondary"><i class="fa-solid fa-shield-halved"></i> Open Admin Panel</a>';h+='<div class="border-t border-void-400 pt-6"><button class="do-del-acct vl-btn vl-btn-danger"><i class="fa-solid fa-trash"></i> Delete Account</button></div></div>';return h;}
 
-// Get badge HTML for admin table (respects hidden)
-function getUserBadgeHtml(user){
-  var visible=getVisibleBadges(user);
-  if(!visible.length) return '<span class="text-void-200 text-xs">None</span>';
-  var bH='';
-  for(var j=0;j<visible.length;j++){bH+=renderBadgePill(visible[j],user);}
-  return bH;
-}
+function getUserBadgeHtml(user){var visible=getVisibleBadges(user);if(!visible.length) return '<span class="text-void-200 text-xs">None</span>';var bH='';for(var j=0;j<visible.length;j++){bH+=renderBadgePill(visible[j],user);}return bH;}
 
 function renderAdminTable(admin,users){P.start();var myPerms=admin.permissions||ROLE_PERMS[admin.role]||ROLE_PERMS.user;var h='<div class="mobile-header fixed top-0 left-0 right-0 z-50 glass-strong h-14 items-center px-4 gap-3"><a href="/" class="font-display font-bold text-sm">'+brandLogo()+'</a><span class="text-xs text-accent font-semibold">Admin</span><div class="flex-1"></div><a href="/dashboard" class="vl-btn vl-btn-s vl-btn-sm"><i class="fa-solid fa-arrow-left"></i></a></div><aside class="dash-sidebar"><div class="px-6 mb-8"><a href="/" class="font-display font-bold text-lg tracking-tight block mb-1">'+brandLogo()+'</a><p class="text-xs text-accent font-semibold">Admin Panel</p></div><nav><a href="/admin" class="active"><i class="fa-solid fa-users w-5 text-center"></i>All Users</a>';if(myPerms.manage_users||myPerms.manage_badges||myPerms.ban_users)h+='<a href="/admin/roles" class="mt-2"><i class="fa-solid fa-user-shield w-5 text-center"></i>Roles & Permissions</a>';h+='<a href="/dashboard" class="mt-2"><i class="fa-solid fa-arrow-left w-5 text-center"></i>Back to Dashboard</a></nav><div class="px-6 pt-8 mt-auto"><div class="border-t border-void-400 pt-4"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center text-sm font-bold text-accent">A</div><div><div class="text-sm font-semibold">'+esc(admin.displayName||admin.username)+'</div><div class="text-xs text-accent">'+admin.role+'</div></div></div></div></div></aside>';h+='<main class="dash-main pt-4 md:pt-8"><div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8"><div><h2 class="font-display font-bold text-2xl mb-1">User Management</h2><p class="text-void-100 text-sm">'+users.length+' total users</p></div><input id="admin-search" class="vl-input sm:w-64" placeholder="Search users..."></div><div class="glass rounded-2xl overflow-hidden"><div class="overflow-x-auto"><table class="admin-table" id="adm-tbl"><thead><tr><th>User</th><th>UID</th><th>Role</th><th>Badges</th><th>Status</th><th>Actions</th></tr></thead><tbody>';for(var i=0;i<users.length;i++){var u=users[i];var avc=u.avatar?'<img src="'+esc(u.avatar)+'" class="w-full h-full rounded-full object-cover" alt="">':esc((u.displayName||u.username)[0].toUpperCase());var rc={admin:'text-accent',moderator:'text-purple-400',user:'text-void-100'};var acts='<div class="flex gap-1 flex-wrap">';if(u.id!==admin.id){if(myPerms.ban_users)acts+='<button class="do-ban vl-btn vl-btn-sm '+(u.banned?'vl-btn-success':'vl-btn-danger')+'" data-uid="'+u.id+'"><i class="fa-solid '+(u.banned?'fa-unlock':'fa-ban')+'"></i></button>';if(myPerms.change_uid)acts+='<button class="do-uid vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-fingerprint"></i></button>';if(myPerms.manage_badges)acts+='<button class="do-badges vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-award"></i></button>';if(myPerms.manage_users)acts+='<button class="do-roles vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-user-shield"></i></button>';if(myPerms.delete_users&&!hasPerm(u,'bypass_ban'))acts+='<button class="do-adm-del vl-btn vl-btn-s vl-btn-sm" style="color:#f55" data-uid="'+u.id+'"><i class="fa-solid fa-trash"></i></button>';}else acts='<span class="text-void-200 text-xs px-2">You</span>';acts+='</div>';h+='<tr data-search="'+esc(u.username+' '+u.uid+' '+u.role).toLowerCase()+'"><td><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-void-400 flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden">'+avc+'</div><div><div class="font-semibold text-sm">'+esc(u.displayName||u.username)+'</div><div class="text-void-100 text-xs">@'+esc(u.username)+'</div></div></div></td><td><code class="text-xs font-mono text-void-100">'+u.uid+'</code></td><td><span class="badge '+(rc[u.role]||'text-void-100')+'" style="background:'+(u.role==='admin'?'rgba(125,211,252,.1)':u.role==='moderator'?'rgba(168,85,247,.1)':'rgba(255,255,255,.05)')+'">'+u.role+'</span></td><td><div class="flex gap-1 flex-wrap">'+getUserBadgeHtml(u)+'</div></td><td>'+(u.banned?'<span class="badge" style="background:rgba(255,45,45,.15);color:#ff5555"><i class="fa-solid fa-ban" style="font-size:9px"></i> Banned</span>':'<span class="badge" style="background:rgba(0,255,136,.1);color:#00ff88"><i class="fa-solid fa-circle" style="font-size:6px"></i> Active</span>')+'</td><td>'+acts+'</td></tr>';}h+='</tbody></table></div></div></main>';return h;}
 
@@ -282,12 +254,8 @@ function renderRolesPage(admin,users){P.start();var h='<div class="mobile-header
 
 // ==================== ROUTER ====================
 function router(){
-  var path=window.location.pathname;
-  var parts=path.replace(/^\/|\/$/g,'').split('/');
-  var route=parts[0]||'';
-  var param=parts.slice(1).join('/');
-  var app=document.getElementById('app');
-  if(!app)return;
+  var path=window.location.pathname;var parts=path.replace(/^\/|\/$/g,'').split('/');var route=parts[0]||'';var param=parts.slice(1).join('/');
+  var app=document.getElementById('app');if(!app)return;
   curUser().then(function(user){
     if(route===''||route==='home'){app.innerHTML=renderHome(user);}
     else if(route==='dashboard'){if(!user){navigateTo('/');showModal(loginHTML());return;}app.innerHTML=renderDashboard(user,param);}
@@ -300,8 +268,7 @@ function router(){
 
 // ==================== EVENT DELEGATION ====================
 function bindEvents(){
-  var app=document.getElementById('app');
-  if(!app)return;
+  var app=document.getElementById('app');if(!app)return;
 
   document.addEventListener('click',function(e){
     var el=e.target.closest('.open-login');if(el){e.preventDefault();showModal(loginHTML());return;}
@@ -327,57 +294,109 @@ function bindEvents(){
       e.preventDefault();var ses=getSession();if(!ses)return;var curPw=frm.querySelector('[name=curPw]').value;var newPw=frm.querySelector('[name=newPw]').value;if(newPw.length<6){toast('Password must be at least 6 characters.','error');return;}findById(ses.userId).then(function(u){if(!u)return;if(u.password!==hashPw(curPw)){toast('Current password incorrect.','error');return;}updateUser(u.id,{password:hashPw(newPw)}).then(function(){toast('Password updated!','success');frm.reset();});});return;
     }
 
+    // Custom badge form — image only, no icon picker
     if(frm.id==='frm-custom-badge'){
-      e.preventDefault();var ses=getSession();if(!ses)return;var name=frm.querySelector('[name=cbName]').value.trim();var color=frm.querySelector('[name=cbColor]').value;var imgUrl=frm.querySelector('[name=cbImg]').value.trim();var errEl=frm.querySelector('#cb-err');if(!name){errEl.textContent='Badge name is required.';errEl.classList.remove('hidden');return;}errEl.classList.add('hidden');var selIcon=frm.querySelector('.icon-pick.sel');var icon=selIcon?selIcon.getAttribute('data-icon'):'fa-solid fa-star';findById(ses.userId).then(function(u){if(!u)return;var customs=u.customBadges||[];if(customs.length>=5){errEl.textContent='Maximum 5 custom badges allowed.';errEl.classList.remove('hidden');return;}var newBadge={id:'cb_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),l:name,i:icon,c:color,img:imgUrl||''};customs.push(newBadge);updateUser(u.id,{customBadges:customs}).then(function(){closeModal();toast('Custom badge created!','success');router();});});return;
+      e.preventDefault();var ses=getSession();if(!ses)return;
+      var name=frm.querySelector('[name=cbName]').value.trim();
+      var color=frm.querySelector('[name=cbColor]').value;
+      var imgUrl=frm.querySelector('[name=cbImg]').value.trim();
+      var errEl=frm.querySelector('#cb-err');
+      if(!name){errEl.textContent='Badge name is required.';errEl.classList.remove('hidden');return;}
+      if(!imgUrl){errEl.textContent='Image URL is required.';errEl.classList.remove('hidden');return;}
+      errEl.classList.add('hidden');
+      findById(ses.userId).then(function(u){
+        if(!u)return;
+        var customs=u.customBadges||[];
+        if(customs.length>=5){errEl.textContent='Maximum 5 custom badges allowed.';errEl.classList.remove('hidden');return;}
+        var newBadge={id:'cb_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),l:name,i:'',c:color,img:imgUrl};
+        customs.push(newBadge);
+        updateUser(u.id,{customBadges:customs}).then(function(){closeModal();toast('Custom badge created!','success');router();});
+      });
+      return;
     }
   });
 
   document.addEventListener('click',function(e){
     var el;
 
-    el=e.target.closest('#icon-grid .icon-pick');
-    if(el){document.querySelectorAll('#icon-grid .icon-pick').forEach(function(p){p.classList.remove('sel');});el.classList.add('sel');return;}
-
     el=e.target.closest('.do-logout');
     if(el){e.preventDefault();clearSession();toast('Logged out.','info');navigateTo('/');return;}
 
-    // Dashboard badge toggles
+    // Dashboard badge toggles — built-in
     el=e.target.closest('#dash-badges-built .perm-toggle');
     if(el){el.classList.toggle('on');var label=el.parentElement.querySelector('.text-xs');if(label){label.textContent=el.classList.contains('on')?'Visible':'Hidden';label.className='text-xs '+(el.classList.contains('on')?'text-success':'text-void-200');}return;}
 
+    // Dashboard badge toggles — custom
     el=e.target.closest('#dash-custom-badges .perm-toggle');
     if(el){el.classList.toggle('on');var label=el.parentElement.querySelector('.text-xs');if(label){label.textContent=el.classList.contains('on')?'Visible':'Hidden';label.className='text-xs '+(el.classList.contains('on')?'text-success':'text-void-200');}return;}
 
-    // Save dashboard badge VISIBILITY (writes to hiddenBadges, NOT badges)
+    // Save dashboard badge visibility
     el=e.target.closest('.do-save-dash-badges');
     if(el){
       var ses=getSession();if(!ses)return;
       findById(ses.userId).then(function(u){
         if(!u)return;
-        var awarded=u.badges||[];
-        var customs=u.customBadges||[];
         var hidden=[];
-        // Check built-in toggles: OFF = hidden
-        document.querySelectorAll('#dash-badges-built .perm-toggle').forEach(function(t){
-          if(!t.classList.contains('on')) hidden.push(t.getAttribute('data-badge'));
-        });
-        // Check custom toggles: OFF = hidden
-        document.querySelectorAll('#dash-custom-badges .perm-toggle').forEach(function(t){
-          if(!t.classList.contains('on')) hidden.push(t.getAttribute('data-badge'));
-        });
+        document.querySelectorAll('#dash-badges-built .perm-toggle').forEach(function(t){if(!t.classList.contains('on'))hidden.push(t.getAttribute('data-badge'));});
+        document.querySelectorAll('#dash-custom-badges .perm-toggle').forEach(function(t){if(!t.classList.contains('on'))hidden.push(t.getAttribute('data-badge'));});
         updateUser(u.id,{hiddenBadges:hidden}).then(function(){toast('Badge visibility saved!','success');router();});
       });
       return;
     }
 
-    // Add custom badge
+    // Add custom badge — image/GIF only modal
     el=e.target.closest('.do-add-custom-badge');
     if(el){
-      var iconGrid='<div class="grid grid-cols-8 gap-2 mb-4" id="icon-grid">';
-      for(var i=0;i<ICON_OPTIONS.length;i++){iconGrid+='<div class="icon-pick'+(i===0?' sel':'')+'" data-icon="'+ICON_OPTIONS[i]+'"><i class="'+ICON_OPTIONS[i]+'"></i></div>';}
-      iconGrid+='</div>';
-      showModal('<h3 class="font-display font-bold text-xl mb-1">Create Custom Badge</h3><p class="text-void-100 text-sm mb-6">Design your own badge (max 5)</p><form id="frm-custom-badge"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Badge Name</label><input class="vl-input mb-4" name="cbName" placeholder="My Cool Badge" required maxlength="20"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Icon</label>'+iconGrid+'<label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Color</label><div class="flex items-center gap-3 mb-4"><input type="color" name="cbColor" value="#7dd3fc" class="w-12 h-10 rounded-lg cursor-pointer border-0 bg-transparent"><code class="text-sm font-mono text-void-100">#7dd3fc</code></div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Image URL <span class="text-void-200 font-normal">(optional, overrides icon)</span></label><input class="vl-input mb-2" name="cbImg" placeholder="https://example.com/badge.png"><div id="cb-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center"><i class="fa-solid fa-plus"></i> Create Badge</button></form>');
-      setTimeout(function(){var ci=document.querySelector('#frm-custom-badge [name=cbColor]');if(ci)ci.addEventListener('input',function(){var code=this.parentElement.querySelector('code');if(code)code.textContent=this.value;});},50);
+      showModal(
+        '<h3 class="font-display font-bold text-xl mb-1">Create Custom Badge</h3>'+
+        '<p class="text-void-100 text-sm mb-6">Upload an image or GIF for your badge (max 5)</p>'+
+        '<form id="frm-custom-badge">'+
+          '<label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Badge Name</label>'+
+          '<input class="vl-input mb-4" name="cbName" placeholder="My Cool Badge" required maxlength="20">'+
+          '<label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Image / GIF URL</label>'+
+          '<input class="vl-input mb-3" name="cbImg" placeholder="https://example.com/badge.png" required>'+
+          '<p class="text-void-200 text-xs mb-4">Use a direct link to a PNG, GIF, or WebP image. Square images work best.</p>'+
+          '<div id="cb-preview-area" class="mb-4" style="display:none">'+
+            '<label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Preview</label>'+
+            '<div class="cb-preview" style="width:48px;height:48px;border-radius:12px;border:2px solid #2a2a2a;overflow:hidden">'+
+              '<img id="cb-preview-img" src="" style="width:100%;height:100%;object-fit:cover" alt="" onerror="this.parentElement.style.display=\'none\'">'+
+            '</div>'+
+          '</div>'+
+          '<label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Label Color</label>'+
+          '<div class="flex items-center gap-3 mb-2">'+
+            '<input type="color" name="cbColor" value="#7dd3fc" class="w-12 h-10 rounded-lg cursor-pointer border-0 bg-transparent">'+
+            '<code class="text-sm font-mono text-void-100">#7dd3fc</code>'+
+          '</div>'+
+          '<p class="text-void-200 text-xs mb-4">This color is used for the badge label background on hover.</p>'+
+          '<div id="cb-err" class="text-red-400 text-xs mb-4 hidden"></div>'+
+          '<button type="submit" class="vl-btn vl-btn-primary w-full justify-center"><i class="fa-solid fa-plus"></i> Create Badge</button>'+
+        '</form>'
+      );
+      // Live preview on image URL input
+      setTimeout(function(){
+        var imgInput=document.querySelector('#frm-custom-badge [name=cbImg]');
+        var previewArea=document.getElementById('cb-preview-area');
+        var previewImg=document.getElementById('cb-preview-img');
+        var colorInput=document.querySelector('#frm-custom-badge [name=cbColor]');
+        if(imgInput){
+          imgInput.addEventListener('input',function(){
+            var url=this.value.trim();
+            if(url){
+              previewImg.src=url;
+              previewArea.style.display='block';
+              previewImg.onerror=function(){previewArea.style.display='none';};
+            } else {
+              previewArea.style.display='none';
+            }
+          });
+        }
+        if(colorInput){
+          colorInput.addEventListener('input',function(){
+            var code=this.parentElement.querySelector('code');
+            if(code)code.textContent=this.value;
+          });
+        }
+      },50);
       return;
     }
 
@@ -421,7 +440,7 @@ function bindEvents(){
     el=e.target.closest('.do-uid');
     if(el){var uid=el.getAttribute('data-uid');findById(uid).then(function(target){if(!target)return;showModal('<h3 class="font-display font-bold text-xl mb-1">Change UID</h3><p class="text-void-100 text-sm mb-4">Current: <code class="text-accent">'+target.uid+'</code></p><form id="frm-uid"><input class="vl-input mb-4" name="newUid" placeholder="#123" required><div id="uid-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center">Update UID</button></form>');setTimeout(function(){var f=document.getElementById('frm-uid');if(f)f.addEventListener('submit',function(ev){ev.preventDefault();var newUid=f.querySelector('[name=newUid]').value.trim();var errEl=f.querySelector('#uid-err');if(!/^#\d+$/.test(newUid)){errEl.textContent='UID must be #123 format';errEl.classList.remove('hidden');return;}findByUID(newUid).then(function(ex){if(ex){errEl.textContent='UID already in use.';errEl.classList.remove('hidden');return;}updateUser(uid,{uid:newUid}).then(function(){closeModal();toast('UID updated!','success');router();});});});},50);});return;}
 
-    // Admin: manage badges — shows ALL badges for awarding, respects hiddenBadges for display
+    // Admin: manage badges
     el=e.target.closest('.do-badges');
     if(el){
       var uid=el.getAttribute('data-uid');
@@ -433,7 +452,7 @@ function bindEvents(){
         var customs=target.customBadges||[];
         if(customs.length>0){
           html+='<h4 class="font-display font-semibold text-sm mt-6 mb-3 text-void-100 flex items-center gap-2"><i class="fa-solid fa-crown text-warning text-xs"></i> Custom Badges</h4><div class="space-y-1" id="admin-custom-badges">';
-          for(var i=0;i<customs.length;i++){var cb=customs[i];var has=(target.badges||[]).indexOf(cb.id)>-1;var cbI=cb.img?'<img src="'+esc(cb.img)+'" style="width:14px;height:14px;border-radius:50%;object-fit:cover" alt="">':'<i class="'+cb.i+'" style="color:'+cb.c+'"></i>';html+='<label class="flex items-center justify-between p-3 rounded-lg bg-white/5 cursor-pointer hover:bg-white/8 transition-colors"><div class="flex items-center gap-3">'+cbI+'<span class="text-sm font-medium">'+esc(cb.l)+' <span class="text-void-200 text-xs">(custom)</span></span></div><div class="perm-toggle '+(has?'on':'')+'" data-badge="'+cb.id+'"></div></label>';}
+          for(var i=0;i<customs.length;i++){var cb=customs[i];var has=(target.badges||[]).indexOf(cb.id)>-1;html+='<label class="flex items-center justify-between p-3 rounded-lg bg-white/5 cursor-pointer hover:bg-white/8 transition-colors"><div class="flex items-center gap-3"><div class="w-5 h-5 rounded overflow-hidden flex-shrink-0"><img src="'+esc(cb.img)+'" class="w-full h-full object-cover" alt=""></div><span class="text-sm font-medium">'+esc(cb.l)+' <span class="text-void-200 text-xs">(custom)</span></span></div><div class="perm-toggle '+(has?'on':'')+'" data-badge="'+cb.id+'"></div></label>';}
           html+='</div>';
         }
         html+='<button class="do-save-badges vl-btn vl-btn-primary w-full justify-center mt-6" data-uid="'+uid+'">Save Badges</button>';
@@ -448,14 +467,12 @@ function bindEvents(){
     el=e.target.closest('#admin-custom-badges .perm-toggle');
     if(el){el.classList.toggle('on');return;}
 
-    // Admin save badges — writes to BADGES array (full control)
     el=e.target.closest('.do-save-badges');
     if(el){
-      var uid=el.getAttribute('data-uid');
-      var badges=[];
+      var uid=el.getAttribute('data-uid');var badges=[];
       document.querySelectorAll('#badge-list .perm-toggle.on').forEach(function(t){badges.push(t.getAttribute('data-badge'));});
-      var custToggles=document.querySelectorAll('#admin-custom-badges .perm-toggle.on');
-      if(custToggles.length)custToggles.forEach(function(t){badges.push(t.getAttribute('data-badge'));});
+      var ct=document.querySelectorAll('#admin-custom-badges .perm-toggle.on');
+      if(ct.length)ct.forEach(function(t){badges.push(t.getAttribute('data-badge'));});
       updateUser(uid,{badges:badges}).then(function(){closeModal();toast('Badges updated!','success');router();});
       return;
     }
