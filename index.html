@@ -84,7 +84,8 @@ textarea.vl-input{resize:vertical;min-height:80px}
 select.vl-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23888' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
 .vl-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;transition:all .2s;border:none;font-family:'DM Sans',sans-serif;text-decoration:none;color:#e8e8e8;background:transparent;line-height:1.4}
 .vl-btn:active{transform:scale(.97)}
-.vl-btn-primary{background:#7dd3fc;color:#050505}.vl-btn-primary:hover{background:#38bdf8;box-shadow:0 4px 20px rgba(125,211,252,.3)}
+.vl-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.vl-btn-primary{background:#7dd3fc;color:#050505}.vl-btn-primary:hover:not(:disabled){background:#38bdf8;box-shadow:0 4px 20px rgba(125,211,252,.3)}
 .vl-btn-secondary{background:rgba(255,255,255,.06);border:1px solid #1e1e1e}.vl-btn-secondary:hover{background:rgba(255,255,255,.1);border-color:#333}
 .vl-btn-s{background:transparent;color:#888;padding:8px 12px}.vl-btn-s:hover{color:#e8e8e8;background:rgba(255,255,255,.04)}
 .vl-btn-sm{padding:6px 14px;font-size:12px;border-radius:8px}
@@ -145,7 +146,6 @@ var FIREBASE_CONFIG={apiKey:"AIzaSyDbvpzYvPDxzYBXr7-WLFWabmeIRkJlTnw",authDomain
 
 window.onerror=function(m){try{var d=document.getElementById('app');if(d)d.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:40px;text-align:center"><h2 style="color:#7dd3fc;font-family:Space Grotesk,sans-serif;font-size:22px;margin-bottom:12px">Error</h2><p style="color:#888;font-size:13px;max-width:500px;word-break:break-all">'+m+'</p></div>';}catch(e){}};
 
-function closeModal(){var m=document.getElementById('modal-act');if(m)m.remove();}
 var db=null;
 
 function initFirebase(){
@@ -168,6 +168,8 @@ function toast(msg,type){var box=document.getElementById('toast-container');if(!
 
 function showModal(html){closeModal();var ov=document.createElement('div');ov.className='modal-overlay';ov.id='modal-act';ov.innerHTML='<div class="modal-box">'+html+'</div>';ov.addEventListener('click',function(e){if(e.target===ov)closeModal();});document.body.appendChild(ov);}
 
+function closeModal(){var m=document.getElementById('modal-act');if(m)m.remove();}
+
 var ROLE_PERMS={user:{admin_panel:false,manage_users:false,manage_badges:false,change_uid:false,ban_users:false,delete_users:false,bypass_link_limit:false,bypass_ban:false},moderator:{admin_panel:true,manage_users:false,manage_badges:true,change_uid:false,ban_users:true,delete_users:false,bypass_link_limit:false,bypass_ban:true},admin:{admin_panel:true,manage_users:true,manage_badges:true,change_uid:true,ban_users:true,delete_users:true,bypass_link_limit:true,bypass_ban:true}};
 var PERM_LABELS={admin_panel:'Access Admin Panel',manage_users:'Manage Users',manage_badges:'Manage Badges',change_uid:'Change UIDs',ban_users:'Ban / Unban Users',delete_users:'Delete Users',bypass_link_limit:'Unlimited Links',bypass_ban:'Bypass Ban Restrictions'};
 var PERM_ICONS={admin_panel:'fa-gauge-high',manage_users:'fa-users-gear',manage_badges:'fa-award',change_uid:'fa-fingerprint',ban_users:'fa-gavel',delete_users:'fa-user-slash',bypass_link_limit:'fa-link',bypass_ban:'fa-shield-halved'};
@@ -175,7 +177,6 @@ var BADGES={verified:{l:'Verified',i:'fa-solid fa-circle-check',c:'#7dd3fc'},dev
 var BGM={void:'bg-preset-void',sunset:'bg-preset-sunset',ocean:'bg-preset-ocean',forest:'bg-preset-forest',midnight:'bg-preset-midnight',neon:'bg-preset-neon'};
 var BGL={void:'Void',sunset:'Sunset',ocean:'Ocean',forest:'Forest',midnight:'Midnight',neon:'Neon'};
 
-/* ===== DISPLAY NAME EFFECTS ===== */
 var DISPLAY_EFFECTS={
   none:{name:'None',icon:'fa-ban',cls:''},
   sparkle:{name:'Sparkles',icon:'fa-sparkles',cls:'effect-sparkle',sparkles:true},
@@ -198,102 +199,25 @@ function buildEffectHTML(text,effectKey){
   return '<span class="'+fx.cls+'">'+esc(text)+'</span>';
 }
 
-/* ===== MUSIC PLATFORM DETECTION & EMBED ===== */
-var MUSIC_PLATFORMS={
-  youtube:{name:'YouTube',icon:'fa-brands fa-youtube',color:'#ff0000'},
-  soundcloud:{name:'SoundCloud',icon:'fa-brands fa-soundcloud',color:'#ff5500'},
-  spotify:{name:'Spotify',icon:'fa-brands fa-spotify',color:'#1db954'},
-  apple:{name:'Apple Music',icon:'fa-brands fa-apple',color:'#fc3c44'},
-  tidal:{name:'Tidal',icon:'fa-solid fa-water',color:'#00ffff'},
-  deezer:{name:'Deezer',icon:'fa-solid fa-headphones',color:'#feaa2d'},
-  bandcamp:{name:'Bandcamp',icon:'fa-brands fa-bandcamp',color:'#629aa9'}
-};
+var MUSIC_PLATFORMS={youtube:{name:'YouTube',icon:'fa-brands fa-youtube',color:'#ff0000'},soundcloud:{name:'SoundCloud',icon:'fa-brands fa-soundcloud',color:'#ff5500'},spotify:{name:'Spotify',icon:'fa-brands fa-spotify',color:'#1db954'},apple:{name:'Apple Music',icon:'fa-brands fa-apple',color:'#fc3c44'},tidal:{name:'Tidal',icon:'fa-solid fa-water',color:'#00ffff'},deezer:{name:'Deezer',icon:'fa-solid fa-headphones',color:'#feaa2d'},bandcamp:{name:'Bandcamp',icon:'fa-brands fa-bandcamp',color:'#629aa9'}};
 
-function detectMusicPlatform(url){
-  if(!url)return null;var u=url.toLowerCase();
-  if(u.indexOf('youtube.com')>-1||u.indexOf('youtu.be')>-1)return 'youtube';
-  if(u.indexOf('soundcloud.com')>-1)return 'soundcloud';
-  if(u.indexOf('spotify.com')>-1)return 'spotify';
-  if(u.indexOf('music.apple.com')>-1||u.indexOf('itunes.apple.com')>-1)return 'apple';
-  if(u.indexOf('tidal.com')>-1)return 'tidal';
-  if(u.indexOf('deezer.com')>-1)return 'deezer';
-  if(u.indexOf('bandcamp.com')>-1)return 'bandcamp';
-  return null;
-}
+function detectMusicPlatform(url){if(!url)return null;var u=url.toLowerCase();if(u.indexOf('youtube.com')>-1||u.indexOf('youtu.be')>-1)return 'youtube';if(u.indexOf('soundcloud.com')>-1)return 'soundcloud';if(u.indexOf('spotify.com')>-1)return 'spotify';if(u.indexOf('music.apple.com')>-1||u.indexOf('itunes.apple.com')>-1)return 'apple';if(u.indexOf('tidal.com')>-1)return 'tidal';if(u.indexOf('deezer.com')>-1)return 'deezer';if(u.indexOf('bandcamp.com')>-1)return 'bandcamp';return null;}
 
 function buildMusicEmbed(url){
   if(!url)return '';
   var u=url.toLowerCase();
-
-  // YouTube — autoplay, loop single video, no related, play full
-  if(u.indexOf('youtube.com/watch')>-1){
-    var m=url.match(/[?&]v=([^&]+)/);
-    if(m)return '<iframe src="https://www.youtube.com/embed/'+m[1]+'?autoplay=1&loop=1&playlist='+m[1]+'&rel=0&modestbranding=1&disablekb=0&fs=0&playsinline=1" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media" allowfullscreen></iframe>';
-  }
-  if(u.indexOf('youtu.be/')>-1){
-    var id=url.split('youtu.be/')[1].split('?')[0].split('#')[0];
-    if(id)return '<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&loop=1&playlist='+id+'&rel=0&modestbranding=1&disablekb=0&fs=0&playsinline=1" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media" allowfullscreen></iframe>';
-  }
-  if(u.indexOf('youtube.com/shorts/')>-1){
-    var id=url.split('youtube.com/shorts/')[1].split('?')[0].split('#')[0];
-    if(id)return '<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&loop=1&playlist='+id+'&rel=0&modestbranding=1&disablekb=0&fs=0&playsinline=1" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media" allowfullscreen></iframe>';
-  }
-
-  // SoundCloud — autoplay, full track, no comments, visual mode
-  if(u.indexOf('soundcloud.com')>-1){
-    return '<iframe src="https://w.soundcloud.com/player/?url='+encodeURIComponent(url)+'&color=%237dd3fc&auto_play=true&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=true&single_active=true" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay"></iframe>';
-  }
-
-  // Spotify — autoplay, dark theme, full playback
-  if(u.indexOf('open.spotify.com/')>-1){
-    var parts=url.replace('https://open.spotify.com/','').replace('http://open.spotify.com/','').split('/');
-    if(parts.length>=2){
-      var type=parts[0];var id=parts[1].split('?')[0];
-      if(['track','album','playlist','episode','show'].indexOf(type)>-1&&id){
-        var spH=type==='track'?152:type==='album'?352:352;
-        return '<iframe src="https://open.spotify.com/embed/'+type+'/'+id+'?utm_source=generator&theme=0" style="width:100%;height:'+spH+'px;border:none;border-radius:12px;" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>';
-      }
-    }
-  }
-
-  // Apple Music — autoplay, dark theme, full song
-  if(u.indexOf('music.apple.com/')>-1){
-    var embedUrl=url.replace('https://music.apple.com/','https://embed.music.apple.com/');
-    return '<iframe src="'+embedUrl+'?theme=dark" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media"></iframe>';
-  }
-
-  // Tidal — autoplay, full track
-  if(u.indexOf('tidal.com/')>-1){
-    var m=url.match(/tidal\.com\/(?:browse\/)?(track|album|playlist)\/(\d+)/);
-    if(m)return '<iframe src="https://tidal.com/embed/?id='+m[2]+'&type='+m[1]+'" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media"></iframe>';
-  }
-
-  // Deezer — autoplay, dark theme, full track
-  if(u.indexOf('deezer.com/')>-1){
-    var m=url.match(/deezer\.com\/(?:\w+\/)?(track|album|playlist)\/(\d+)/);
-    if(m)return '<iframe src="https://widget.deezer.com/widget/dark/'+m[1]+'/'+m[2]+'" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>';
-  }
-
-  // Bandcamp
-  if(u.indexOf('bandcamp.com')>-1){
-    return '<div style="width:100%;height:120px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:rgba(255,255,255,.03);border:1px dashed #333;color:#666;font-size:13px;text-align:center;padding:16px"><div><i class="fa-brands fa-bandcamp text-2xl mb-2" style="display:block;color:#629aa9"></i>Bandcamp embeds require the<br>album/track embed URL.</div></div>';
-  }
-
-  return '<div style="width:100%;height:80px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:rgba(255,255,255,.03);border:1px dashed #333;color:#555;font-size:13px"><i class="fa-solid fa-circle-xmark" style="margin-right:8px;color:#f55"></i>Unsupported music link</div>';
+  if(u.indexOf('youtube.com/watch')>-1){var m=url.match(/[?&]v=([^&]+)/);if(m)return '<iframe src="https://www.youtube.com/embed/'+m[1]+'?autoplay=1&loop=1&playlist='+m[1]+'&rel=0&modestbranding=1&disablekb=0&fs=0&playsinline=1" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media" allowfullscreen></iframe>';}
+  if(u.indexOf('youtu.be/')>-1){var id=url.split('youtu.be/')[1].split('?')[0].split('#')[0];if(id)return '<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&loop=1&playlist='+id+'&rel=0&modestbranding=1&disablekb=0&fs=0&playsinline=1" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media" allowfullscreen></iframe>';}
+  if(u.indexOf('youtube.com/shorts/')>-1){var id=url.split('youtube.com/shorts/')[1].split('?')[0].split('#')[0];if(id)return '<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&loop=1&playlist='+id+'&rel=0&modestbranding=1&disablekb=0&fs=0&playsinline=1" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media" allowfullscreen></iframe>';}
+  if(u.indexOf('soundcloud.com')>-1){return '<iframe src="https://w.soundcloud.com/player/?url='+encodeURIComponent(url)+'&color=%237dd3fc&auto_play=true&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=true&single_active=true" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay"></iframe>';}
+  if(u.indexOf('open.spotify.com/')>-1){var parts=url.replace('https://open.spotify.com/','').replace('http://open.spotify.com/','').split('/');if(parts.length>=2){var type=parts[0];var id=parts[1].split('?')[0];if(['track','album','playlist','episode','show'].indexOf(type)>-1&&id){var spH=type==='track'?152:type==='album'?352:352;return '<iframe src="https://open.spotify.com/embed/'+type+'/'+id+'?utm_source=generator&theme=0" style="width:100%;height:'+spH+'px;border:none;border-radius:12px;" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>';}}}
+  if(u.indexOf('music.apple.com/')>-1){var embedUrl=url.replace('https://music.apple.com/','https://embed.music.apple.com/');return '<iframe src="'+embedUrl+'?theme=dark" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media"></iframe>';}
+  if(u.indexOf('tidal.com/')>-1){var m=url.match(/tidal\.com\/(?:browse\/)?(track|album|playlist)\/(\d+)/);if(m)return '<iframe src="https://tidal.com/embed/?id='+m[2]+'&type='+m[1]+'" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media"></iframe>';}
+  if(u.indexOf('deezer.com/')>-1){var m=url.match(/deezer\.com\/(?:\w+\/)?(track|album|playlist)\/(\d+)/);if(m)return '<iframe src="https://widget.deezer.com/widget/dark/'+m[1]+'/'+m[2]+'" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>';}
+  return '';
 }
 
-function buildProfileMusicHTML(url,accent){
-  if(!url)return '';
-  var plat=detectMusicPlatform(url);
-  var p=MUSIC_PLATFORMS[plat];
-  var embed=buildMusicEmbed(url);
-  if(!embed)return '';
-  var eqBars='<div style="display:flex;align-items:flex-end;gap:2px;height:18px"><div class="music-eq-bar"></div><div class="music-eq-bar"></div><div class="music-eq-bar"></div><div class="music-eq-bar"></div></div>';
-  var platLabel=p?'<div class="music-platform-badge" style="background:'+p.color+'18;color:'+p.color+'"><i class="'+p.icon+'" style="font-size:10px"></i>'+p.name+'</div>':'';
-  return '<div class="anim-fade" style="animation-delay:.15s"><div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2">'+eqBars+'<span class="text-xs font-semibold text-void-100 uppercase tracking-wider">Now Playing</span></div>'+platLabel+'</div><div class="music-embed-wrap">'+embed+'</div></div>';
-}
-
-/* ===== END MUSIC ===== */
+function buildProfileMusicHTML(url,accent){if(!url)return '';var plat=detectMusicPlatform(url);var p=MUSIC_PLATFORMS[plat];var embed=buildMusicEmbed(url);if(!embed)return '';var eqBars='<div style="display:flex;align-items:flex-end;gap:2px;height:18px"><div class="music-eq-bar"></div><div class="music-eq-bar"></div><div class="music-eq-bar"></div><div class="music-eq-bar"></div></div>';var platLabel=p?'<div class="music-platform-badge" style="background:'+p.color+'18;color:'+p.color+'"><i class="'+p.icon+'" style="font-size:10px"></i>'+p.name+'</div>':'';return '<div class="anim-fade" style="animation-delay:.15s"><div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2">'+eqBars+'<span class="text-xs font-semibold text-void-100 uppercase tracking-wider">Now Playing</span></div>'+platLabel+'</div><div class="music-embed-wrap">'+embed+'</div></div>';}
 
 var userCache={};var allUsersCache=null;var cacheValid=false;
 
@@ -316,21 +240,47 @@ function curUser(){var s=getSession();if(!s)return Promise.resolve(null);if(user
 function needAuth(){var s=getSession();if(!s){navigateTo('/');showModal(loginHTML());return Promise.resolve(null);}return findById(s.userId).then(function(u){if(!u){clearSession();navigateTo('/');showModal(loginHTML());return null;}if(u.banned&&!hasPerm(u,'bypass_ban')){clearSession();navigateTo('/');toast('Account banned.','error');return null;}return u;});}
 function needAdmin(){return needAuth().then(function(u){if(!u)return null;if(!hasPerm(u,'admin_panel')){navigateTo('/');toast('Access denied.','error');return null;}return u;});}
 
-function getVisibleBadges(user){
-  var awarded=user.badges||[];var hidden=user.hiddenBadges||[];var result=[];
-  for(var i=0;i<awarded.length;i++){if(hidden.indexOf(awarded[i])===-1)result.push(awarded[i]);}return result;
-}
+function getVisibleBadges(user){var awarded=user.badges||[];var hidden=user.hiddenBadges||[];var result=[];for(var i=0;i<awarded.length;i++){if(hidden.indexOf(awarded[i])===-1)result.push(awarded[i]);}return result;}
 
-function loginHTML(){return '<h3 class="font-display font-bold text-xl mb-1">Welcome back</h3><p class="text-void-100 text-sm mb-6">Sign in to your Seashell account</p><form id="frm-login"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Email or Username</label><input class="vl-input mb-4" name="loginId" placeholder="you@email.com" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Password</label><input class="vl-input mb-2" name="password" type="password" placeholder="Enter password" required><div id="login-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center mb-4">Sign In</button><p class="text-center text-sm text-void-100">No account? <a href="#" class="open-signup text-accent hover:underline">Sign up</a></p></form>';}
-function signupHTML(){return '<h3 class="font-display font-bold text-xl mb-1">Create account</h3><p class="text-void-100 text-sm mb-6">Claim your Seashell identity</p><form id="frm-signup"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Username</label><input class="vl-input mb-4" name="username" placeholder="yourname" required minlength="3" maxlength="20"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Display Name</label><input class="vl-input mb-4" name="displayName" placeholder="Your Name" maxlength="30"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Email</label><input class="vl-input mb-4" name="email" type="email" placeholder="you@email.com" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Password</label><input class="vl-input mb-2" name="password" type="password" placeholder="Min 6 characters" required minlength="6"><div id="signup-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center mb-4">Create Account</button><p class="text-center text-sm text-void-100">Have an account? <a href="#" class="open-login text-accent hover:underline">Sign in</a></p></form>';}
-// Handle signup form submission
+function loginHTML(){return '<h3 class="font-display font-bold text-xl mb-1">Welcome back</h3><p class="text-void-100 text-sm mb-6">Sign in to your Seashell account</p><form id="frm-login"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Email or Username</label><input class="vl-input mb-4" name="loginId" placeholder="you@email.com" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Password</label><input class="vl-input mb-2" name="password" type="password" placeholder="Enter password" required><div id="login-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center mb-4" data-submitting="false">Sign In</button><p class="text-center text-sm text-void-100">No account? <a href="#" class="open-signup text-accent hover:underline">Sign up</a></p></form>';}
+
+function signupHTML(){return '<h3 class="font-display font-bold text-xl mb-1">Create account</h3><p class="text-void-100 text-sm mb-6">Claim your Seashell identity</p><form id="frm-signup"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Username</label><input class="vl-input mb-4" name="username" placeholder="yourname" required minlength="3" maxlength="20"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Display Name</label><input class="vl-input mb-4" name="displayName" placeholder="Your Name" maxlength="30"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Email</label><input class="vl-input mb-4" name="email" type="email" placeholder="you@email.com" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Password</label><input class="vl-input mb-2" name="password" type="password" placeholder="Min 6 characters" required minlength="6"><div id="signup-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center mb-4" data-submitting="false">Create Account</button><p class="text-center text-sm text-void-100">Have an account? <a href="#" class="open-login text-accent hover:underline">Sign in</a></p></form>';}
+
+/* ===== PARTICLES ===== */
+var P={cv:null,cx:null,pts:[],on:false,raf:0,init:function(){this.cv=document.getElementById('bg-canvas');if(!this.cv)return;this.cx=this.cv.getContext('2d');this.resize();window.addEventListener('resize',this.resize.bind(this));this.make();},resize:function(){if(!this.cv)return;this.cv.width=window.innerWidth;this.cv.height=window.innerHeight;},make:function(){if(!this.cv)return;this.pts=[];var n=Math.min(50,Math.floor(this.cv.width*this.cv.height/22000));for(var i=0;i<n;i++)this.pts.push({x:Math.random()*this.cv.width,y:Math.random()*this.cv.height,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*1.5+.5,a:Math.random()*.5+.2});},start:function(){if(this.on)return;this.on=true;this.loop();},stop:function(){this.on=false;if(this.raf)cancelAnimationFrame(this.raf);if(this.cx&&this.cv)this.cx.clearRect(0,0,this.cv.width,this.cv.height);},loop:function(){if(!this.on||!this.cx||!this.cv)return;var c=this.cx,w=this.cv.width,h=this.cv.height,pts=this.pts;c.clearRect(0,0,w,h);for(var i=0;i<pts.length;i++){var p=pts[i];p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;c.beginPath();c.arc(p.x,p.y,p.r,0,Math.PI*2);c.fillStyle='rgba(125,211,252,'+p.a+')';c.fill();}for(var i=0;i<pts.length;i++)for(var j=i+1;j<pts.length;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<130){c.beginPath();c.moveTo(pts[i].x,pts[i].y);c.lineTo(pts[j].x,pts[j].y);c.strokeStyle='rgba(125,211,252,'+(0.07*(1-d/130))+')';c.lineWidth=.5;c.stroke();}}var self=this;this.raf=requestAnimationFrame(function(){self.loop();});}};
+
+function renderBadgePill(key,user){var customs=user.customBadges||[];for(var j=0;j<customs.length;j++){if(customs[j].id===key){var cb=customs[j];if(!cb.img)return '';return '<span class="badge" style="background:'+cb.c+'20;color:'+cb.c+'" title="'+esc(cb.l)+'"><img src="'+esc(cb.img)+'" style="width:10px;height:10px;border-radius:50%;object-fit:cover" alt=""></span>';}}var b=BADGES[key];if(b)return '<span class="badge" style="background:'+b.c+'20;color:'+b.c+'" title="'+esc(b.l)+'"><i class="'+b.i+'" style="font-size:10px"></i></span>';return '';}
+
+function renderProfile(user){P.stop();var bgCls=BGM[user.background]||'bg-preset-void';var accent=user.accentColor||'#7dd3fc';var avatar=user.avatar||'https://picsum.photos/seed/'+user.username+'/200/200.jpg';var visible=getVisibleBadges(user);var badgesH='';for(var i=0;i<visible.length;i++){badgesH+=renderBadgePill(visible[i],user);}var linksH='';var lks=user.links||[];for(var i=0;i<lks.length;i++){var lk=lks[i];linksH+='<a href="'+esc(lk.url)+'" target="_blank" rel="noopener" class="profile-link anim-fade" style="animation-delay:'+(0.35+i*0.07)+'s"><i class="'+linkIcon(lk.url)+' text-lg" style="color:'+accent+';width:24px;text-align:center"></i><span class="flex-1 font-medium text-sm">'+esc(lk.title)+'</span><i class="fa-solid fa-chevron-right text-xs text-void-200"></i></a>';}var bgStyle=user.bgImage?'background-image:url(\''+esc(user.bgImage)+'\');background-size:cover;background-position:center;':'';var overlay=user.bgImage?'<div class="absolute inset-0 bg-black/60"></div>':'';var dnEffect=buildEffectHTML(user.displayName||user.username,user.displayNameEffect||'none');var musicHTML=buildProfileMusicHTML(user.musicUrl,accent);return '<div class="'+bgCls+' min-h-screen flex flex-col items-center justify-center px-4 py-12 relative" style="'+bgStyle+'">'+overlay+'<div class="relative z-10 w-full max-w-md" style="animation:profile-in .6s ease both"><div class="glass-strong rounded-3xl p-8 text-center"><div class="relative inline-block mb-5"><div class="w-24 h-24 rounded-full p-[3px]" style="background:linear-gradient(135deg,'+accent+','+accent+'44)"><img src="'+esc(avatar)+'" class="w-full h-full rounded-full object-cover border-2 border-void-800" alt="" onerror="this.src=\'https://picsum.photos/seed/'+user.username+'/200/200.jpg\'"></div><span class="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-success border-2 border-void-600"></span></div><h1 class="font-display font-bold text-2xl mb-1 flex items-center justify-center gap-2 flex-wrap"><span class="uid-wrap relative cursor-default inline-flex items-center gap-2">'+dnEffect+' '+badgesH+'<span class="uid-tip">'+user.uid+'</span></span></h1><p class="text-void-100 text-sm mb-4">@'+esc(user.username)+'</p>'+(user.bio?'<p class="text-sm text-void-50 leading-relaxed mb-6">'+esc(user.bio)+'</p>':'<div class="mb-6"></div>')+'<div class="w-16 h-[2px] mx-auto mb-6 rounded-full" style="background:'+accent+'40"></div>'+(musicHTML?'<div class="mb-6 text-left">'+musicHTML+'</div>':'')+'<div class="space-y-3 text-left">'+(linksH||'<p class="text-void-200 text-sm text-center py-4">No links yet</p>')+'</div><div class="mt-8 flex items-center justify-center gap-2 text-void-200 text-xs"><i class="fa-solid fa-eye"></i><span>'+((user.views||0)+1).toLocaleString()+' views</span></div></div></div><div class="relative z-10 mt-8 flex items-center gap-4 text-xs text-void-200"><span class="font-display font-semibold"><span style="color:'+accent+'">Seashell</span>.lol</span><span class="text-void-400">|</span><a href="/" class="hover:text-void-50 transition-colors">Create your own</a></div></div>';}
+
+function renderHome(u){P.start();var authBtns=u?'<a href="/dashboard" class="vl-btn vl-btn-secondary vl-btn-sm"><i class="fa-solid fa-table-cells"></i> Dashboard</a>':'<a href="#" class="open-login vl-btn vl-btn-s vl-btn-sm">Sign In</a><a href="#" class="open-signup vl-btn vl-btn-primary vl-btn-sm">Get Started</a>';var h='<nav class="fixed top-0 left-0 right-0 z-50 glass-strong anim-slide-down"><div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between"><a href="/" class="font-display font-bold text-lg tracking-tight">'+brandLogo()+'</a><div class="flex items-center gap-3"><a href="/s" class="vl-btn vl-btn-s vl-btn-sm">Example</a>'+authBtns+'</div></div></nav>';h+='<section class="min-h-screen flex items-center justify-center relative px-6 pt-16"><div class="max-w-4xl mx-auto text-center"><div class="anim-fade" style="animation-delay:.1s"><div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-void-400 text-xs text-void-100 mb-8"><span class="w-2 h-2 rounded-full bg-success" style="animation:pulse-glow 2s infinite"></span> :3</div></div>';h+='<h1 class="font-display font-bold text-5xl md:text-7xl lg:text-8xl leading-none mb-6 anim-fade" style="animation-delay:.2s">Seashell.lol<br><span class="bg-gradient-to-r from-accent via-sky-300 to-cyan-300 bg-clip-text text-transparent" style="animation:glitch 4s ease-in-out infinite"></span></h1>';h+='<p class="text-void-100 text-lg md:text-xl max-w-xl mx-auto mb-10 anim-fade" style="animation-delay:.35s">Create a stunning profile page with all your links, badges, and social presence.</p>';h+='<div class="flex flex-col sm:flex-row items-center justify-center gap-4 anim-fade" style="animation-delay:.5s"><a href="#" class="open-signup vl-btn vl-btn-primary text-base px-8 py-3"><i class="fa-solid fa-bolt"></i> Create Your Link</a><a href="/s" class="vl-btn vl-btn-secondary text-base px-8 py-3"><i class="fa-solid fa-eye"></i> See Example</a></div>';h+='<div class="mt-16 anim-fade anim-float anim-pulse-glow" style="animation-delay:.7s"><div class="glass rounded-2xl p-6 max-w-sm mx-auto"><div class="flex items-center gap-4 mb-4"><img src="https://cdn.discordapp.com/attachments/1520286517874921603/1520952429699666153/content.png?ex=6a4310d5&is=6a41bf55&hm=2bd8dacc4c56874c397a9aca939cc9281fdd3815db8d6ae34248846902a79545&" class="w-14 h-14 rounded-full object-cover border-2" style="border-color:rgba(125,211,252,.3)" alt=""><div class="text-left"><div class="font-display font-bold flex items-center gap-2">s <i class="fa-solid fa-circle-check text-info text-xs"></i></div><div class="text-void-100 text-sm">@s</div></div></div><p class="text-sm text-void-100 text-left mb-4">She sells sea shells by the sea shore.</p><div class="space-y-2"><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-github text-void-100"></i> GitHub</div><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-discord text-void-100"></i> Discord Server</div><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-x-twitter text-void-100"></i> Twitter / X</div></div></div></div></div></div></div></section>';var feats=[['fa-palette','Custom Themes','Choose from stunning gradient backgrounds'],['fa-shield-halved','Unique Badges','Get verified with collectible profile badges'],['fa-chart-line','View Analytics','Track profile visits in real time'],['fa-bolt','Instant Setup','Create your page in under 60 seconds']];h+='<section class="py-24 px-6"><div class="max-w-5xl mx-auto"><h2 class="font-display font-bold text-3xl md:text-4xl text-center mb-4">Everything you need</h2><p class="text-void-100 text-center mb-16 max-w-lg mx-auto">Powerful features to make your bio link stand out</p><div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">';for(var i=0;i<feats.length;i++){var f=feats[i];h+='<div class="glass rounded-2xl p-6 hover:border-accent/20 transition-all duration-300 hover:-translate-y-1 anim-fade" style="animation-delay:'+(0.1+i*0.1)+'s"><div class="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center mb-4"><i class="fa-solid '+f[0]+' text-accent"></i></div><h3 class="font-display font-semibold text-base mb-2">'+f[1]+'</h3><p class="text-void-100 text-sm leading-relaxed">'+f[2]+'</p></div>';}h+='</div></div></section><section class="py-24 px-6"><div class="max-w-2xl mx-auto text-center"><h2 class="font-display font-bold text-3xl md:text-4xl mb-4">Ready to claim your link?</h2><p class="text-void-100 mb-8">Join thousands of creators who use Seashell.</p><a href="#" class="open-signup vl-btn vl-btn-primary text-base px-10 py-3"><i class="fa-solid fa-rocket"></i> Get Started Free</a></div></section>';h+='<footer class="border-t border-void-400 py-8 px-6"><div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4"><span class="font-display font-bold text-sm">'+brandLogo()+'</span><span class="text-void-100 text-xs">&copy; '+new Date().getFullYear()+' Seashell.lol</span></div></footer>';return h;}
+
+function renderDashboard(user,tab){tab=tab||'profile';var tabs=[{id:'profile',i:'fa-user',l:'Profile'},{id:'links',i:'fa-link',l:'Links'},{id:'badges',i:'fa-award',l:'Badges'},{id:'appearance',i:'fa-palette',l:'Appearance'},{id:'settings',i:'fa-gear',l:'Settings'}];var ok=false;for(var i=0;i<tabs.length;i++)if(tabs[i].id===tab)ok=true;if(!ok)tab='profile';var content='';if(tab==='profile')content=dashProfile(user);else if(tab==='links')content=dashLinks(user);else if(tab==='badges')content=dashBadges(user);else if(tab==='appearance')content=dashAppearance(user);else if(tab==='settings')content=dashSettings(user);var h='<div class="mobile-header fixed top-0 left-0 right-0 z-50 glass-strong h-14 items-center px-4 gap-3"><a href="/" class="font-display font-bold text-sm">'+brandLogo()+'</a><div class="flex-1"></div><a href="/'+esc(user.username)+'" target="_blank" class="vl-btn vl-btn-s vl-btn-sm"><i class="fa-solid fa-eye"></i></a></div>';h+='<aside class="dash-sidebar"><div class="px-6 mb-8"><a href="/" class="font-display font-bold text-lg tracking-tight block mb-1">'+brandLogo()+'</a><p class="text-void-100 text-xs">Dashboard</p></div><nav>';for(var i=0;i<tabs.length;i++)h+='<a href="/dashboard/'+tabs[i].id+'" class="'+(tabs[i].id===tab?'active':'')+'"><i class="fa-solid '+tabs[i].i+' w-5 text-center"></i>'+tabs[i].l+'</a>';h+='</nav><div class="px-6 pt-8 mt-auto"><div class="border-t border-void-400 pt-4"><div class="flex items-center gap-3 mb-3"><div class="w-9 h-9 rounded-full bg-void-400 flex items-center justify-center text-sm font-bold">'+esc((user.displayName||user.username)[0].toUpperCase())+'</div><div><div class="text-sm font-semibold">'+esc(user.displayName||user.username)+'</div><div class="text-xs text-void-100">@'+esc(user.username)+'</div></div></div><div class="flex gap-2"><a href="/'+esc(user.username)+'" target="_blank" class="vl-btn vl-btn-s vl-btn-sm flex-1 justify-center text-xs"><i class="fa-solid fa-eye"></i> View</a><button class="do-logout vl-btn vl-btn-s vl-btn-sm flex-1 justify-center text-xs" style="color:#f55"><i class="fa-solid fa-right-from-bracket"></i> Logout</button></div></div></div></aside>';h+='<main class="dash-main pt-4 md:pt-8"><div class="flex md:hidden gap-1 mb-6 overflow-x-auto pb-2">';for(var i=0;i<tabs.length;i++)h+='<a href="/dashboard/'+tabs[i].id+'" class="vl-btn vl-btn-sm whitespace-nowrap '+(tabs[i].id===tab?'vl-btn-primary':'vl-btn-secondary')+'"><i class="fa-solid '+tabs[i].i+'"></i>'+tabs[i].l+'</a>';h+='</div><div class="anim-fade">'+content+'</div></main>';return h;}
+
+function dashProfile(u){return '<h2 class="font-display font-bold text-2xl mb-1">Edit Profile</h2><p class="text-void-100 text-sm mb-8">Customize how your profile appears</p><form id="frm-profile" class="max-w-lg space-y-5"><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Display Name</label><input class="vl-input" name="displayName" value="'+esc(u.displayName||'')+'" maxlength="30"></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Username</label><div class="flex items-center gap-2"><span class="text-void-100 text-sm">@</span><input class="vl-input" name="username" value="'+esc(u.username)+'" minlength="3" maxlength="20" required></div><p class="text-void-200 text-xs mt-1">seashell.lol/<strong class="text-void-100">'+esc(u.username)+'</strong></p></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Bio</label><textarea class="vl-input" name="bio" maxlength="160" placeholder="Tell people about yourself...">'+esc(u.bio||'')+'</textarea></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Avatar URL</label><input class="vl-input" name="avatar" value="'+esc(u.avatar||'')+'" placeholder="https://example.com/avatar.jpg">'+(u.avatar?'<img src="'+esc(u.avatar)+'" class="w-16 h-16 rounded-full mt-2 object-cover border border-void-400" alt="">':'')+'</div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Music URL</label><input class="vl-input" name="musicUrl" value="'+esc(u.musicUrl||'')+'" placeholder="YouTube, Spotify, SoundCloud, etc."><p class="text-void-200 text-xs mt-1">Supports YouTube, Spotify, SoundCloud, Apple Music, Tidal, Deezer</p></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">UID</label><div class="flex items-center gap-3"><code class="bg-void-500 px-4 py-2.5 rounded-lg text-sm font-mono text-accent">'+u.uid+'</code></div></div><div id="profile-err" class="text-red-400 text-xs hidden"></div><div id="profile-ok" class="text-success text-xs hidden"></div><button type="submit" class="vl-btn vl-btn-primary" data-submitting="false"><i class="fa-solid fa-check"></i> Save Changes</button></form>';}
+
+function dashLinks(u){var links=u.links||[];var maxLinks=hasPerm(u,'bypass_link_limit')?999:10;var h='<div class="flex items-center justify-between mb-8"><div><h2 class="font-display font-bold text-2xl mb-1">Manage Links</h2><p class="text-void-100 text-sm">'+links.length+'/'+maxLinks+' links used</p></div><button class="vl-btn vl-btn-primary add-link-btn" '+(links.length>=maxLinks?'disabled':'')+'><i class="fa-solid fa-plus"></i> Add Link</button></div>';if(links.length===0){h+='<div class="text-center py-16"><i class="fa-solid fa-link text-4xl text-void-300 mb-4"></i><p class="text-void-100">No links yet. Add your first one!</p></div>';}else{h+='<div class="space-y-3 max-w-lg">';for(var i=0;i<links.length;i++){var lk=links[i];h+='<div class="glass rounded-xl p-4 flex items-center gap-4"><i class="'+linkIcon(lk.url)+' text-lg text-void-100" style="width:24px;text-align:center"></i><div class="flex-1 min-w-0"><div class="font-medium text-sm truncate">'+esc(lk.title)+'</div><div class="text-xs text-void-200 truncate">'+esc(lk.url)+'</div></div><div class="flex gap-2"><button class="vl-btn vl-btn-s vl-btn-sm edit-link-btn" data-idx="'+i+'"><i class="fa-solid fa-pen"></i></button><button class="vl-btn vl-btn-s vl-btn-sm del-link-btn" data-idx="'+i+'" style="color:#f55"><i class="fa-solid fa-trash"></i></button></div></div>';}h+='</div>';}return h;}
+
+function dashBadges(u){var awarded=u.badges||[];var hidden=u.hiddenBadges||[];var customs=u.customBadges||[];var h='<h2 class="font-display font-bold text-2xl mb-1">Badges</h2><p class="text-void-100 text-sm mb-8">Manage your profile badges</p><div class="max-w-lg"><h3 class="font-display font-semibold text-sm uppercase tracking-wider text-void-100 mb-4">Awarded Badges</h3>';if(awarded.length===0){h+='<p class="text-void-200 text-sm mb-8">No badges yet.</p>';}else{h+='<div class="space-y-2 mb-8">';for(var i=0;i<awarded.length;i++){var key=awarded[i];var isHidden=hidden.indexOf(key)>-1;var b=BADGES[key];var name=b?b.l:key;var color=b?b.c:'#888';var icon=b?b.i:'fa-solid fa-circle';h+='<div class="flex items-center justify-between glass rounded-xl p-4"><div class="flex items-center gap-3"><span class="badge" style="background:'+color+'20;color:'+color+'"><i class="'+icon+'" style="font-size:10px"></i></span><span class="text-sm font-medium">'+esc(name)+'</span>'+(isHidden?'<span class="text-xs text-void-200">(hidden)</span>':'')+'</div><button class="vl-btn vl-btn-s vl-btn-sm toggle-badge-btn" data-badge="'+esc(key)+'" title="Toggle visibility"><i class="fa-solid '+(isHidden?'fa-eye-slash':'fa-eye')+'"></i></button></div>';}h+='</div>';}h+='<h3 class="font-display font-semibold text-sm uppercase tracking-wider text-void-100 mb-4">Custom Badges</h3>';if(customs.length===0){h+='<p class="text-void-200 text-sm mb-4">No custom badges.</p>';}else{h+='<div class="space-y-2 mb-4">';for(var i=0;i<customs.length;i++){var cb=customs[i];h+='<div class="flex items-center justify-between glass rounded-xl p-4"><div class="flex items-center gap-3"><div class="cb-preview">'+(cb.img?'<img src="'+esc(cb.img)+'" alt="">':'<i class="fa-solid fa-image text-void-200"></i>')+'</div><div><div class="text-sm font-medium" style="color:'+cb.c+'">'+esc(cb.l)+'</div><div class="text-xs text-void-200">'+esc(cb.id)+'</div></div></div><button class="vl-btn vl-btn-s vl-btn-sm del-cbadge-btn" data-idx="'+i+'" style="color:#f55"><i class="fa-solid fa-trash"></i></button></div>';}h+='</div>';}h+='<button class="vl-btn vl-btn-secondary add-cbadge-btn"><i class="fa-solid fa-plus"></i> Add Custom Badge</button></div>';return h;}
+
+function dashAppearance(u){var bgKeys=Object.keys(BGM);var h='<h2 class="font-display font-bold text-2xl mb-1">Appearance</h2><p class="text-void-100 text-sm mb-8">Customize your profile look</p><div class="max-w-lg space-y-8"><div><label class="block text-xs font-semibold text-void-100 mb-3 uppercase tracking-wider">Background</label><div class="grid grid-cols-3 gap-3">';for(var i=0;i<bgKeys.length;i++){var k=bgKeys[i];h+='<div class="fx-opt rounded-xl overflow-hidden cursor-pointer '+(u.background===k?'sel':'')+' bg-opt" data-bg="'+k+'"><div class="'+BGM[k]+'" style="height:60px"></div><div class="p-2 text-center text-xs font-medium">'+BGL[k]+'</div></div>';}h+='</div></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Background Image URL (overrides preset)</label><input class="vl-input" name="bgImage" id="inp-bgImage" value="'+esc(u.bgImage||'')+'" placeholder="https://example.com/bg.jpg"></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Accent Color</label><div class="flex items-center gap-3"><input type="color" id="inp-accent" value="'+(u.accentColor||'#7dd3fc')+'" class="w-10 h-10 rounded-lg border border-void-400 cursor-pointer" style="background:none"><input class="vl-input flex-1" id="inp-accent-text" value="'+esc(u.accentColor||'#7dd3fc')+'" placeholder="#7dd3fc"></div></div><div><label class="block text-xs font-semibold text-void-100 mb-3 uppercase tracking-wider">Display Name Effect</label><div class="grid grid-cols-2 gap-2">';var fxKeys=Object.keys(DISPLAY_EFFECTS);for(var i=0;i<fxKeys.length;i++){var fk=fxKeys[i];var fx=DISPLAY_EFFECTS[fk];h+='<div class="fx-opt rounded-xl p-3 text-center '+(u.displayNameEffect===fk?'sel':'')+' fx-opt" data-fx="'+fk+'"><i class="fa-solid '+fx.icon+' text-sm mb-1 '+(fx.cls||'text-void-100')+'"></i><div class="text-xs">'+fx.name+'</div></div>';}h+='</div><div class="mt-3 fx-preview-box glass rounded-xl p-4"><span class="text-lg font-display font-bold">'+buildEffectHTML(u.displayName||u.username,u.displayNameEffect||'none')+'</span></div></div><div id="appearance-err" class="text-red-400 text-xs hidden"></div><div id="appearance-ok" class="text-success text-xs hidden"></div><button class="vl-btn vl-btn-primary save-appearance-btn" data-submitting="false"><i class="fa-solid fa-check"></i> Save Appearance</button></div>';return h;}
+
+function dashSettings(u){var h='<h2 class="font-display font-bold text-2xl mb-1">Settings</h2><p class="text-void-100 text-sm mb-8">Account settings</p><div class="max-w-lg space-y-6"><div class="glass rounded-xl p-6"><h3 class="font-display font-semibold mb-4">Change Password</h3><form id="frm-changepw"><input class="vl-input mb-3" name="currentPw" type="password" placeholder="Current password" required><input class="vl-input mb-3" name="newPw" type="password" placeholder="New password (min 6)" required minlength="6"><div id="changepw-err" class="text-red-400 text-xs mb-3 hidden"></div><button type="submit" class="vl-btn vl-btn-secondary vl-btn-sm" data-submitting="false"><i class="fa-solid fa-key"></i> Update Password</button></form></div><div class="glass rounded-xl p-6"><h3 class="font-display font-semibold mb-2">Account Info</h3><div class="space-y-2 text-sm"><div class="flex justify-between"><span class="text-void-100">UID</span><code class="text-accent">'+u.uid+'</code></div><div class="flex justify-between"><span class="text-void-100">Role</span><span class="capitalize">'+esc(u.role)+'</span></div><div class="flex justify-between"><span class="text-void-100">Created</span><span>'+(new Date(u.createdAt)).toLocaleDateString()+'</span></div><div class="flex justify-between"><span class="text-void-100">Views</span><span>'+(u.views||0).toLocaleString()+'</span></div></div></div>';if(hasPerm(u,'admin_panel')){h+='<div class="glass rounded-xl p-6 border-accent/20"><h3 class="font-display font-semibold mb-2 text-accent">Admin</h3><p class="text-void-100 text-sm mb-3">You have admin access.</p><a href="/admin" class="vl-btn vl-btn-primary vl-btn-sm"><i class="fa-solid fa-gauge-high"></i> Open Admin Panel</a></div>';}h+='<div class="glass rounded-xl p-6 border-red-500/20"><h3 class="font-display font-semibold mb-2 text-red-400">Danger Zone</h3><p class="text-void-100 text-sm mb-3">Permanently delete your account and all data.</p><button class="vl-btn vl-btn-danger vl-btn-sm delete-account-btn"><i class="fa-solid fa-trash"></i> Delete Account</button></div></div>';return h;}
+
+/* ===== FORM HANDLERS ===== */
+
+// Signup handler with double-submit prevention
 document.addEventListener('submit', function(e) {
   if (e.target.id !== 'frm-signup') return;
   e.preventDefault();
   
   var form = e.target;
   var errEl = document.getElementById('signup-err');
+  var btn = form.querySelector('button[type="submit"]');
   errEl.classList.add('hidden');
+  
+  // Prevent double submission - CHECK 1
+  if (btn.disabled || btn.dataset.submitting === 'true') return;
   
   var username = form.username.value.trim().toLowerCase();
   var displayName = form.displayName.value.trim() || username;
@@ -354,22 +304,17 @@ document.addEventListener('submit', function(e) {
     return;
   }
   
+  // Disable button immediately - PREVENTS DOUBLE CLICK
+  btn.disabled = true;
+  btn.dataset.submitting = 'true';
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating...';
+  
   // Check if username taken
   findByUsername(username).then(function(existing) {
-    if (existing) {
-      errEl.textContent = 'Username is already taken';
-      errEl.classList.remove('hidden');
-      return;
-    }
-    // Check if email taken
+    if (existing) throw new Error('Username is already taken');
     return findByEmail(email);
   }).then(function(existing) {
-    if (existing) {
-      errEl.textContent = 'Email is already registered';
-      errEl.classList.remove('hidden');
-      return;
-    }
-    // Create the user
+    if (existing) throw new Error('Email is already registered');
     return createUser({
       username: username,
       displayName: displayName,
@@ -384,287 +329,592 @@ document.addEventListener('submit', function(e) {
       navigateTo('/dashboard');
     }
   }).catch(function(err) {
-    errEl.textContent = 'Error: ' + err.message;
+    // Re-enable button on error ONLY
+    btn.disabled = false;
+    btn.dataset.submitting = 'false';
+    btn.innerHTML = 'Create Account';
+    
+    errEl.textContent = err.message || 'An error occurred';
     errEl.classList.remove('hidden');
   });
 });
 
-// Handle login form submission
+// Login handler with double-submit prevention
 document.addEventListener('submit', function(e) {
   if (e.target.id !== 'frm-login') return;
   e.preventDefault();
   
   var form = e.target;
   var errEl = document.getElementById('login-err');
+  var btn = form.querySelector('button[type="submit"]');
   errEl.classList.add('hidden');
+  
+  // Prevent double submission
+  if (btn.disabled || btn.dataset.submitting === 'true') return;
   
   var loginId = form.loginId.value.trim().toLowerCase();
   var password = form.password.value;
   
-  // Try finding by email or username
-  var findPromise = loginId.indexOf('@') > -1 
-    ? findByEmail(loginId) 
-    : findByUsername(loginId);
+  // Disable button
+  btn.disabled = true;
+  btn.dataset.submitting = 'true';
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing in...';
+  
+  var findPromise = loginId.indexOf('@') > -1 ? findByEmail(loginId) : findByUsername(loginId);
   
   findPromise.then(function(user) {
-    if (!user) {
-      errEl.textContent = 'No account found with that email/username';
-      errEl.classList.remove('hidden');
-      return;
-    }
-    if (user.password !== hashPw(password)) {
-      errEl.textContent = 'Incorrect password';
-      errEl.classList.remove('hidden');
-      return;
-    }
-    if (user.banned) {
-      errEl.textContent = 'Account is banned: ' + (user.banReason || 'No reason specified');
-      errEl.classList.remove('hidden');
-      return;
-    }
+    if (!user) throw new Error('No account found with that email/username');
+    if (user.password !== hashPw(password)) throw new Error('Incorrect password');
+    if (user.banned) throw new Error('Account is banned: ' + (user.banReason || 'No reason specified'));
     setSession(user.id);
     closeModal();
     toast('Welcome back!', 'success');
     navigateTo('/dashboard');
   }).catch(function(err) {
-    errEl.textContent = 'Error: ' + err.message;
+    btn.disabled = false;
+    btn.dataset.submitting = 'false';
+    btn.innerHTML = 'Sign In';
+    
+    errEl.textContent = err.message || 'An error occurred';
     errEl.classList.remove('hidden');
   });
 });
 
-// Handle modal link clicks (Sign up / Sign in toggles)
+// Profile edit handler
+document.addEventListener('submit', function(e) {
+  if (e.target.id !== 'frm-profile') return;
+  e.preventDefault();
+  
+  var form = e.target;
+  var errEl = document.getElementById('profile-err');
+  var okEl = document.getElementById('profile-ok');
+  var btn = form.querySelector('button[type="submit"]');
+  errEl.classList.add('hidden');
+  okEl.classList.add('hidden');
+  
+  if (btn.disabled || btn.dataset.submitting === 'true') return;
+  
+  var s = getSession();
+  if (!s) return;
+  
+  var username = form.username.value.trim().toLowerCase();
+  var displayName = form.displayName.value.trim();
+  var bio = form.bio.value.trim();
+  var avatar = form.avatar.value.trim();
+  var musicUrl = form.musicUrl.value.trim();
+  
+  if (username.length < 3 || username.length > 20) {
+    errEl.textContent = 'Username must be 3-20 characters';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  if (!/^[a-z0-9_]+$/.test(username)) {
+    errEl.textContent = 'Username can only contain letters, numbers, and underscores';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.dataset.submitting = 'true';
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+  
+  findById(s.userId).then(function(user) {
+    if (!user) throw new Error('Not logged in');
+    if (username !== user.username) {
+      return findByUsername(username).then(function(existing) {
+        if (existing) throw new Error('Username is already taken');
+        return user;
+      });
+    }
+    return user;
+  }).then(function(user) {
+    if (!user) return;
+    return updateUser(s.userId, {
+      username: username,
+      displayName: displayName,
+      bio: bio,
+      avatar: avatar,
+      musicUrl: musicUrl
+    });
+  }).then(function() {
+    btn.disabled = false;
+    btn.dataset.submitting = 'false';
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Changes';
+    okEl.textContent = 'Profile saved!';
+    okEl.classList.remove('hidden');
+    toast('Profile updated!', 'success');
+  }).catch(function(err) {
+    btn.disabled = false;
+    btn.dataset.submitting = 'false';
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Changes';
+    errEl.textContent = err.message || 'Error saving profile';
+    errEl.classList.remove('hidden');
+  });
+});
+
+// Change password handler
+document.addEventListener('submit', function(e) {
+  if (e.target.id !== 'frm-changepw') return;
+  e.preventDefault();
+  
+  var form = e.target;
+  var errEl = document.getElementById('changepw-err');
+  var btn = form.querySelector('button[type="submit"]');
+  errEl.classList.add('hidden');
+  
+  if (btn.disabled || btn.dataset.submitting === 'true') return;
+  
+  var s = getSession();
+  if (!s) return;
+  
+  var currentPw = form.currentPw.value;
+  var newPw = form.newPw.value;
+  
+  if (newPw.length < 6) {
+    errEl.textContent = 'New password must be at least 6 characters';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.dataset.submitting = 'true';
+  
+  findById(s.userId).then(function(user) {
+    if (!user) throw new Error('Not logged in');
+    if (user.password !== hashPw(currentPw)) throw new Error('Current password is incorrect');
+    return updateUser(s.userId, { password: hashPw(newPw) });
+  }).then(function() {
+    btn.disabled = false;
+    btn.dataset.submitting = 'false';
+    form.reset();
+    toast('Password updated!', 'success');
+  }).catch(function(err) {
+    btn.disabled = false;
+    btn.dataset.submitting = 'false';
+    errEl.textContent = err.message || 'Error changing password';
+    errEl.classList.remove('hidden');
+  });
+});
+
+// Click handlers for modals, links, badges, etc.
 document.addEventListener('click', function(e) {
-  if (e.target.classList.contains('open-signup')) {
+  // Open signup modal
+  var signupTrigger = e.target.closest('.open-signup');
+  if (signupTrigger) {
     e.preventDefault();
     showModal(signupHTML());
+    return;
   }
-  if (e.target.classList.contains('open-login')) {
+  
+  // Open login modal
+  var loginTrigger = e.target.closest('.open-login');
+  if (loginTrigger) {
     e.preventDefault();
     showModal(loginHTML());
+    return;
   }
-  if (e.target.classList.contains('do-logout')) {
+  
+  // Logout
+  var logoutBtn = e.target.closest('.do-logout');
+  if (logoutBtn) {
     e.preventDefault();
     clearSession();
     toast('Logged out.', 'info');
     navigateTo('/');
+    return;
   }
-});
-var P={cv:null,cx:null,pts:[],on:false,raf:0,init:function(){this.cv=document.getElementById('bg-canvas');if(!this.cv)return;this.cx=this.cv.getContext('2d');this.resize();window.addEventListener('resize',this.resize.bind(this));this.make();},resize:function(){if(!this.cv)return;this.cv.width=window.innerWidth;this.cv.height=window.innerHeight;},make:function(){if(!this.cv)return;this.pts=[];var n=Math.min(50,Math.floor(this.cv.width*this.cv.height/22000));for(var i=0;i<n;i++)this.pts.push({x:Math.random()*this.cv.width,y:Math.random()*this.cv.height,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*1.5+.5,a:Math.random()*.5+.2});},start:function(){if(this.on)return;this.on=true;this.loop();},stop:function(){this.on=false;if(this.raf)cancelAnimationFrame(this.raf);if(this.cx&&this.cv)this.cx.clearRect(0,0,this.cv.width,this.cv.height);},loop:function(){if(!this.on||!this.cx||!this.cv)return;var c=this.cx,w=this.cv.width,h=this.cv.height,pts=this.pts;c.clearRect(0,0,w,h);for(var i=0;i<pts.length;i++){var p=pts[i];p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;c.beginPath();c.arc(p.x,p.y,p.r,0,Math.PI*2);c.fillStyle='rgba(125,211,252,'+p.a+')';c.fill();}for(var i=0;i<pts.length;i++)for(var j=i+1;j<pts.length;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<130){c.beginPath();c.moveTo(pts[i].x,pts[i].y);c.lineTo(pts[j].x,pts[j].y);c.strokeStyle='rgba(125,211,252,'+(0.07*(1-d/130))+')';c.lineWidth=.5;c.stroke();}}var self=this;this.raf=requestAnimationFrame(function(){self.loop();});}};
-
-function renderBadgePill(key,user){
-  var customs=user.customBadges||[];
-  for(var j=0;j<customs.length;j++){if(customs[j].id===key){var cb=customs[j];if(!cb.img)return '';return '<span class="badge" style="background:'+cb.c+'20;color:'+cb.c+'" title="'+esc(cb.l)+'"><img src="'+esc(cb.img)+'" style="width:10px;height:10px;border-radius:50%;object-fit:cover" alt=""></span>';}}
-  var b=BADGES[key];
-  if(b)return '<span class="badge" style="background:'+b.c+'20;color:'+b.c+'" title="'+esc(b.l)+'"><i class="'+b.i+'" style="font-size:10px"></i></span>';
-  return '';
-}
-
-function renderProfile(user){P.stop();var bgCls=BGM[user.background]||'bg-preset-void';var accent=user.accentColor||'#7dd3fc';var avatar=user.avatar||'https://picsum.photos/seed/'+user.username+'/200/200.jpg';var visible=getVisibleBadges(user);var badgesH='';for(var i=0;i<visible.length;i++){badgesH+=renderBadgePill(visible[i],user);}var linksH='';var lks=user.links||[];for(var i=0;i<lks.length;i++){var lk=lks[i];linksH+='<a href="'+esc(lk.url)+'" target="_blank" rel="noopener" class="profile-link anim-fade" style="animation-delay:'+(0.35+i*0.07)+'s"><i class="'+linkIcon(lk.url)+' text-lg" style="color:'+accent+';width:24px;text-align:center"></i><span class="flex-1 font-medium text-sm">'+esc(lk.title)+'</span><i class="fa-solid fa-chevron-right text-xs text-void-200"></i></a>';}var bgStyle=user.bgImage?'background-image:url(\''+esc(user.bgImage)+'\');background-size:cover;background-position:center;':'';var overlay=user.bgImage?'<div class="absolute inset-0 bg-black/60"></div>':'';var dnEffect=buildEffectHTML(user.displayName||user.username,user.displayNameEffect||'none');var musicHTML=buildProfileMusicHTML(user.musicUrl,accent);return '<div class="'+bgCls+' min-h-screen flex flex-col items-center justify-center px-4 py-12 relative" style="'+bgStyle+'">'+overlay+'<div class="relative z-10 w-full max-w-md" style="animation:profile-in .6s ease both"><div class="glass-strong rounded-3xl p-8 text-center"><div class="relative inline-block mb-5"><div class="w-24 h-24 rounded-full p-[3px]" style="background:linear-gradient(135deg,'+accent+','+accent+'44)"><img src="'+esc(avatar)+'" class="w-full h-full rounded-full object-cover border-2 border-void-800" alt="" onerror="this.src=\'https://picsum.photos/seed/'+user.username+'/200/200.jpg\'"></div><span class="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-success border-2 border-void-600"></span></div><h1 class="font-display font-bold text-2xl mb-1 flex items-center justify-center gap-2 flex-wrap"><span class="uid-wrap relative cursor-default inline-flex items-center gap-2">'+dnEffect+' '+badgesH+'<span class="uid-tip">'+user.uid+'</span></span></h1><p class="text-void-100 text-sm mb-4">@'+esc(user.username)+'</p>'+(user.bio?'<p class="text-sm text-void-50 leading-relaxed mb-6">'+esc(user.bio)+'</p>':'<div class="mb-6"></div>')+'<div class="w-16 h-[2px] mx-auto mb-6 rounded-full" style="background:'+accent+'40"></div>'+(musicHTML?'<div class="mb-6 text-left">'+musicHTML+'</div>':'')+'<div class="space-y-3 text-left">'+(linksH||'<p class="text-void-200 text-sm text-center py-4">No links yet</p>')+'</div><div class="mt-8 flex items-center justify-center gap-2 text-void-200 text-xs"><i class="fa-solid fa-eye"></i><span>'+((user.views||0)+1).toLocaleString()+' views</span></div></div></div><div class="relative z-10 mt-8 flex items-center gap-4 text-xs text-void-200"><span class="font-display font-semibold"><span style="color:'+accent+'">Seashell</span>.lol</span><span class="text-void-400">|</span><a href="/" class="hover:text-void-50 transition-colors">Create your own</a></div></div>';}
-
-function renderHome(u){P.start();var authBtns=u?'<a href="/dashboard" class="vl-btn vl-btn-secondary vl-btn-sm"><i class="fa-solid fa-table-cells"></i> Dashboard</a>':'<a href="#" class="open-login vl-btn vl-btn-s vl-btn-sm">Sign In</a><a href="#" class="open-signup vl-btn vl-btn-primary vl-btn-sm">Get Started</a>';var h='<nav class="fixed top-0 left-0 right-0 z-50 glass-strong anim-slide-down"><div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between"><a href="/" class="font-display font-bold text-lg tracking-tight">'+brandLogo()+'</a><div class="flex items-center gap-3"><a href="/s" class="vl-btn vl-btn-s vl-btn-sm">Example</a>'+authBtns+'</div></div></nav>';h+='<section class="min-h-screen flex items-center justify-center relative px-6 pt-16"><div class="max-w-4xl mx-auto text-center"><div class="anim-fade" style="animation-delay:.1s"><div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-void-400 text-xs text-void-100 mb-8"><span class="w-2 h-2 rounded-full bg-success" style="animation:pulse-glow 2s infinite"></span> :3</div></div>';h+='<h1 class="font-display font-bold text-5xl md:text-7xl lg:text-8xl leading-none mb-6 anim-fade" style="animation-delay:.2s">Seashell.lol<br><span class="bg-gradient-to-r from-accent via-sky-300 to-cyan-300 bg-clip-text text-transparent" style="animation:glitch 4s ease-in-out infinite"></span></h1>';h+='<p class="text-void-100 text-lg md:text-xl max-w-xl mx-auto mb-10 anim-fade" style="animation-delay:.35s">Create a stunning profile page with all your links, badges, and social presence.</p>';h+='<div class="flex flex-col sm:flex-row items-center justify-center gap-4 anim-fade" style="animation-delay:.5s"><a href="#" class="open-signup vl-btn vl-btn-primary text-base px-8 py-3"><i class="fa-solid fa-bolt"></i> Create Your Link</a><a href="/s" class="vl-btn vl-btn-secondary text-base px-8 py-3"><i class="fa-solid fa-eye"></i> See Example</a></div>';h+='<div class="mt-16 anim-fade anim-float anim-pulse-glow" style="animation-delay:.7s"><div class="glass rounded-2xl p-6 max-w-sm mx-auto"><div class="flex items-center gap-4 mb-4"><img src="https://cdn.discordapp.com/attachments/1520286517874921603/1520952429699666153/content.png?ex=6a4310d5&is=6a41bf55&hm=2bd8dacc4c56874c397a9aca939cc9281fdd3815db8d6ae34248846902a79545&" class="w-14 h-14 rounded-full object-cover border-2" style="border-color:rgba(125,211,252,.3)" alt=""><div class="text-left"><div class="font-display font-bold flex items-center gap-2">s <i class="fa-solid fa-circle-check text-info text-xs"></i></div><div class="text-void-100 text-sm">@s</div></div></div><p class="text-sm text-void-100 text-left mb-4">She sells sea shells by the sea shore.</p><div class="space-y-2"><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-github text-void-100"></i> GitHub</div><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-discord text-void-100"></i> Discord Server</div><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-x-twitter text-void-100"></i> Twitter / X</div></div></div></div></div></div></div></section>';var feats=[['fa-palette','Custom Themes','Choose from stunning gradient backgrounds'],['fa-shield-halved','Unique Badges','Get verified with collectible profile badges'],['fa-chart-line','View Analytics','Track profile visits in real time'],['fa-bolt','Instant Setup','Create your page in under 60 seconds']];h+='<section class="py-24 px-6"><div class="max-w-5xl mx-auto"><h2 class="font-display font-bold text-3xl md:text-4xl text-center mb-4">Everything you need</h2><p class="text-void-100 text-center mb-16 max-w-lg mx-auto">Powerful features to make your bio link stand out</p><div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">';for(var i=0;i<feats.length;i++){var f=feats[i];h+='<div class="glass rounded-2xl p-6 hover:border-accent/20 transition-all duration-300 hover:-translate-y-1 anim-fade" style="animation-delay:'+(0.1+i*0.1)+'s"><div class="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center mb-4"><i class="fa-solid '+f[0]+' text-accent"></i></div><h3 class="font-display font-semibold text-base mb-2">'+f[1]+'</h3><p class="text-void-100 text-sm leading-relaxed">'+f[2]+'</p></div>';}h+='</div></div></section><section class="py-24 px-6"><div class="max-w-2xl mx-auto text-center"><h2 class="font-display font-bold text-3xl md:text-4xl mb-4">Ready to claim your link?</h2><p class="text-void-100 mb-8">Join thousands of creators who use Seashell.</p><a href="#" class="open-signup vl-btn vl-btn-primary text-base px-10 py-3"><i class="fa-solid fa-rocket"></i> Get Started Free</a></div></section>';h+='<footer class="border-t border-void-400 py-8 px-6"><div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4"><span class="font-display font-bold text-sm">'+brandLogo()+'</span><span class="text-void-100 text-xs">&copy; '+new Date().getFullYear()+' Seashell.lol</span></div></footer>';return h;}
-
-function renderDashboard(user,tab){tab=tab||'profile';var tabs=[{id:'profile',i:'fa-user',l:'Profile'},{id:'links',i:'fa-link',l:'Links'},{id:'badges',i:'fa-award',l:'Badges'},{id:'appearance',i:'fa-palette',l:'Appearance'},{id:'settings',i:'fa-gear',l:'Settings'}];var ok=false;for(var i=0;i<tabs.length;i++)if(tabs[i].id===tab)ok=true;if(!ok)tab='profile';var content='';if(tab==='profile')content=dashProfile(user);else if(tab==='links')content=dashLinks(user);else if(tab==='badges')content=dashBadges(user);else if(tab==='appearance')content=dashAppearance(user);else if(tab==='settings')content=dashSettings(user);var h='<div class="mobile-header fixed top-0 left-0 right-0 z-50 glass-strong h-14 items-center px-4 gap-3"><a href="/" class="font-display font-bold text-sm">'+brandLogo()+'</a><div class="flex-1"></div><a href="/'+esc(user.username)+'" target="_blank" class="vl-btn vl-btn-s vl-btn-sm"><i class="fa-solid fa-eye"></i></a></div>';h+='<aside class="dash-sidebar"><div class="px-6 mb-8"><a href="/" class="font-display font-bold text-lg tracking-tight block mb-1">'+brandLogo()+'</a><p class="text-void-100 text-xs">Dashboard</p></div><nav>';for(var i=0;i<tabs.length;i++)h+='<a href="/dashboard/'+tabs[i].id+'" class="'+(tabs[i].id===tab?'active':'')+'"><i class="fa-solid '+tabs[i].i+' w-5 text-center"></i>'+tabs[i].l+'</a>';h+='</nav><div class="px-6 pt-8 mt-auto"><div class="border-t border-void-400 pt-4"><div class="flex items-center gap-3 mb-3"><div class="w-9 h-9 rounded-full bg-void-400 flex items-center justify-center text-sm font-bold">'+esc((user.displayName||user.username)[0].toUpperCase())+'</div><div><div class="text-sm font-semibold">'+esc(user.displayName||user.username)+'</div><div class="text-xs text-void-100">@'+esc(user.username)+'</div></div></div><div class="flex gap-2"><a href="/'+esc(user.username)+'" target="_blank" class="vl-btn vl-btn-s vl-btn-sm flex-1 justify-center text-xs"><i class="fa-solid fa-eye"></i> View</a><button class="do-logout vl-btn vl-btn-s vl-btn-sm flex-1 justify-center text-xs" style="color:#f55"><i class="fa-solid fa-right-from-bracket"></i> Logout</button></div></div></div></aside>';h+='<main class="dash-main pt-4 md:pt-8"><div class="flex md:hidden gap-1 mb-6 overflow-x-auto pb-2">';for(var i=0;i<tabs.length;i++)h+='<a href="/dashboard/'+tabs[i].id+'" class="vl-btn vl-btn-sm whitespace-nowrap '+(tabs[i].id===tab?'vl-btn-primary':'vl-btn-secondary')+'"><i class="fa-solid '+tabs[i].i+'"></i>'+tabs[i].l+'</a>';h+='</div><div class="anim-fade">'+content+'</div></main>';return h;}
-
-function dashProfile(u){return '<h2 class="font-display font-bold text-2xl mb-1">Edit Profile</h2><p class="text-void-100 text-sm mb-8">Customize how your profile appears</p><form id="frm-profile" class="max-w-lg space-y-5"><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Display Name</label><input class="vl-input" name="displayName" value="'+esc(u.displayName||'')+'" maxlength="30"></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Username</label><div class="flex items-center gap-2"><span class="text-void-100 text-sm">@</span><input class="vl-input" name="username" value="'+esc(u.username)+'" minlength="3" maxlength="20" required></div><p class="text-void-200 text-xs mt-1">seashell.lol/<strong class="text-void-100">'+esc(u.username)+'</strong></p></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Bio</label><textarea class="vl-input" name="bio" maxlength="160" placeholder="Tell people about yourself...">'+esc(u.bio||'')+'</textarea></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Avatar URL</label><input class="vl-input" name="avatar" value="'+esc(u.avatar||'')+'" placeholder="https://example.com/avatar.jpg">'+(u.avatar?'<img src="'+esc(u.avatar)+'" class="w-16 h-16 rounded-full mt-2 object-cover border border-void-400" alt="">':'')+'</div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">UID</label><div class="flex items-center gap-3"><code class="bg-void-500 px-4 py-2.5 rounded-lg text-sm font-mono text-accent">'+u.uid+'</code></div></div><button type="submit" class="vl-btn vl-btn-primary"><i class="fa-solid fa-check"></i> Save Changes</button></form>';}
-
-function dashLinks(u){var links=u.links||[];var h='<div class="flex items-center justify-between mb-8"><div><h2 class="font-display font-bold text-2xl mb-1">Manage Links</h2><p class="text-void-100 text-sm">Add, edit, or remove links</p></div><button class="do-add-link vl-btn vl-btn-primary"><i class="fa-solid fa-plus"></i> Add Link</button></div><div class="max-w-lg space-y-3">';if(!links.length){h+='<div class="glass rounded-xl p-8 text-center"><i class="fa-solid fa-link-slash text-3xl text-void-300 mb-3"></i><p class="text-void-100 text-sm">No links yet.</p></div>';}else{for(var i=0;i<links.length;i++){var lk=links[i];h+='<div class="glass rounded-xl p-4 flex items-center gap-4 anim-fade" style="animation-delay:'+(i*0.05)+'s"><div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-void-100"><i class="'+linkIcon(lk.url)+'"></i></div><div class="flex-1 min-w-0"><div class="font-semibold text-sm truncate">'+esc(lk.title)+'</div><div class="text-void-100 text-xs truncate">'+esc(lk.url)+'</div></div><button class="do-edit-link vl-btn vl-btn-s vl-btn-sm" data-lid="'+lk.id+'"><i class="fa-solid fa-pen text-xs"></i></button><button class="do-del-link vl-btn vl-btn-s vl-btn-sm" style="color:#f55" data-lid="'+lk.id+'"><i class="fa-solid fa-trash text-xs"></i></button></div>';}}h+='</div>';return h;}
-
-function dashBadges(u){
-  var hasPremium=(u.badges||[]).indexOf('premium')>-1;var awarded=u.badges||[];var hidden=u.hiddenBadges||[];var customs=u.customBadges||[];
-  var h='<h2 class="font-display font-bold text-2xl mb-1">Badges</h2><p class="text-void-100 text-sm mb-8">Toggle badge visibility on your profile</p>';
-  var builtInAwarded=[];for(var i=0;i<awarded.length;i++){if(BADGES[awarded[i]])builtInAwarded.push(awarded[i]);}
-  h+='<div class="glass rounded-xl p-6 mb-6"><h3 class="font-display font-semibold text-base mb-1 flex items-center gap-2"><i class="fa-solid fa-award text-accent text-sm"></i> Your Badges</h3><p class="text-void-200 text-xs mb-4">Awarded badges. Toggle to show or hide.</p>';
-  if(builtInAwarded.length===0&&customs.length===0){h+='<div class="text-center py-8"><i class="fa-solid fa-award text-2xl text-void-300 mb-3"></i><p class="text-void-100 text-sm">No badges yet.</p></div>';}
-  else{if(builtInAwarded.length>0){h+='<div id="dash-badges-built">';for(var i=0;i<builtInAwarded.length;i++){var k=builtInAwarded[i];var b=BADGES[k];var vis=hidden.indexOf(k)===-1;h+='<div class="perm-row"><div class="flex items-center gap-3"><i class="'+b.i+'" style="color:'+b.c+'"></i><div><span class="text-sm font-medium">'+b.l+'</span></div></div><div class="flex items-center gap-3"><span class="text-xs '+(vis?'text-success':'text-void-200')+'">'+(vis?'Visible':'Hidden')+'</span><div class="perm-toggle '+(vis?'on':'')+'" data-badge="'+k+'"></div></div></div>';}h+='</div>';}}
-  h+='</div>';
-  if(builtInAwarded.length>0||customs.length>0)h+='<button class="do-save-dash-badges vl-btn vl-btn-primary mb-8"><i class="fa-solid fa-check"></i> Save Visibility</button>';
-  if(hasPremium){h+='<div class="glass rounded-xl p-6"><div class="flex items-center justify-between mb-4"><div><h3 class="font-display font-semibold text-base flex items-center gap-2"><i class="fa-solid fa-crown text-warning text-sm"></i> Custom Badges</h3><p class="text-void-200 text-xs mt-1">Create up to 5 custom badges.</p></div><button class="do-add-custom-badge vl-btn vl-btn-primary vl-btn-sm"><i class="fa-solid fa-plus"></i> Create</button></div>';if(!customs.length){h+='<div class="text-center py-8"><i class="fa-solid fa-image text-2xl text-void-300 mb-3"></i><p class="text-void-100 text-sm">No custom badges yet.</p></div>';}else{h+='<div id="dash-custom-badges">';for(var i=0;i<customs.length;i++){var cb=customs[i];var vis=hidden.indexOf(cb.id)===-1;h+='<div class="perm-row"><div class="flex items-center gap-3"><div class="w-7 h-7 rounded-md overflow-hidden flex-shrink-0"><img src="'+esc(cb.img)+'" class="w-full h-full object-cover" alt="" onerror="this.style.display=\'none\'"></div><div><span class="text-sm font-medium">'+esc(cb.l)+'</span></div></div><div class="flex items-center gap-2"><span class="text-xs '+(vis?'text-success':'text-void-200')+' mr-1">'+(vis?'Visible':'Hidden')+'</span><div class="perm-toggle '+(vis?'on':'')+'" data-badge="'+cb.id+'"></div><button class="do-del-custom-badge vl-btn vl-btn-s vl-btn-sm" style="color:#f55" data-cbid="'+cb.id+'"><i class="fa-solid fa-trash text-xs"></i></button></div></div>';}h+='</div>';}h+='</div><button class="do-save-dash-badges vl-btn vl-btn-primary mt-4"><i class="fa-solid fa-check"></i> Save Visibility</button>';}
-  else{h+='<div class="glass rounded-xl p-6"><div class="flex items-center gap-4"><div class="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center"><i class="fa-solid fa-crown text-warning text-lg"></i></div><div><p class="font-display font-semibold text-sm">Premium Required</p><p class="text-void-100 text-xs mt-0.5">Get the Premium badge to unlock custom badges.</p></div></div></div>';}
-  return h;
-}
-
-/* ===== dashAppearance WITH MUSIC + AUTOPLAY ===== */
-function dashAppearance(u){
-  var curFx=u.displayNameEffect||'none';
-  var dn=u.displayName||u.username;
-  var curMusic=u.musicUrl||'';
-  var curPlat=detectMusicPlatform(curMusic);
-  var h='<h2 class="font-display font-bold text-2xl mb-1">Appearance</h2><p class="text-void-100 text-sm mb-8">Customize the look of your profile</p><div class="max-w-lg space-y-8">';
-
-  // Display Name Effect
-  h+='<div><label class="block text-xs font-semibold text-void-100 mb-3 uppercase tracking-wider">Display Name Effect</label>';
-  h+='<div class="grid grid-cols-3 sm:grid-cols-4 gap-2" id="fx-grid">';
-  for(var key in DISPLAY_EFFECTS){
-    var fx=DISPLAY_EFFECTS[key];var isSel=curFx===key;
-    h+='<button class="fx-opt glass rounded-xl p-3 flex flex-col items-center gap-2 '+(isSel?'sel':'')+'" data-fx="'+key+'"><i class="fa-solid '+fx.icon+' text-base '+(isSel?'text-accent':'text-void-100')+'"></i><span class="text-[11px] font-medium leading-tight text-center">'+fx.name+'</span></button>';
+  
+  // Add link
+  var addLinkBtn = e.target.closest('.add-link-btn');
+  if (addLinkBtn && !addLinkBtn.disabled) {
+    showModal('<h3 class="font-display font-bold text-xl mb-6">Add Link</h3><form id="frm-addlink"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Title</label><input class="vl-input mb-4" name="title" placeholder="My Website" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">URL</label><input class="vl-input mb-4" name="url" type="url" placeholder="https://example.com" required><div id="addlink-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center" data-submitting="false">Add Link</button></form>');
+    return;
   }
-  h+='</div>';
-  h+='<div class="mt-4 glass rounded-xl p-5"><p class="text-xs text-void-200 mb-3 uppercase tracking-wider font-semibold">Preview</p>';
-  h+='<div class="fx-preview-box text-xl font-display font-bold" id="fx-preview">'+buildEffectHTML(dn,curFx)+'</div></div></div>';
-
-  // ===== MUSIC SECTION =====
-  h+='<div class="glass rounded-xl p-6"><div class="flex items-center gap-3 mb-1"><div class="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center"><i class="fa-solid fa-music text-accent"></i></div><div><h3 class="font-display font-semibold text-base">Profile Music</h3><p class="text-void-200 text-xs">Add a song that autoplay on your profile</p></div></div>';
-  h+='<p class="text-void-200 text-xs mb-4 mt-3">Paste a link from any supported platform. The player will autoplay the full song when visitors open your profile.</p>';
-
-  h+='<div class="flex flex-wrap gap-1.5 mb-4">';
-  var platKeys=['youtube','soundcloud','spotify','apple','tidal','deezer','bandcamp'];
-  for(var i=0;i<platKeys.length;i++){
-    var pk=platKeys[i];var pp=MUSIC_PLATFORMS[pk];
-    h+='<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-semibold" style="background:'+pp.color+'12;color:'+pp.color+';border:1px solid '+pp.color+'20"><i class="'+pp.icon+'" style="font-size:9px"></i>'+pp.name+'</span>';
+  
+  // Edit link
+  var editLinkBtn = e.target.closest('.edit-link-btn');
+  if (editLinkBtn) {
+    var idx = parseInt(editLinkBtn.dataset.idx);
+    var s = getSession();
+    if (s) {
+      findById(s.userId).then(function(user) {
+        if (user && user.links[idx]) {
+          var lk = user.links[idx];
+          showModal('<h3 class="font-display font-bold text-xl mb-6">Edit Link</h3><form id="frm-editlink" data-idx="'+idx+'"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Title</label><input class="vl-input mb-4" name="title" value="'+esc(lk.title)+'" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">URL</label><input class="vl-input mb-4" name="url" type="url" value="'+esc(lk.url)+'" required><div id="editlink-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center" data-submitting="false">Save Changes</button></form>');
+        }
+      });
+    }
+    return;
   }
-  h+='</div>';
-
-  h+='<div class="flex gap-2 mb-3"><input class="vl-input flex-1" id="inp-music-url" value="'+esc(curMusic)+'" placeholder="https://open.spotify.com/track/..."><button class="do-clear-music vl-btn vl-btn-s vl-btn-sm" style="color:#f55" title="Remove music"><i class="fa-solid fa-xmark"></i></button></div>';
-
-  h+='<div id="music-plat-detect" class="mb-4 min-h-[24px]">';
-  if(curPlat){var mp=MUSIC_PLATFORMS[curPlat];h+='<div class="music-platform-badge" style="background:'+mp.color+'18;color:'+mp.color+'"><i class="'+mp.icon+'" style="font-size:10px"></i> '+mp.name+' detected — will autoplay full song</div>';}
-  else if(curMusic){h+='<span class="text-xs text-red-400"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px"></i>Unrecognized platform</span>';}
-  h+='</div>';
-
-  h+='<button class="do-preview-music vl-btn vl-btn-secondary vl-btn-sm mb-4"><i class="fa-solid fa-play"></i> Preview Player</button>';
-  h+='<div id="music-preview-area" class="min-h-0">';
-  if(curMusic){h+='<div class="music-embed-wrap">'+buildMusicEmbed(curMusic)+'</div>';}
-  h+='</div>';
-  h+='</div>';
-  // ===== END MUSIC SECTION =====
-
-  // Background
-  h+='<div><label class="block text-xs font-semibold text-void-100 mb-3 uppercase tracking-wider">Background</label><div class="grid grid-cols-3 gap-3">';
-  var bgs=['void','sunset','ocean','forest','midnight','neon'];
-  for(var i=0;i<bgs.length;i++){var k=bgs[i];h+='<button class="do-set-bg relative rounded-xl overflow-hidden h-20 border-2 transition-all" data-bg="'+k+'" style="border-color:'+(u.background===k?'#7dd3fc':'#1e1e1e')+'"><div class="'+BGM[k]+' absolute inset-0"></div><span class="absolute bottom-1 left-0 right-0 text-center text-[10px] font-semibold text-white/80 drop-shadow">'+BGL[k]+'</span></button>';}
-  h+='</div></div>';
-
-  h+='<div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Background Image URL</label><input class="vl-input" id="inp-bgimg" value="'+esc(u.bgImage||'')+'" placeholder="https://example.com/bg.jpg"></div>';
-
-  h+='<div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Accent Color</label><div class="flex items-center gap-3"><input type="color" id="inp-accent" value="'+(u.accentColor||'#7dd3fc')+'" class="w-12 h-10 rounded-lg cursor:pointer border-0 bg-transparent"><code class="text-sm font-mono text-void-100" id="accent-code">'+(u.accentColor||'#7dd3fc')+'</code></div></div>';
-
-  h+='<button class="do-save-app vl-btn vl-btn-primary"><i class="fa-solid fa-check"></i> Save Appearance</button></div>';
-  return h;
-}
-
-function dashSettings(u){var h='<h2 class="font-display font-bold text-2xl mb-1">Settings</h2><p class="text-void-100 text-sm mb-8">Manage your account</p><div class="max-w-lg space-y-8"><div class="glass rounded-xl p-6"><h3 class="font-display font-semibold mb-1">Change Password</h3><p class="text-void-100 text-xs mb-4">Update your password</p><form id="frm-pw" class="space-y-4"><input class="vl-input" name="curPw" type="password" placeholder="Current password" required><input class="vl-input" name="newPw" type="password" placeholder="New password (min 6)" required minlength="6"><button type="submit" class="vl-btn vl-btn-secondary"><i class="fa-solid fa-key"></i> Update Password</button></form></div><div class="glass rounded-xl p-6"><h3 class="font-display font-semibold mb-1">Account Info</h3><div class="space-y-2 text-sm mt-3"><div class="flex justify-between"><span class="text-void-100">Email</span><span>'+esc(u.email)+'</span></div><div class="flex justify-between"><span class="text-void-100">UID</span><code class="text-accent">'+u.uid+'</code></div><div class="flex justify-between"><span class="text-void-100">Role</span><span class="capitalize text-accent">'+u.role+'</span></div><div class="flex justify-between"><span class="text-void-100">Joined</span><span>'+new Date(u.createdAt).toLocaleDateString()+'</span></div><div class="flex justify-between"><span class="text-void-100">Views</span><span>'+(u.views||0)+'</span></div></div></div>';if(hasPerm(u,'admin_panel'))h+='<a href="/admin" class="vl-btn vl-btn-secondary"><i class="fa-solid fa-shield-halved"></i> Open Admin Panel</a>';h+='<div class="border-t border-void-400 pt-6"><button class="do-del-acct vl-btn vl-btn-danger"><i class="fa-solid fa-trash"></i> Delete Account</button></div></div>';return h;}
-
-function getUserBadgeHtml(user){var visible=getVisibleBadges(user);if(!visible.length)return '<span class="text-void-200 text-xs">None</span>';var bH='';for(var j=0;j<visible.length;j++){bH+=renderBadgePill(visible[j],user);}return bH;}
-
-function renderAdminTable(admin,users){P.start();var myPerms=admin.permissions||ROLE_PERMS[admin.role]||ROLE_PERMS.user;var h='<div class="mobile-header fixed top-0 left-0 right-0 z-50 glass-strong h-14 items-center px-4 gap-3"><a href="/" class="font-display font-bold text-sm">'+brandLogo()+'</a><span class="text-xs text-accent font-semibold">Admin</span><div class="flex-1"></div><a href="/dashboard" class="vl-btn vl-btn-s vl-btn-sm"><i class="fa-solid fa-arrow-left"></i></a></div><aside class="dash-sidebar"><div class="px-6 mb-8"><a href="/" class="font-display font-bold text-lg tracking-tight block mb-1">'+brandLogo()+'</a><p class="text-xs text-accent font-semibold">Admin Panel</p></div><nav><a href="/admin" class="active"><i class="fa-solid fa-users w-5 text-center"></i>All Users</a>';if(myPerms.manage_users||myPerms.manage_badges||myPerms.ban_users)h+='<a href="/admin/roles" class="mt-2"><i class="fa-solid fa-user-shield w-5 text-center"></i>Roles & Permissions</a>';h+='<a href="/dashboard" class="mt-2"><i class="fa-solid fa-arrow-left w-5 text-center"></i>Back to Dashboard</a></nav><div class="px-6 pt-8 mt-auto"><div class="border-t border-void-400 pt-4"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center text-sm font-bold text-accent">A</div><div><div class="text-sm font-semibold">'+esc(admin.displayName||admin.username)+'</div><div class="text-xs text-accent">'+admin.role+'</div></div></div></div></div></aside>';h+='<main class="dash-main pt-4 md:pt-8"><div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8"><div><h2 class="font-display font-bold text-2xl mb-1">User Management</h2><p class="text-void-100 text-sm">'+users.length+' total users</p></div><input id="admin-search" class="vl-input sm:w-64" placeholder="Search users..."></div><div class="glass rounded-2xl overflow-hidden"><div class="overflow-x-auto"><table class="admin-table" id="adm-tbl"><thead><tr><th>User</th><th>UID</th><th>Role</th><th>Badges</th><th>Status</th><th>Actions</th></tr></thead><tbody>';for(var i=0;i<users.length;i++){var u=users[i];var avc=u.avatar?'<img src="'+esc(u.avatar)+'" class="w-full h-full rounded-full object-cover" alt="">':esc((u.displayName||u.username)[0].toUpperCase());var rc={admin:'text-accent',moderator:'text-purple-400',user:'text-void-100'};var acts='<div class="flex gap-1 flex-wrap">';if(u.id!==admin.id){if(myPerms.ban_users)acts+='<button class="do-ban vl-btn vl-btn-sm '+(u.banned?'vl-btn-success':'vl-btn-danger')+'" data-uid="'+u.id+'"><i class="fa-solid '+(u.banned?'fa-unlock':'fa-ban')+'"></i></button>';if(myPerms.change_uid)acts+='<button class="do-uid vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-fingerprint"></i></button>';if(myPerms.manage_badges)acts+='<button class="do-badges vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-award"></i></button>';if(myPerms.manage_users)acts+='<button class="do-role vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-user-shield"></i></button>';if(myPerms.delete_users)acts+='<button class="do-del-user vl-btn vl-btn-danger vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-trash"></i></button>';}acts+='</div>';h+='<tr data-uname="'+esc(u.username)+'"><td><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-void-400 flex items-center justify-center text-sm font-bold overflow-hidden flex-shrink-0">'+avc+'</div><div class="min-w-0"><div class="font-semibold text-sm truncate">'+esc(u.displayName||u.username)+'</div><div class="text-void-200 text-xs truncate">'+esc(u.email)+'</div></div></div></td><td><code class="text-accent text-xs">'+u.uid+'</code></td><td><span class="text-xs font-semibold uppercase '+rc[u.role]+'">'+u.role+'</span></td><td>'+getUserBadgeHtml(u)+'</td><td>'+(u.banned?'<span class="badge" style="background:rgba(255,45,45,.15);color:#ff5555"><i class="fa-solid fa-ban" style="font-size:9px"></i> Banned</span>':'<span class="badge" style="background:rgba(0,255,136,.1);color:#00ff88">Active</span>')+'</td><td>'+acts+'</td></tr>';}h+='</tbody></table></div></div></main>';return h;}
-
-function router(){var app=document.getElementById('app');if(!app)return;var path=window.location.pathname||'/';if(path==='/'||path==='/index.html'){curUser().then(function(u){app.innerHTML=renderHome(u);bindHome();});}
-else if(path.startsWith('/dashboard')){var parts=path.split('/');var tab=parts[2]||'profile';needAuth().then(function(u){if(!u){app.innerHTML=renderHome(null);bindHome();return;}app.innerHTML=renderDashboard(u,tab);bindDash(u);});}
-else if(path.startsWith('/admin')){needAdmin().then(function(a){if(!a){app.innerHTML=renderHome(null);bindHome();return;}getAllUsers().then(function(users){app.innerHTML=renderAdminTable(a,users);bindAdmin(a);});});}
-else{var slug=path.slice(1).replace(/\/$/,'');if(!slug){app.innerHTML=renderHome(null);bindHome();return;}findByUsername(slug).then(function(u){if(!u){app.innerHTML='<div class="min-h-screen flex items-center justify-center px-6"><div class="text-center"><h2 class="font-display font-bold text-3xl mb-3">User not found</h2><p class="text-void-100 mb-6">This profile doesn\'t exist.</p><a href="/" class="vl-btn vl-btn-primary">Go Home</a></div></div>';return;}if(u.id){db.collection("users").doc(u.id).update({views:firebase.firestore.FieldValue.increment(1)}).catch(function(){});}app.innerHTML=renderProfile(u);});}}
-
-function bindHome(){document.addEventListener('click',function h(e){var ln=e.target.closest('.open-login');if(ln){e.preventDefault();showModal(loginHTML());bindLogin();return;}var sn=e.target.closest('.open-signup');if(sn){e.preventDefault();showModal(signupHTML());bindSignup();return;}});}
-
-function bindLogin(){var f=document.getElementById('frm-login');if(!f)return;f.onsubmit=function(e){e.preventDefault();var fd=new FormData(f);var lid=fd.get('loginId').trim();var pw=fd.get('password');var err=document.getElementById('login-err');if(!lid||!pw){err.textContent='All fields required.';err.classList.remove('hidden');return;}findByEmail(lid).then(function(u){if(!u)return findByUsername(lid);return u;}).then(function(u){if(!u||u.password!==hashPw(pw)){err.textContent='Invalid credentials.';err.classList.remove('hidden');return;}if(u.banned&&!hasPerm(u,'bypass_ban')){err.textContent='Account is banned.';err.classList.remove('hidden');return;}setSession(u.id);closeModal();navigateTo('/dashboard');toast('Welcome back!','success');}).catch(function(){err.textContent='Login failed.';err.classList.remove('hidden');});};}
-
-function bindSignup(){var f=document.getElementById('frm-signup');if(!f)return;f.onsubmit=function(e){e.preventDefault();var fd=new FormData(f);var un=fd.get('username').trim().toLowerCase();var dn=fd.get('displayName').trim();var em=fd.get('email').trim();var pw=fd.get('password');var err=document.getElementById('signup-err');if(!un||!em||!pw){err.textContent='All fields required.';err.classList.remove('hidden');return;}if(un.length<3||!/^[a-z0-9_]+$/.test(un)){err.textContent='Username: 3-20 chars, lowercase, numbers, underscores only.';err.classList.remove('hidden');return;}findByUsername(un).then(function(exists){if(exists){err.textContent='Username already taken.';err.classList.remove('hidden');return null;}return findByEmail(em);}).then(function(exists){if(exists===null)return;if(exists){err.textContent='Email already registered.';err.classList.remove('hidden');return;}createUser({username:un,displayName:dn||un,email:em,password:pw}).then(function(u){setSession(u.id);closeModal();navigateTo('/dashboard');toast('Account created!','success');}).catch(function(er){err.textContent='Signup failed: '+er.message;err.classList.remove('hidden');});}).catch(function(er){err.textContent='Error: '+er.message;err.classList.remove('hidden');});};}
-
-function bindDash(u){
-  var pf=document.getElementById('frm-profile');
-  if(pf){pf.onsubmit=function(e){e.preventDefault();var fd=new FormData(pf);var dn=fd.get('displayName').trim();var un=fd.get('username').trim().toLowerCase();var bio=fd.get('bio').trim();var av=fd.get('avatar').trim();if(!un||un.length<3||!/^[a-z0-9_]+$/.test(un)){toast('Invalid username.','error');return;}if(un!==u.username){findByUsername(un).then(function(ex){if(ex){toast('Username taken.','error');return;}updateUser(u.id,{displayName:dn,username:un,bio:bio,avatar:av}).then(function(){toast('Profile saved!','success');navigateTo('/dashboard/profile');}).catch(function(er){toast('Error: '+er.message,'error');});});}else{updateUser(u.id,{displayName:dn,bio:bio,avatar:av}).then(function(){toast('Profile saved!','success');}).catch(function(er){toast('Error: '+er.message,'error');});}};}
-
-  var pwf=document.getElementById('frm-pw');
-  if(pwf){pwf.onsubmit=function(e){e.preventDefault();var fd=new FormData(pwf);if(hashPw(fd.get('curPw'))!==u.password){toast('Wrong current password.','error');return;}updateUser(u.id,{password:hashPw(fd.get('newPw'))}).then(function(){toast('Password updated!','success');pwf.reset();}).catch(function(er){toast('Error: '+er.message,'error');});};}
-
-  var fxGrid=document.getElementById('fx-grid');
-  if(fxGrid){fxGrid.addEventListener('click',function(e){var btn=e.target.closest('.fx-opt');if(!btn)return;var key=btn.getAttribute('data-fx');var preview=document.getElementById('fx-preview');if(preview)preview.innerHTML=buildEffectHTML(u.displayName||u.username,key);var allBtns=fxGrid.querySelectorAll('.fx-opt');for(var i=0;i<allBtns.length;i++){allBtns[i].classList.remove('sel');var ic=allBtns[i].querySelector('i');if(ic){ic.classList.remove('text-accent');ic.classList.add('text-void-100');}}btn.classList.add('sel');var ic=btn.querySelector('i');if(ic){ic.classList.remove('text-void-100');ic.classList.add('text-accent');}});}
-
-  var musicInp=document.getElementById('inp-music-url');
-  var platDetect=document.getElementById('music-plat-detect');
-  if(musicInp&&platDetect){
-    var musicTimer=null;
-    musicInp.addEventListener('input',function(){
-      clearTimeout(musicTimer);
-      musicTimer=setTimeout(function(){
-        var val=musicInp.value.trim();
-        if(!val){platDetect.innerHTML='';return;}
-        var plat=detectMusicPlatform(val);
-        if(plat){var mp=MUSIC_PLATFORMS[plat];platDetect.innerHTML='<div class="music-platform-badge" style="background:'+mp.color+'18;color:'+mp.color+'"><i class="'+mp.icon+'" style="font-size:10px"></i> '+mp.name+' detected — will autoplay full song</div>';}
-        else{platDetect.innerHTML='<span class="text-xs text-red-400"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px"></i>Unrecognized platform</span>';}
-      },400);
+  
+  // Delete link
+  var delLinkBtn = e.target.closest('.del-link-btn');
+  if (delLinkBtn) {
+    var idx = parseInt(delLinkBtn.dataset.idx);
+    var s = getSession();
+    if (s) {
+      findById(s.userId).then(function(user) {
+        if (user) {
+          var links = user.links || [];
+          links.splice(idx, 1);
+          return updateUser(s.userId, { links: links });
+        }
+      }).then(function() {
+        toast('Link removed.', 'info');
+        router();
+      });
+    }
+    return;
+  }
+  
+  // Toggle badge visibility
+  var toggleBadgeBtn = e.target.closest('.toggle-badge-btn');
+  if (toggleBadgeBtn) {
+    var badgeKey = toggleBadgeBtn.dataset.badge;
+    var s = getSession();
+    if (s) {
+      findById(s.userId).then(function(user) {
+        if (user) {
+          var hidden = user.hiddenBadges || [];
+          var idx = hidden.indexOf(badgeKey);
+          if (idx > -1) hidden.splice(idx, 1); else hidden.push(badgeKey);
+          return updateUser(s.userId, { hiddenBadges: hidden });
+        }
+      }).then(function() { router(); });
+    }
+    return;
+  }
+  
+  // Delete custom badge
+  var delCbadgeBtn = e.target.closest('.del-cbadge-btn');
+  if (delCbadgeBtn) {
+    var idx = parseInt(delCbadgeBtn.dataset.idx);
+    var s = getSession();
+    if (s) {
+      findById(s.userId).then(function(user) {
+        if (user) {
+          var customs = user.customBadges || [];
+          customs.splice(idx, 1);
+          return updateUser(s.userId, { customBadges: customs });
+        }
+      }).then(function() { toast('Custom badge removed.', 'info'); router(); });
+    }
+    return;
+  }
+  
+  // Add custom badge
+  var addCbadgeBtn = e.target.closest('.add-cbadge-btn');
+  if (addCbadgeBtn) {
+    showModal('<h3 class="font-display font-bold text-xl mb-6">Add Custom Badge</h3><form id="frm-addcbadge"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Label</label><input class="vl-input mb-4" name="label" placeholder="My Badge" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">ID (unique)</label><input class="vl-input mb-4" name="id" placeholder="my_badge" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Color</label><input class="vl-input mb-4" name="color" value="#7dd3fc" placeholder="#7dd3fc"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Image URL (optional)</label><input class="vl-input mb-4" name="img" placeholder="https://example.com/icon.png"><div id="addcbadge-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center" data-submitting="false">Add Badge</button></form>');
+    return;
+  }
+  
+  // Background option
+  var bgOpt = e.target.closest('.bg-opt');
+  if (bgOpt) {
+    document.querySelectorAll('.bg-opt').forEach(function(el) { el.classList.remove('sel'); });
+    bgOpt.classList.add('sel');
+    return;
+  }
+  
+  // Effect option
+  var fxOpt = e.target.closest('.fx-opt');
+  if (fxOpt && fxOpt.dataset.fx) {
+    document.querySelectorAll('.fx-opt').forEach(function(el) { el.classList.remove('sel'); });
+    fxOpt.classList.add('sel');
+    var previewBox = document.querySelector('.fx-preview-box');
+    if (previewBox) {
+      var s = getSession();
+      if (s) {
+        findById(s.userId).then(function(user) {
+          if (user) previewBox.innerHTML = '<span class="text-lg font-display font-bold">' + buildEffectHTML(user.displayName || user.username, fxOpt.dataset.fx) + '</span>';
+        });
+      }
+    }
+    return;
+  }
+  
+  // Save appearance
+  var saveAppBtn = e.target.closest('.save-appearance-btn');
+  if (saveAppBtn && !saveAppBtn.disabled) {
+    var s = getSession();
+    if (!s) return;
+    
+    var errEl = document.getElementById('appearance-err');
+    var okEl = document.getElementById('appearance-ok');
+    errEl.classList.add('hidden');
+    okEl.classList.add('hidden');
+    
+    saveAppBtn.disabled = true;
+    saveAppBtn.dataset.submitting = 'true';
+    saveAppBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+    
+    var bg = document.querySelector('.bg-opt.sel');
+    var bgKey = bg ? bg.dataset.bg : 'void';
+    var bgImage = document.getElementById('inp-bgImage').value.trim();
+    var accent = document.getElementById('inp-accent').value;
+    var fx = document.querySelector('.fx-opt.sel');
+    var fxKey = fx ? fx.dataset.fx : 'none';
+    
+    updateUser(s.userId, {
+      background: bgKey,
+      bgImage: bgImage,
+      accentColor: accent,
+      displayNameEffect: fxKey
+    }).then(function() {
+      saveAppBtn.disabled = false;
+      saveAppBtn.dataset.submitting = 'false';
+      saveAppBtn.innerHTML = '<i class="fa-solid fa-check"></i> Save Appearance';
+      okEl.textContent = 'Appearance saved!';
+      okEl.classList.remove('hidden');
+      toast('Appearance updated!', 'success');
+    }).catch(function(err) {
+      saveAppBtn.disabled = false;
+      saveAppBtn.dataset.submitting = 'false';
+      saveAppBtn.innerHTML = '<i class="fa-solid fa-check"></i> Save Appearance';
+      errEl.textContent = err.message || 'Error saving';
+      errEl.classList.remove('hidden');
     });
+    return;
   }
+  
+  // Delete account
+  var delAccBtn = e.target.closest('.delete-account-btn');
+  if (delAccBtn) {
+    showModal('<h3 class="font-display font-bold text-xl mb-2 text-red-400">Delete Account?</h3><p class="text-void-100 text-sm mb-6">This action is permanent and cannot be undone. All your data will be deleted.</p><div class="flex gap-3"><button class="vl-btn vl-btn-secondary flex-1 justify-center cancel-delete-btn">Cancel</button><button class="vl-btn vl-btn-danger flex-1 justify-center confirm-delete-btn" data-submitting="false"><i class="fa-solid fa-trash"></i> Delete</button></div>');
+    return;
+  }
+  
+  // Confirm delete
+  var confirmDelBtn = e.target.closest('.confirm-delete-btn');
+  if (confirmDelBtn && confirmDelBtn.dataset.submitting !== 'true') {
+    confirmDelBtn.disabled = true;
+    confirmDelBtn.dataset.submitting = 'true';
+    confirmDelBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Deleting...';
+    
+    var s = getSession();
+    if (s) {
+      deleteUser(s.userId).then(function() {
+        clearSession();
+        closeModal();
+        toast('Account deleted.', 'info');
+        navigateTo('/');
+      }).catch(function(err) {
+        confirmDelBtn.disabled = false;
+        confirmDelBtn.dataset.submitting = 'false';
+        confirmDelBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete';
+        toast('Error: ' + err.message, 'error');
+      });
+    }
+    return;
+  }
+  
+  // Cancel delete
+  var cancelDelBtn = e.target.closest('.cancel-delete-btn');
+  if (cancelDelBtn) {
+    closeModal();
+    return;
+  }
+});
 
-  var acInp=document.getElementById('inp-accent');
-  var acCode=document.getElementById('accent-code');
-  if(acInp&&acCode){acInp.addEventListener('input',function(){acCode.textContent=acInp.value;});}
+// Add link form handler
+document.addEventListener('submit', function(e) {
+  if (e.target.id !== 'frm-addlink') return;
+  e.preventDefault();
+  
+  var form = e.target;
+  var errEl = document.getElementById('addlink-err');
+  var btn = form.querySelector('button[type="submit"]');
+  errEl.classList.add('hidden');
+  
+  if (btn.disabled || btn.dataset.submitting === 'true') return;
+  
+  var s = getSession();
+  if (!s) return;
+  
+  var title = form.title.value.trim();
+  var url = form.url.value.trim();
+  
+  btn.disabled = true;
+  btn.dataset.submitting = 'true';
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Adding...';
+  
+  findById(s.userId).then(function(user) {
+    if (!user) throw new Error('Not logged in');
+    var links = user.links || [];
+    var maxLinks = hasPerm(user, 'bypass_link_limit') ? 999 : 10;
+    if (links.length >= maxLinks) throw new Error('Link limit reached');
+    links.push({ title: title, url: url });
+    return updateUser(s.userId, { links: links });
+  }).then(function() {
+    closeModal();
+    toast('Link added!', 'success');
+    router();
+  }).catch(function(err) {
+    btn.disabled = false;
+    btn.dataset.submitting = 'false';
+    btn.innerHTML = 'Add Link';
+    errEl.textContent = err.message || 'Error adding link';
+    errEl.classList.remove('hidden');
+  });
+});
+
+// Edit link form handler
+document.addEventListener('submit', function(e) {
+  if (e.target.id !== 'frm-editlink') return;
+  e.preventDefault();
+  
+  var form = e.target;
+  var errEl = document.getElementById('editlink-err');
+  var btn = form.querySelector('button[type="submit"]');
+  var idx = parseInt(form.dataset.idx);
+  errEl.classList.add('hidden');
+  
+  if (btn.disabled || btn.dataset.submitting === 'true') return;
+  
+  var s = getSession();
+  if (!s) return;
+  
+  var title = form.title.value.trim();
+  var url = form.url.value.trim();
+  
+  btn.disabled = true;
+  btn.dataset.submitting = 'true';
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+  
+  findById(s.userId).then(function(user) {
+    if (!user) throw new Error('Not logged in');
+    var links = user.links || [];
+    if (!links[idx]) throw new Error('Link not found');
+    links[idx] = { title: title, url: url };
+    return updateUser(s.userId, { links: links });
+  }).then(function() {
+    closeModal();
+    toast('Link updated!', 'success');
+    router();
+  }).catch(function(err) {
+    btn.disabled = false;
+    btn.dataset.submitting = 'false';
+    btn.innerHTML = 'Save Changes';
+    errEl.textContent = err.message || 'Error updating link';
+    errEl.classList.remove('hidden');
+  });
+});
+
+// Add custom badge form handler
+document.addEventListener('submit', function(e) {
+  if (e.target.id !== 'frm-addcbadge') return;
+  e.preventDefault();
+  
+  var form = e.target;
+  var errEl = document.getElementById('addcbadge-err');
+  var btn = form.querySelector('button[type="submit"]');
+  errEl.classList.add('hidden');
+  
+  if (btn.disabled || btn.dataset.submitting === 'true') return;
+  
+  var s = getSession();
+  if (!s) return;
+  
+  var label = form.label.value.trim();
+  var id = form.id.value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '_');
+  var color = form.color.value.trim();
+  var img = form.img.value.trim();
+  
+  btn.disabled = true;
+  btn.dataset.submitting = 'true';
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Adding...';
+  
+  findById(s.userId).then(function(user) {
+    if (!user) throw new Error('Not logged in');
+    var customs = user.customBadges || [];
+    customs.push({ id: id, l: label, c: color, img: img });
+    return updateUser(s.userId, { customBadges: customs });
+  }).then(function() {
+    closeModal();
+    toast('Custom badge added!', 'success');
+    router();
+  }).catch(function(err) {
+    btn.disabled = false;
+    btn.dataset.submitting = 'false';
+    btn.innerHTML = 'Add Badge';
+    errEl.textContent = err.message || 'Error adding badge';
+    errEl.classList.remove('hidden');
+  });
+});
+
+// Accent color sync
+document.addEventListener('input', function(e) {
+  if (e.target.id === 'inp-accent') {
+    document.getElementById('inp-accent-text').value = e.target.value;
+  }
+  if (e.target.id === 'inp-accent-text') {
+    var v = e.target.value;
+    if (/^#[0-9a-fA-F]{6}$/.test(v)) {
+      document.getElementById('inp-accent').value = v;
+    }
+  }
+});
+
+/* ===== ROUTER ===== */
+function router(){
+  var path=window.location.pathname.replace(/\/+$/,'')||'/';
+  var app=document.getElementById('app');
+  if(!app)return;
+  
+  if(path==='/'){
+    curUser().then(function(u){app.innerHTML=renderHome(u);});
+    return;
+  }
+  
+  if(path==='/s'){
+    findByUsername('s').then(function(u){
+      if(u){
+        app.innerHTML=renderProfile(u);
+        db.collection("users").doc(u.id).update({views:firebase.firestore.FieldValue.increment(1)}).catch(function(){});
+      }else{
+        app.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh"><p class="text-void-100">User not found</p></div>';
+      }
+    });
+    return;
+  }
+  
+  if(path.indexOf('/dashboard')===0){
+    var parts=path.split('/').filter(Boolean);
+    var tab=parts[1]||'profile';
+    needAuth().then(function(u){
+      if(!u)return;
+      app.innerHTML=renderDashboard(u,tab);
+    });
+    return;
+  }
+  
+  // Profile page
+  var username=path.slice(1);
+  if(username){
+    findByUsername(username).then(function(u){
+      if(u){
+        app.innerHTML=renderProfile(u);
+        db.collection("users").doc(u.id).update({views:firebase.firestore.FieldValue.increment(1)}).catch(function(){});
+      }else{
+        app.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px"><h2 class="font-display text-2xl text-void-100">User not found</h2><a href="/" class="vl-btn vl-btn-primary"><i class="fa-solid fa-home"></i> Go Home</a></div>';
+      }
+    });
+    return;
+  }
+  
+  app.innerHTML=renderHome(null);
 }
 
-/* ===== EVENT DELEGATION ===== */
-document.addEventListener('click',function(e){
-  if(e.target.closest('.do-logout')){e.preventDefault();clearSession();navigateTo('/');toast('Logged out.','info');return;}
+window.addEventListener('popstate',router);
 
-  var bgBtn=e.target.closest('.do-set-bg');
-  if(bgBtn){var allBg=document.querySelectorAll('.do-set-bg');for(var i=0;i<allBg.length;i++)allBg[i].style.borderColor='#1e1e1e';bgBtn.style.borderColor='#7dd3fc';return;}
-
-  if(e.target.closest('.do-clear-music')){
-    var inp=document.getElementById('inp-music-url');var pd=document.getElementById('music-plat-detect');var pa=document.getElementById('music-preview-area');
-    if(inp)inp.value='';if(pd)pd.innerHTML='';if(pa)pa.innerHTML='';return;
-  }
-
-  if(e.target.closest('.do-preview-music')){
-    var inp=document.getElementById('inp-music-url');var pa=document.getElementById('music-preview-area');
-    if(!inp||!pa)return;var val=inp.value.trim();
-    if(!val){toast('Paste a music link first.','info');return;}
-    var plat=detectMusicPlatform(val);
-    if(!plat){toast('Unrecognized music platform.','error');return;}
-    pa.innerHTML='<div class="music-embed-wrap">'+buildMusicEmbed(val)+'</div>';return;
-  }
-
-  if(e.target.closest('.do-save-app')){
-    needAuth().then(function(u){if(!u)return;
-      var bgImg=document.getElementById('inp-bgimg');var acInp=document.getElementById('inp-accent');
-      var selFx=document.querySelector('.fx-opt.sel');var fx=selFx?selFx.getAttribute('data-fx'):'none';
-      var selBg=document.querySelector('.do-set-bg[style*="border-color: rgb(125, 211, 252)"],.do-set-bg[style*="border-color:#7dd3fc"]');
-      var bg=selBg?selBg.getAttribute('data-bg'):u.background;
-      var musicInp=document.getElementById('inp-music-url');var musicUrl=musicInp?musicInp.value.trim():'';
-      updateUser(u.id,{bgImage:bgImg?bgImg.value.trim():'',accentColor:acInp?acInp.value:u.accentColor,background:bg,displayNameEffect:fx,musicUrl:musicUrl}).then(function(){toast('Appearance saved!','success');}).catch(function(er){toast('Error: '+er.message,'error');});
-    });return;}
-
-  if(e.target.closest('.do-add-link')){showModal('<h3 class="font-display font-bold text-xl mb-4">Add Link</h3><form id="frm-add-link" class="space-y-4"><input class="vl-input" name="title" placeholder="Link title" required><input class="vl-input" name="url" placeholder="https://example.com" required><div class="flex gap-2 justify-end"><button type="button" class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="vl-btn vl-btn-primary">Add</button></div></form>');document.getElementById('frm-add-link').onsubmit=function(ev){ev.preventDefault();var fd=new FormData(this);needAuth().then(function(u){if(!u)return;var links=u.links||[];links.push({id:Date.now().toString(36),title:fd.get('title').trim(),url:fd.get('url').trim()});if(!hasPerm(u,'bypass_link_limit')&&links.length>10){toast('Max 10 links.','error');return;}updateUser(u.id,{links:links}).then(function(){closeModal();navigateTo('/dashboard/links');toast('Link added!','success');}).catch(function(er){toast('Error: '+er.message,'error');});});};return;}
-
-  var editBtn=e.target.closest('.do-edit-link');
-  if(editBtn){var lid=editBtn.getAttribute('data-lid');needAuth().then(function(u){if(!u)return;var lk=null;var links=u.links||[];for(var i=0;i<links.length;i++){if(links[i].id===lid){lk=links[i];break;}}if(!lk)return;showModal('<h3 class="font-display font-bold text-xl mb-4">Edit Link</h3><form id="frm-edit-link" class="space-y-4"><input class="vl-input" name="title" value="'+esc(lk.title)+'" required><input class="vl-input" name="url" value="'+esc(lk.url)+'" required><input type="hidden" name="lid" value="'+lid+'"><div class="flex gap-2 justify-end"><button type="button" class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="vl-btn vl-btn-primary">Save</button></div></form>');document.getElementById('frm-edit-link').onsubmit=function(ev){ev.preventDefault();var fd=new FormData(this);var newLinks=[];for(var i=0;i<links.length;i++){if(links[i].id===fd.get('lid'))newLinks.push({id:links[i].id,title:fd.get('title').trim(),url:fd.get('url').trim()});else newLinks.push(links[i]);}updateUser(u.id,{links:newLinks}).then(function(){closeModal();navigateTo('/dashboard/links');toast('Link updated!','success');}).catch(function(er){toast('Error: '+er.message,'error');});};});return;}
-
-  var delBtn=e.target.closest('.do-del-link');
-  if(delBtn){var lid=delBtn.getAttribute('data-lid');needAuth().then(function(u){if(!u)return;updateUser(u.id,{links:(u.links||[]).filter(function(l){return l.id!==lid;})}).then(function(){navigateTo('/dashboard/links');toast('Link removed.','success');}).catch(function(er){toast('Error: '+er.message,'error');});});return;}
-
-  if(e.target.closest('.do-save-dash-badges')){needAuth().then(function(u){if(!u)return;var hidden=[];var toggles=document.querySelectorAll('.perm-toggle[data-badge]');for(var i=0;i<toggles.length;i++){if(!toggles[i].classList.contains('on'))hidden.push(toggles[i].getAttribute('data-badge'));}updateUser(u.id,{hiddenBadges:hidden}).then(function(){toast('Badge visibility saved!','success');}).catch(function(er){toast('Error: '+er.message,'error');});});return;}
-
-  var ptog=e.target.closest('.perm-toggle');
-  if(ptog){ptog.classList.toggle('on');var row=ptog.closest('.perm-row');if(row){var lbl=row.querySelector('.text-xs.text-success,.text-xs.text-void-200');if(lbl){lbl.textContent=ptog.classList.contains('on')?'Visible':'Hidden';lbl.className='text-xs '+(ptog.classList.contains('on')?'text-success':'text-void-200');}}return;}
-
-  if(e.target.closest('.do-add-custom-badge')){needAuth().then(function(u){if(!u)return;if((u.customBadges||[]).length>=5){toast('Max 5 custom badges.','error');return;}showModal('<h3 class="font-display font-bold text-xl mb-4">Create Custom Badge</h3><form id="frm-cb" class="space-y-4"><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Label</label><input class="vl-input" name="label" placeholder="My Badge" required maxlength="20></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Image URL</label><input class="vl-input" name="img" placeholder="https://example.com/badge.png" required></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Color</label><input type="color" name="color" value="#7dd3fc" class="w-12 h-10 rounded-lg cursor:pointer border-0 bg-transparent"></div><div class="flex gap-2 justify-end"><button type="button" class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="vl-btn vl-btn-primary">Create</button></div></form>');document.getElementById('frm-cb').onsubmit=function(ev){ev.preventDefault();var fd=new FormData(this);var customs=u.customBadges||[];customs.push({id:'cb_'+Date.now().toString(36),l:fd.get('label').trim(),img:fd.get('img').trim(),c:fd.get('color')});updateUser(u.id,{customBadges:customs}).then(function(){closeModal();navigateTo('/dashboard/badges');toast('Badge created!','success');}).catch(function(er){toast('Error: '+er.message,'error');});};});return;}
-
-  var dcb=e.target.closest('.do-del-custom-badge');
-  if(dcb){var cbid=dcb.getAttribute('data-cbid');needAuth().then(function(u){if(!u)return;updateUser(u.id,{customBadges:(u.customBadges||[]).filter(function(b){return b.id!==cbid;}),hiddenBadges:(u.hiddenBadges||[]).filter(function(b){return b!==cbid;})}).then(function(){navigateTo('/dashboard/badges');toast('Badge deleted.','success');}).catch(function(er){toast('Error: '+er.message,'error');});});return;}
-
-  if(e.target.closest('.do-del-acct')){showModal('<h3 class="font-display font-bold text-xl mb-2" style="color:#ff5555">Delete Account</h3><p class="text-void-100 text-sm mb-6">This is permanent and cannot be undone.</p><div class="flex gap-2 justify-end"><button class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button class="do-confirm-del vl-btn vl-btn-danger">Delete Forever</button></div>');document.querySelector('.do-confirm-del').onclick=function(){needAuth().then(function(u){if(!u)return;deleteUser(u.id).then(function(){clearSession();closeModal();navigateTo('/');toast('Account deleted.','info');}).catch(function(er){toast('Error: '+er.message,'error');});});};return;}
-
-  var banBtn=e.target.closest('.do-ban');
-  if(banBtn){var uid=banBtn.getAttribute('data-uid');needAdmin().then(function(a){if(!a)return;findById(uid).then(function(tu){if(!tu)return;updateUser(uid,{banned:!tu.banned,banReason:!tu.banned?'':'Violated terms'}).then(function(){navigateTo('/admin');toast(!tu.banned?'User banned.':'User unbanned.','success');}).catch(function(er){toast('Error: '+er.message,'error');});});});return;}
-
-  var uidBtn=e.target.closest('.do-uid');
-  if(uidBtn){var uid=uidBtn.getAttribute('data-uid');needAdmin().then(function(a){if(!a)return;findById(uid).then(function(tu){if(!tu)return;showModal('<h3 class="font-display font-bold text-xl mb-4">Change UID</h3><p class="text-void-100 text-sm mb-4">Current: <code class="text-accent">'+tu.uid+'</code></p><form id="frm-uid" class="space-y-4"><input class="vl-input" name="newUid" placeholder="#123" required pattern="^#\\d+$"><div class="flex gap-2 justify-end"><button type="button" class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="vl-btn vl-btn-primary">Change</button></div></form>');document.getElementById('frm-uid').onsubmit=function(ev){ev.preventDefault();var fd=new FormData(this);updateUser(uid,{uid:fd.get('newUid').trim()}).then(function(){closeModal();navigateTo('/admin');toast('UID updated.','success');}).catch(function(er){toast('Error: '+er.message,'error');});};});});return;}
-
-  var badgeBtn=e.target.closest('.do-badges');
-  if(badgeBtn){var uid=badgeBtn.getAttribute('data-uid');needAdmin().then(function(a){if(!a)return;findById(uid).then(function(tu){if(!tu)return;var h='<h3 class="font-display font-bold text-xl mb-4">Manage Badges</h3><p class="text-void-100 text-sm mb-4">'+esc(tu.displayName||tu.username)+'</p><div class="space-y-2 mb-6">';for(var k in BADGES){var b=BADGES[k];var has=(tu.badges||[]).indexOf(k)>-1;h+='<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer"><input type="checkbox" name="badge" value="'+k+'" '+(has?'checked':'')+' class="accent-sky-400"><i class="'+b.i+'" style="color:'+b.c+'"></i><span class="text-sm">'+b.l+'</span></label>';}h+='</div><div class="flex gap-2 justify-end"><button type="button" class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="vl-btn vl-btn-primary" id="do-save-badges-admin">Save</button></div>';showModal(h);document.getElementById('do-save-badges-admin').onclick=function(ev){ev.preventDefault();var cbs=document.querySelectorAll('input[name="badge"]:checked');var nb=[];for(var i=0;i<cbs.length;i++)nb.push(cbs[i].value);updateUser(uid,{badges:nb}).then(function(){closeModal();navigateTo('/admin');toast('Badges updated.','success');}).catch(function(er){toast('Error: '+er.message,'error');});};});});return;}
-
-  var roleBtn=e.target.closest('.do-role');
-  if(roleBtn){var uid=roleBtn.getAttribute('data-uid');needAdmin().then(function(a){if(!a)return;findById(uid).then(function(tu){if(!tu)return;showModal('<h3 class="font-display font-bold text-xl mb-4">Change Role</h3><p class="text-void-100 text-sm mb-4">'+esc(tu.displayName||tu.username)+' — <span class="text-accent capitalize">'+tu.role+'</span></p><form id="frm-role" class="space-y-4"><select class="vl-input" name="role"><option value="user" '+(tu.role==='user'?'selected':'')+'>User</option><option value="moderator" '+(tu.role==='moderator'?'selected':'')+'>Moderator</option><option value="admin" '+(tu.role==='admin'?'selected':'')+'>Admin</option></select><div class="flex gap-2 justify-end"><button type="button" class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="vl-btn vl-btn-primary">Save</button></div></form>');document.getElementById('frm-role').onsubmit=function(ev){ev.preventDefault();var fd=new FormData(this);var nr=fd.get('role');updateUser(uid,{role:nr,permissions:JSON.parse(JSON.stringify(ROLE_PERMS[nr]||ROLE_PERMS.user))}).then(function(){closeModal();navigateTo('/admin');toast('Role updated.','success');}).catch(function(er){toast('Error: '+er.message,'error');});};});});return;}
-
-  var delUserBtn=e.target.closest('.do-del-user');
-  if(delUserBtn){var uid=delUserBtn.getAttribute('data-uid');needAdmin().then(function(a){if(!a)return;showModal('<h3 class="font-display font-bold text-xl mb-2" style="color:#ff5555">Delete User</h3><p class="text-void-100 text-sm mb-6">Permanently delete this user?</p><div class="flex gap-2 justify-end"><button class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button class="do-confirm-del-user vl-btn vl-btn-danger" data-uid="'+uid+'">Delete</button></div>');document.querySelector('.do-confirm-del-user').onclick=function(){deleteUser(uid).then(function(){closeModal();navigateTo('/admin');toast('User deleted.','success');}).catch(function(er){toast('Error: '+er.message,'error');});};});return;}
+// Init
+initFirebase().then(function(){
+  P.init();
+  router();
+}).catch(function(err){
+  document.getElementById('app').innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:40px;text-align:center"><h2 style="color:#ff5555;font-family:Space Grotesk,sans-serif;font-size:22px;margin-bottom:12px">Connection Error</h2><p style="color:#888;font-size:13px;max-width:500px">Could not connect to the database. Please check your internet connection and try again.<br><br><code style="color:#555;font-size:11px">'+esc(err.message||err)+'</code></p></div>';
 });
-
-document.addEventListener('input',function(e){
-  if(e.target.id==='admin-search'){var q=e.target.value.toLowerCase();var rows=document.querySelectorAll('#adm-tbl tbody tr');for(var i=0;i<rows.length;i++){var name=rows[i].getAttribute('data-uname')||'';rows[i].style.display=name.toLowerCase().indexOf(q)>-1?'':'none';}}
-});
-
-window.addEventListener('popstate',function(){router();});
-
-P.init();
-initFirebase().then(function(){router();}).catch(function(){document.getElementById('app').innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:40px;text-align:center"><h2 style="color:#ff5555;font-family:Space Grotesk,sans-serif;font-size:22px;margin-bottom:12px">Connection Error</h2><p style="color:#888;font-size:13px;max-width:500px">Could not connect to the database.</p></div>';});
 </script>
 </body>
 </html>
