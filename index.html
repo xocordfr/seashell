@@ -67,7 +67,6 @@ h1,h2,h3,h4,h5,h6{font-family:'Space Grotesk',sans-serif}
 .music-eq-bar:nth-child(2){animation:music-eq2 .5s ease-in-out infinite;animation-delay:.1s}
 .music-eq-bar:nth-child(3){animation:music-eq3 .7s ease-in-out infinite;animation-delay:.2s}
 .music-eq-bar:nth-child(4){animation:music-eq .55s ease-in-out infinite;animation-delay:.15s}
-
 .music-embed-wrap{border-radius:14px;overflow:hidden;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.06)}
 .music-embed-wrap iframe{display:block;border:none;width:100%;border-radius:14px}
 .music-platform-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:600}
@@ -131,7 +130,6 @@ select.vl-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg 
 .perm-row:last-child{border-bottom:none}
 .cb-preview{width:40px;height:40px;border-radius:10px;border:2px solid #1e1e1e;object-fit:cover;background:#0d0d0d;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .cb-preview img{width:100%;height:100%;object-fit:cover;border-radius:8px}
-.cb-preview .placeholder-icon{color:#333;font-size:16px}
 .fx-opt{cursor:pointer;transition:all .2s;border:2px solid transparent;user-select:none}
 .fx-opt:hover{border-color:rgba(125,211,252,.25);background:rgba(125,211,252,.03)}
 .fx-opt.sel{border-color:#7dd3fc;background:rgba(125,211,252,.08)}
@@ -195,15 +193,8 @@ var DISPLAY_EFFECTS={
 function buildEffectHTML(text,effectKey){
   var fx=DISPLAY_EFFECTS[effectKey]||DISPLAY_EFFECTS.none;
   if(!fx.cls)return esc(text);
-  if(fx.sparkles){
-    var sp='';for(var i=0;i<6;i++)sp+='<span class="sparkle-particle">&#10022;</span>';
-    return '<span class="'+fx.cls+'">'+sp+esc(text)+'</span>';
-  }
-  if(fx.wave){
-    var chars=esc(text).split('');var w='';
-    for(var i=0;i<chars.length;i++)w+='<span style="animation-delay:'+(i*0.08)+'s">'+chars[i]+'</span>';
-    return '<span class="'+fx.cls+'">'+w+'</span>';
-  }
+  if(fx.sparkles){var sp='';for(var i=0;i<6;i++)sp+='<span class="sparkle-particle">&#10022;</span>';return '<span class="'+fx.cls+'">'+sp+esc(text)+'</span>';}
+  if(fx.wave){var chars=esc(text).split('');var w='';for(var i=0;i<chars.length;i++)w+='<span style="animation-delay:'+(i*0.08)+'s">'+chars[i]+'</span>';return '<span class="'+fx.cls+'">'+w+'</span>';}
   return '<span class="'+fx.cls+'">'+esc(text)+'</span>';
 }
 
@@ -219,8 +210,7 @@ var MUSIC_PLATFORMS={
 };
 
 function detectMusicPlatform(url){
-  if(!url)return null;
-  var u=url.toLowerCase();
+  if(!url)return null;var u=url.toLowerCase();
   if(u.indexOf('youtube.com')>-1||u.indexOf('youtu.be')>-1)return 'youtube';
   if(u.indexOf('soundcloud.com')>-1)return 'soundcloud';
   if(u.indexOf('spotify.com')>-1)return 'spotify';
@@ -234,60 +224,59 @@ function detectMusicPlatform(url){
 function buildMusicEmbed(url){
   if(!url)return '';
   var u=url.toLowerCase();
-  var h=152;
 
-  // YouTube
+  // YouTube — autoplay, loop single video, no related, play full
   if(u.indexOf('youtube.com/watch')>-1){
     var m=url.match(/[?&]v=([^&]+)/);
-    if(m)return '<iframe src="https://www.youtube.com/embed/'+m[1]+'?rel=0" style="width:100%;height:'+h+'px;border:none;border-radius:12px;" allow="autoplay;encrypted-media" allowfullscreen></iframe>';
+    if(m)return '<iframe src="https://www.youtube.com/embed/'+m[1]+'?autoplay=1&loop=1&playlist='+m[1]+'&rel=0&modestbranding=1&disablekb=0&fs=0&playsinline=1" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media" allowfullscreen></iframe>';
   }
   if(u.indexOf('youtu.be/')>-1){
     var id=url.split('youtu.be/')[1].split('?')[0].split('#')[0];
-    if(id)return '<iframe src="https://www.youtube.com/embed/'+id+'?rel=0" style="width:100%;height:'+h+'px;border:none;border-radius:12px;" allow="autoplay;encrypted-media" allowfullscreen></iframe>';
+    if(id)return '<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&loop=1&playlist='+id+'&rel=0&modestbranding=1&disablekb=0&fs=0&playsinline=1" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media" allowfullscreen></iframe>';
   }
   if(u.indexOf('youtube.com/shorts/')>-1){
     var id=url.split('youtube.com/shorts/')[1].split('?')[0].split('#')[0];
-    if(id)return '<iframe src="https://www.youtube.com/embed/'+id+'?rel=0" style="width:100%;height:'+h+'px;border:none;border-radius:12px;" allow="autoplay;encrypted-media" allowfullscreen></iframe>';
+    if(id)return '<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&loop=1&playlist='+id+'&rel=0&modestbranding=1&disablekb=0&fs=0&playsinline=1" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media" allowfullscreen></iframe>';
   }
 
-  // SoundCloud
+  // SoundCloud — autoplay, full track, no comments, visual mode
   if(u.indexOf('soundcloud.com')>-1){
-    return '<iframe src="https://w.soundcloud.com/player/?url='+encodeURIComponent(url)+'&color=%237dd3fc&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=true" style="width:100%;height:'+h+'px;border:none;border-radius:12px;" allow="autoplay"></iframe>';
+    return '<iframe src="https://w.soundcloud.com/player/?url='+encodeURIComponent(url)+'&color=%237dd3fc&auto_play=true&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=true&single_active=true" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay"></iframe>';
   }
 
-  // Spotify
+  // Spotify — autoplay, dark theme, full playback
   if(u.indexOf('open.spotify.com/')>-1){
     var parts=url.replace('https://open.spotify.com/','').replace('http://open.spotify.com/','').split('/');
     if(parts.length>=2){
       var type=parts[0];var id=parts[1].split('?')[0];
       if(['track','album','playlist','episode','show'].indexOf(type)>-1&&id){
-        var spH=type==='track'?152:352;
-        return '<iframe src="https://open.spotify.com/embed/'+type+'/'+id+'?theme=0" style="width:100%;height:'+spH+'px;border:none;border-radius:12px;" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>';
+        var spH=type==='track'?152:type==='album'?352:352;
+        return '<iframe src="https://open.spotify.com/embed/'+type+'/'+id+'?utm_source=generator&theme=0" style="width:100%;height:'+spH+'px;border:none;border-radius:12px;" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>';
       }
     }
   }
 
-  // Apple Music
+  // Apple Music — autoplay, dark theme, full song
   if(u.indexOf('music.apple.com/')>-1){
     var embedUrl=url.replace('https://music.apple.com/','https://embed.music.apple.com/');
-    return '<iframe src="'+embedUrl+'?theme=dark" style="width:100%;height:'+h+'px;border:none;border-radius:12px;" allow="autoplay;encrypted-media"></iframe>';
+    return '<iframe src="'+embedUrl+'?theme=dark" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media"></iframe>';
   }
 
-  // Tidal
+  // Tidal — autoplay, full track
   if(u.indexOf('tidal.com/')>-1){
     var m=url.match(/tidal\.com\/(?:browse\/)?(track|album|playlist)\/(\d+)/);
-    if(m)return '<iframe src="https://tidal.com/embed/?id='+m[2]+'&type='+m[1]+'" style="width:100%;height:'+h+'px;border:none;border-radius:12px;" allow="autoplay;encrypted-media"></iframe>';
+    if(m)return '<iframe src="https://tidal.com/embed/?id='+m[2]+'&type='+m[1]+'" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media"></iframe>';
   }
 
-  // Deezer
+  // Deezer — autoplay, dark theme, full track
   if(u.indexOf('deezer.com/')>-1){
     var m=url.match(/deezer\.com\/(?:\w+\/)?(track|album|playlist)\/(\d+)/);
-    if(m)return '<iframe src="https://widget.deezer.com/widget/dark/'+m[1]+'/'+m[2]+'" style="width:100%;height:'+h+'px;border:none;border-radius:12px;" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>';
+    if(m)return '<iframe src="https://widget.deezer.com/widget/dark/'+m[1]+'/'+m[2]+'" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>';
   }
 
-  // Bandcamp - try to use URL-based embed
+  // Bandcamp
   if(u.indexOf('bandcamp.com')>-1){
-    return '<div style="width:100%;height:120px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:rgba(255,255,255,.03);border:1px dashed #333;color:#666;font-size:13px;text-align:center;padding:16px"><div><i class="fa-brands fa-bandcamp text-2xl mb-2" style="display:block;color:#629aa9"></i>Bandcamp embeds require the<br>album/track ID. Paste the full<br>Bandcamp embed URL instead.</div></div>';
+    return '<div style="width:100%;height:120px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:rgba(255,255,255,.03);border:1px dashed #333;color:#666;font-size:13px;text-align:center;padding:16px"><div><i class="fa-brands fa-bandcamp text-2xl mb-2" style="display:block;color:#629aa9"></i>Bandcamp embeds require the<br>album/track embed URL.</div></div>';
   }
 
   return '<div style="width:100%;height:80px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:rgba(255,255,255,.03);border:1px dashed #333;color:#555;font-size:13px"><i class="fa-solid fa-circle-xmark" style="margin-right:8px;color:#f55"></i>Unsupported music link</div>';
@@ -299,7 +288,7 @@ function buildProfileMusicHTML(url,accent){
   var p=MUSIC_PLATFORMS[plat];
   var embed=buildMusicEmbed(url);
   if(!embed)return '';
-  var eqBars='<div style="display:flex;align-items:flex-end;gap:2px;height:18px">'+ '<div class="music-eq-bar"></div><div class="music-eq-bar"></div><div class="music-eq-bar"></div><div class="music-eq-bar"></div></div>';
+  var eqBars='<div style="display:flex;align-items:flex-end;gap:2px;height:18px"><div class="music-eq-bar"></div><div class="music-eq-bar"></div><div class="music-eq-bar"></div><div class="music-eq-bar"></div></div>';
   var platLabel=p?'<div class="music-platform-badge" style="background:'+p.color+'18;color:'+p.color+'"><i class="'+p.icon+'" style="font-size:10px"></i>'+p.name+'</div>':'';
   return '<div class="anim-fade" style="animation-delay:.15s"><div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2">'+eqBars+'<span class="text-xs font-semibold text-void-100 uppercase tracking-wider">Now Playing</span></div>'+platLabel+'</div><div class="music-embed-wrap">'+embed+'</div></div>';
 }
@@ -359,8 +348,8 @@ function dashBadges(u){
   var hasPremium=(u.badges||[]).indexOf('premium')>-1;var awarded=u.badges||[];var hidden=u.hiddenBadges||[];var customs=u.customBadges||[];
   var h='<h2 class="font-display font-bold text-2xl mb-1">Badges</h2><p class="text-void-100 text-sm mb-8">Toggle badge visibility on your profile</p>';
   var builtInAwarded=[];for(var i=0;i<awarded.length;i++){if(BADGES[awarded[i]])builtInAwarded.push(awarded[i]);}
-  h+='<div class="glass rounded-xl p-6 mb-6"><h3 class="font-display font-semibold text-base mb-1 flex items-center gap-2"><i class="fa-solid fa-award text-accent text-sm"></i> Your Badges</h3><p class="text-void-200 text-xs mb-4">Awarded badges. Toggle to show or hide on your profile.</p>';
-  if(builtInAwarded.length===0&&customs.length===0){h+='<div class="text-center py-8"><i class="fa-solid fa-award text-2xl text-void-300 mb-3"></i><p class="text-void-100 text-sm">No badges yet. Badges are awarded by staff.</p></div>';}
+  h+='<div class="glass rounded-xl p-6 mb-6"><h3 class="font-display font-semibold text-base mb-1 flex items-center gap-2"><i class="fa-solid fa-award text-accent text-sm"></i> Your Badges</h3><p class="text-void-200 text-xs mb-4">Awarded badges. Toggle to show or hide.</p>';
+  if(builtInAwarded.length===0&&customs.length===0){h+='<div class="text-center py-8"><i class="fa-solid fa-award text-2xl text-void-300 mb-3"></i><p class="text-void-100 text-sm">No badges yet.</p></div>';}
   else{if(builtInAwarded.length>0){h+='<div id="dash-badges-built">';for(var i=0;i<builtInAwarded.length;i++){var k=builtInAwarded[i];var b=BADGES[k];var vis=hidden.indexOf(k)===-1;h+='<div class="perm-row"><div class="flex items-center gap-3"><i class="'+b.i+'" style="color:'+b.c+'"></i><div><span class="text-sm font-medium">'+b.l+'</span></div></div><div class="flex items-center gap-3"><span class="text-xs '+(vis?'text-success':'text-void-200')+'">'+(vis?'Visible':'Hidden')+'</span><div class="perm-toggle '+(vis?'on':'')+'" data-badge="'+k+'"></div></div></div>';}h+='</div>';}}
   h+='</div>';
   if(builtInAwarded.length>0||customs.length>0)h+='<button class="do-save-dash-badges vl-btn vl-btn-primary mb-8"><i class="fa-solid fa-check"></i> Save Visibility</button>';
@@ -369,7 +358,7 @@ function dashBadges(u){
   return h;
 }
 
-/* ===== MODIFIED dashAppearance WITH MUSIC SECTION ===== */
+/* ===== dashAppearance WITH MUSIC + AUTOPLAY ===== */
 function dashAppearance(u){
   var curFx=u.displayNameEffect||'none';
   var dn=u.displayName||u.username;
@@ -389,10 +378,9 @@ function dashAppearance(u){
   h+='<div class="fx-preview-box text-xl font-display font-bold" id="fx-preview">'+buildEffectHTML(dn,curFx)+'</div></div></div>';
 
   // ===== MUSIC SECTION =====
-  h+='<div class="glass rounded-xl p-6"><div class="flex items-center gap-3 mb-1"><div class="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center"><i class="fa-solid fa-music text-accent"></i></div><div><h3 class="font-display font-semibold text-base">Profile Music</h3><p class="text-void-200 text-xs">Add a song to your profile</p></div></div>';
-  h+='<p class="text-void-200 text-xs mb-4 mt-3">Paste a link from any supported platform. A player will appear on your profile.</p>';
+  h+='<div class="glass rounded-xl p-6"><div class="flex items-center gap-3 mb-1"><div class="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center"><i class="fa-solid fa-music text-accent"></i></div><div><h3 class="font-display font-semibold text-base">Profile Music</h3><p class="text-void-200 text-xs">Add a song that autoplay on your profile</p></div></div>';
+  h+='<p class="text-void-200 text-xs mb-4 mt-3">Paste a link from any supported platform. The player will autoplay the full song when visitors open your profile.</p>';
 
-  // Supported platforms chips
   h+='<div class="flex flex-wrap gap-1.5 mb-4">';
   var platKeys=['youtube','soundcloud','spotify','apple','tidal','deezer','bandcamp'];
   for(var i=0;i<platKeys.length;i++){
@@ -401,25 +389,16 @@ function dashAppearance(u){
   }
   h+='</div>';
 
-  // URL input row
   h+='<div class="flex gap-2 mb-3"><input class="vl-input flex-1" id="inp-music-url" value="'+esc(curMusic)+'" placeholder="https://open.spotify.com/track/..."><button class="do-clear-music vl-btn vl-btn-s vl-btn-sm" style="color:#f55" title="Remove music"><i class="fa-solid fa-xmark"></i></button></div>';
 
-  // Platform detection badge
   h+='<div id="music-plat-detect" class="mb-4 min-h-[24px]">';
-  if(curPlat){
-    var mp=MUSIC_PLATFORMS[curPlat];
-    h+='<div class="music-platform-badge" style="background:'+mp.color+'18;color:'+mp.color+'"><i class="'+mp.icon+'" style="font-size:10px"></i> '+mp.name+' detected</div>';
-  } else if(curMusic){
-    h+='<span class="text-xs text-red-400"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px"></i>Unrecognized platform</span>';
-  }
+  if(curPlat){var mp=MUSIC_PLATFORMS[curPlat];h+='<div class="music-platform-badge" style="background:'+mp.color+'18;color:'+mp.color+'"><i class="'+mp.icon+'" style="font-size:10px"></i> '+mp.name+' detected — will autoplay full song</div>';}
+  else if(curMusic){h+='<span class="text-xs text-red-400"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px"></i>Unrecognized platform</span>';}
   h+='</div>';
 
-  // Preview button + preview area
   h+='<button class="do-preview-music vl-btn vl-btn-secondary vl-btn-sm mb-4"><i class="fa-solid fa-play"></i> Preview Player</button>';
   h+='<div id="music-preview-area" class="min-h-0">';
-  if(curMusic){
-    h+='<div class="music-embed-wrap">'+buildMusicEmbed(curMusic)+'</div>';
-  }
+  if(curMusic){h+='<div class="music-embed-wrap">'+buildMusicEmbed(curMusic)+'</div>';}
   h+='</div>';
   h+='</div>';
   // ===== END MUSIC SECTION =====
@@ -430,10 +409,8 @@ function dashAppearance(u){
   for(var i=0;i<bgs.length;i++){var k=bgs[i];h+='<button class="do-set-bg relative rounded-xl overflow-hidden h-20 border-2 transition-all" data-bg="'+k+'" style="border-color:'+(u.background===k?'#7dd3fc':'#1e1e1e')+'"><div class="'+BGM[k]+' absolute inset-0"></div><span class="absolute bottom-1 left-0 right-0 text-center text-[10px] font-semibold text-white/80 drop-shadow">'+BGL[k]+'</span></button>';}
   h+='</div></div>';
 
-  // Background Image
   h+='<div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Background Image URL</label><input class="vl-input" id="inp-bgimg" value="'+esc(u.bgImage||'')+'" placeholder="https://example.com/bg.jpg"></div>';
 
-  // Accent Color
   h+='<div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Accent Color</label><div class="flex items-center gap-3"><input type="color" id="inp-accent" value="'+(u.accentColor||'#7dd3fc')+'" class="w-12 h-10 rounded-lg cursor:pointer border-0 bg-transparent"><code class="text-sm font-mono text-void-100" id="accent-code">'+(u.accentColor||'#7dd3fc')+'</code></div></div>';
 
   h+='<button class="do-save-app vl-btn vl-btn-primary"><i class="fa-solid fa-check"></i> Save Appearance</button></div>';
@@ -464,11 +441,9 @@ function bindDash(u){
   var pwf=document.getElementById('frm-pw');
   if(pwf){pwf.onsubmit=function(e){e.preventDefault();var fd=new FormData(pwf);if(hashPw(fd.get('curPw'))!==u.password){toast('Wrong current password.','error');return;}updateUser(u.id,{password:hashPw(fd.get('newPw'))}).then(function(){toast('Password updated!','success');pwf.reset();}).catch(function(er){toast('Error: '+er.message,'error');});};}
 
-  // Effect selection
   var fxGrid=document.getElementById('fx-grid');
   if(fxGrid){fxGrid.addEventListener('click',function(e){var btn=e.target.closest('.fx-opt');if(!btn)return;var key=btn.getAttribute('data-fx');var preview=document.getElementById('fx-preview');if(preview)preview.innerHTML=buildEffectHTML(u.displayName||u.username,key);var allBtns=fxGrid.querySelectorAll('.fx-opt');for(var i=0;i<allBtns.length;i++){allBtns[i].classList.remove('sel');var ic=allBtns[i].querySelector('i');if(ic){ic.classList.remove('text-accent');ic.classList.add('text-void-100');}}btn.classList.add('sel');var ic=btn.querySelector('i');if(ic){ic.classList.remove('text-void-100');ic.classList.add('text-accent');}});}
 
-  // Music URL live platform detection
   var musicInp=document.getElementById('inp-music-url');
   var platDetect=document.getElementById('music-plat-detect');
   if(musicInp&&platDetect){
@@ -479,17 +454,12 @@ function bindDash(u){
         var val=musicInp.value.trim();
         if(!val){platDetect.innerHTML='';return;}
         var plat=detectMusicPlatform(val);
-        if(plat){
-          var mp=MUSIC_PLATFORMS[plat];
-          platDetect.innerHTML='<div class="music-platform-badge" style="background:'+mp.color+'18;color:'+mp.color+'"><i class="'+mp.icon+'" style="font-size:10px"></i> '+mp.name+' detected</div>';
-        }else{
-          platDetect.innerHTML='<span class="text-xs text-red-400"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px"></i>Unrecognized platform</span>';
-        }
+        if(plat){var mp=MUSIC_PLATFORMS[plat];platDetect.innerHTML='<div class="music-platform-badge" style="background:'+mp.color+'18;color:'+mp.color+'"><i class="'+mp.icon+'" style="font-size:10px"></i> '+mp.name+' detected — will autoplay full song</div>';}
+        else{platDetect.innerHTML='<span class="text-xs text-red-400"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px"></i>Unrecognized platform</span>';}
       },400);
     });
   }
 
-  // Accent color live update
   var acInp=document.getElementById('inp-accent');
   var acCode=document.getElementById('accent-code');
   if(acInp&&acCode){acInp.addEventListener('input',function(){acCode.textContent=acInp.value;});}
@@ -502,43 +472,28 @@ document.addEventListener('click',function(e){
   var bgBtn=e.target.closest('.do-set-bg');
   if(bgBtn){var allBg=document.querySelectorAll('.do-set-bg');for(var i=0;i<allBg.length;i++)allBg[i].style.borderColor='#1e1e1e';bgBtn.style.borderColor='#7dd3fc';return;}
 
-  // Clear music
   if(e.target.closest('.do-clear-music')){
-    var inp=document.getElementById('inp-music-url');
-    var pd=document.getElementById('music-plat-detect');
-    var pa=document.getElementById('music-preview-area');
-    if(inp)inp.value='';
-    if(pd)pd.innerHTML='';
-    if(pa)pa.innerHTML='';
-    return;
+    var inp=document.getElementById('inp-music-url');var pd=document.getElementById('music-plat-detect');var pa=document.getElementById('music-preview-area');
+    if(inp)inp.value='';if(pd)pd.innerHTML='';if(pa)pa.innerHTML='';return;
   }
 
-  // Preview music
   if(e.target.closest('.do-preview-music')){
-    var inp=document.getElementById('inp-music-url');
-    var pa=document.getElementById('music-preview-area');
-    if(!inp||!pa)return;
-    var val=inp.value.trim();
+    var inp=document.getElementById('inp-music-url');var pa=document.getElementById('music-preview-area');
+    if(!inp||!pa)return;var val=inp.value.trim();
     if(!val){toast('Paste a music link first.','info');return;}
     var plat=detectMusicPlatform(val);
     if(!plat){toast('Unrecognized music platform.','error');return;}
-    pa.innerHTML='<div class="music-embed-wrap">'+buildMusicEmbed(val)+'</div>';
-    return;
+    pa.innerHTML='<div class="music-embed-wrap">'+buildMusicEmbed(val)+'</div>';return;
   }
 
-  // Save appearance
   if(e.target.closest('.do-save-app')){
     needAuth().then(function(u){if(!u)return;
-      var bgImg=document.getElementById('inp-bgimg');
-      var acInp=document.getElementById('inp-accent');
-      var selFx=document.querySelector('.fx-opt.sel');
-      var fx=selFx?selFx.getAttribute('data-fx'):'none';
+      var bgImg=document.getElementById('inp-bgimg');var acInp=document.getElementById('inp-accent');
+      var selFx=document.querySelector('.fx-opt.sel');var fx=selFx?selFx.getAttribute('data-fx'):'none';
       var selBg=document.querySelector('.do-set-bg[style*="border-color: rgb(125, 211, 252)"],.do-set-bg[style*="border-color:#7dd3fc"]');
       var bg=selBg?selBg.getAttribute('data-bg'):u.background;
-      var musicInp=document.getElementById('inp-music-url');
-      var musicUrl=musicInp?musicInp.value.trim():'';
-      var updates={bgImage:bgImg?bgImg.value.trim():'',accentColor:acInp?acInp.value:u.accentColor,background:bg,displayNameEffect:fx,musicUrl:musicUrl};
-      updateUser(u.id,updates).then(function(){toast('Appearance saved!','success');}).catch(function(er){toast('Error: '+er.message,'error');});
+      var musicInp=document.getElementById('inp-music-url');var musicUrl=musicInp?musicInp.value.trim():'';
+      updateUser(u.id,{bgImage:bgImg?bgImg.value.trim():'',accentColor:acInp?acInp.value:u.accentColor,background:bg,displayNameEffect:fx,musicUrl:musicUrl}).then(function(){toast('Appearance saved!','success');}).catch(function(er){toast('Error: '+er.message,'error');});
     });return;}
 
   if(e.target.closest('.do-add-link')){showModal('<h3 class="font-display font-bold text-xl mb-4">Add Link</h3><form id="frm-add-link" class="space-y-4"><input class="vl-input" name="title" placeholder="Link title" required><input class="vl-input" name="url" placeholder="https://example.com" required><div class="flex gap-2 justify-end"><button type="button" class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="vl-btn vl-btn-primary">Add</button></div></form>');document.getElementById('frm-add-link').onsubmit=function(ev){ev.preventDefault();var fd=new FormData(this);needAuth().then(function(u){if(!u)return;var links=u.links||[];links.push({id:Date.now().toString(36),title:fd.get('title').trim(),url:fd.get('url').trim()});if(!hasPerm(u,'bypass_link_limit')&&links.length>10){toast('Max 10 links.','error');return;}updateUser(u.id,{links:links}).then(function(){closeModal();navigateTo('/dashboard/links');toast('Link added!','success');}).catch(function(er){toast('Error: '+er.message,'error');});});};return;}
@@ -554,7 +509,7 @@ document.addEventListener('click',function(e){
   var ptog=e.target.closest('.perm-toggle');
   if(ptog){ptog.classList.toggle('on');var row=ptog.closest('.perm-row');if(row){var lbl=row.querySelector('.text-xs.text-success,.text-xs.text-void-200');if(lbl){lbl.textContent=ptog.classList.contains('on')?'Visible':'Hidden';lbl.className='text-xs '+(ptog.classList.contains('on')?'text-success':'text-void-200');}}return;}
 
-  if(e.target.closest('.do-add-custom-badge')){needAuth().then(function(u){if(!u)return;if((u.customBadges||[]).length>=5){toast('Max 5 custom badges.','error');return;}showModal('<h3 class="font-display font-bold text-xl mb-4">Create Custom Badge</h3><form id="frm-cb" class="space-y-4"><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Label</label><input class="vl-input" name="label" placeholder="My Badge" required maxlength="20"></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Image URL</label><input class="vl-input" name="img" placeholder="https://example.com/badge.png" required></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Color</label><input type="color" name="color" value="#7dd3fc" class="w-12 h-10 rounded-lg cursor:pointer border-0 bg-transparent"></div><div class="flex gap-2 justify-end"><button type="button" class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="vl-btn vl-btn-primary">Create</button></div></form>');document.getElementById('frm-cb').onsubmit=function(ev){ev.preventDefault();var fd=new FormData(this);var customs=u.customBadges||[];customs.push({id:'cb_'+Date.now().toString(36),l:fd.get('label').trim(),img:fd.get('img').trim(),c:fd.get('color')});updateUser(u.id,{customBadges:customs}).then(function(){closeModal();navigateTo('/dashboard/badges');toast('Badge created!','success');}).catch(function(er){toast('Error: '+er.message,'error');});};});return;}
+  if(e.target.closest('.do-add-custom-badge')){needAuth().then(function(u){if(!u)return;if((u.customBadges||[]).length>=5){toast('Max 5 custom badges.','error');return;}showModal('<h3 class="font-display font-bold text-xl mb-4">Create Custom Badge</h3><form id="frm-cb" class="space-y-4"><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Label</label><input class="vl-input" name="label" placeholder="My Badge" required maxlength="20></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Image URL</label><input class="vl-input" name="img" placeholder="https://example.com/badge.png" required></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Color</label><input type="color" name="color" value="#7dd3fc" class="w-12 h-10 rounded-lg cursor:pointer border-0 bg-transparent"></div><div class="flex gap-2 justify-end"><button type="button" class="vl-btn vl-btn-secondary" onclick="closeModal()">Cancel</button><button type="submit" class="vl-btn vl-btn-primary">Create</button></div></form>');document.getElementById('frm-cb').onsubmit=function(ev){ev.preventDefault();var fd=new FormData(this);var customs=u.customBadges||[];customs.push({id:'cb_'+Date.now().toString(36),l:fd.get('label').trim(),img:fd.get('img').trim(),c:fd.get('color')});updateUser(u.id,{customBadges:customs}).then(function(){closeModal();navigateTo('/dashboard/badges');toast('Badge created!','success');}).catch(function(er){toast('Error: '+er.message,'error');});};});return;}
 
   var dcb=e.target.closest('.do-del-custom-badge');
   if(dcb){var cbid=dcb.getAttribute('data-cbid');needAuth().then(function(u){if(!u)return;updateUser(u.id,{customBadges:(u.customBadges||[]).filter(function(b){return b.id!==cbid;}),hiddenBadges:(u.hiddenBadges||[]).filter(function(b){return b!==cbid;})}).then(function(){navigateTo('/dashboard/badges');toast('Badge deleted.','success');}).catch(function(er){toast('Error: '+er.message,'error');});});return;}
