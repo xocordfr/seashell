@@ -210,7 +210,7 @@ function buildMusicEmbed(url){
   if(u.indexOf('youtu.be/')>-1){var id=url.split('youtu.be/')[1].split('?')[0].split('#')[0];if(id)return '<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&loop=1&playlist='+id+'&rel=0&modestbranding=1&disablekb=0&fs=0&playsinline=1" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media" allowfullscreen></iframe>';}
   if(u.indexOf('youtube.com/shorts/')>-1){var id=url.split('youtube.com/shorts/')[1].split('?')[0].split('#')[0];if(id)return '<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&loop=1&playlist='+id+'&rel=0&modestbranding=1&disablekb=0&fs=0&playsinline=1" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media" allowfullscreen></iframe>';}
   if(u.indexOf('soundcloud.com')>-1){return '<iframe src="https://w.soundcloud.com/player/?url='+encodeURIComponent(url)+'&color=%237dd3fc&auto_play=true&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=true&single_active=true" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay"></iframe>';}
-  if(u.indexOf('open.spotify.com/')>-1){var parts=url.replace('https://open.spotify.com/','').replace('http://open.spotify.com/','').split('/');if(parts.length>=2){var type=parts[0];var id=parts[1].split('?')[0];if(['track','album','playlist','episode','show'].indexOf(type)>-1&&id){var spH=type==='track'?152:type==='album'?352:352;return '<iframe src="https://open.spotify.com/embed/'+type+'/'+id+'?utm_source=generator&theme=0" style="width:100%;height:'+spH+'px;border:none;border-radius:12px;" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>';}}}
+  if(u.indexOf('open.spotify.com/')>-1){var parts=url.replace('https://open.spotify.com/','').replace('http://open.spotify.com/','').split('/');if(parts.length>=2){var type=parts[0];var id=parts[1].split('?')[0];if(['track','album','playlist','episode','show'].indexOf(type)>-1&&id){var spH=type==='track'?152:352;return '<iframe src="https://open.spotify.com/embed/'+type+'/'+id+'?utm_source=generator&theme=0" style="width:100%;height:'+spH+'px;border:none;border-radius:12px;" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>';}}}
   if(u.indexOf('music.apple.com/')>-1){var embedUrl=url.replace('https://music.apple.com/','https://embed.music.apple.com/');return '<iframe src="'+embedUrl+'?theme=dark" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media"></iframe>';}
   if(u.indexOf('tidal.com/')>-1){var m=url.match(/tidal\.com\/(?:browse\/)?(track|album|playlist)\/(\d+)/);if(m)return '<iframe src="https://tidal.com/embed/?id='+m[2]+'&type='+m[1]+'" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;encrypted-media"></iframe>';}
   if(u.indexOf('deezer.com/')>-1){var m=url.match(/deezer\.com\/(?:\w+\/)?(track|album|playlist)\/(\d+)/);if(m)return '<iframe src="https://widget.deezer.com/widget/dark/'+m[1]+'/'+m[2]+'" style="width:100%;height:152px;border:none;border-radius:12px;" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>';}
@@ -236,6 +236,7 @@ function getSession(){try{return JSON.parse(localStorage.getItem('seashell_ses')
 function setSession(uid){localStorage.setItem('seashell_ses',JSON.stringify({userId:uid,ts:Date.now()}));}
 function clearSession(){localStorage.removeItem('seashell_ses');}
 function hasPerm(u,p){if(!u)return false;if(u.permissions&&typeof u.permissions[p]==='boolean')return u.permissions[p];var rp=ROLE_PERMS[u.role];return rp?!!rp[p]:false;}
+function hasBadge(u,key){if(!u||!u.badges)return false;return u.badges.indexOf(key)>-1;}
 function curUser(){var s=getSession();if(!s)return Promise.resolve(null);if(userCache[s.userId])return Promise.resolve(userCache[s.userId]);return findById(s.userId);}
 function needAuth(){var s=getSession();if(!s){navigateTo('/');showModal(loginHTML());return Promise.resolve(null);}return findById(s.userId).then(function(u){if(!u){clearSession();navigateTo('/');showModal(loginHTML());return null;}if(u.banned&&!hasPerm(u,'bypass_ban')){clearSession();navigateTo('/');toast('Account banned.','error');return null;}return u;});}
 function needAdmin(){return needAuth().then(function(u){if(!u)return null;if(!hasPerm(u,'admin_panel')){navigateTo('/');toast('Access denied.','error');return null;}return u;});}
@@ -261,599 +262,328 @@ function dashProfile(u){return '<h2 class="font-display font-bold text-2xl mb-1"
 
 function dashLinks(u){var links=u.links||[];var maxLinks=hasPerm(u,'bypass_link_limit')?999:10;var h='<div class="flex items-center justify-between mb-8"><div><h2 class="font-display font-bold text-2xl mb-1">Manage Links</h2><p class="text-void-100 text-sm">'+links.length+'/'+maxLinks+' links used</p></div><button class="vl-btn vl-btn-primary add-link-btn" '+(links.length>=maxLinks?'disabled':'')+'><i class="fa-solid fa-plus"></i> Add Link</button></div>';if(links.length===0){h+='<div class="text-center py-16"><i class="fa-solid fa-link text-4xl text-void-300 mb-4"></i><p class="text-void-100">No links yet. Add your first one!</p></div>';}else{h+='<div class="space-y-3 max-w-lg">';for(var i=0;i<links.length;i++){var lk=links[i];h+='<div class="glass rounded-xl p-4 flex items-center gap-4"><i class="'+linkIcon(lk.url)+' text-lg text-void-100" style="width:24px;text-align:center"></i><div class="flex-1 min-w-0"><div class="font-medium text-sm truncate">'+esc(lk.title)+'</div><div class="text-xs text-void-200 truncate">'+esc(lk.url)+'</div></div><div class="flex gap-2"><button class="vl-btn vl-btn-s vl-btn-sm edit-link-btn" data-idx="'+i+'"><i class="fa-solid fa-pen"></i></button><button class="vl-btn vl-btn-s vl-btn-sm del-link-btn" data-idx="'+i+'" style="color:#f55"><i class="fa-solid fa-trash"></i></button></div></div>';}h+='</div>';}return h;}
 
-function dashBadges(u){var awarded=u.badges||[];var hidden=u.hiddenBadges||[];var customs=u.customBadges||[];var h='<h2 class="font-display font-bold text-2xl mb-1">Badges</h2><p class="text-void-100 text-sm mb-8">Manage your profile badges</p><div class="max-w-lg"><h3 class="font-display font-semibold text-sm uppercase tracking-wider text-void-100 mb-4">Awarded Badges</h3>';if(awarded.length===0){h+='<p class="text-void-200 text-sm mb-8">No badges yet.</p>';}else{h+='<div class="space-y-2 mb-8">';for(var i=0;i<awarded.length;i++){var key=awarded[i];var isHidden=hidden.indexOf(key)>-1;var b=BADGES[key];var name=b?b.l:key;var color=b?b.c:'#888';var icon=b?b.i:'fa-solid fa-circle';h+='<div class="flex items-center justify-between glass rounded-xl p-4"><div class="flex items-center gap-3"><span class="badge" style="background:'+color+'20;color:'+color+'"><i class="'+icon+'" style="font-size:10px"></i></span><span class="text-sm font-medium">'+esc(name)+'</span>'+(isHidden?'<span class="text-xs text-void-200">(hidden)</span>':'')+'</div><button class="vl-btn vl-btn-s vl-btn-sm toggle-badge-btn" data-badge="'+esc(key)+'" title="Toggle visibility"><i class="fa-solid '+(isHidden?'fa-eye-slash':'fa-eye')+'"></i></button></div>';}h+='</div>';}h+='<h3 class="font-display font-semibold text-sm uppercase tracking-wider text-void-100 mb-4">Custom Badges</h3>';if(customs.length===0){h+='<p class="text-void-200 text-sm mb-4">No custom badges.</p>';}else{h+='<div class="space-y-2 mb-4">';for(var i=0;i<customs.length;i++){var cb=customs[i];h+='<div class="flex items-center justify-between glass rounded-xl p-4"><div class="flex items-center gap-3"><div class="cb-preview">'+(cb.img?'<img src="'+esc(cb.img)+'" alt="">':'<i class="fa-solid fa-image text-void-200"></i>')+'</div><div><div class="text-sm font-medium" style="color:'+cb.c+'">'+esc(cb.l)+'</div><div class="text-xs text-void-200">'+esc(cb.id)+'</div></div></div><button class="vl-btn vl-btn-s vl-btn-sm del-cbadge-btn" data-idx="'+i+'" style="color:#f55"><i class="fa-solid fa-trash"></i></button></div>';}h+='</div>';}h+='<button class="vl-btn vl-btn-secondary add-cbadge-btn"><i class="fa-solid fa-plus"></i> Add Custom Badge</button></div>';return h;}
+function dashBadges(u){
+  var awarded=u.badges||[];
+  var hidden=u.hiddenBadges||[];
+  var customs=u.customBadges||[];
+  var isPremium=hasBadge(u,'premium');
+
+  var h='<h2 class="font-display font-bold text-2xl mb-1">Badges</h2><p class="text-void-100 text-sm mb-8">Manage your profile badges</p><div class="max-w-lg"><h3 class="font-display font-semibold text-sm uppercase tracking-wider text-void-100 mb-4">Awarded Badges</h3>';
+  if(awarded.length===0){
+    h+='<p class="text-void-200 text-sm mb-8">No badges yet.</p>';
+  }else{
+    h+='<div class="space-y-2 mb-8">';
+    for(var i=0;i<awarded.length;i++){
+      var key=awarded[i];
+      var isHidden=hidden.indexOf(key)>-1;
+      var b=BADGES[key];
+      var name=b?b.l:key;
+      var color=b?b.c:'#888';
+      var icon=b?b.i:'fa-solid fa-circle';
+      h+='<div class="flex items-center justify-between glass rounded-xl p-4"><div class="flex items-center gap-3"><span class="badge" style="background:'+color+'20;color:'+color+'"><i class="'+icon+'" style="font-size:10px"></i></span><span class="text-sm font-medium">'+esc(name)+'</span>'+(isHidden?'<span class="text-xs text-void-200">(hidden)</span>':'')+'</div><button class="vl-btn vl-btn-s vl-btn-sm toggle-badge-btn" data-badge="'+esc(key)+'" title="Toggle visibility"><i class="fa-solid '+(isHidden?'fa-eye-slash':'fa-eye')+'"></i></button></div>';
+    }
+    h+='</div>';
+  }
+
+  /* Custom badges: ONLY for premium users */
+  h+='<h3 class="font-display font-semibold text-sm uppercase tracking-wider text-void-100 mb-4">Custom Badges</h3>';
+  if(!isPremium){
+    h+='<div class="glass rounded-xl p-6 text-center mb-4"><i class="fa-solid fa-crown text-3xl text-warning mb-3" style="display:block"></i><p class="text-sm text-void-100 mb-1">Premium Feature</p><p class="text-xs text-void-200">Custom badges require the <span style="color:#ffd700">Premium</span> badge. Contact an admin to get it.</p></div>';
+  }else{
+    if(customs.length===0){
+      h+='<p class="text-void-200 text-sm mb-4">No custom badges yet.</p>';
+    }else{
+      h+='<div class="space-y-2 mb-4">';
+      for(var i=0;i<customs.length;i++){
+        var cb=customs[i];
+        h+='<div class="flex items-center justify-between glass rounded-xl p-4"><div class="flex items-center gap-3"><div class="cb-preview">'+(cb.img?'<img src="'+esc(cb.img)+'" alt="">':'<i class="fa-solid fa-image text-void-200"></i>')+'</div><div><div class="text-sm font-medium" style="color:'+cb.c+'">'+esc(cb.l)+'</div><div class="text-xs text-void-200">'+esc(cb.id)+'</div></div></div><button class="vl-btn vl-btn-s vl-btn-sm del-cbadge-btn" data-idx="'+i+'" style="color:#f55"><i class="fa-solid fa-trash"></i></button></div>';
+      }
+      h+='</div>';
+    }
+    h+='<button class="vl-btn vl-btn-secondary add-cbadge-btn"><i class="fa-solid fa-plus"></i> Add Custom Badge</button>';
+  }
+
+  h+='</div>';
+  return h;
+}
 
 function dashAppearance(u){var bgKeys=Object.keys(BGM);var h='<h2 class="font-display font-bold text-2xl mb-1">Appearance</h2><p class="text-void-100 text-sm mb-8">Customize your profile look</p><div class="max-w-lg space-y-8"><div><label class="block text-xs font-semibold text-void-100 mb-3 uppercase tracking-wider">Background</label><div class="grid grid-cols-3 gap-3">';for(var i=0;i<bgKeys.length;i++){var k=bgKeys[i];h+='<div class="fx-opt rounded-xl overflow-hidden cursor-pointer '+(u.background===k?'sel':'')+' bg-opt" data-bg="'+k+'"><div class="'+BGM[k]+'" style="height:60px"></div><div class="p-2 text-center text-xs font-medium">'+BGL[k]+'</div></div>';}h+='</div></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Background Image URL (overrides preset)</label><input class="vl-input" name="bgImage" id="inp-bgImage" value="'+esc(u.bgImage||'')+'" placeholder="https://example.com/bg.jpg"></div><div><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Accent Color</label><div class="flex items-center gap-3"><input type="color" id="inp-accent" value="'+(u.accentColor||'#7dd3fc')+'" class="w-10 h-10 rounded-lg border border-void-400 cursor-pointer" style="background:none"><input class="vl-input flex-1" id="inp-accent-text" value="'+esc(u.accentColor||'#7dd3fc')+'" placeholder="#7dd3fc"></div></div><div><label class="block text-xs font-semibold text-void-100 mb-3 uppercase tracking-wider">Display Name Effect</label><div class="grid grid-cols-2 gap-2">';var fxKeys=Object.keys(DISPLAY_EFFECTS);for(var i=0;i<fxKeys.length;i++){var fk=fxKeys[i];var fx=DISPLAY_EFFECTS[fk];h+='<div class="fx-opt rounded-xl p-3 text-center '+(u.displayNameEffect===fk?'sel':'')+' fx-opt" data-fx="'+fk+'"><i class="fa-solid '+fx.icon+' text-sm mb-1 '+(fx.cls||'text-void-100')+'"></i><div class="text-xs">'+fx.name+'</div></div>';}h+='</div><div class="mt-3 fx-preview-box glass rounded-xl p-4"><span class="text-lg font-display font-bold">'+buildEffectHTML(u.displayName||u.username,u.displayNameEffect||'none')+'</span></div></div><div id="appearance-err" class="text-red-400 text-xs hidden"></div><div id="appearance-ok" class="text-success text-xs hidden"></div><button class="vl-btn vl-btn-primary save-appearance-btn" data-submitting="false"><i class="fa-solid fa-check"></i> Save Appearance</button></div>';return h;}
 
 function dashSettings(u){var h='<h2 class="font-display font-bold text-2xl mb-1">Settings</h2><p class="text-void-100 text-sm mb-8">Account settings</p><div class="max-w-lg space-y-6"><div class="glass rounded-xl p-6"><h3 class="font-display font-semibold mb-4">Change Password</h3><form id="frm-changepw"><input class="vl-input mb-3" name="currentPw" type="password" placeholder="Current password" required><input class="vl-input mb-3" name="newPw" type="password" placeholder="New password (min 6)" required minlength="6"><div id="changepw-err" class="text-red-400 text-xs mb-3 hidden"></div><button type="submit" class="vl-btn vl-btn-secondary vl-btn-sm" data-submitting="false"><i class="fa-solid fa-key"></i> Update Password</button></form></div><div class="glass rounded-xl p-6"><h3 class="font-display font-semibold mb-2">Account Info</h3><div class="space-y-2 text-sm"><div class="flex justify-between"><span class="text-void-100">UID</span><code class="text-accent">'+u.uid+'</code></div><div class="flex justify-between"><span class="text-void-100">Role</span><span class="capitalize">'+esc(u.role)+'</span></div><div class="flex justify-between"><span class="text-void-100">Created</span><span>'+(new Date(u.createdAt)).toLocaleDateString()+'</span></div><div class="flex justify-between"><span class="text-void-100">Views</span><span>'+(u.views||0).toLocaleString()+'</span></div></div></div>';if(hasPerm(u,'admin_panel')){h+='<div class="glass rounded-xl p-6 border-accent/20"><h3 class="font-display font-semibold mb-2 text-accent">Admin</h3><p class="text-void-100 text-sm mb-3">You have admin access.</p><a href="/admin" class="vl-btn vl-btn-primary vl-btn-sm"><i class="fa-solid fa-gauge-high"></i> Open Admin Panel</a></div>';}h+='<div class="glass rounded-xl p-6 border-red-500/20"><h3 class="font-display font-semibold mb-2 text-red-400">Danger Zone</h3><p class="text-void-100 text-sm mb-3">Permanently delete your account and all data.</p><button class="vl-btn vl-btn-danger vl-btn-sm delete-account-btn"><i class="fa-solid fa-trash"></i> Delete Account</button></div></div>';return h;}
 
-/* ===== FORM HANDLERS ===== */
+/* ===== ADMIN PANEL ===== */
+function renderAdmin(user,tab){
+  tab=tab||'users';
+  var tabs=[{id:'users',i:'fa-users',l:'Users'},{id:'badges',i:'fa-award',l:'Badges'}];
+  var ok=false;for(var i=0;i<tabs.length;i++)if(tabs[i].id===tab)ok=true;if(!ok)tab='users';
+  var content=tab==='users'?adminUsers(user):adminBadgesPanel(user);
 
-// Signup handler with double-submit prevention
-document.addEventListener('submit', function(e) {
-  if (e.target.id !== 'frm-signup') return;
-  e.preventDefault();
-  
-  var form = e.target;
-  var errEl = document.getElementById('signup-err');
-  var btn = form.querySelector('button[type="submit"]');
-  errEl.classList.add('hidden');
-  
-  // Prevent double submission - CHECK 1
-  if (btn.disabled || btn.dataset.submitting === 'true') return;
-  
-  var username = form.username.value.trim().toLowerCase();
-  var displayName = form.displayName.value.trim() || username;
-  var email = form.email.value.trim().toLowerCase();
-  var password = form.password.value;
-  
-  // Validation
-  if (username.length < 3 || username.length > 20) {
-    errEl.textContent = 'Username must be 3-20 characters';
-    errEl.classList.remove('hidden');
-    return;
-  }
-  if (!/^[a-z0-9_]+$/.test(username)) {
-    errEl.textContent = 'Username can only contain letters, numbers, and underscores';
-    errEl.classList.remove('hidden');
-    return;
-  }
-  if (password.length < 6) {
-    errEl.textContent = 'Password must be at least 6 characters';
-    errEl.classList.remove('hidden');
-    return;
-  }
-  
-  // Disable button immediately - PREVENTS DOUBLE CLICK
-  btn.disabled = true;
-  btn.dataset.submitting = 'true';
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating...';
-  
-  // Check if username taken
-  findByUsername(username).then(function(existing) {
-    if (existing) throw new Error('Username is already taken');
-    return findByEmail(email);
-  }).then(function(existing) {
-    if (existing) throw new Error('Email is already registered');
-    return createUser({
-      username: username,
-      displayName: displayName,
-      email: email,
-      password: password
-    });
-  }).then(function(user) {
-    if (user) {
-      setSession(user.id);
-      closeModal();
-      toast('Account created! Welcome to Seashell.', 'success');
-      navigateTo('/dashboard');
-    }
-  }).catch(function(err) {
-    // Re-enable button on error ONLY
-    btn.disabled = false;
-    btn.dataset.submitting = 'false';
-    btn.innerHTML = 'Create Account';
-    
-    errEl.textContent = err.message || 'An error occurred';
-    errEl.classList.remove('hidden');
-  });
-});
+  var h='<div class="mobile-header fixed top-0 left-0 right-0 z-50 glass-strong h-14 items-center px-4 gap-3"><a href="/" class="font-display font-bold text-sm">'+brandLogo()+'</a><div class="flex-1"></div><a href="/dashboard" class="vl-btn vl-btn-s vl-btn-sm"><i class="fa-solid fa-arrow-left"></i></a></div>';
+  h+='<aside class="dash-sidebar"><div class="px-6 mb-8"><a href="/" class="font-display font-bold text-lg tracking-tight block mb-1">'+brandLogo()+'</a><p class="text-accent text-xs font-semibold uppercase tracking-wider">Admin Panel</p></div><nav>';
+  for(var i=0;i<tabs.length;i++)h+='<a href="/admin/'+tabs[i].id+'" class="'+(tabs[i].id===tab?'active':'')+'"><i class="fa-solid '+tabs[i].i+' w-5 text-center"></i>'+tabs[i].l+'</a>';
+  h+='</nav><div class="px-6 pt-8 mt-auto"><div class="border-t border-void-400 pt-4"><div class="flex items-center gap-3 mb-3"><div class="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center text-sm font-bold text-accent">'+esc((user.displayName||user.username)[0].toUpperCase())+'</div><div><div class="text-sm font-semibold">'+esc(user.displayName||user.username)+'</div><div class="text-xs text-void-100">@'+esc(user.username)+' &middot; '+esc(user.role)+'</div></div></div><div class="flex gap-2"><a href="/dashboard" class="vl-btn vl-btn-s vl-btn-sm flex-1 justify-center text-xs"><i class="fa-solid fa-arrow-left"></i> Dashboard</a><a href="/" class="vl-btn vl-btn-s vl-btn-sm flex-1 justify-center text-xs"><i class="fa-solid fa-home"></i> Home</a></div></div></div></aside>';
+  h+='<main class="dash-main pt-4 md:pt-8"><div class="flex md:hidden gap-1 mb-6 overflow-x-auto pb-2">';
+  for(var i=0;i<tabs.length;i++)h+='<a href="/admin/'+tabs[i].id+'" class="vl-btn vl-btn-sm whitespace-nowrap '+(tabs[i].id===tab?'vl-btn-primary':'vl-btn-secondary')+'"><i class="fa-solid '+tabs[i].i+'"></i>'+tabs[i].l+'</a>';
+  h+='</div><div class="anim-fade" id="admin-content">'+content+'</div></main>';
+  return h;
+}
 
-// Login handler with double-submit prevention
-document.addEventListener('submit', function(e) {
-  if (e.target.id !== 'frm-login') return;
-  e.preventDefault();
-  
-  var form = e.target;
-  var errEl = document.getElementById('login-err');
-  var btn = form.querySelector('button[type="submit"]');
-  errEl.classList.add('hidden');
-  
-  // Prevent double submission
-  if (btn.disabled || btn.dataset.submitting === 'true') return;
-  
-  var loginId = form.loginId.value.trim().toLowerCase();
-  var password = form.password.value;
-  
-  // Disable button
-  btn.disabled = true;
-  btn.dataset.submitting = 'true';
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing in...';
-  
-  var findPromise = loginId.indexOf('@') > -1 ? findByEmail(loginId) : findByUsername(loginId);
-  
-  findPromise.then(function(user) {
-    if (!user) throw new Error('No account found with that email/username');
-    if (user.password !== hashPw(password)) throw new Error('Incorrect password');
-    if (user.banned) throw new Error('Account is banned: ' + (user.banReason || 'No reason specified'));
-    setSession(user.id);
-    closeModal();
-    toast('Welcome back!', 'success');
-    navigateTo('/dashboard');
-  }).catch(function(err) {
-    btn.disabled = false;
-    btn.dataset.submitting = 'false';
-    btn.innerHTML = 'Sign In';
-    
-    errEl.textContent = err.message || 'An error occurred';
-    errEl.classList.remove('hidden');
-  });
-});
+function adminUsers(me){
+  var h='<div class="flex items-center justify-between mb-6"><div><h2 class="font-display font-bold text-2xl mb-1">All Users</h2><p class="text-void-100 text-sm" id="admin-user-count">Loading...</p></div><div class="flex gap-2"><input class="vl-input" id="admin-search" placeholder="Search users..." style="width:220px"></div></div>';
+  h+='<div class="overflow-x-auto"><table class="admin-table"><thead><tr><th>User</th><th>UID</th><th>Role</th><th>Badges</th><th>Views</th><th>Status</th><th>Actions</th></tr></thead><tbody id="admin-users-tbody"><tr><td colspan="7" class="text-center text-void-200 py-8">Loading users...</td></tr></tbody></table></div>';
+  return h;
+}
 
-// Profile edit handler
-document.addEventListener('submit', function(e) {
-  if (e.target.id !== 'frm-profile') return;
-  e.preventDefault();
-  
-  var form = e.target;
-  var errEl = document.getElementById('profile-err');
-  var okEl = document.getElementById('profile-ok');
-  var btn = form.querySelector('button[type="submit"]');
-  errEl.classList.add('hidden');
-  okEl.classList.add('hidden');
-  
-  if (btn.disabled || btn.dataset.submitting === 'true') return;
-  
-  var s = getSession();
-  if (!s) return;
-  
-  var username = form.username.value.trim().toLowerCase();
-  var displayName = form.displayName.value.trim();
-  var bio = form.bio.value.trim();
-  var avatar = form.avatar.value.trim();
-  var musicUrl = form.musicUrl.value.trim();
-  
-  if (username.length < 3 || username.length > 20) {
-    errEl.textContent = 'Username must be 3-20 characters';
-    errEl.classList.remove('hidden');
-    return;
-  }
-  if (!/^[a-z0-9_]+$/.test(username)) {
-    errEl.textContent = 'Username can only contain letters, numbers, and underscores';
-    errEl.classList.remove('hidden');
-    return;
-  }
-  
-  btn.disabled = true;
-  btn.dataset.submitting = 'true';
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-  
-  findById(s.userId).then(function(user) {
-    if (!user) throw new Error('Not logged in');
-    if (username !== user.username) {
-      return findByUsername(username).then(function(existing) {
-        if (existing) throw new Error('Username is already taken');
-        return user;
-      });
-    }
-    return user;
-  }).then(function(user) {
-    if (!user) return;
-    return updateUser(s.userId, {
-      username: username,
-      displayName: displayName,
-      bio: bio,
-      avatar: avatar,
-      musicUrl: musicUrl
-    });
-  }).then(function() {
-    btn.disabled = false;
-    btn.dataset.submitting = 'false';
-    btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Changes';
-    okEl.textContent = 'Profile saved!';
-    okEl.classList.remove('hidden');
-    toast('Profile updated!', 'success');
-  }).catch(function(err) {
-    btn.disabled = false;
-    btn.dataset.submitting = 'false';
-    btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Changes';
-    errEl.textContent = err.message || 'Error saving profile';
-    errEl.classList.remove('hidden');
-  });
-});
+function adminBadgesPanel(me){
+  var h='<div class="mb-6"><h2 class="font-display font-bold text-2xl mb-1">Manage Badges</h2><p class="text-void-100 text-sm">Award or remove badges from users</p></div>';
+  h+='<div class="glass rounded-xl p-6 max-w-lg mb-8"><h3 class="font-display font-semibold mb-4">Award Badge</h3><form id="frm-award-badge"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Username</label><input class="vl-input mb-4" name="username" placeholder="username" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Badge</label><select class="vl-input mb-4" name="badge" required><option value="">Select badge...</option>';
+  var bKeys=Object.keys(BADGES);
+  for(var i=0;i<bKeys.length;i++){var k=bKeys[i];var b=BADGES[k];h+='<option value="'+k+'">'+b.l+'</option>';}
+  h+='</select><div id="award-badge-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary" data-submitting="false"><i class="fa-solid fa-plus"></i> Award Badge</button></form></div>';
+  h+='<div class="glass rounded-xl p-6 max-w-lg"><h3 class="font-display font-semibold mb-4">Remove Badge</h3><form id="frm-remove-badge"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Username</label><input class="vl-input mb-4" name="username" placeholder="username" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Badge</label><select class="vl-input mb-4" name="badge" required><option value="">Select badge...</option>';
+  for(var i=0;i<bKeys.length;i++){var k=bKeys[i];var b=BADGES[k];h+='<option value="'+k+'">'+b.l+'</option>';}
+  h+='</select><div id="remove-badge-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-danger" data-submitting="false"><i class="fa-solid fa-minus"></i> Remove Badge</button></form></div>';
+  return h;
+}
 
-// Change password handler
-document.addEventListener('submit', function(e) {
-  if (e.target.id !== 'frm-changepw') return;
-  e.preventDefault();
-  
-  var form = e.target;
-  var errEl = document.getElementById('changepw-err');
-  var btn = form.querySelector('button[type="submit"]');
-  errEl.classList.add('hidden');
-  
-  if (btn.disabled || btn.dataset.submitting === 'true') return;
-  
-  var s = getSession();
-  if (!s) return;
-  
-  var currentPw = form.currentPw.value;
-  var newPw = form.newPw.value;
-  
-  if (newPw.length < 6) {
-    errEl.textContent = 'New password must be at least 6 characters';
-    errEl.classList.remove('hidden');
-    return;
-  }
-  
-  btn.disabled = true;
-  btn.dataset.submitting = 'true';
-  
-  findById(s.userId).then(function(user) {
-    if (!user) throw new Error('Not logged in');
-    if (user.password !== hashPw(currentPw)) throw new Error('Current password is incorrect');
-    return updateUser(s.userId, { password: hashPw(newPw) });
-  }).then(function() {
-    btn.disabled = false;
-    btn.dataset.submitting = 'false';
-    form.reset();
-    toast('Password updated!', 'success');
-  }).catch(function(err) {
-    btn.disabled = false;
-    btn.dataset.submitting = 'false';
-    errEl.textContent = err.message || 'Error changing password';
-    errEl.classList.remove('hidden');
-  });
-});
-
-// Click handlers for modals, links, badges, etc.
-document.addEventListener('click', function(e) {
-  // Open signup modal
-  var signupTrigger = e.target.closest('.open-signup');
-  if (signupTrigger) {
-    e.preventDefault();
-    showModal(signupHTML());
-    return;
-  }
-  
-  // Open login modal
-  var loginTrigger = e.target.closest('.open-login');
-  if (loginTrigger) {
-    e.preventDefault();
-    showModal(loginHTML());
-    return;
-  }
-  
-  // Logout
-  var logoutBtn = e.target.closest('.do-logout');
-  if (logoutBtn) {
-    e.preventDefault();
-    clearSession();
-    toast('Logged out.', 'info');
-    navigateTo('/');
-    return;
-  }
-  
-  // Add link
-  var addLinkBtn = e.target.closest('.add-link-btn');
-  if (addLinkBtn && !addLinkBtn.disabled) {
-    showModal('<h3 class="font-display font-bold text-xl mb-6">Add Link</h3><form id="frm-addlink"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Title</label><input class="vl-input mb-4" name="title" placeholder="My Website" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">URL</label><input class="vl-input mb-4" name="url" type="url" placeholder="https://example.com" required><div id="addlink-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center" data-submitting="false">Add Link</button></form>');
-    return;
-  }
-  
-  // Edit link
-  var editLinkBtn = e.target.closest('.edit-link-btn');
-  if (editLinkBtn) {
-    var idx = parseInt(editLinkBtn.dataset.idx);
-    var s = getSession();
-    if (s) {
-      findById(s.userId).then(function(user) {
-        if (user && user.links[idx]) {
-          var lk = user.links[idx];
-          showModal('<h3 class="font-display font-bold text-xl mb-6">Edit Link</h3><form id="frm-editlink" data-idx="'+idx+'"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Title</label><input class="vl-input mb-4" name="title" value="'+esc(lk.title)+'" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">URL</label><input class="vl-input mb-4" name="url" type="url" value="'+esc(lk.url)+'" required><div id="editlink-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center" data-submitting="false">Save Changes</button></form>');
-        }
-      });
-    }
-    return;
-  }
-  
-  // Delete link
-  var delLinkBtn = e.target.closest('.del-link-btn');
-  if (delLinkBtn) {
-    var idx = parseInt(delLinkBtn.dataset.idx);
-    var s = getSession();
-    if (s) {
-      findById(s.userId).then(function(user) {
-        if (user) {
-          var links = user.links || [];
-          links.splice(idx, 1);
-          return updateUser(s.userId, { links: links });
-        }
-      }).then(function() {
-        toast('Link removed.', 'info');
-        router();
-      });
-    }
-    return;
-  }
-  
-  // Toggle badge visibility
-  var toggleBadgeBtn = e.target.closest('.toggle-badge-btn');
-  if (toggleBadgeBtn) {
-    var badgeKey = toggleBadgeBtn.dataset.badge;
-    var s = getSession();
-    if (s) {
-      findById(s.userId).then(function(user) {
-        if (user) {
-          var hidden = user.hiddenBadges || [];
-          var idx = hidden.indexOf(badgeKey);
-          if (idx > -1) hidden.splice(idx, 1); else hidden.push(badgeKey);
-          return updateUser(s.userId, { hiddenBadges: hidden });
-        }
-      }).then(function() { router(); });
-    }
-    return;
-  }
-  
-  // Delete custom badge
-  var delCbadgeBtn = e.target.closest('.del-cbadge-btn');
-  if (delCbadgeBtn) {
-    var idx = parseInt(delCbadgeBtn.dataset.idx);
-    var s = getSession();
-    if (s) {
-      findById(s.userId).then(function(user) {
-        if (user) {
-          var customs = user.customBadges || [];
-          customs.splice(idx, 1);
-          return updateUser(s.userId, { customBadges: customs });
-        }
-      }).then(function() { toast('Custom badge removed.', 'info'); router(); });
-    }
-    return;
-  }
-  
-  // Add custom badge
-  var addCbadgeBtn = e.target.closest('.add-cbadge-btn');
-  if (addCbadgeBtn) {
-    showModal('<h3 class="font-display font-bold text-xl mb-6">Add Custom Badge</h3><form id="frm-addcbadge"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Label</label><input class="vl-input mb-4" name="label" placeholder="My Badge" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">ID (unique)</label><input class="vl-input mb-4" name="id" placeholder="my_badge" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Color</label><input class="vl-input mb-4" name="color" value="#7dd3fc" placeholder="#7dd3fc"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Image URL (optional)</label><input class="vl-input mb-4" name="img" placeholder="https://example.com/icon.png"><div id="addcbadge-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center" data-submitting="false">Add Badge</button></form>');
-    return;
-  }
-  
-  // Background option
-  var bgOpt = e.target.closest('.bg-opt');
-  if (bgOpt) {
-    document.querySelectorAll('.bg-opt').forEach(function(el) { el.classList.remove('sel'); });
-    bgOpt.classList.add('sel');
-    return;
-  }
-  
-  // Effect option
-  var fxOpt = e.target.closest('.fx-opt');
-  if (fxOpt && fxOpt.dataset.fx) {
-    document.querySelectorAll('.fx-opt').forEach(function(el) { el.classList.remove('sel'); });
-    fxOpt.classList.add('sel');
-    var previewBox = document.querySelector('.fx-preview-box');
-    if (previewBox) {
-      var s = getSession();
-      if (s) {
-        findById(s.userId).then(function(user) {
-          if (user) previewBox.innerHTML = '<span class="text-lg font-display font-bold">' + buildEffectHTML(user.displayName || user.username, fxOpt.dataset.fx) + '</span>';
-        });
+function loadAdminUsers(){
+  var tbody=document.getElementById('admin-users-tbody');
+  var countEl=document.getElementById('admin-user-count');
+  if(!tbody)return;
+  getAllUsers().then(function(users){
+    if(countEl)countEl.textContent=users.length+' total users';
+    if(users.length===0){tbody.innerHTML='<tr><td colspan="7" class="text-center text-void-200 py-8">No users found</td></tr>';return;}
+    var html='';
+    for(var i=0;i<users.length;i++){
+      var u=users[i];
+      var badgeH='';
+      for(var j=0;j<(u.badges||[]).length;j++){
+        var bk=u.badges[j];
+        var bd=BADGES[bk];
+        if(bd)badgeH+='<span class="badge" style="background:'+bd.c+'20;color:'+bd.c+'"><i class="'+bd.i+'" style="font-size:9px"></i></span> ';
       }
+      var statusH=u.banned?'<span class="text-red-400 text-xs font-semibold">Banned</span>':'<span class="text-success text-xs font-semibold">Active</span>';
+      html+='<tr data-userid="'+u.id+'"><td><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-void-400 flex items-center justify-center text-xs font-bold">'+esc((u.displayName||u.username)[0].toUpperCase())+'</div><div><div class="font-medium text-sm">'+esc(u.displayName||u.username)+'</div><div class="text-xs text-void-200">@'+esc(u.username)+'</div></div></div></td><td><code class="text-accent text-xs">'+u.uid+'</code></td><td><span class="text-xs font-semibold capitalize">'+esc(u.role)+'</span></td><td>'+(badgeH||'<span class="text-void-200 text-xs">None</span>')+'</td><td class="text-void-100 text-sm">'+(u.views||0)+'</td><td>'+statusH+'</td><td><div class="flex gap-1"><button class="vl-btn vl-btn-s vl-btn-sm admin-view-btn" data-uid="'+u.id+'" title="View"><i class="fa-solid fa-eye"></i></button>'+(u.banned?'<button class="vl-btn vl-btn-s vl-btn-sm admin-unban-btn" data-uid="'+u.id+'" title="Unban" style="color:#00ff88"><i class="fa-solid fa-lock-open"></i></button>':'<button class="vl-btn vl-btn-s vl-btn-sm admin-ban-btn" data-uid="'+u.id+'" title="Ban" style="color:#ffaa00"><i class="fa-solid fa-gavel"></i></button>')+'<button class="vl-btn vl-btn-s vl-btn-sm admin-role-btn" data-uid="'+u.id+'" title="Change Role" style="color:#7dd3fc"><i class="fa-solid fa-user-gear"></i></button>'+(hasPerm(me,'delete_users')?'<button class="vl-btn vl-btn-s vl-btn-sm admin-deluser-btn" data-uid="'+u.id+'" title="Delete" style="color:#f55"><i class="fa-solid fa-trash"></i></button>':'')+'</div></td></tr>';
     }
-    return;
-  }
-  
-  // Save appearance
-  var saveAppBtn = e.target.closest('.save-appearance-btn');
-  if (saveAppBtn && !saveAppBtn.disabled) {
-    var s = getSession();
-    if (!s) return;
-    
-    var errEl = document.getElementById('appearance-err');
-    var okEl = document.getElementById('appearance-ok');
+    tbody.innerHTML=html;
+  });
+}
+
+/* ===== FORM HANDLERS ===== */
+document.addEventListener('submit', function(e) {
+  if (e.target.id === 'frm-signup') {
+    e.preventDefault();
+    var form=e.target, errEl=document.getElementById('signup-err'), btn=form.querySelector('button[type="submit"]');
     errEl.classList.add('hidden');
-    okEl.classList.add('hidden');
-    
-    saveAppBtn.disabled = true;
-    saveAppBtn.dataset.submitting = 'true';
-    saveAppBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-    
-    var bg = document.querySelector('.bg-opt.sel');
-    var bgKey = bg ? bg.dataset.bg : 'void';
-    var bgImage = document.getElementById('inp-bgImage').value.trim();
-    var accent = document.getElementById('inp-accent').value;
-    var fx = document.querySelector('.fx-opt.sel');
-    var fxKey = fx ? fx.dataset.fx : 'none';
-    
-    updateUser(s.userId, {
-      background: bgKey,
-      bgImage: bgImage,
-      accentColor: accent,
-      displayNameEffect: fxKey
-    }).then(function() {
-      saveAppBtn.disabled = false;
-      saveAppBtn.dataset.submitting = 'false';
-      saveAppBtn.innerHTML = '<i class="fa-solid fa-check"></i> Save Appearance';
-      okEl.textContent = 'Appearance saved!';
-      okEl.classList.remove('hidden');
-      toast('Appearance updated!', 'success');
-    }).catch(function(err) {
-      saveAppBtn.disabled = false;
-      saveAppBtn.dataset.submitting = 'false';
-      saveAppBtn.innerHTML = '<i class="fa-solid fa-check"></i> Save Appearance';
-      errEl.textContent = err.message || 'Error saving';
-      errEl.classList.remove('hidden');
-    });
+    if(btn.disabled||btn.dataset.submitting==='true')return;
+    var username=form.username.value.trim().toLowerCase(), displayName=form.displayName.value.trim()||username, email=form.email.value.trim().toLowerCase(), password=form.password.value;
+    if(username.length<3||username.length>20){errEl.textContent='Username must be 3-20 characters';errEl.classList.remove('hidden');return;}
+    if(!/^[a-z0-9_]+$/.test(username)){errEl.textContent='Username can only contain letters, numbers, and underscores';errEl.classList.remove('hidden');return;}
+    if(password.length<6){errEl.textContent='Password must be at least 6 characters';errEl.classList.remove('hidden');return;}
+    btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Creating...';
+    findByUsername(username).then(function(ex){if(ex)throw new Error('Username is already taken');return findByEmail(email);}).then(function(ex){if(ex)throw new Error('Email is already registered');return createUser({username:username,displayName:displayName,email:email,password:password});}).then(function(user){if(user){setSession(user.id);closeModal();toast('Account created! Welcome to Seashell.','success');navigateTo('/dashboard');}}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='Create Account';errEl.textContent=err.message||'An error occurred';errEl.classList.remove('hidden');});
     return;
   }
-  
-  // Delete account
-  var delAccBtn = e.target.closest('.delete-account-btn');
-  if (delAccBtn) {
-    showModal('<h3 class="font-display font-bold text-xl mb-2 text-red-400">Delete Account?</h3><p class="text-void-100 text-sm mb-6">This action is permanent and cannot be undone. All your data will be deleted.</p><div class="flex gap-3"><button class="vl-btn vl-btn-secondary flex-1 justify-center cancel-delete-btn">Cancel</button><button class="vl-btn vl-btn-danger flex-1 justify-center confirm-delete-btn" data-submitting="false"><i class="fa-solid fa-trash"></i> Delete</button></div>');
+  if (e.target.id === 'frm-login') {
+    e.preventDefault();
+    var form=e.target, errEl=document.getElementById('login-err'), btn=form.querySelector('button[type="submit"]');
+    errEl.classList.add('hidden');
+    if(btn.disabled||btn.dataset.submitting==='true')return;
+    var loginId=form.loginId.value.trim().toLowerCase(), password=form.password.value;
+    btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Signing in...';
+    var findPromise=loginId.indexOf('@')>-1?findByEmail(loginId):findByUsername(loginId);
+    findPromise.then(function(user){if(!user)throw new Error('No account found with that email/username');if(user.password!==hashPw(password))throw new Error('Incorrect password');if(user.banned)throw new Error('Account is banned: '+(user.banReason||'No reason specified'));setSession(user.id);closeModal();toast('Welcome back!','success');navigateTo('/dashboard');}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='Sign In';errEl.textContent=err.message||'An error occurred';errEl.classList.remove('hidden');});
     return;
   }
-  
-  // Confirm delete
-  var confirmDelBtn = e.target.closest('.confirm-delete-btn');
-  if (confirmDelBtn && confirmDelBtn.dataset.submitting !== 'true') {
-    confirmDelBtn.disabled = true;
-    confirmDelBtn.dataset.submitting = 'true';
-    confirmDelBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Deleting...';
-    
-    var s = getSession();
-    if (s) {
-      deleteUser(s.userId).then(function() {
-        clearSession();
-        closeModal();
-        toast('Account deleted.', 'info');
-        navigateTo('/');
-      }).catch(function(err) {
-        confirmDelBtn.disabled = false;
-        confirmDelBtn.dataset.submitting = 'false';
-        confirmDelBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete';
-        toast('Error: ' + err.message, 'error');
-      });
-    }
+  if (e.target.id === 'frm-profile') {
+    e.preventDefault();
+    var form=e.target, errEl=document.getElementById('profile-err'), okEl=document.getElementById('profile-ok'), btn=form.querySelector('button[type="submit"]');
+    errEl.classList.add('hidden');okEl.classList.add('hidden');
+    if(btn.disabled||btn.dataset.submitting==='true')return;
+    var s=getSession();if(!s)return;
+    var username=form.username.value.trim().toLowerCase(), displayName=form.displayName.value.trim(), bio=form.bio.value.trim(), avatar=form.avatar.value.trim(), musicUrl=form.musicUrl.value.trim();
+    if(username.length<3||username.length>20){errEl.textContent='Username must be 3-20 characters';errEl.classList.remove('hidden');return;}
+    if(!/^[a-z0-9_]+$/.test(username)){errEl.textContent='Username can only contain letters, numbers, and underscores';errEl.classList.remove('hidden');return;}
+    btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+    findById(s.userId).then(function(user){if(!user)throw new Error('Not logged in');if(username!==user.username){return findByUsername(username).then(function(ex){if(ex)throw new Error('Username is already taken');return user;});}return user;}).then(function(user){if(!user)return;return updateUser(s.userId,{username:username,displayName:displayName,bio:bio,avatar:avatar,musicUrl:musicUrl});}).then(function(){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='<i class="fa-solid fa-check"></i> Save Changes';okEl.textContent='Profile saved!';okEl.classList.remove('hidden');toast('Profile updated!','success');}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='<i class="fa-solid fa-check"></i> Save Changes';errEl.textContent=err.message||'Error saving profile';errEl.classList.remove('hidden');});
     return;
   }
-  
-  // Cancel delete
-  var cancelDelBtn = e.target.closest('.cancel-delete-btn');
-  if (cancelDelBtn) {
-    closeModal();
+  if (e.target.id === 'frm-changepw') {
+    e.preventDefault();
+    var form=e.target, errEl=document.getElementById('changepw-err'), btn=form.querySelector('button[type="submit"]');
+    errEl.classList.add('hidden');
+    if(btn.disabled||btn.dataset.submitting==='true')return;
+    var s=getSession();if(!s)return;
+    var currentPw=form.currentPw.value, newPw=form.newPw.value;
+    if(newPw.length<6){errEl.textContent='New password must be at least 6 characters';errEl.classList.remove('hidden');return;}
+    btn.disabled=true;btn.dataset.submitting='true';
+    findById(s.userId).then(function(user){if(!user)throw new Error('Not logged in');if(user.password!==hashPw(currentPw))throw new Error('Current password is incorrect');return updateUser(s.userId,{password:hashPw(newPw)});}).then(function(){btn.disabled=false;btn.dataset.submitting='false';form.reset();toast('Password updated!','success');}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';errEl.textContent=err.message||'Error changing password';errEl.classList.remove('hidden');});
+    return;
+  }
+  if (e.target.id === 'frm-addlink') {
+    e.preventDefault();
+    var form=e.target, errEl=document.getElementById('addlink-err'), btn=form.querySelector('button[type="submit"]');
+    errEl.classList.add('hidden');
+    if(btn.disabled||btn.dataset.submitting==='true')return;
+    var s=getSession();if(!s)return;
+    var title=form.title.value.trim(), url=form.url.value.trim();
+    btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Adding...';
+    findById(s.userId).then(function(user){if(!user)throw new Error('Not logged in');var links=user.links||[];var maxLinks=hasPerm(user,'bypass_link_limit')?999:10;if(links.length>=maxLinks)throw new Error('Link limit reached');links.push({title:title,url:url});return updateUser(s.userId,{links:links});}).then(function(){closeModal();toast('Link added!','success');router();}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='Add Link';errEl.textContent=err.message||'Error adding link';errEl.classList.remove('hidden');});
+    return;
+  }
+  if (e.target.id === 'frm-editlink') {
+    e.preventDefault();
+    var form=e.target, errEl=document.getElementById('editlink-err'), btn=form.querySelector('button[type="submit"]'), idx=parseInt(form.dataset.idx);
+    errEl.classList.add('hidden');
+    if(btn.disabled||btn.dataset.submitting==='true')return;
+    var s=getSession();if(!s)return;
+    var title=form.title.value.trim(), url=form.url.value.trim();
+    btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+    findById(s.userId).then(function(user){if(!user)throw new Error('Not logged in');var links=user.links||[];if(!links[idx])throw new Error('Link not found');links[idx]={title:title,url:url};return updateUser(s.userId,{links:links});}).then(function(){closeModal();toast('Link updated!','success');router();}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='Save Changes';errEl.textContent=err.message||'Error updating link';errEl.classList.remove('hidden');});
+    return;
+  }
+  if (e.target.id === 'frm-addcbadge') {
+    e.preventDefault();
+    var form=e.target, errEl=document.getElementById('addcbadge-err'), btn=form.querySelector('button[type="submit"]');
+    errEl.classList.add('hidden');
+    if(btn.disabled||btn.dataset.submitting==='true')return;
+    var s=getSession();if(!s)return;
+    var label=form.label.value.trim(), id=form.id.value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'_'), color=form.color.value.trim(), img=form.img.value.trim();
+    btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Adding...';
+    findById(s.userId).then(function(user){if(!user)throw new Error('Not logged in');var customs=user.customBadges||[];customs.push({id:id,l:label,c:color,img:img});return updateUser(s.userId,{customBadges:customs});}).then(function(){closeModal();toast('Custom badge added!','success');router();}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='Add Badge';errEl.textContent=err.message||'Error adding badge';errEl.classList.remove('hidden');});
+    return;
+  }
+  if (e.target.id === 'frm-award-badge') {
+    e.preventDefault();
+    var form=e.target, errEl=document.getElementById('award-badge-err'), btn=form.querySelector('button[type="submit"]');
+    errEl.classList.add('hidden');
+    if(btn.disabled||btn.dataset.submitting==='true')return;
+    var username=form.username.value.trim().toLowerCase(), badge=form.badge.value;
+    if(!badge){errEl.textContent='Select a badge';errEl.classList.remove('hidden');return;}
+    btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Awarding...';
+    findByUsername(username).then(function(user){if(!user)throw new Error('User not found');var badges=user.badges||[];if(badges.indexOf(badge)>-1)throw new Error('User already has this badge');badges.push(badge);return updateUser(user.id,{badges:badges});}).then(function(){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='<i class="fa-solid fa-plus"></i> Award Badge';form.reset();toast('Badge awarded!','success');}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='<i class="fa-solid fa-plus"></i> Award Badge';errEl.textContent=err.message||'Error awarding badge';errEl.classList.remove('hidden');});
+    return;
+  }
+  if (e.target.id === 'frm-remove-badge') {
+    e.preventDefault();
+    var form=e.target, errEl=document.getElementById('remove-badge-err'), btn=form.querySelector('button[type="submit"]');
+    errEl.classList.add('hidden');
+    if(btn.disabled||btn.dataset.submitting==='true')return;
+    var username=form.username.value.trim().toLowerCase(), badge=form.badge.value;
+    if(!badge){errEl.textContent='Select a badge';errEl.classList.remove('hidden');return;}
+    btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Removing...';
+    findByUsername(username).then(function(user){if(!user)throw new Error('User not found');var badges=user.badges||[];var idx=badges.indexOf(badge);if(idx<0)throw new Error('User does not have this badge');badges.splice(idx,1);return updateUser(user.id,{badges:badges});}).then(function(){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='<i class="fa-solid fa-minus"></i> Remove Badge';form.reset();toast('Badge removed!','success');}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='<i class="fa-solid fa-minus"></i> Remove Badge';errEl.textContent=err.message||'Error removing badge';errEl.classList.remove('hidden');});
     return;
   }
 });
 
-// Add link form handler
+/* ===== CLICK HANDLERS ===== */
+document.addEventListener('click', function(e) {
+  var signupTrigger=e.target.closest('.open-signup');
+  if(signupTrigger){e.preventDefault();showModal(signupHTML());return;}
+  var loginTrigger=e.target.closest('.open-login');
+  if(loginTrigger){e.preventDefault();showModal(loginHTML());return;}
+  var logoutBtn=e.target.closest('.do-logout');
+  if(logoutBtn){e.preventDefault();clearSession();toast('Logged out.','info');navigateTo('/');return;}
+
+  var addLinkBtn=e.target.closest('.add-link-btn');
+  if(addLinkBtn&&!addLinkBtn.disabled){showModal('<h3 class="font-display font-bold text-xl mb-6">Add Link</h3><form id="frm-addlink"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Title</label><input class="vl-input mb-4" name="title" placeholder="My Website" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">URL</label><input class="vl-input mb-4" name="url" type="url" placeholder="https://example.com" required><div id="addlink-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center" data-submitting="false">Add Link</button></form>');return;}
+
+  var editLinkBtn=e.target.closest('.edit-link-btn');
+  if(editLinkBtn){var idx=parseInt(editLinkBtn.dataset.idx);var s=getSession();if(s){findById(s.userId).then(function(user){if(user&&user.links[idx]){var lk=user.links[idx];showModal('<h3 class="font-display font-bold text-xl mb-6">Edit Link</h3><form id="frm-editlink" data-idx="'+idx+'"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Title</label><input class="vl-input mb-4" name="title" value="'+esc(lk.title)+'" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">URL</label><input class="vl-input mb-4" name="url" type="url" value="'+esc(lk.url)+'" required><div id="editlink-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center" data-submitting="false">Save Changes</button></form>');}});}return;}
+
+  var delLinkBtn=e.target.closest('.del-link-btn');
+  if(delLinkBtn){var idx=parseInt(delLinkBtn.dataset.idx);var s=getSession();if(s){findById(s.userId).then(function(user){if(user){var links=user.links||[];links.splice(idx,1);return updateUser(s.userId,{links:links});}}).then(function(){toast('Link removed.','info');router();});}return;}
+
+  var toggleBadgeBtn=e.target.closest('.toggle-badge-btn');
+  if(toggleBadgeBtn){var badgeKey=toggleBadgeBtn.dataset.badge;var s=getSession();if(s){findById(s.userId).then(function(user){if(user){var hidden=user.hiddenBadges||[];var idx=hidden.indexOf(badgeKey);if(idx>-1)hidden.splice(idx,1);else hidden.push(badgeKey);return updateUser(s.userId,{hiddenBadges:hidden});}}).then(function(){router();});}return;}
+
+  var delCbadgeBtn=e.target.closest('.del-cbadge-btn');
+  if(delCbadgeBtn){var idx=parseInt(delCbadgeBtn.dataset.idx);var s=getSession();if(s){findById(s.userId).then(function(user){if(user){var customs=user.customBadges||[];customs.splice(idx,1);return updateUser(s.userId,{customBadges:customs});}}).then(function(){toast('Custom badge removed.','info');router();});}return;}
+
+  var addCbadgeBtn=e.target.closest('.add-cbadge-btn');
+  if(addCbadgeBtn){showModal('<h3 class="font-display font-bold text-xl mb-6">Add Custom Badge</h3><form id="frm-addcbadge"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Label</label><input class="vl-input mb-4" name="label" placeholder="My Badge" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">ID (unique)</label><input class="vl-input mb-4" name="id" placeholder="my_badge" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Color</label><input class="vl-input mb-4" name="color" value="#7dd3fc" placeholder="#7dd3fc"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Image URL (optional)</label><input class="vl-input mb-4" name="img" placeholder="https://example.com/icon.png"><div id="addcbadge-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center" data-submitting="false">Add Badge</button></form>');return;}
+
+  var bgOpt=e.target.closest('.bg-opt');
+  if(bgOpt){document.querySelectorAll('.bg-opt').forEach(function(el){el.classList.remove('sel');});bgOpt.classList.add('sel');return;}
+
+  var fxOpt=e.target.closest('.fx-opt');
+  if(fxOpt&&fxOpt.dataset.fx){document.querySelectorAll('.fx-opt').forEach(function(el){el.classList.remove('sel');});fxOpt.classList.add('sel');var previewBox=document.querySelector('.fx-preview-box');if(previewBox){var s=getSession();if(s){findById(s.userId).then(function(user){if(user)previewBox.innerHTML='<span class="text-lg font-display font-bold">'+buildEffectHTML(user.displayName||user.username,fxOpt.dataset.fx)+'</span>';});}}return;}
+
+  var saveAppBtn=e.target.closest('.save-appearance-btn');
+  if(saveAppBtn&&!saveAppBtn.disabled){var s=getSession();if(!s)return;var errEl=document.getElementById('appearance-err'),okEl=document.getElementById('appearance-ok');errEl.classList.add('hidden');okEl.classList.add('hidden');saveAppBtn.disabled=true;saveAppBtn.dataset.submitting='true';saveAppBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Saving...';var bg=document.querySelector('.bg-opt.sel');var bgKey=bg?bg.dataset.bg:'void';var bgImage=document.getElementById('inp-bgImage').value.trim();var accent=document.getElementById('inp-accent').value;var fx=document.querySelector('.fx-opt.sel');var fxKey=fx?fx.dataset.fx:'none';updateUser(s.userId,{background:bgKey,bgImage:bgImage,accentColor:accent,displayNameEffect:fxKey}).then(function(){saveAppBtn.disabled=false;saveAppBtn.dataset.submitting='false';saveAppBtn.innerHTML='<i class="fa-solid fa-check"></i> Save Appearance';okEl.textContent='Appearance saved!';okEl.classList.remove('hidden');toast('Appearance updated!','success');}).catch(function(err){saveAppBtn.disabled=false;saveAppBtn.dataset.submitting='false';saveAppBtn.innerHTML='<i class="fa-solid fa-check"></i> Save Appearance';errEl.textContent=err.message||'Error saving';errEl.classList.remove('hidden');});return;}
+
+  var delAccBtn=e.target.closest('.delete-account-btn');
+  if(delAccBtn){showModal('<h3 class="font-display font-bold text-xl mb-2 text-red-400">Delete Account?</h3><p class="text-void-100 text-sm mb-6">This action is permanent and cannot be undone.</p><div class="flex gap-3"><button class="vl-btn vl-btn-secondary flex-1 justify-center cancel-delete-btn">Cancel</button><button class="vl-btn vl-btn-danger flex-1 justify-center confirm-delete-btn" data-submitting="false"><i class="fa-solid fa-trash"></i> Delete</button></div>');return;}
+
+  var confirmDelBtn=e.target.closest('.confirm-delete-btn');
+  if(confirmDelBtn&&confirmDelBtn.dataset.submitting!=='true'){confirmDelBtn.disabled=true;confirmDelBtn.dataset.submitting='true';confirmDelBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Deleting...';var s=getSession();if(s){deleteUser(s.userId).then(function(){clearSession();closeModal();toast('Account deleted.','info');navigateTo('/');}).catch(function(err){confirmDelBtn.disabled=false;confirmDelBtn.dataset.submitting='false';confirmDelBtn.innerHTML='<i class="fa-solid fa-trash"></i> Delete';toast('Error: '+err.message,'error');});}return;}
+
+  var cancelDelBtn=e.target.closest('.cancel-delete-btn');
+  if(cancelDelBtn){closeModal();return;}
+
+  /* ===== ADMIN CLICK HANDLERS ===== */
+  var adminViewBtn=e.target.closest('.admin-view-btn');
+  if(adminViewBtn){var uid=adminViewBtn.dataset.uid;findById(uid).then(function(u){if(u)window.open('/'+u.username,'_blank');});return;}
+
+  var adminBanBtn=e.target.closest('.admin-ban-btn');
+  if(adminBanBtn){var uid=adminBanBtn.dataset.uid;showModal('<h3 class="font-display font-bold text-xl mb-2 text-warning">Ban User</h3><p class="text-void-100 text-sm mb-4">Enter a reason for banning this user:</p><form id="frm-ban-user" data-uid="'+uid+'"><textarea class="vl-input mb-4" name="reason" placeholder="Reason for ban..." rows="3"></textarea><div id="ban-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-danger w-full justify-center" data-submitting="false"><i class="fa-solid fa-gavel"></i> Ban User</button></form>');return;}
+
+  var adminUnbanBtn=e.target.closest('.admin-unban-btn');
+  if(adminUnbanBtn){var uid=adminUnbanBtn.dataset.uid;updateUser(uid,{banned:false,banReason:''}).then(function(){toast('User unbanned.','success');loadAdminUsers();}).catch(function(err){toast('Error: '+err.message,'error');});return;}
+
+  var adminRoleBtn=e.target.closest('.admin-role-btn');
+  if(adminRoleBtn){var uid=adminRoleBtn.dataset.uid;findById(uid).then(function(u){if(u)showModal('<h3 class="font-display font-bold text-xl mb-2">Change Role</h3><p class="text-void-100 text-sm mb-4">@'+esc(u.username)+' &middot; Current role: <strong class="capitalize">'+esc(u.role)+'</strong></p><form id="frm-change-role" data-uid="'+uid+'"><select class="vl-input mb-4" name="role"><option value="user" '+(u.role==='user'?'selected':'')+'>User</option><option value="moderator" '+(u.role==='moderator'?'selected':'')+'>Moderator</option><option value="admin" '+(u.role==='admin'?'selected':'')+'>Admin</option></select><div id="role-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center" data-submitting="false"><i class="fa-solid fa-check"></i> Update Role</button></form>');});return;}
+
+  var adminDeluserBtn=e.target.closest('.admin-deluser-btn');
+  if(adminDeluserBtn){var uid=adminDeluserBtn.dataset.uid;findById(uid).then(function(u){if(u)showModal('<h3 class="font-display font-bold text-xl mb-2 text-red-400">Delete User</h3><p class="text-void-100 text-sm mb-6">Permanently delete <strong>@'+esc(u.username)+'</strong> ('+u.uid+')? This cannot be undone.</p><div class="flex gap-3"><button class="vl-btn vl-btn-secondary flex-1 justify-center cancel-admin-del-btn">Cancel</button><button class="vl-btn vl-btn-danger flex-1 justify-center confirm-admin-del-btn" data-uid="'+uid+'" data-submitting="false"><i class="fa-solid fa-trash"></i> Delete</button></div>');});return;}
+
+  var confirmAdminDel=e.target.closest('.confirm-admin-del-btn');
+  if(confirmAdminDel&&confirmAdminDel.dataset.submitting!=='true'){confirmAdminDel.disabled=true;confirmAdminDel.dataset.submitting='true';confirmAdminDel.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Deleting...';var uid=confirmAdminDel.dataset.uid;deleteUser(uid).then(function(){closeModal();toast('User deleted.','success');loadAdminUsers();}).catch(function(err){confirmAdminDel.disabled=false;confirmAdminDel.dataset.submitting='false';confirmAdminDel.innerHTML='<i class="fa-solid fa-trash"></i> Delete';toast('Error: '+err.message,'error');});return;}
+
+  var cancelAdminDel=e.target.closest('.cancel-admin-del-btn');
+  if(cancelAdminDel){closeModal();return;}
+});
+
+/* Admin form handlers */
 document.addEventListener('submit', function(e) {
-  if (e.target.id !== 'frm-addlink') return;
-  e.preventDefault();
-  
-  var form = e.target;
-  var errEl = document.getElementById('addlink-err');
-  var btn = form.querySelector('button[type="submit"]');
-  errEl.classList.add('hidden');
-  
-  if (btn.disabled || btn.dataset.submitting === 'true') return;
-  
-  var s = getSession();
-  if (!s) return;
-  
-  var title = form.title.value.trim();
-  var url = form.url.value.trim();
-  
-  btn.disabled = true;
-  btn.dataset.submitting = 'true';
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Adding...';
-  
-  findById(s.userId).then(function(user) {
-    if (!user) throw new Error('Not logged in');
-    var links = user.links || [];
-    var maxLinks = hasPerm(user, 'bypass_link_limit') ? 999 : 10;
-    if (links.length >= maxLinks) throw new Error('Link limit reached');
-    links.push({ title: title, url: url });
-    return updateUser(s.userId, { links: links });
-  }).then(function() {
-    closeModal();
-    toast('Link added!', 'success');
-    router();
-  }).catch(function(err) {
-    btn.disabled = false;
-    btn.dataset.submitting = 'false';
-    btn.innerHTML = 'Add Link';
-    errEl.textContent = err.message || 'Error adding link';
-    errEl.classList.remove('hidden');
-  });
+  if(e.target.id==='frm-ban-user'){
+    e.preventDefault();
+    var form=e.target, errEl=document.getElementById('ban-err'), btn=form.querySelector('button[type="submit"]'), uid=form.dataset.uid, reason=form.reason.value.trim();
+    errEl.classList.add('hidden');
+    if(btn.disabled||btn.dataset.submitting==='true')return;
+    btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Banning...';
+    updateUser(uid,{banned:true,banReason:reason||'No reason specified'}).then(function(){closeModal();toast('User banned.','success');loadAdminUsers();}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='<i class="fa-solid fa-gavel"></i> Ban User';errEl.textContent=err.message;errEl.classList.remove('hidden');});
+    return;
+  }
+  if(e.target.id==='frm-change-role'){
+    e.preventDefault();
+    var form=e.target, errEl=document.getElementById('role-err'), btn=form.querySelector('button[type="submit"]'), uid=form.dataset.uid, role=form.role.value;
+    errEl.classList.add('hidden');
+    if(btn.disabled||btn.dataset.submitting==='true')return;
+    btn.disabled=true;btn.dataset.submitting='true';btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Updating...';
+    var perms=ROLE_PERMS[role]?JSON.parse(JSON.stringify(ROLE_PERMS[role])):JSON.parse(JSON.stringify(ROLE_PERMS.user));
+    updateUser(uid,{role:role,permissions:perms}).then(function(){closeModal();toast('Role updated to '+role+'.','success');loadAdminUsers();}).catch(function(err){btn.disabled=false;btn.dataset.submitting='false';btn.innerHTML='<i class="fa-solid fa-check"></i> Update Role';errEl.textContent=err.message;errEl.classList.remove('hidden');});
+    return;
+  }
 });
 
-// Edit link form handler
-document.addEventListener('submit', function(e) {
-  if (e.target.id !== 'frm-editlink') return;
-  e.preventDefault();
-  
-  var form = e.target;
-  var errEl = document.getElementById('editlink-err');
-  var btn = form.querySelector('button[type="submit"]');
-  var idx = parseInt(form.dataset.idx);
-  errEl.classList.add('hidden');
-  
-  if (btn.disabled || btn.dataset.submitting === 'true') return;
-  
-  var s = getSession();
-  if (!s) return;
-  
-  var title = form.title.value.trim();
-  var url = form.url.value.trim();
-  
-  btn.disabled = true;
-  btn.dataset.submitting = 'true';
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-  
-  findById(s.userId).then(function(user) {
-    if (!user) throw new Error('Not logged in');
-    var links = user.links || [];
-    if (!links[idx]) throw new Error('Link not found');
-    links[idx] = { title: title, url: url };
-    return updateUser(s.userId, { links: links });
-  }).then(function() {
-    closeModal();
-    toast('Link updated!', 'success');
-    router();
-  }).catch(function(err) {
-    btn.disabled = false;
-    btn.dataset.submitting = 'false';
-    btn.innerHTML = 'Save Changes';
-    errEl.textContent = err.message || 'Error updating link';
-    errEl.classList.remove('hidden');
-  });
-});
-
-// Add custom badge form handler
-document.addEventListener('submit', function(e) {
-  if (e.target.id !== 'frm-addcbadge') return;
-  e.preventDefault();
-  
-  var form = e.target;
-  var errEl = document.getElementById('addcbadge-err');
-  var btn = form.querySelector('button[type="submit"]');
-  errEl.classList.add('hidden');
-  
-  if (btn.disabled || btn.dataset.submitting === 'true') return;
-  
-  var s = getSession();
-  if (!s) return;
-  
-  var label = form.label.value.trim();
-  var id = form.id.value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '_');
-  var color = form.color.value.trim();
-  var img = form.img.value.trim();
-  
-  btn.disabled = true;
-  btn.dataset.submitting = 'true';
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Adding...';
-  
-  findById(s.userId).then(function(user) {
-    if (!user) throw new Error('Not logged in');
-    var customs = user.customBadges || [];
-    customs.push({ id: id, l: label, c: color, img: img });
-    return updateUser(s.userId, { customBadges: customs });
-  }).then(function() {
-    closeModal();
-    toast('Custom badge added!', 'success');
-    router();
-  }).catch(function(err) {
-    btn.disabled = false;
-    btn.dataset.submitting = 'false';
-    btn.innerHTML = 'Add Badge';
-    errEl.textContent = err.message || 'Error adding badge';
-    errEl.classList.remove('hidden');
-  });
-});
-
-// Accent color sync
+/* Admin search */
 document.addEventListener('input', function(e) {
-  if (e.target.id === 'inp-accent') {
-    document.getElementById('inp-accent-text').value = e.target.value;
-  }
-  if (e.target.id === 'inp-accent-text') {
-    var v = e.target.value;
-    if (/^#[0-9a-fA-F]{6}$/.test(v)) {
-      document.getElementById('inp-accent').value = v;
+  if(e.target.id==='admin-search'){
+    var q=e.target.value.trim().toLowerCase();
+    var rows=document.querySelectorAll('#admin-users-tbody tr');
+    for(var i=0;i<rows.length;i++){
+      var text=rows[i].textContent.toLowerCase();
+      rows[i].style.display=text.indexOf(q)>-1?'':'none';
     }
   }
+});
+
+/* Accent color sync */
+document.addEventListener('input', function(e) {
+  if(e.target.id==='inp-accent')document.getElementById('inp-accent-text').value=e.target.value;
+  if(e.target.id==='inp-accent-text'){var v=e.target.value;if(/^#[0-9a-fA-F]{6}$/.test(v))document.getElementById('inp-accent').value=v;}
 });
 
 /* ===== ROUTER ===== */
@@ -861,24 +591,31 @@ function router(){
   var path=window.location.pathname.replace(/\/+$/,'')||'/';
   var app=document.getElementById('app');
   if(!app)return;
-  
+
   if(path==='/'){
     curUser().then(function(u){app.innerHTML=renderHome(u);});
     return;
   }
-  
+
   if(path==='/s'){
     findByUsername('s').then(function(u){
-      if(u){
-        app.innerHTML=renderProfile(u);
-        db.collection("users").doc(u.id).update({views:firebase.firestore.FieldValue.increment(1)}).catch(function(){});
-      }else{
-        app.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh"><p class="text-void-100">User not found</p></div>';
-      }
+      if(u){app.innerHTML=renderProfile(u);db.collection("users").doc(u.id).update({views:firebase.firestore.FieldValue.increment(1)}).catch(function(){});}
+      else{app.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh"><p class="text-void-100">User not found</p></div>';}
     });
     return;
   }
-  
+
+  if(path.indexOf('/admin')===0){
+    var parts=path.split('/').filter(Boolean);
+    var tab=parts[1]||'users';
+    needAdmin().then(function(u){
+      if(!u)return;
+      app.innerHTML=renderAdmin(u,tab);
+      if(tab==='users')loadAdminUsers();
+    });
+    return;
+  }
+
   if(path.indexOf('/dashboard')===0){
     var parts=path.split('/').filter(Boolean);
     var tab=parts[1]||'profile';
@@ -888,27 +625,28 @@ function router(){
     });
     return;
   }
-  
-  // Profile page
+
+  /* Profile page - MUST be last since it matches any /username */
   var username=path.slice(1);
   if(username){
+    /* Exclude known routes that aren't usernames */
+    var knownRoutes=['admin','dashboard','s'];
+    if(knownRoutes.indexOf(username)>-1){
+      app.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px"><h2 class="font-display text-2xl text-void-100">Page not found</h2><a href="/" class="vl-btn vl-btn-primary"><i class="fa-solid fa-home"></i> Go Home</a></div>';
+      return;
+    }
     findByUsername(username).then(function(u){
-      if(u){
-        app.innerHTML=renderProfile(u);
-        db.collection("users").doc(u.id).update({views:firebase.firestore.FieldValue.increment(1)}).catch(function(){});
-      }else{
-        app.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px"><h2 class="font-display text-2xl text-void-100">User not found</h2><a href="/" class="vl-btn vl-btn-primary"><i class="fa-solid fa-home"></i> Go Home</a></div>';
-      }
+      if(u){app.innerHTML=renderProfile(u);db.collection("users").doc(u.id).update({views:firebase.firestore.FieldValue.increment(1)}).catch(function(){});}
+      else{app.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px"><h2 class="font-display text-2xl text-void-100">User not found</h2><a href="/" class="vl-btn vl-btn-primary"><i class="fa-solid fa-home"></i> Go Home</a></div>';}
     });
     return;
   }
-  
+
   app.innerHTML=renderHome(null);
 }
 
 window.addEventListener('popstate',router);
 
-// Init
 initFirebase().then(function(){
   P.init();
   router();
