@@ -116,7 +116,6 @@ function hashPw(s){var h=0;for(var i=0;i<s.length;i++){h=((h<<5)-h+s.charCodeAt(
 function esc(s){if(!s)return '';var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 function brandLogo(){return '<span class="text-accent">Seashell</span><span class="text-void-100">.lol</span>';}
 
-// Navigation helper - uses History API
 function navigateTo(path){
   window.history.pushState({}, '', path);
   router();
@@ -162,7 +161,7 @@ function signupHTML(){return '<h3 class="font-display font-bold text-xl mb-1">Cr
 
 var P={cv:null,cx:null,pts:[],on:false,raf:0,init:function(){this.cv=document.getElementById('bg-canvas');if(!this.cv)return;this.cx=this.cv.getContext('2d');this.resize();window.addEventListener('resize',this.resize.bind(this));this.make();},resize:function(){if(!this.cv)return;this.cv.width=window.innerWidth;this.cv.height=window.innerHeight;},make:function(){if(!this.cv)return;this.pts=[];var n=Math.min(50,Math.floor(this.cv.width*this.cv.height/22000));for(var i=0;i<n;i++)this.pts.push({x:Math.random()*this.cv.width,y:Math.random()*this.cv.height,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*1.5+.5,a:Math.random()*.5+.2});},start:function(){if(this.on)return;this.on=true;this.loop();},stop:function(){this.on=false;if(this.raf)cancelAnimationFrame(this.raf);if(this.cx&&this.cv)this.cx.clearRect(0,0,this.cv.width,this.cv.height);},loop:function(){if(!this.on||!this.cx||!this.cv)return;var c=this.cx,w=this.cv.width,h=this.cv.height,pts=this.pts;c.clearRect(0,0,w,h);for(var i=0;i<pts.length;i++){var p=pts[i];p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;c.beginPath();c.arc(p.x,p.y,p.r,0,Math.PI*2);c.fillStyle='rgba(125,211,252,'+p.a+')';c.fill();}for(var i=0;i<pts.length;i++)for(var j=i+1;j<pts.length;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<130){c.beginPath();c.moveTo(pts[i].x,pts[i].y);c.lineTo(pts[j].x,pts[j].y);c.strokeStyle='rgba(125,211,252,'+(0.07*(1-d/130))+')';c.lineWidth=.5;c.stroke();}}var self=this;this.raf=requestAnimationFrame(function(){self.loop();});}};
 
-function renderHome(u){P.start();var authBtns=u?'<a href="/dashboard" class="vl-btn vl-btn-secondary vl-btn-sm"><i class="fa-solid fa-table-cells"></i> Dashboard</a>':'<a href="#" class="open-login vl-btn vl-btn-s vl-btn-sm">Sign In</a><a href="#" class="open-signup vl-btn vl-btn-primary vl-btn-sm">Get Started</a>';var h='<nav class="fixed top-0 left-0 right-0 z-50 glass-strong anim-slide-down"><div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between"><a href="/" class="font-display font-bold text-lg tracking-tight">'+brandLogo()+'</a><div class="flex items-center gap-3"><a href="/s" class="vl-btn vl-btn-s vl-btn-sm">Example</a>'+authBtns+'</div></div></nav>';h+='<section class="min-h-screen flex items-center justify-center relative px-6 pt-16"><div class="max-w-4xl mx-auto text-center"><div class="anim-fade" style="animation-delay:.1s"><div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-void-400 text-xs text-void-100 mb-8"><span class="w-2 h-2 rounded-full bg-success" style="animation:pulse-glow 2s infinite"></span>:3</div></div>';h+='<h1 class="font-display font-bold text-5xl md:text-7xl lg:text-8xl leading-none mb-6 anim-fade" style="animation-delay:.2s">Seashell.lol<br><span class="bg-gradient-to-r from-accent via-sky-300 to-cyan-300 bg-clip-text text-transparent" style="animation:glitch 4s ease-in-out infinite"></span></h1>';h+='<p class="text-void-100 text-lg md:text-xl max-w-xl mx-auto mb-10 anim-fade" style="animation-delay:.35s">Create a stunning profile page with all your links, badges, and social presence.</p>';h+='<div class="flex flex-col sm:flex-row items-center justify-center gap-4 anim-fade" style="animation-delay:.5s"><a href="#" class="open-signup vl-btn vl-btn-primary text-base px-8 py-3"><i class="fa-solid fa-bolt"></i> Create Your Link</a><a href="/s" class="vl-btn vl-btn-secondary text-base px-8 py-3"><i class="fa-solid fa-eye"></i> See Example</a></div>';h+='<div class="mt-16 anim-fade anim-float anim-pulse-glow" style="animation-delay:.7s"><div class="glass rounded-2xl p-6 max-w-sm mx-auto"><div class="flex items-center gap-4 mb-4"><img src="https://cdn.discordapp.com/attachments/1520286517874921603/1520952429699666153/content.png?ex=6a4310d5&is=6a41bf55&hm=2bd8dacc4c56874c397a9aca939cc9281fdd3815db8d6ae34248846902a79545&" class="w-14 h-14 rounded-full object-cover border-2" style="border-color:rgba(125,211,252,.3)" alt=""><div class="text-left"><div class="font-display font-bold flex items-center gap-2">s <i class="fa-solid fa-circle-check text-info text-xs"></i></div><div class="text-void-100 text-sm">@s</div></div></div><p class="text-sm text-void-100 text-left mb-4">She sells sea shells by the sea shore.</p><div class="space-y-2"><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-github text-void-100"></i> GitHub</div><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-discord text-void-100"></i> Discord Server</div><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-x-twitter text-void-100"></i> Twitter / X</div></div></div></div></div></div></section>';var feats=[['fa-palette','Custom Themes','Choose from stunning gradient backgrounds'],['fa-shield-halved','Unique Badges','Get verified with collectible profile badges'],['fa-chart-line','View Analytics','Track profile visits in real time'],['fa-bolt','Instant Setup','Create your page in under 60 seconds']];h+='<section class="py-24 px-6"><div class="max-w-5xl mx-auto"><h2 class="font-display font-bold text-3xl md:text-4xl text-center mb-4">Everything you need</h2><p class="text-void-100 text-center mb-16 max-w-lg mx-auto">Powerful features to make your bio link stand out</p><div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">';for(var i=0;i<feats.length;i++){var f=feats[i];h+='<div class="glass rounded-2xl p-6 hover:border-accent/20 transition-all duration-300 hover:-translate-y-1 anim-fade" style="animation-delay:'+(0.1+i*0.1)+'s"><div class="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center mb-4"><i class="fa-solid '+f[0]+' text-accent"></i></div><h3 class="font-display font-semibold text-base mb-2">'+f[1]+'</h3><p class="text-void-100 text-sm leading-relaxed">'+f[2]+'</p></div>';}h+='</div></div></section><section class="py-24 px-6"><div class="max-w-2xl mx-auto text-center"><h2 class="font-display font-bold text-3xl md:text-4xl mb-4">Ready to claim your link?</h2><p class="text-void-100 mb-8">Join thousands of creators who use Seashell.</p><a href="#" class="open-signup vl-btn vl-btn-primary text-base px-10 py-3"><i class="fa-solid fa-rocket"></i> Get Started Free</a></div></section>';h+='<footer class="border-t border-void-400 py-8 px-6"><div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4"><span class="font-display font-bold text-sm">'+brandLogo()+'</span><span class="text-void-100 text-xs">&copy; '+new Date().getFullYear()+' Seashell.lol</span></div></footer>';return h;}
+function renderHome(u){P.start();var authBtns=u?'<a href="/dashboard" class="vl-btn vl-btn-secondary vl-btn-sm"><i class="fa-solid fa-table-cells"></i> Dashboard</a>':'<a href="#" class="open-login vl-btn vl-btn-s vl-btn-sm">Sign In</a><a href="#" class="open-signup vl-btn vl-btn-primary vl-btn-sm">Get Started</a>';var h='<nav class="fixed top-0 left-0 right-0 z-50 glass-strong anim-slide-down"><div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between"><a href="/" class="font-display font-bold text-lg tracking-tight">'+brandLogo()+'</a><div class="flex items-center gap-3"><a href="/s" class="vl-btn vl-btn-s vl-btn-sm">Example</a>'+authBtns+'</div></div></nav>';h+='<section class="min-h-screen flex items-center justify-center relative px-6 pt-16"><div class="max-w-4xl mx-auto text-center"><div class="anim-fade" style="animation-delay:.1s"><div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-void-400 text-xs text-void-100 mb-8"><span class="w-2 h-2 rounded-full bg-success" style="animation:pulse-glow 2s infinite"></span> Online</div></div>';h+='<h1 class="font-display font-bold text-5xl md:text-7xl lg:text-8xl leading-none mb-6 anim-fade" style="animation-delay:.2s">Seashell.lol<br><span class="bg-gradient-to-r from-accent via-sky-300 to-cyan-300 bg-clip-text text-transparent" style="animation:glitch 4s ease-in-out infinite">Your link, your way.</span></h1>';h+='<p class="text-void-100 text-lg md:text-xl max-w-xl mx-auto mb-10 anim-fade" style="animation-delay:.35s">Create a stunning profile page with all your links, badges, and social presence.</p>';h+='<div class="flex flex-col sm:flex-row items-center justify-center gap-4 anim-fade" style="animation-delay:.5s"><a href="#" class="open-signup vl-btn vl-btn-primary text-base px-8 py-3"><i class="fa-solid fa-bolt"></i> Create Your Link</a><a href="/s" class="vl-btn vl-btn-secondary text-base px-8 py-3"><i class="fa-solid fa-eye"></i> See Example</a></div>';h+='<div class="mt-16 anim-fade anim-float anim-pulse-glow" style="animation-delay:.7s"><div class="glass rounded-2xl p-6 max-w-sm mx-auto"><div class="flex items-center gap-4 mb-4"><img src="https://cdn.discordapp.com/attachments/1520286517874921603/1520952429699666153/content.png?ex=6a4310d5&is=6a41bf55&hm=2bd8dacc4c56874c397a9aca939cc9281fdd3815db8d6ae34248846902a79545&" class="w-14 h-14 rounded-full object-cover border-2" style="border-color:rgba(125,211,252,.3)" alt=""><div class="text-left"><div class="font-display font-bold flex items-center gap-2">s <i class="fa-solid fa-circle-check text-info text-xs"></i></div><div class="text-void-100 text-sm">@s</div></div></div><p class="text-sm text-void-100 text-left mb-4">She sells sea shells by the sea shore.</p><div class="space-y-2"><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-github text-void-100"></i> GitHub</div><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-discord text-void-100"></i> Discord Server</div><div class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-sm"><i class="fa-brands fa-x-twitter text-void-100"></i> Twitter / X</div></div></div></div></div></div></section>';var feats=[['fa-palette','Custom Themes','Choose from stunning gradient backgrounds'],['fa-shield-halved','Unique Badges','Get verified with collectible profile badges'],['fa-chart-line','View Analytics','Track profile visits in real time'],['fa-bolt','Instant Setup','Create your page in under 60 seconds']];h+='<section class="py-24 px-6"><div class="max-w-5xl mx-auto"><h2 class="font-display font-bold text-3xl md:text-4xl text-center mb-4">Everything you need</h2><p class="text-void-100 text-center mb-16 max-w-lg mx-auto">Powerful features to make your bio link stand out</p><div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">';for(var i=0;i<feats.length;i++){var f=feats[i];h+='<div class="glass rounded-2xl p-6 hover:border-accent/20 transition-all duration-300 hover:-translate-y-1 anim-fade" style="animation-delay:'+(0.1+i*0.1)+'s"><div class="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center mb-4"><i class="fa-solid '+f[0]+' text-accent"></i></div><h3 class="font-display font-semibold text-base mb-2">'+f[1]+'</h3><p class="text-void-100 text-sm leading-relaxed">'+f[2]+'</p></div>';}h+='</div></div></section><section class="py-24 px-6"><div class="max-w-2xl mx-auto text-center"><h2 class="font-display font-bold text-3xl md:text-4xl mb-4">Ready to claim your link?</h2><p class="text-void-100 mb-8">Join thousands of creators who use Seashell.</p><a href="#" class="open-signup vl-btn vl-btn-primary text-base px-10 py-3"><i class="fa-solid fa-rocket"></i> Get Started Free</a></div></section>';h+='<footer class="border-t border-void-400 py-8 px-6"><div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4"><span class="font-display font-bold text-sm">'+brandLogo()+'</span><span class="text-void-100 text-xs">&copy; '+new Date().getFullYear()+' Seashell.lol</span></div></footer>';return h;}
 
 function renderDashboard(user,tab){tab=tab||'profile';var tabs=[{id:'profile',i:'fa-user',l:'Profile'},{id:'links',i:'fa-link',l:'Links'},{id:'appearance',i:'fa-palette',l:'Appearance'},{id:'settings',i:'fa-gear',l:'Settings'}];var ok=false;for(var i=0;i<tabs.length;i++)if(tabs[i].id===tab)ok=true;if(!ok)tab='profile';var content='';if(tab==='profile')content=dashProfile(user);else if(tab==='links')content=dashLinks(user);else if(tab==='appearance')content=dashAppearance(user);else if(tab==='settings')content=dashSettings(user);var h='<div class="mobile-header fixed top-0 left-0 right-0 z-50 glass-strong h-14 items-center px-4 gap-3"><a href="/" class="font-display font-bold text-sm">'+brandLogo()+'</a><div class="flex-1"></div><a href="/'+esc(user.username)+'" target="_blank" class="vl-btn vl-btn-s vl-btn-sm"><i class="fa-solid fa-eye"></i></a></div>';h+='<aside class="dash-sidebar"><div class="px-6 mb-8"><a href="/" class="font-display font-bold text-lg tracking-tight block mb-1">'+brandLogo()+'</a><p class="text-void-100 text-xs">Dashboard</p></div><nav>';for(var i=0;i<tabs.length;i++)h+='<a href="/dashboard/'+tabs[i].id+'" class="'+(tabs[i].id===tab?'active':'')+'"><i class="fa-solid '+tabs[i].i+' w-5 text-center"></i>'+tabs[i].l+'</a>';h+='</nav><div class="px-6 pt-8 mt-auto"><div class="border-t border-void-400 pt-4"><div class="flex items-center gap-3 mb-3"><div class="w-9 h-9 rounded-full bg-void-400 flex items-center justify-center text-sm font-bold">'+esc((user.displayName||user.username)[0].toUpperCase())+'</div><div><div class="text-sm font-semibold">'+esc(user.displayName||user.username)+'</div><div class="text-xs text-void-100">@'+esc(user.username)+'</div></div></div><div class="flex gap-2"><a href="/'+esc(user.username)+'" target="_blank" class="vl-btn vl-btn-s vl-btn-sm flex-1 justify-center text-xs"><i class="fa-solid fa-eye"></i> View</a><button class="do-logout vl-btn vl-btn-s vl-btn-sm flex-1 justify-center text-xs" style="color:#f55"><i class="fa-solid fa-right-from-bracket"></i> Logout</button></div></div></div></aside>';h+='<main class="dash-main pt-4 md:pt-8"><div class="flex md:hidden gap-1 mb-6 overflow-x-auto pb-2">';for(var i=0;i<tabs.length;i++)h+='<a href="/dashboard/'+tabs[i].id+'" class="vl-btn vl-btn-sm whitespace-nowrap '+(tabs[i].id===tab?'vl-btn-primary':'vl-btn-secondary')+'"><i class="fa-solid '+tabs[i].i+'"></i>'+tabs[i].l+'</a>';h+='</div><div class="anim-fade">'+content+'</div></main>';return h;}
 
@@ -180,29 +179,431 @@ function renderAdminTable(admin,users){P.start();var myPerms=admin.permissions||
 
 function renderRolesPage(admin,users){P.start();var h='<div class="mobile-header fixed top-0 left-0 right-0 z-50 glass-strong h-14 items-center px-4 gap-3"><a href="/" class="font-display font-bold text-sm">'+brandLogo()+'</a><span class="text-xs text-accent font-semibold">Roles</span><div class="flex-1"></div><a href="/admin" class="vl-btn vl-btn-s vl-btn-sm"><i class="fa-solid fa-arrow-left"></i></a></div><aside class="dash-sidebar"><div class="px-6 mb-8"><a href="/" class="font-display font-bold text-lg tracking-tight block mb-1">'+brandLogo()+'</a><p class="text-xs text-accent font-semibold">Roles & Permissions</p></div><nav><a href="/admin"><i class="fa-solid fa-users w-5 text-center"></i>All Users</a><a href="/admin/roles" class="active mt-2"><i class="fa-solid fa-user-shield w-5 text-center"></i>Roles & Permissions</a><a href="/dashboard" class="mt-2"><i class="fa-solid fa-arrow-left w-5 text-center"></i>Back to Dashboard</a></nav><div class="px-6 pt-8 mt-auto"><div class="border-t border-void-400 pt-4"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center text-sm font-bold text-accent">A</div><div><div class="text-sm font-semibold">'+esc(admin.displayName||admin.username)+'</div><div class="text-xs text-accent">'+admin.role+'</div></div></div></div></div></aside>';h+='<main class="dash-main pt-4 md:pt-8"><h2 class="font-display font-bold text-2xl mb-1">Roles & Permissions</h2><p class="text-void-100 text-sm mb-8">Assign roles and fine-tune permissions</p><div class="grid sm:grid-cols-3 gap-4 mb-10">';var ri=[['user','User','fa-user','text-void-100','rgba(255,255,255,.05)','Standard access'],['moderator','Moderator','fa-shield','text-purple-400','rgba(168,85,247,.1)','Badges + bans'],['admin','Admin','fa-crown','text-accent','rgba(125,211,252,.1)','Full access']];for(var i=0;i<ri.length;i++){var r=ri[i];h+='<div class="glass rounded-xl p-4"><div class="flex items-center gap-3 mb-3"><i class="fa-solid '+r[2]+' '+r[3]+'"></i><div><div class="font-display font-semibold text-sm '+r[3]+'">'+r[0]+'</div></div></div><p class="text-void-100 text-xs leading-relaxed">'+r[5]+'</p></div>';}h+='</div><div class="glass rounded-2xl overflow-hidden"><div class="overflow-x-auto"><table class="admin-table" id="roles-tbl"><thead><tr><th>User</th><th>Role</th><th>Perms</th><th>Actions</th></tr></thead><tbody>';for(var i=0;i<users.length;i++){var u=users[i];var isSelf=u.id===admin.id;var canEdit=!isSelf&&hasPerm(admin,'manage_users');var avc=u.avatar?'<img src="'+esc(u.avatar)+'" class="w-full h-full rounded-full object-cover" alt="">':esc((u.displayName||u.username)[0].toUpperCase());var pc=0;var up=u.permissions||ROLE_PERMS[u.role]||ROLE_PERMS.user;for(var k in up)if(up[k])pc++;var rc={admin:'text-accent',moderator:'text-purple-400',user:'text-void-100'};h+='<tr data-search="'+esc(u.username+' '+u.uid+' '+u.role).toLowerCase()+'"><td><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-void-400 flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden">'+avc+'</div><div><div class="font-semibold text-sm">'+esc(u.displayName||u.username)+'</div><div class="text-void-100 text-xs">@'+esc(u.username)+'</div></div></div></td><td><span class="badge '+(rc[u.role]||'text-void-100')+'" style="background:'+(u.role==='admin'?'rgba(125,211,252,.1)':u.role==='moderator'?'rgba(168,85,247,.1)':'rgba(255,255,255,.05)')+'">'+u.role+'</span></td><td><span class="text-void-100 text-xs">'+pc+' enabled</span></td><td>'+(canEdit?'<button class="do-roles vl-btn vl-btn-secondary vl-btn-sm" data-uid="'+u.id+'"><i class="fa-solid fa-user-shield"></i> Edit</button>':'<span class="text-void-200 text-xs px-2">You</span>')+'</td></tr>';}h+='</tbody></table></div></div></main>';return h;}
 
-// ==================== PATH-BASED ROUTING ====================
+// ==================== ROUTER ====================
 function router(){
   var path=window.location.pathname;
   var parts=path.replace(/^\/|\/$/g,'').split('/');
-  var route=parts[0]||'home';
+  var route=parts[0]||'';
   var param=parts.slice(1).join('/');
-  
+
   var app=document.getElementById('app');
-  if(!app) return;
-  
+  if(!app)return;
+
   curUser().then(function(user){
-    // ... rest of the router function
+    if(route===''||route==='home'){
+      app.innerHTML=renderHome(user);
+    } else if(route==='dashboard'){
+      if(!user){navigateTo('/');showModal(loginHTML());return;}
+      app.innerHTML=renderDashboard(user,param);
+    } else if(route==='admin'){
+      needAdmin().then(function(admin){
+        if(!admin)return;
+        if(param==='roles'){
+          getAllUsers().then(function(users){app.innerHTML=renderRolesPage(admin,users);});
+        } else {
+          getAllUsers().then(function(users){app.innerHTML=renderAdminTable(admin,users);});
+        }
+      });
+    } else if(route==='s'){
+      findByUsername('s').then(function(profileUser){
+        if(profileUser){app.innerHTML=renderProfile(profileUser);}
+        else{app.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh"><p class="text-void-100">Example profile not found.</p></div>';}
+      });
+    } else {
+      findByUsername(route).then(function(profileUser){
+        if(profileUser){
+          updateUser(profileUser.id,{views:firebase.firestore.FieldValue.increment(1)}).catch(function(){});
+          app.innerHTML=renderProfile(profileUser);
+        } else {
+          P.start();
+          app.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:40px"><h1 class="font-display font-bold text-6xl text-accent mb-4">404</h1><p class="text-void-100 text-lg mb-6">User <strong>@'+esc(route)+'</strong> not found</p><a href="/" class="vl-btn vl-btn-primary"><i class="fa-solid fa-house"></i> Go Home</a></div>';
+        }
+      });
+    }
+    window.scrollTo(0,0);
+    bindEvents();
   });
 }
 
-// Initialize
+// ==================== EVENT DELEGATION ====================
+function bindEvents(){
+  var app=document.getElementById('app');
+  if(!app)return;
+
+  // Open login/signup modals
+  app.addEventListener('click',function(e){
+    var el=e.target.closest('.open-login');
+    if(el){e.preventDefault();showModal(loginHTML());return;}
+    el=e.target.closest('.open-signup');
+    if(el){e.preventDefault();showModal(signupHTML());return;}
+  });
+
+  // Modal delegate
+  document.addEventListener('click',function(e){
+    var el=e.target.closest('.open-login');
+    if(el){e.preventDefault();showModal(loginHTML());return;}
+    el=e.target.closest('.open-signup');
+    if(el){e.preventDefault();showModal(signupHTML());return;}
+  });
+
+  // Form submissions via delegation on document
+  document.addEventListener('submit',function(e){
+    var frm=e.target;
+
+    // Login
+    if(frm.id==='frm-login'){
+      e.preventDefault();
+      var loginId=frm.querySelector('[name=loginId]').value.trim();
+      var password=frm.querySelector('[name=password]').value;
+      var errEl=frm.querySelector('#login-err');
+      if(!loginId||!password){errEl.textContent='Please fill in all fields.';errEl.classList.remove('hidden');return;}
+      errEl.classList.add('hidden');
+      var lookup=loginId.indexOf('@')>-1?findByEmail(loginId):findByUsername(loginId);
+      lookup.then(function(u){
+        if(!u){errEl.textContent='No account found with that email/username.';errEl.classList.remove('hidden');return;}
+        if(u.password!==hashPw(password)){errEl.textContent='Incorrect password.';errEl.classList.remove('hidden');return;}
+        if(u.banned){errEl.textContent='This account has been banned.';errEl.classList.remove('hidden');return;}
+        setSession(u.id);
+        closeModal();
+        toast('Welcome back, '+esc(u.displayName||u.username)+'!','success');
+        router();
+      }).catch(function(err){errEl.textContent='Login failed. Try again.';errEl.classList.remove('hidden');});
+      return;
+    }
+
+    // Signup
+    if(frm.id==='frm-signup'){
+      e.preventDefault();
+      var username=frm.querySelector('[name=username]').value.trim().toLowerCase();
+      var displayName=frm.querySelector('[name=displayName]').value.trim()||username;
+      var email=frm.querySelector('[name=email]').value.trim();
+      var password=frm.querySelector('[name=password]').value;
+      var errEl=frm.querySelector('#signup-err');
+      if(!username||!email||!password){errEl.textContent='Please fill in all required fields.';errEl.classList.remove('hidden');return;}
+      if(!/^[a-z0-9_]{3,20}$/.test(username)){errEl.textContent='Username must be 3-20 chars, lowercase letters, numbers, underscores.';errEl.classList.remove('hidden');return;}
+      errEl.classList.add('hidden');
+      findByUsername(username).then(function(existing){
+        if(existing){errEl.textContent='Username is already taken.';errEl.classList.remove('hidden');return;}
+        findByEmail(email).then(function(existing2){
+          if(existing2){errEl.textContent='Email is already registered.';errEl.classList.remove('hidden');return;}
+          createUser({username:username,displayName:displayName,email:email,password:password}).then(function(u){
+            setSession(u.id);
+            closeModal();
+            toast('Account created! Welcome, '+esc(displayName)+'!','success');
+            navigateTo('/dashboard');
+          }).catch(function(err){errEl.textContent='Signup failed. Try again.';errEl.classList.remove('hidden');});
+        });
+      });
+      return;
+    }
+
+    // Profile edit
+    if(frm.id==='frm-profile'){
+      e.preventDefault();
+      var ses=getSession();if(!ses)return;
+      var displayName=frm.querySelector('[name=displayName]').value.trim();
+      var username=frm.querySelector('[name=username]').value.trim().toLowerCase();
+      var bio=frm.querySelector('[name=bio]').value.trim();
+      var avatar=frm.querySelector('[name=avatar]').value.trim();
+      if(!/^[a-z0-9_]{3,20}$/.test(username)){toast('Invalid username format.','error');return;}
+      findById(ses.userId).then(function(u){
+        if(!u)return;
+        if(username!==u.username){
+          findByUsername(username).then(function(existing){
+            if(existing&&existing.id!==u.id){toast('Username already taken.','error');return;}
+            updateUser(u.id,{displayName:displayName,username:username,bio:bio,avatar:avatar}).then(function(){toast('Profile saved!','success');router();});
+          });
+        } else {
+          updateUser(u.id,{displayName:displayName,username:username,bio:bio,avatar:avatar}).then(function(){toast('Profile saved!','success');router();});
+        }
+      });
+      return;
+    }
+
+    // Change password
+    if(frm.id==='frm-pw'){
+      e.preventDefault();
+      var ses=getSession();if(!ses)return;
+      var curPw=frm.querySelector('[name=curPw]').value;
+      var newPw=frm.querySelector('[name=newPw]').value;
+      if(newPw.length<6){toast('New password must be at least 6 characters.','error');return;}
+      findById(ses.userId).then(function(u){
+        if(!u)return;
+        if(u.password!==hashPw(curPw)){toast('Current password is incorrect.','error');return;}
+        updateUser(u.id,{password:hashPw(newPw)}).then(function(){toast('Password updated!','success');frm.reset();});
+      });
+      return;
+    }
+  });
+
+  // Click delegation for all buttons
+  document.addEventListener('click',function(e){
+    var el;
+
+    // Logout
+    el=e.target.closest('.do-logout');
+    if(el){e.preventDefault();clearSession();toast('Logged out.','info');navigateTo('/');return;}
+
+    // Add link
+    el=e.target.closest('.do-add-link');
+    if(el){
+      var ses=getSession();if(!ses)return;
+      showModal('<h3 class="font-display font-bold text-xl mb-1">Add Link</h3><p class="text-void-100 text-sm mb-6">Add a new link to your profile</p><form id="frm-add-link"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Title</label><input class="vl-input mb-4" name="title" placeholder="My Website" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">URL</label><input class="vl-input mb-4" name="url" type="url" placeholder="https://example.com" required><div id="link-add-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center">Add Link</button></form>');
+      setTimeout(function(){
+        var f=document.getElementById('frm-add-link');
+        if(f)f.addEventListener('submit',function(ev){
+          ev.preventDefault();
+          var title=f.querySelector('[name=title]').value.trim();
+          var url=f.querySelector('[name=url]').value.trim();
+          if(!title||!url)return;
+          var errEl=f.querySelector('#link-add-err');
+          findById(ses.userId).then(function(u){
+            if(!u)return;
+            var links=u.links||[];
+            if(!hasPerm(u,'bypass_link_limit')&&links.length>=10){errEl.textContent='Maximum 10 links allowed.';errEl.classList.remove('hidden');return;}
+            links.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),title:title,url:url});
+            updateUser(u.id,{links:links}).then(function(){closeModal();toast('Link added!','success');router();});
+          });
+        });
+      },50);
+      return;
+    }
+
+    // Edit link
+    el=e.target.closest('.do-edit-link');
+    if(el){
+      var lid=el.getAttribute('data-lid');
+      var ses=getSession();if(!ses)return;
+      findById(ses.userId).then(function(u){
+        if(!u)return;
+        var lk=null;for(var i=0;i<(u.links||[]).length;i++){if(u.links[i].id===lid){lk=u.links[i];break;}}
+        if(!lk)return;
+        showModal('<h3 class="font-display font-bold text-xl mb-1">Edit Link</h3><p class="text-void-100 text-sm mb-6">Modify this link</p><form id="frm-edit-link"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Title</label><input class="vl-input mb-4" name="title" value="'+esc(lk.title)+'" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">URL</label><input class="vl-input mb-4" name="url" type="url" value="'+esc(lk.url)+'" required><input type="hidden" name="lid" value="'+lid+'"><button type="submit" class="vl-btn vl-btn-primary w-full justify-center">Save Changes</button></form>');
+        setTimeout(function(){
+          var f=document.getElementById('frm-edit-link');
+          if(f)f.addEventListener('submit',function(ev){
+            ev.preventDefault();
+            var title=f.querySelector('[name=title]').value.trim();
+            var url=f.querySelector('[name=url]').value.trim();
+            var editLid=f.querySelector('[name=lid]').value;
+            if(!title||!url)return;
+            findById(ses.userId).then(function(u2){
+              if(!u2)return;
+              var links=u2.links||[];
+              for(var i=0;i<links.length;i++){if(links[i].id===editLid){links[i].title=title;links[i].url=url;break;}}
+              updateUser(u2.id,{links:links}).then(function(){closeModal();toast('Link updated!','success');router();});
+            });
+          });
+        },50);
+      });
+      return;
+    }
+
+    // Delete link
+    el=e.target.closest('.do-del-link');
+    if(el){
+      var lid=el.getAttribute('data-lid');
+      var ses=getSession();if(!ses)return;
+      findById(ses.userId).then(function(u){
+        if(!u)return;
+        var links=(u.links||[]).filter(function(l){return l.id!==lid;});
+        updateUser(u.id,{links:links}).then(function(){toast('Link removed.','info');router();});
+      });
+      return;
+    }
+
+    // Set background
+    el=e.target.closest('.do-set-bg');
+    if(el){
+      var bg=el.getAttribute('data-bg');
+      var ses=getSession();if(!ses)return;
+      updateUser(ses.userId,{background:bg}).then(function(){toast('Background updated!','success');router();});
+      return;
+    }
+
+    // Save appearance
+    el=e.target.closest('.do-save-app');
+    if(el){
+      var ses=getSession();if(!ses)return;
+      var bgImg=document.getElementById('inp-bgimg');
+      var accent=document.getElementById('inp-accent');
+      var data={};
+      if(bgImg)data.bgImage=bgImg.value.trim();
+      if(accent)data.accentColor=accent.value;
+      updateUser(ses.userId,data).then(function(){toast('Appearance saved!','success');router();});
+      return;
+    }
+
+    // Delete account
+    el=e.target.closest('.do-del-acct');
+    if(el){
+      var ses=getSession();if(!ses)return;
+      showModal('<h3 class="font-display font-bold text-xl mb-1 text-red-400">Delete Account</h3><p class="text-void-100 text-sm mb-6">This action is permanent and cannot be undone.</p><div class="flex gap-3"><button class="do-confirm-del vl-btn vl-btn-danger flex-1 justify-center" data-uid="'+ses.userId+'"><i class="fa-solid fa-trash"></i> Delete Forever</button><button class="vl-btn vl-btn-secondary flex-1 justify-center" onclick="closeModal()">Cancel</button></div>');
+      return;
+    }
+
+    // Confirm delete account
+    el=e.target.closest('.do-confirm-del');
+    if(el){
+      var uid=el.getAttribute('data-uid');
+      deleteUser(uid).then(function(){clearSession();closeModal();toast('Account deleted.','info');navigateTo('/');});
+      return;
+    }
+
+    // Admin: ban/unban
+    el=e.target.closest('.do-ban');
+    if(el){
+      var uid=el.getAttribute('data-uid');
+      var ses=getSession();if(!ses)return;
+      findById(ses.userId).then(function(admin){
+        if(!admin||!hasPerm(admin,'ban_users'))return;
+        findById(uid).then(function(target){
+          if(!target)return;
+          if(hasPerm(target,'bypass_ban')){toast('Cannot ban this user.','error');return;}
+          var newBanned=!target.banned;
+          updateUser(uid,{banned:newBanned,banReason:newBanned?'Banned by admin':''}).then(function(){toast(newBanned?'User banned.':'User unbanned.',newBanned?'error':'success');router();});
+        });
+      });
+      return;
+    }
+
+    // Admin: change UID
+    el=e.target.closest('.do-uid');
+    if(el){
+      var uid=el.getAttribute('data-uid');
+      findById(uid).then(function(target){
+        if(!target)return;
+        showModal('<h3 class="font-display font-bold text-xl mb-1">Change UID</h3><p class="text-void-100 text-sm mb-4">Current UID: <code class="text-accent">'+target.uid+'</code></p><form id="frm-uid"><input class="vl-input mb-4" name="newUid" placeholder="#123" required><div id="uid-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center">Update UID</button></form>');
+        setTimeout(function(){
+          var f=document.getElementById('frm-uid');
+          if(f)f.addEventListener('submit',function(ev){
+            ev.preventDefault();
+            var newUid=f.querySelector('[name=newUid]').value.trim();
+            var errEl=f.querySelector('#uid-err');
+            if(!/^#\d+$/.test(newUid)){errEl.textContent='UID must be in format #123';errEl.classList.remove('hidden');return;}
+            findByUID(newUid).then(function(existing){
+              if(existing){errEl.textContent='UID already in use.';errEl.classList.remove('hidden');return;}
+              updateUser(uid,{uid:newUid}).then(function(){closeModal();toast('UID updated!','success');router();});
+            });
+          });
+        },50);
+      });
+      return;
+    }
+
+    // Admin: manage badges
+    el=e.target.closest('.do-badges');
+    if(el){
+      var uid=el.getAttribute('data-uid');
+      findById(uid).then(function(target){
+        if(!target)return;
+        var html='<h3 class="font-display font-bold text-xl mb-1">Manage Badges</h3><p class="text-void-100 text-sm mb-6">@'+esc(target.username)+'</p><div class="space-y-2" id="badge-list">';
+        for(var k in BADGES){
+          var b=BADGES[k];
+          var has=(target.badges||[]).indexOf(k)>-1;
+          html+='<label class="flex items-center justify-between p-3 rounded-lg bg-white/5 cursor-pointer hover:bg-white/8 transition-colors"><div class="flex items-center gap-3"><i class="'+b.i+'" style="color:'+b.c+'"></i><span class="text-sm font-medium">'+b.l+'</span></div><div class="perm-toggle '+(has?'on':'')+'" data-badge="'+k+'"></div></label>';
+        }
+        html+='</div><button class="do-save-badges vl-btn vl-btn-primary w-full justify-center mt-6" data-uid="'+uid+'">Save Badges</button>';
+        showModal(html);
+      });
+      return;
+    }
+
+    // Save badges (toggle)
+    el=e.target.closest('.do-save-badges');
+    if(el){
+      var uid=el.getAttribute('data-uid');
+      var toggles=document.querySelectorAll('#badge-list .perm-toggle');
+      var badges=[];
+      toggles.forEach(function(t){if(t.classList.contains('on'))badges.push(t.getAttribute('data-badge'));});
+      updateUser(uid,{badges:badges}).then(function(){closeModal();toast('Badges updated!','success');router();});
+      return;
+    }
+
+    // Toggle badge in modal
+    el=e.target.closest('#badge-list .perm-toggle');
+    if(el){el.classList.toggle('on');return;}
+
+    // Admin: manage roles
+    el=e.target.closest('.do-roles');
+    if(el){
+      var uid=el.getAttribute('data-uid');
+      findById(uid).then(function(target){
+        if(!target)return;
+        var perms=target.permissions?JSON.parse(JSON.stringify(target.permissions)):JSON.parse(JSON.stringify(ROLE_PERMS[target.role]||ROLE_PERMS.user));
+        var html='<h3 class="font-display font-bold text-xl mb-1">Edit Role & Permissions</h3><p class="text-void-100 text-sm mb-4">@'+esc(target.username)+' ('+target.role+')</p>';
+        html+='<label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Role</label><select class="vl-input mb-6" id="role-sel"><option value="user"'+(target.role==='user'?' selected':'')+'>User</option><option value="moderator"'+(target.role==='moderator'?' selected':'')+'>Moderator</option><option value="admin"'+(target.role==='admin'?' selected':'')+'>Admin</option></select>';
+        html+='<label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Permissions</label><div class="space-y-1" id="perm-list">';
+        for(var k in PERM_LABELS){
+          var on=!!perms[k];
+          html+='<div class="perm-row"><div><div class="text-sm font-medium flex items-center gap-2"><i class="fa-solid '+PERM_ICONS[k]+' text-void-200 text-xs"></i>'+PERM_LABELS[k]+'</div><div class="text-xs text-void-200 mt-0.5">'+PERM_DESC[k]+'</div></div><div class="perm-toggle '+(on?'on':'')+'" data-perm="'+k+'"></div></div>';
+        }
+        html+='</div><button class="do-save-roles vl-btn vl-btn-primary w-full justify-center mt-6" data-uid="'+uid+'">Save Role & Permissions</button>';
+        showModal(html);
+      });
+      return;
+    }
+
+    // Save roles
+    el=e.target.closest('.do-save-roles');
+    if(el){
+      var uid=el.getAttribute('data-uid');
+      var roleSel=document.getElementById('role-sel');
+      var toggles=document.querySelectorAll('#perm-list .perm-toggle');
+      var role=roleSel?roleSel.value:'user';
+      var perms=JSON.parse(JSON.stringify(ROLE_PERMS[role]||ROLE_PERMS.user));
+      toggles.forEach(function(t){var p=t.getAttribute('data-perm');if(p)perms[p]=t.classList.contains('on');});
+      updateUser(uid,{role:role,permissions:perms}).then(function(){closeModal();toast('Role updated!','success');router();});
+      return;
+    }
+
+    // Toggle perm in modal
+    el=e.target.closest('#perm-list .perm-toggle');
+    if(el){el.classList.toggle('on');return;}
+
+    // Admin: delete user
+    el=e.target.closest('.do-adm-del');
+    if(el){
+      var uid=el.getAttribute('data-uid');
+      showModal('<h3 class="font-display font-bold text-xl mb-1 text-red-400">Delete User</h3><p class="text-void-100 text-sm mb-6">Permanently delete this user and all their data?</p><div class="flex gap-3"><button class="do-confirm-adm-del vl-btn vl-btn-danger flex-1 justify-center" data-uid="'+uid+'"><i class="fa-solid fa-trash"></i> Delete</button><button class="vl-btn vl-btn-secondary flex-1 justify-center" onclick="closeModal()">Cancel</button></div>');
+      return;
+    }
+
+    // Confirm admin delete
+    el=e.target.closest('.do-confirm-adm-del');
+    if(el){
+      var uid=el.getAttribute('data-uid');
+      deleteUser(uid).then(function(){closeModal();toast('User deleted.','info');router();});
+      return;
+    }
+
+    // Admin search
+    el=e.target.closest('#admin-search');
+    // handled via input event below
+  });
+
+  // Admin search input
+  var searchInput=document.getElementById('admin-search');
+  if(searchInput){
+    searchInput.addEventListener('input',function(){
+      var q=this.value.toLowerCase();
+      var rows=document.querySelectorAll('#adm-tbl tbody tr, #roles-tbl tbody tr');
+      rows.forEach(function(row){
+        var search=row.getAttribute('data-search')||'';
+        row.style.display=search.indexOf(q)>-1?'':'none';
+      });
+    });
+  }
+}
+
+// ==================== INIT ====================
 initFirebase().then(function(){
   P.init();
-  window.addEventListener('popstate', router);
+  window.addEventListener('popstate',router);
   router();
 }).catch(function(err){
-  console.error('Firebase init error:', err);
-  document.getElementById('app').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:40px;text-align:center"><h2 style="color:#ff5555;font-family:Space Grotesk,sans-serif;font-size:22px;margin-bottom:12px">Connection Error</h2><p style="color:#888;font-size:13px;max-width:500px">Unable to connect to the server. Please check your internet connection and try again.</p></div>';
+  console.error('Firebase init error:',err);
+  document.getElementById('app').innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:40px;text-align:center"><h2 style="color:#ff5555;font-family:Space Grotesk,sans-serif;font-size:22px;margin-bottom:12px">Connection Error</h2><p style="color:#888;font-size:13px;max-width:500px">Unable to connect to the server. Please check your internet connection and try again.</p></div>';
 });
 </script>
 </body>
