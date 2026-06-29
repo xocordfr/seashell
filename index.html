@@ -323,7 +323,132 @@ function getVisibleBadges(user){
 
 function loginHTML(){return '<h3 class="font-display font-bold text-xl mb-1">Welcome back</h3><p class="text-void-100 text-sm mb-6">Sign in to your Seashell account</p><form id="frm-login"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Email or Username</label><input class="vl-input mb-4" name="loginId" placeholder="you@email.com" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Password</label><input class="vl-input mb-2" name="password" type="password" placeholder="Enter password" required><div id="login-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center mb-4">Sign In</button><p class="text-center text-sm text-void-100">No account? <a href="#" class="open-signup text-accent hover:underline">Sign up</a></p></form>';}
 function signupHTML(){return '<h3 class="font-display font-bold text-xl mb-1">Create account</h3><p class="text-void-100 text-sm mb-6">Claim your Seashell identity</p><form id="frm-signup"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Username</label><input class="vl-input mb-4" name="username" placeholder="yourname" required minlength="3" maxlength="20"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Display Name</label><input class="vl-input mb-4" name="displayName" placeholder="Your Name" maxlength="30"><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Email</label><input class="vl-input mb-4" name="email" type="email" placeholder="you@email.com" required><label class="block text-xs font-semibold text-void-100 mb-2 uppercase tracking-wider">Password</label><input class="vl-input mb-2" name="password" type="password" placeholder="Min 6 characters" required minlength="6"><div id="signup-err" class="text-red-400 text-xs mb-4 hidden"></div><button type="submit" class="vl-btn vl-btn-primary w-full justify-center mb-4">Create Account</button><p class="text-center text-sm text-void-100">Have an account? <a href="#" class="open-login text-accent hover:underline">Sign in</a></p></form>';}
+// Handle signup form submission
+document.addEventListener('submit', function(e) {
+  if (e.target.id !== 'frm-signup') return;
+  e.preventDefault();
+  
+  var form = e.target;
+  var errEl = document.getElementById('signup-err');
+  errEl.classList.add('hidden');
+  
+  var username = form.username.value.trim().toLowerCase();
+  var displayName = form.displayName.value.trim() || username;
+  var email = form.email.value.trim().toLowerCase();
+  var password = form.password.value;
+  
+  // Validation
+  if (username.length < 3 || username.length > 20) {
+    errEl.textContent = 'Username must be 3-20 characters';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  if (!/^[a-z0-9_]+$/.test(username)) {
+    errEl.textContent = 'Username can only contain letters, numbers, and underscores';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  if (password.length < 6) {
+    errEl.textContent = 'Password must be at least 6 characters';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  
+  // Check if username taken
+  findByUsername(username).then(function(existing) {
+    if (existing) {
+      errEl.textContent = 'Username is already taken';
+      errEl.classList.remove('hidden');
+      return;
+    }
+    // Check if email taken
+    return findByEmail(email);
+  }).then(function(existing) {
+    if (existing) {
+      errEl.textContent = 'Email is already registered';
+      errEl.classList.remove('hidden');
+      return;
+    }
+    // Create the user
+    return createUser({
+      username: username,
+      displayName: displayName,
+      email: email,
+      password: password
+    });
+  }).then(function(user) {
+    if (user) {
+      setSession(user.id);
+      closeModal();
+      toast('Account created! Welcome to Seashell.', 'success');
+      navigateTo('/dashboard');
+    }
+  }).catch(function(err) {
+    errEl.textContent = 'Error: ' + err.message;
+    errEl.classList.remove('hidden');
+  });
+});
 
+// Handle login form submission
+document.addEventListener('submit', function(e) {
+  if (e.target.id !== 'frm-login') return;
+  e.preventDefault();
+  
+  var form = e.target;
+  var errEl = document.getElementById('login-err');
+  errEl.classList.add('hidden');
+  
+  var loginId = form.loginId.value.trim().toLowerCase();
+  var password = form.password.value;
+  
+  // Try finding by email or username
+  var findPromise = loginId.indexOf('@') > -1 
+    ? findByEmail(loginId) 
+    : findByUsername(loginId);
+  
+  findPromise.then(function(user) {
+    if (!user) {
+      errEl.textContent = 'No account found with that email/username';
+      errEl.classList.remove('hidden');
+      return;
+    }
+    if (user.password !== hashPw(password)) {
+      errEl.textContent = 'Incorrect password';
+      errEl.classList.remove('hidden');
+      return;
+    }
+    if (user.banned) {
+      errEl.textContent = 'Account is banned: ' + (user.banReason || 'No reason specified');
+      errEl.classList.remove('hidden');
+      return;
+    }
+    setSession(user.id);
+    closeModal();
+    toast('Welcome back!', 'success');
+    navigateTo('/dashboard');
+  }).catch(function(err) {
+    errEl.textContent = 'Error: ' + err.message;
+    errEl.classList.remove('hidden');
+  });
+});
+
+// Handle modal link clicks (Sign up / Sign in toggles)
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('open-signup')) {
+    e.preventDefault();
+    showModal(signupHTML());
+  }
+  if (e.target.classList.contains('open-login')) {
+    e.preventDefault();
+    showModal(loginHTML());
+  }
+  if (e.target.classList.contains('do-logout')) {
+    e.preventDefault();
+    clearSession();
+    toast('Logged out.', 'info');
+    navigateTo('/');
+  }
+});
 var P={cv:null,cx:null,pts:[],on:false,raf:0,init:function(){this.cv=document.getElementById('bg-canvas');if(!this.cv)return;this.cx=this.cv.getContext('2d');this.resize();window.addEventListener('resize',this.resize.bind(this));this.make();},resize:function(){if(!this.cv)return;this.cv.width=window.innerWidth;this.cv.height=window.innerHeight;},make:function(){if(!this.cv)return;this.pts=[];var n=Math.min(50,Math.floor(this.cv.width*this.cv.height/22000));for(var i=0;i<n;i++)this.pts.push({x:Math.random()*this.cv.width,y:Math.random()*this.cv.height,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*1.5+.5,a:Math.random()*.5+.2});},start:function(){if(this.on)return;this.on=true;this.loop();},stop:function(){this.on=false;if(this.raf)cancelAnimationFrame(this.raf);if(this.cx&&this.cv)this.cx.clearRect(0,0,this.cv.width,this.cv.height);},loop:function(){if(!this.on||!this.cx||!this.cv)return;var c=this.cx,w=this.cv.width,h=this.cv.height,pts=this.pts;c.clearRect(0,0,w,h);for(var i=0;i<pts.length;i++){var p=pts[i];p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;c.beginPath();c.arc(p.x,p.y,p.r,0,Math.PI*2);c.fillStyle='rgba(125,211,252,'+p.a+')';c.fill();}for(var i=0;i<pts.length;i++)for(var j=i+1;j<pts.length;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<130){c.beginPath();c.moveTo(pts[i].x,pts[i].y);c.lineTo(pts[j].x,pts[j].y);c.strokeStyle='rgba(125,211,252,'+(0.07*(1-d/130))+')';c.lineWidth=.5;c.stroke();}}var self=this;this.raf=requestAnimationFrame(function(){self.loop();});}};
 
 function renderBadgePill(key,user){
