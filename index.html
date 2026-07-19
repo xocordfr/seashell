@@ -77,9 +77,8 @@ a{text-decoration:none;color:inherit}
 .mbox{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:500px;width:92%;max-height:85vh;overflow-y:auto;animation:msi .25s}
 @keyframes mfi{from{opacity:0}to{opacity:1}}
 @keyframes msi{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
-.bwrap{min-height:100vh;position:relative;overflow:hidden}
-.bcard{position:relative;z-index:1;max-width:440px;width:90%;margin:0 auto;padding:50px 0 36px}
-.baring{width:100px;height:100px;border-radius:50%;padding:2.5px;background:linear-gradient(135deg,var(--accent),var(--accent2),#c084fc);animation:pr 4s linear infinite;margin:0 auto}
+.bwrap{min-height:100vh;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.bcard{position:relative;z-index:1;max-width:440px;width:90%;padding:36px 0}
 .blink{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:11px 15px;display:flex;align-items:center;gap:11px;cursor:pointer;transition:all .25s;color:var(--fg)}
 .blink:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 5px 18px rgba(244,114,182,0.08)}
 .blink i{font-size:16px;width:22px;text-align:center;color:var(--accent)}
@@ -186,9 +185,7 @@ async function restoreSess(){if(!FB)return;return new Promise(r=>{const u=auth.o
 
 function nav(p){window.history.pushState({},'',p);router()}
 function getP(){let p=window.location.pathname;if(p==='/'||!p)return'/';return p.startsWith('/')?p:'/'+p}
-async function router(){const p=getP();upNav();const a=document.getElementById('app');
-const nav=document.getElementById('mainNav');
-let isProfile=false;
+async function router(){const p=getP();upNav();const a=document.getElementById('app');const nav=document.getElementById('mainNav');let isProfile=false;
 if(p==='/')a.innerHTML=pHome();else if(p==='/login')a.innerHTML=pLogin();else if(p==='/signup')a.innerHTML=pSignup();else if(p==='/redirect')a.innerHTML=pRedirect();else if(p==='/help')a.innerHTML=pHelp();else if(p==='/donate')a.innerHTML=pDonate();else if(p==='/dashboard'){if(!CU){nav('/login');return}a.innerHTML=pDash();iDash()}else if(p==='/admin'){if(!CU||RL[CU.role]<RL.moderator){toast('Access denied','er');nav('/');return}a.innerHTML=pAdmin();await rAC()}else{const un=p.startsWith('/')?p.slice(1):p;if(un&&!ROUTES.includes(un)){await pBio(un);isProfile=true}else a.innerHTML=p404()}
 if(isProfile){nav.classList.add('hidden-nav');a.style.paddingTop='0'}else{nav.classList.remove('hidden-nav');a.style.paddingTop='60px'}
 window.scrollTo(0,0)}
@@ -208,16 +205,16 @@ function pDonate(){return`<div class="spage"><h1>Support seashell.lol</h1><p>We 
 function p404(){return`<div style="min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center"><div style="text-align:center"><div class="font-display" style="font-size:88px;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">404</div><p style="color:var(--fg2);font-size:15px;margin-top:6px">Page not found</p><span class="bp" style="margin-top:18px;display:inline-flex;cursor:pointer" onclick="nav('/')">Go Home</span></div></div>`}
 
 async function pBio(un){await D.iV(un);const u=await D.gUN(un);if(!u||u.banned){document.getElementById('app').innerHTML=p404();return}
-const ab=(u.activeBadges&&u.activeBadges.length?u.activeBadges:u.badges||[]);const bHt=ab.map(b=>bH(b,true)).join(' ')||'';
+const ab=(u.activeBadges&&u.activeBadges.length?u.activeBadges:u.badges||[]);
+const bIcons=ab.map(b=>bH(b,false)).join(' ')||'';
 const lks=u.links||[];
 const tc=u.themeColor||'#f472b6';
 let bgStyle='';if(u.backgroundUrl)bgStyle=`background-image:url('${u.backgroundUrl}');background-size:cover;background-position:center;`;
-let html=`<div class="bwrap" style="${bgStyle}"><div style="position:absolute;inset:0;background:${u.backgroundUrl?'rgba(10,10,15,0.85)':'var(--bg)'};z-index:0"></div><div class="bcard"><div style="text-align:center;margin-bottom:20px"><div style="width:100px;height:100px;border-radius:50%;margin:0 auto 16px;overflow:hidden">${u.avatar?`<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover">`:`<div style="width:100%;height:100%;background:linear-gradient(135deg,${tc},${tc}cc);display:flex;align-items:center;justify-content:center;font-family:Outfit;font-weight:700;font-size:40px;color:var(--bg)">${(u.displayName||u.username||'?')[0].toUpperCase()}</div>`}</div><div style="font-weight:700;font-size:20px;margin-bottom:4px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap">${E(u.displayName||u.username)}${bHt}</div><div style="font-size:13px;color:${tc};margin-bottom:8px">@${E(u.username)}</div>${u.bio?`<div style="font-size:13px;color:var(--fg2);line-height:1.6;max-width:360px;margin:0 auto">${E(u.bio)}</div>`:''}</div><div style="width:40px;height:1.5px;background:linear-gradient(90deg,transparent,${tc},transparent);margin:20px auto;border-radius:2px"></div>`;
+let html=`<div class="bwrap" style="${bgStyle}"><div style="position:absolute;inset:0;background:${u.backgroundUrl?'rgba(10,10,15,0.85)':'var(--bg)'};z-index:0"></div><div class="bcard"><div style="text-align:center;margin-bottom:20px"><div style="width:100px;height:100px;border-radius:50%;margin:0 auto 16px;overflow:hidden">${u.avatar?`<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover">`:`<div style="width:100%;height:100%;background:linear-gradient(135deg,${tc},${tc}cc);display:flex;align-items:center;justify-content:center;font-family:Outfit;font-weight:700;font-size:40px;color:var(--bg)">${(u.displayName||u.username||'?')[0].toUpperCase()}</div>`}</div><div style="font-weight:700;font-size:20px;margin-bottom:4px"><span class="uid-tip" data-uid="UID ${u.uidNumber||'--'}">${E(u.displayName||u.username)}</span></div>${bIcons?`<div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;flex-wrap:wrap">${bIcons}</div>`:''}<div style="font-size:13px;color:${tc};margin-top:10px">@${E(u.username)}</div>${u.bio?`<div style="font-size:13px;color:var(--fg2);line-height:1.6;max-width:360px;margin:0 auto">${E(u.bio)}</div>`:''}</div><div style="width:40px;height:1.5px;background:linear-gradient(90deg,transparent,${tc},transparent);margin:20px auto;border-radius:2px"></div>`;
 if(lks.length){html+=lks.map(l=>`<a href="${E(l.url)}" target="_blank" rel="noopener" class="blink" style="border-color:rgba(255,255,255,0.05)"><i class="${lI(l.url)}" style="color:${tc}"></i><span style="flex:1;font-size:14px">${E(l.title)}</span><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;color:var(--muted)"></i></a>`).join('')}else{html+=`<p style="text-align:center;color:var(--muted);font-size:13px;padding:20px 0">No links yet.</p>`}
 html+=`<div style="text-align:center;margin-top:24px;font-size:11px;color:var(--muted)">${u.views||0} views · seashell.lol</div></div></div>`;
 document.getElementById('app').innerHTML=html}
 
-/* Dashboard */
 function pDash(){const u=CU,isA=RL[u.role]>=RL.moderator;const ni=[{id:'overview',i:'fa-solid fa-house',l:'Overview'},{id:'analytics',i:'fa-solid fa-chart-line',l:'Analytics'},{id:'badges',i:'fa-solid fa-award',l:'Badges'},{id:'settings',i:'fa-solid fa-gear',l:'Settings'},{id:'customise',i:'fa-solid fa-palette',l:'Customise'},{id:'links',i:'fa-solid fa-link',l:'Links'}];
 return`<div class="dash-wrap"><div class="dash-side"><div class="dash-nav">${ni.map(n=>`<div class="dni ${dTab===n.id?'on':''}" onclick="sDT('${n.id}')"><i class="${n.i}"></i>${n.l}</div>`).join('')}${isA?`<div class="dns"></div><div class="dni" onclick="nav('/admin')" style="color:#a855f7"><i class="fa-solid fa-shield-halved"></i>Admin Panel</div>`:''}</div><div class="dbottom"><button class="dshare" onclick="window.open('/${u.username}','_blank')"><i class="fa-solid fa-share-nodes"></i>Share Your Profile</button><div class="duinfo"><span>@${E(u.username)}</span><br>UID ${u.uidNumber||'--'}</div></div></div><div class="dcontent" id="dC"></div></div>`}
 function iDash(){rDT()}
