@@ -95,10 +95,6 @@ a{text-decoration:none;color:inherit}
 .anav:hover{background:var(--adim);color:var(--fg)}
 .anav.on{color:var(--accent);border-left-color:var(--accent);background:var(--adim)}
 .abody{margin-left:230px;padding:28px;min-height:calc(100vh - 60px)}
-.utbl{width:100%;border-collapse:separate;border-spacing:0}
-.utbl th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
-.utbl td{padding:10px 14px;font-size:12px;border-bottom:1px solid rgba(34,34,53,0.4);vertical-align:middle}
-.utbl tr:hover td{background:var(--adim)}
 .bp{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a0f;font-weight:600;font-size:13px;padding:9px 20px;border-radius:9px;border:none;cursor:pointer;transition:all .25s;font-family:'Space Grotesk',sans-serif;display:inline-flex;align-items:center;gap:7px}
 .bp:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(244,114,182,0.3)}
 .bs{background:var(--card);color:var(--fg);font-weight:500;font-size:13px;padding:9px 20px;border-radius:9px;border:1px solid var(--border);cursor:pointer;transition:all .25s;font-family:'Space Grotesk',sans-serif;display:inline-flex;align-items:center;gap:7px}
@@ -182,8 +178,7 @@ a{text-decoration:none;color:inherit}
 <div id="tbox"></div>
 <div id="mbox"></div>
 <script>
-var FB=false,auth=null,db=null;
-window._fbLoadErr=false;
+var FB=false,auth=null,db=null;window._fbLoadErr=false;
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js" onerror="window._fbLoadErr=true"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js" onerror="window._fbLoadErr=true"></script>
@@ -191,12 +186,10 @@ window._fbLoadErr=false;
 <script>
 (function(){
 "use strict";
-
 if(window._fbLoadErr||typeof firebase==='undefined'){console.warn('Firebase SDK failed to load.')}
 else{try{firebase.initializeApp({apiKey:"AIzaSyDbvpzYvPDxzYBXr7-WLFWabmeIRkJlTnw",authDomain:"seashell-27f34.firebaseapp.com",projectId:"seashell-27f34",storageBucket:"seashell-27f34.firebasestorage.app",messagingSenderId:"225540891149",appId:"1:225540891149:web:a2dd3060fe7ab6d975ab44"});auth=firebase.auth();db=firebase.firestore();FB=true}catch(e){console.warn('Firebase init failed:',e)}}
 
 var BG={verified:{n:'Verified',c:'#f472b6',bg:'rgba(244,114,182,0.12)',d:'Verified identity',s:'<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#f472b6"/><path d="M6 10l3 3 5-6" stroke="#0a0a0f" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'},premium:{n:'Premium',c:'#fbbf24',bg:'rgba(251,191,36,0.12)',d:'Premium member',s:'<svg viewBox="0 0 20 20"><polygon points="10,1 19,10 10,19 1,10" fill="#fbbf24"/><polygon points="10,4 16,10 10,16 4,10" fill="#f59e0b"/></svg>'},early_adopter:{n:'Early Adopter',c:'#a78bfa',bg:'rgba(167,139,250,0.12)',d:'Early access',s:'<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#7c3aed"/><path d="M11 3L7 11h4l-2 6 4-8h-4l2-6z" fill="#e0e7ff"/></svg>'},developer:{n:'Developer',c:'#34d399',bg:'rgba(52,211,153,0.12)',d:'Developer',s:'<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#065f46"/><path d="M7 7L4 10l3 3M13 7l3 3-3 3" stroke="#34d399" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'},donator:{n:'Donator',c:'#fb7185',bg:'rgba(251,113,133,0.12)',d:'Donated',s:'<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#881337"/><path d="M10 14s-4-2.5-4-5a2 2 0 014 0 2 2 0 014 0c0 2.5-4 5-4 5z" fill="#fb7185"/></svg>'},og:{n:'OG',c:'#ef4444',bg:'rgba(239,68,68,0.12)',d:'Original member',s:'<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#7f1d1d"/><path d="M10 3c0 4-3 5-3 8a3 3 0 006 0c0-3-3-4-3-8z" fill="#ef4444"/></svg>'},moderator:{n:'Moderator',c:'#22c55e',bg:'rgba(34,197,94,0.12)',d:'Staff',s:'<svg viewBox="0 0 20 20"><path d="M10 1l7 3v5c0 4-3 7.5-7 9-4-1.5-7-5-7-9V4l7-3z" fill="#166534"/><path d="M10 3l5 2v4c0 3-2 5.5-5 7-3-1.5-5-4-5-7V5l5-2z" fill="#22c55e"/><path d="M8 10l1.5 1.5L12 8.5" stroke="#166534" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'},admin:{n:'Admin',c:'#3b82f6',bg:'rgba(59,130,246,0.12)',d:'Staff',s:'<svg viewBox="0 0 20 20"><path d="M10 1l7 3v5c0 4-3 7.5-7 9-4-1.5-7-5-7-9V4l7-3z" fill="#1e40af"/><path d="M10 3l5 2v4c0 3-2 5.5-5 7-3-1.5-5-4-5-7V5l5-2z" fill="#3b82f6"/><path d="M10 6.5l.8 1.7h1.8l-1.4 1.1.5 1.7-1.7-1.1-1.7 1.1.5-1.7-1.4-1.1h1.8z" fill="#fbbf24"/></svg>'},manager:{n:'Manager',c:'#a855f7',bg:'rgba(168,85,247,0.12)',d:'Staff',s:'<svg viewBox="0 0 20 20"><path d="M10 1l7 3v5c0 4-3 7.5-7 9-4-1.5-7-5-7-9V4l7-3z" fill="#581c87"/><path d="M10 3l5 2v4c0 3-2 5.5-5 7-3-1.5-5-4-5-7V5l5-2z" fill="#a855f7"/><path d="M7 11.5l1-3h4l1 3z" fill="#fbbf24"/><circle cx="8" cy="8" r=".9" fill="#fbbf24"/><circle cx="10" cy="7" r=".9" fill="#fbbf24"/><circle cx="12" cy="8" r=".9" fill="#fbbf24"/></svg>'},owner:{n:'Owner',c:'#fbbf24',bg:'rgba(251,191,36,0.15)',d:'Staff',s:'<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#78350f"/><path d="M5 13V8l2 2 3-4 3 4 2-2v5H5z" fill="#fbbf24"/><rect x="5" y="12" width="10" height="2" rx=".5" fill="#f59e0b"/></svg>'}};
-
 var RL={user:0,moderator:1,admin:2,manager:3,owner:4};
 var RC={user:'var(--fg2)',moderator:'#22c55e',admin:'#3b82f6',manager:'#a855f7',owner:'#fbbf24'};
 var RB={user:'var(--adim)',moderator:'rgba(34,197,94,0.12)',admin:'rgba(59,130,246,0.12)',manager:'rgba(168,85,247,0.12)',owner:'rgba(251,191,36,0.12)'};
@@ -208,9 +201,9 @@ function E(s){var d=document.createElement('div');d.textContent=s||'';return d.i
 function lI(u){if(!u)return'fa-solid fa-link';var l=u.toLowerCase();if(l.includes('github'))return'fa-brands fa-github';if(l.includes('twitter')||l.includes('x.com'))return'fa-brands fa-x-twitter';if(l.includes('discord'))return'fa-brands fa-discord';if(l.includes('youtube'))return'fa-brands fa-youtube';if(l.includes('twitch'))return'fa-brands fa-twitch';if(l.includes('spotify'))return'fa-brands fa-spotify';if(l.includes('instagram'))return'fa-brands fa-instagram';if(l.includes('tiktok'))return'fa-brands fa-tiktok';if(l.includes('reddit'))return'fa-brands fa-reddit';if(l.includes('steam'))return'fa-brands fa-steam';if(l.includes('telegram'))return'fa-brands fa-telegram';return'fa-solid fa-arrow-up-right-from-square'}
 function canEdit(tr,mr){return mr==='owner'||RL[mr]>RL[tr]}
 function fmtTime(s){if(isNaN(s)||!isFinite(s))return'0:00';var m=Math.floor(s/60),sec=Math.floor(s%60);return m+':'+(sec<10?'0':'')+sec}
-function fmtDate(ts){if(!ts)return'-';var d=new Date(ts);return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+function fmtDate(ts){if(!ts)return'-';return new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
 
-var D={gU:function(uid){if(!db)return Promise.resolve(null);return db.collection('users').doc(uid).get().then(function(d){return d.exists?d.data():null}).catch(function(){return null})},gUN:function(un){if(!db)return Promise.resolve(null);return db.collection('users').where('username','==',un).limit(1).get().then(function(s){return s.empty?null:s.docs[0].data()}).catch(function(){return null})},gUE:function(un){if(!db)return Promise.resolve(null);return db.collection('usernames').doc(un).get().then(function(d){return d.exists?d.data():null}).catch(function(){return null})},getNextUid:function(){if(!db)return Promise.resolve(1);var ref=db.collection('config').doc('counter');return db.runTransaction(function(t){return t.get(ref).then(function(d){var n=1;if(d.exists)n=(d.data().nextUid||0)+1;t.set(ref,{nextUid:n},{merge:true});return n})})},cU:function(uid,d){if(!db)return Promise.resolve(null);return this.getNextUid().then(function(num){var u={uid:uid,uidNumber:num,displayName:d.displayName||'',username:d.username||'',bio:'',avatar:'',backgroundUrl:'',links:[],badges:[],activeBadges:[],role:'user',banned:false,createdAt:Date.now(),views:0,themeColor:'#f472b6',music:{enabled:false,tracks:[],shuffle:false}};return db.collection('users').doc(uid).set(u).then(function(){if(d.username&&d.email)return db.collection('usernames').doc(d.username).set({uid:uid,email:d.email});return})}).then(function(){return D.gU(uid)})},uU:function(uid,d){if(!db)return Promise.resolve(null);return db.collection('users').doc(uid).update(d).then(function(){return D.gU(uid)})},dU:function(uid){if(!db)return Promise.resolve();return this.gU(uid).then(function(u){if(u&&u.username)return db.collection('usernames').doc(u.username).delete().catch(function(){});return}).then(function(){return db.collection('users').doc(uid).delete()})},aU:function(){if(!db)return Promise.resolve([]);return db.collection('users').get().then(function(s){return s.docs.map(function(d){return d.data()})}).catch(function(){return[]})},iV:function(un){if(!db)return Promise.resolve();return db.collection('users').where('username','==',un).limit(1).get().then(function(s){if(!s.empty){var r=s.docs[0].ref;return db.runTransaction(function(t){return t.get(r).then(function(d){if(d.exists)t.update(r,{views:(d.data().views||0)+1})})})}}).catch(function(){})},chUn:function(o,n,uid,email){if(!db)return Promise.resolve();var p=[];if(o)p.push(db.collection('usernames').doc(o).delete().catch(function(){}));if(n&&email)p.push(db.collection('usernames').doc(n).set({uid:uid,email:email}));return Promise.all(p)}};
+var D={gU:function(uid){if(!db)return Promise.resolve(null);return db.collection('users').doc(uid).get().then(function(d){return d.exists?d.data():null}).catch(function(e){console.error('gU error:',e);return null})},gUN:function(un){if(!db)return Promise.resolve(null);return db.collection('users').where('username','==',un).limit(1).get().then(function(s){return s.empty?null:s.docs[0].data()}).catch(function(e){console.error('gUN error:',e);return null})},gUE:function(un){if(!db)return Promise.resolve(null);return db.collection('usernames').doc(un).get().then(function(d){return d.exists?d.data():null}).catch(function(e){console.error('gUE error:',e);return null})},getNextUid:function(){if(!db)return Promise.resolve(1);var ref=db.collection('config').doc('counter');return db.runTransaction(function(t){return t.get(ref).then(function(d){var n=1;if(d.exists)n=(d.data().nextUid||0)+1;t.set(ref,{nextUid:n},{merge:true});return n})})},cU:function(uid,d){if(!db)return Promise.resolve(null);return this.getNextUid().then(function(num){var u={uid:uid,uidNumber:num,displayName:d.displayName||'',username:d.username||'',bio:'',avatar:'',backgroundUrl:'',links:[],badges:[],activeBadges:[],role:'user',banned:false,createdAt:Date.now(),views:0,themeColor:'#f472b6',music:{enabled:false,tracks:[],shuffle:false}};return db.collection('users').doc(uid).set(u).then(function(){if(d.username&&d.email)return db.collection('usernames').doc(d.username).set({uid:uid,email:d.email});return})}).then(function(){return D.gU(uid)})},uU:function(uid,upd){if(!db)return Promise.resolve(null);return db.collection('users').doc(uid).update(upd).then(function(){return D.gU(uid)})},dU:function(uid){if(!db)return Promise.resolve();return this.gU(uid).then(function(u){if(u&&u.username)return db.collection('usernames').doc(u.username).delete().catch(function(){});return}).then(function(){return db.collection('users').doc(uid).delete()})},aU:function(){if(!db)return Promise.resolve([]);return db.collection('users').get().then(function(s){return s.docs.map(function(d){return d.data()})}).catch(function(e){console.error('aU error:',e);return[]})},iV:function(un){if(!db)return Promise.resolve();return db.collection('users').where('username','==',un).limit(1).get().then(function(s){if(!s.empty){var r=s.docs[0].ref;return db.runTransaction(function(t){return t.get(r).then(function(d){if(d.exists)t.update(r,{views:(d.data().views||0)+1})})})}}).catch(function(){})},chUn:function(o,n,uid,email){if(!db)return Promise.resolve();var p=[];if(o)p.push(db.collection('usernames').doc(o).delete().catch(function(){}));if(n&&email)p.push(db.collection('usernames').doc(n).set({uid:uid,email:email}));return Promise.all(p)}};
 
 var CU=null,dTab='overview',aTab='users',allUsers=[],tempMusic=null;
 var mpState={audio:null,trackIdx:0,looping:false,shuffle:false,updateTimer:null,tracks:[],shuffleQueue:[]};
@@ -251,7 +244,7 @@ function router(){stopProfileAudio();var p=getP();upNav();var a=document.getElem
 
 function upNav(){var e=document.getElementById('navA');if(CU){e.innerHTML='<span class="nl" onclick="nav(\'/dashboard\')" style="color:var(--accent);font-weight:500">Dashboard</span><span class="nl" onclick="doLogout()">Logout</span>'}else{e.innerHTML='<span class="nl" onclick="nav(\'/login\')">Login</span><span class="btn-su" onclick="nav(\'/signup\')">Sign Up Free</span>'}}
 
-function pHome(){return'<div class="hwrap"><div class="hpat"><div class="hgl hg1"></div><div class="hgl hg2"></div></div><div class="hhero"><div class="htxt"><div class="htag"><span></span>Now in Early Access</div><h1 class="htitle">Your Next Gen<br>Link-In-Bio</h1><p class="hdesc">seashell.lol provides cute link-in-bio pages and safe file hosting services with powerful features and a vibrant community.</p><div style="display:flex;gap:12px;flex-wrap:wrap"><a href="https://discord.gg/wvTcFqa9Ej" target="_blank" rel="noopener" class="bc"><i class="fa-brands fa-discord"></i> Community</a></div><p class="hlaunch">meow :3</p></div><div class="hprev"><div class="pglow"></div><div class="pcard"><div class="pav"><img src="https://cdn.discordapp.com/attachments/1370493911948197910/1528402163435442347/cc5207bb6cda57c3bad02af0299d7009.png?ex=6a5e2af0&is=6a5cd970&hm=a1504a152b5e0ceae64170d0fd6911f089e1294e5af2a39355e1dbaf691242bc&" alt=""></div><div style="text-align:center;font-weight:700;font-size:17px;margin-bottom:2px">sem</div><div style="text-align:center;font-size:12px;color:var(--accent);margin-bottom:10px">@sem</div><div style="text-align:center;font-size:12px;color:var(--fg2);margin-bottom:16px;line-height:1.5">she sells seashells by the seashore</div><div style="width:40px;height:1.5px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:0 auto 16px;border-radius:2px"></div><div class="plink"><i class="fa-brands fa-instagram"></i>Instagram</div><div class="plink"><i class="fa-brands fa-x-twitter"></i>Twitter / X</div><div class="plink"><i class="fa-brands fa-discord"></i>Discord Server</div><div class="plink"><i class="fa-solid fa-palette"></i>Portfolio</div></div></div></div></div>'}
+function pHome(){return'<div class="hwrap"><div class="hpat"><div class="hgl hg1"></div><div class="hgl hg2"></div></div><div class="hhero"><div class="htxt"><div class="htag"><span></span>Now in Early Access</div><h1 class="htitle">Your Next Gen<br>Link-In-Bio</h1><p class="hdesc">seashell.lol provides cute link-in-bio pages and safe file hosting services with powerful features and a vibrant community.</p><div style="display:flex;gap:12px;flex-wrap:wrap"><a href="https://discord.gg/wvTcFqa9Ej" target="_blank" rel="noopener" class="bc"><i class="fa-brands fa-discord"></i> Community</a></div><p class="hlaunch">Expected Launch by February 20th, 2025</p></div><div class="hprev"><div class="pglow"></div><div class="pcard"><div class="pav"><img src="https://picsum.photos/seed/seashell42/200/200.jpg" alt=""></div><div style="text-align:center;font-weight:700;font-size:17px;margin-bottom:2px">sem</div><div style="text-align:center;font-size:12px;color:var(--accent);margin-bottom:10px">@sem</div><div style="text-align:center;font-size:12px;color:var(--fg2);margin-bottom:16px;line-height:1.5">she sells seashells by the seashore</div><div style="width:40px;height:1.5px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:0 auto 16px;border-radius:2px"></div><div class="plink"><i class="fa-brands fa-instagram"></i>Instagram</div><div class="plink"><i class="fa-brands fa-x-twitter"></i>Twitter / X</div><div class="plink"><i class="fa-brands fa-discord"></i>Discord Server</div><div class="plink"><i class="fa-solid fa-palette"></i>Portfolio</div></div></div></div></div>'}
 function pLogin(){return'<div style="min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center;padding:40px 20px"><div class="card" style="max-width:380px;width:100%"><h2 style="font-size:22px;font-weight:700;margin-bottom:4px;font-family:Outfit,sans-serif">Welcome back</h2><p style="color:var(--fg2);font-size:13px;margin-bottom:22px">Sign in to your seashell.lol account</p><div style="display:flex;flex-direction:column;gap:15px"><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Username</label><input id="lU" class="ifield" type="text" placeholder="Enter your username" autocomplete="off"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Password</label><input id="lP" class="ifield" type="password" placeholder="Enter your password"></div><button class="bp" style="width:100%;justify-content:center;padding:11px" onclick="hL()"><i class="fa-solid fa-right-to-bracket"></i> Sign In</button></div><p style="text-align:center;margin-top:18px;font-size:13px;color:var(--fg2)">Don\'t have an account? <span style="color:var(--accent);font-weight:600;cursor:pointer" onclick="nav(\'/signup\')">Sign up</span></p></div></div>'}
 function hL(){var u=document.getElementById('lU').value.trim(),p=document.getElementById('lP').value;if(!u||!p){toast('Fill in all fields','er');return}doLogin(u,p)}
 function pSignup(){return'<div style="min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center;padding:40px 20px"><div class="card" style="max-width:380px;width:100%"><h2 style="font-size:22px;font-weight:700;margin-bottom:4px;font-family:Outfit,sans-serif">Create account</h2><p style="color:var(--fg2);font-size:13px;margin-bottom:22px">Join seashell.lol for free</p><div style="display:flex;flex-direction:column;gap:15px"><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Display Name</label><input id="sN" class="ifield" type="text" placeholder="Your display name" autocomplete="off"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Username</label><div style="position:relative"><span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px">seashell.lol/</span><input id="sU" class="ifield" type="text" placeholder="username" style="padding-left:112px" autocomplete="off"></div></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Email</label><input id="sE" class="ifield" type="email" placeholder="your@email.com" autocomplete="off"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Password</label><input id="sP" class="ifield" type="password" placeholder="Min 6 characters"></div><button class="bp" style="width:100%;justify-content:center;padding:11px" onclick="hS()"><i class="fa-solid fa-user-plus"></i> Create Account</button></div><p style="text-align:center;margin-top:18px;font-size:13px;color:var(--fg2)">Already have an account? <span style="color:var(--accent);font-weight:600;cursor:pointer" onclick="nav(\'/login\')">Sign in</span></p></div></div>'}
@@ -272,14 +265,14 @@ function rDT(){var el=document.getElementById('dC');if(!el||!CU)return;if(dTab==
 
 function dOv(u){var ab=(u.activeBadges&&u.activeBadges.length?u.activeBadges:u.badges||[]);var bHt=ab.map(function(b){return bH(b,true)}).join(' ')||'<span style="color:var(--muted);font-size:13px">No badges</span>';return'<h2 style="font-size:22px;font-weight:700;margin-bottom:24px;font-family:Outfit,sans-serif">Overview</h2><div class="sg" style="margin-bottom:28px"><div class="sc"><div class="sn">'+(u.views||0)+'</div><div class="sl">Profile Views</div></div><div class="sc"><div class="sn">'+(u.links||[]).length+'</div><div class="sl">Total Links</div></div><div class="sc"><div class="sn">'+ab.length+'</div><div class="sl">Badges</div></div><div class="sc"><div class="sn">'+rT(u.role)+'</div><div class="sl">Role</div></div></div><div class="card" style="margin-bottom:20px"><h3 style="font-size:15px;font-weight:600;margin-bottom:12px">Badges</h3><div style="display:flex;gap:8px;flex-wrap:wrap">'+bHt+'</div></div><div class="card"><h3 style="font-size:15px;font-weight:600;margin-bottom:12px">Quick Actions</h3><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="bs bsm" onclick="sDT(\'links\')"><i class="fa-solid fa-plus"></i> Add Link</button><button class="bs bsm" onclick="sDT(\'customise\')"><i class="fa-solid fa-palette"></i> Customise</button><button class="bs bsm" onclick="window.open(\'/'+u.username+'\',\'_blank\')"><i class="fa-solid fa-eye"></i> View Profile</button></div></div>'}
 function dAn(u){return'<h2 style="font-size:22px;font-weight:700;margin-bottom:24px;font-family:Outfit,sans-serif">Analytics</h2><div class="card"><p style="color:var(--fg2);font-size:14px">Profile analytics will be available soon. Your profile has been viewed '+(u.views||0)+' times.</p></div>'}
-function dBg(u){var all=Object.keys(BG);var active=u.activeBadges||[];var owned=u.badges||[];var list=all.map(function(k){var b=BG[k];var has=owned.includes(k);var shown=active.includes(k);if(!has)return'';return'<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:10px">'+bH(k,true)+'<span style="font-size:12px;color:var(--fg2)">'+b.d+'</span></div><button class="btoggle '+(shown?'on':'')+'" onclick="tBadge(\''+k+'\')"></button></div>'}).join('');return'<h2 style="font-size:22px;font-weight:700;margin-bottom:24px;font-family:Outfit,sans-serif">Badges</h2><div class="card">'+(list||'<p style="color:var(--muted);font-size:13px">No badges yet. Contact staff on Discord to earn badges!</p>')+'</div>'}
+function dBg(u){var all=Object.keys(BG);var active=u.activeBadges||[];var owned=u.badges||[];var list=all.map(function(k){var b=BG[k];if(!owned.includes(k))return'';return'<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:10px">'+bH(k,true)+'<span style="font-size:12px;color:var(--fg2)">'+b.d+'</span></div><button class="btoggle '+(active.includes(k)?'on':'')+'" onclick="tBadge(\''+k+'\')"></button></div>'}).join('');return'<h2 style="font-size:22px;font-weight:700;margin-bottom:24px;font-family:Outfit,sans-serif">Badges</h2><div class="card">'+(list||'<p style="color:var(--muted);font-size:13px">No badges yet. Contact staff on Discord to earn badges!</p>')+'</div>'}
 function tBadge(k){if(!CU)return;var ab=CU.activeBadges||[];var idx=ab.indexOf(k);if(idx>=0)ab.splice(idx,1);else ab.push(k);D.uU(CU.uid,{activeBadges:ab}).then(function(u){CU=u;rDT()}).catch(function(){toast('Error updating badge','er')})}
 
 function dSt(u){return'<h2 style="font-size:22px;font-weight:700;margin-bottom:24px;font-family:Outfit,sans-serif">Settings</h2><div class="card" style="margin-bottom:16px"><h3 style="font-size:15px;font-weight:600;margin-bottom:16px">Profile</h3><div style="display:flex;flex-direction:column;gap:14px"><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Display Name</label><input id="stN" class="ifield" type="text" value="'+E(u.displayName)+'"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Username</label><div style="position:relative"><span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px">seashell.lol/</span><input id="stU" class="ifield" type="text" value="'+E(u.username)+'" style="padding-left:112px"></div></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Bio</label><textarea id="stB" class="ifield" rows="3" style="resize:vertical">'+E(u.bio)+'</textarea></div><button class="bp" onclick="svSt()"><i class="fa-solid fa-check"></i> Save Changes</button></div></div><div class="card"><h3 style="font-size:15px;font-weight:600;margin-bottom:16px">Change Password</h3><div style="display:flex;flex-direction:column;gap:14px"><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">New Password</label><input id="stP" class="ifield" type="password" placeholder="Min 6 characters"></div><button class="bs" onclick="chPw()"><i class="fa-solid fa-key"></i> Update Password</button></div></div>'}
 function svSt(){if(!CU)return;var n=document.getElementById('stN').value.trim(),un=document.getElementById('stU').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,''),bio=document.getElementById('stB').value.trim();if(!n||!un){toast('Name and username required','er');return}if(un.length<3){toast('Username min 3 chars','er');return}var oldUn=CU.username,updates={displayName:n,bio:bio};if(un!==oldUn){D.gUN(un).then(function(ex){if(ex&&ex.uid!==CU.uid){toast('Username taken','er');return null}return D.chUn(oldUn,un,CU.uid,auth.currentUser.email)}).then(function(r){if(r===null)return;updates.username=un;return D.uU(CU.uid,updates)}).then(function(u){if(u){CU=u;toast('Profile updated!','ok');rDT()}}).catch(function(){toast('Error updating profile','er')})}else{D.uU(CU.uid,updates).then(function(u){CU=u;toast('Profile updated!','ok');rDT()}).catch(function(){toast('Error updating profile','er')})}}
 function chPw(){if(!auth||!auth.currentUser)return;var p=document.getElementById('stP').value;if(!p||p.length<6){toast('Password min 6 chars','er');return}auth.currentUser.updatePassword(p).then(function(){toast('Password updated!','ok');document.getElementById('stP').value=''}).catch(function(e){toast(e.message,'er')})}
 
-/* ===== Customise - with draft-then-save music editor ===== */
+/* ===== MUSIC - completely rewritten with direct DB calls ===== */
 function dCu(u){
   var tc=u.themeColor||'#f472b6';
   var m=tempMusic||{enabled:false,tracks:[],shuffle:false};
@@ -294,76 +287,115 @@ function dCu(u){
   /* Theme Color */
   h+='<div class="card" style="margin-bottom:16px"><h3 style="font-size:15px;font-weight:600;margin-bottom:16px">Theme Color</h3><div style="display:flex;align-items:center;gap:12px"><input id="cuTc" type="color" value="'+tc+'" style="width:48px;height:36px;border:none;background:none;cursor:pointer"><input id="cuTcTxt" class="ifield" type="text" value="'+tc+'" style="flex:1"><button class="bs bsm" onclick="svTc()"><i class="fa-solid fa-check"></i> Save</button></div></div>';
 
-  /* Music Player - draft mode */
+  /* Music Player */
   h+='<div class="card" id="musicCard"><h3 style="font-size:15px;font-weight:600;margin-bottom:16px"><i class="fa-solid fa-music" style="margin-right:6px;color:var(--accent)"></i>Music Player</h3>';
 
-  /* Enable toggle */
   h+='<div style="margin-bottom:16px"><label style="font-size:12px;font-weight:500;color:var(--fg2);display:flex;align-items:center;gap:8px;cursor:pointer"><button class="btoggle '+(m.enabled?'on':'')+'" onclick="muToggleEnabled()"></button>Enable Music Player</label></div>';
 
   if(m.enabled){
-    /* Existing tracks */
     h+='<h4 style="font-size:13px;font-weight:600;margin-bottom:10px">Tracks ('+(m.tracks||[]).length+')</h4>';
-    if((m.tracks||[]).length){
-      for(var i=0;i<m.tracks.length;i++){
-        var trk=m.tracks[i];
+    var tracks=m.tracks||[];
+    if(tracks.length){
+      for(var i=0;i<tracks.length;i++){
+        var trk=tracks[i];
         h+='<div class="am-item"><div class="am-item-info"><div class="am-item-t">'+E(trk.title||'Untitled')+'</div><div class="am-item-a">'+E(trk.artist||'Unknown')+'</div></div><button class="bd bsm" onclick="muRemoveTrack('+i+')" title="Remove track"><i class="fa-solid fa-trash"></i></button></div>';
       }
     } else {
       h+='<p style="color:var(--muted);font-size:12px;margin-bottom:14px">No tracks added yet.</p>';
     }
 
-    /* Add track form */
     h+='<div style="margin-top:16px;padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:10px"><h4 style="font-size:12px;font-weight:600;margin-bottom:12px;color:var(--fg2)">Add New Track</h4><div style="display:flex;flex-direction:column;gap:10px"><input id="muTi" class="ifield" type="text" placeholder="Track Title"><input id="muAr" class="ifield" type="text" placeholder="Artist Name"><input id="muCv" class="ifield" type="text" placeholder="Cover Image URL (optional)"><input id="muAu" class="ifield" type="text" placeholder="Audio URL (direct mp3 link)"><button class="bs bsm" onclick="muAddTrack()" style="align-self:flex-start"><i class="fa-solid fa-plus"></i> Add to List</button></div></div>';
 
-    /* Shuffle toggle */
     h+='<div style="margin-top:16px"><label style="font-size:12px;font-weight:500;color:var(--fg2);display:flex;align-items:center;gap:8px;cursor:pointer"><button class="btoggle '+(m.shuffle?'on':'')+'" onclick="muToggleShuffle()"></button>Shuffle by default</label></div>';
   }
 
-  /* Save / Reset bar */
-  h+='<div class="mu-save-bar"><button class="bs bsm" onclick="muReset()" style="margin-right:auto"><i class="fa-solid fa-rotate-left"></i> Discard</button><span style="font-size:11px;color:var(--muted)" id="muStatus"></span><button class="bp" onclick="muSave()"><i class="fa-solid fa-floppy-disk"></i> Save Music Settings</button></div>';
+  h+='<div class="mu-save-bar"><button class="bs bsm" onclick="muReset()" style="margin-right:auto"><i class="fa-solid fa-rotate-left"></i> Discard</button><button class="bp" id="muSaveBtn" onclick="muSave()"><i class="fa-solid fa-floppy-disk"></i> Save Music Settings</button></div>';
 
   h+='</div>';
   return h;
 }
 
-/* Music draft operations - modify tempMusic only, no DB writes */
-function muToggleEnabled(){if(!tempMusic)return;tempMusic.enabled=!tempMusic.enabled;rDT()}
-function muToggleShuffle(){if(!tempMusic)return;tempMusic.shuffle=!tempMusic.shuffle;rDT()}
+/* Draft operations - modify tempMusic in memory only */
+function muToggleEnabled(){
+  if(!tempMusic) tempMusic={enabled:false,tracks:[],shuffle:false};
+  tempMusic.enabled=!tempMusic.enabled;
+  rDT();
+}
+function muToggleShuffle(){
+  if(!tempMusic) tempMusic={enabled:false,tracks:[],shuffle:false};
+  tempMusic.shuffle=!tempMusic.shuffle;
+  rDT();
+}
 function muAddTrack(){
-  if(!tempMusic)return;
+  if(!tempMusic) tempMusic={enabled:false,tracks:[],shuffle:false};
+  if(!tempMusic.tracks) tempMusic.tracks=[];
   var ti=document.getElementById('muTi').value.trim();
   var ar=document.getElementById('muAr').value.trim();
   var cv=document.getElementById('muCv').value.trim();
   var au=document.getElementById('muAu').value.trim();
-  if(!ti||!au){toast('Title and audio URL are required','er');return}
-  if(!au.startsWith('http')){toast('Audio URL must be a direct link','er');return}
-  tempMusic.tracks.push({title:ti,artist:ar,coverUrl:cv,audioUrl:au});
+  if(!ti){toast('Track title is required','er');return}
+  if(!au){toast('Audio URL is required','er');return}
+  tempMusic.tracks.push({title:ti,artist:ar||'Unknown',coverUrl:cv,audioUrl:au});
   toast('Track added to list','in');
   rDT();
 }
-function muRemoveTrack(i){if(!tempMusic)return;tempMusic.tracks.splice(i,1);rDT()}
-
-/* Save all music settings to DB at once */
-function muSave(){
-  if(!CU||!tempMusic)return;
-  var btn=document.querySelector('.mu-save-bar .bp');
-  if(btn){btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Saving...';btn.style.opacity='.6';btn.style.pointerEvents='none'}
-  var st=document.getElementById('muStatus');if(st)st.textContent='Saving...';
-  D.uU(CU.uid,{music:JSON.parse(JSON.stringify(tempMusic))}).then(function(u){
-    CU=u;
-    if(st)st.textContent='';
-    toast('Music settings saved!','ok');
-    /* Re-init temp from saved to sync */
-    tempMusic=JSON.parse(JSON.stringify(u.music||{enabled:false,tracks:[],shuffle:false}));
-    rDT();
-  }).catch(function(e){
-    if(st)st.textContent='';
-    toast('Error saving: '+e.message,'er');
-    if(btn){btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-floppy-disk"></i> Save Music Settings';btn.style.opacity='1';btn.style.pointerEvents='auto'}
-  });
+function muRemoveTrack(i){
+  if(!tempMusic||!tempMusic.tracks)return;
+  tempMusic.tracks.splice(i,1);
+  rDT();
 }
 
-/* Discard music changes, reset to last saved */
+/* RESET button state helper */
+function muResetBtn(){
+  var btn=document.getElementById('muSaveBtn');
+  if(btn){btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-floppy-disk"></i> Save Music Settings';btn.style.opacity='1';btn.style.cursor='pointer'}
+}
+
+/* SAVE - writes tempMusic to Firestore directly, bypassing D.uU */
+function muSave(){
+  try{
+    if(!CU){toast('Not logged in','er');return}
+    if(!tempMusic){toast('No music data','er');return}
+    if(!db){toast('Database not connected','er');return}
+
+    var btn=document.getElementById('muSaveBtn');
+    if(btn){btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Saving...';btn.style.opacity='0.6';btn.style.cursor='wait'}
+
+    /* Deep copy to avoid any reference issues */
+    var musicData=JSON.parse(JSON.stringify(tempMusic));
+
+    /* Write directly to Firestore */
+    db.collection('users').doc(CU.uid).update({music:musicData})
+      .then(function(){
+        /* Re-read from DB to confirm */
+        return db.collection('users').doc(CU.uid).get();
+      })
+      .then(function(doc){
+        if(doc&&doc.exists){
+          CU=doc.data();
+          tempMusic=JSON.parse(JSON.stringify(CU.music||{enabled:false,tracks:[],shuffle:false}));
+          toast('Music settings saved!','ok');
+        } else {
+          /* Fallback: trust our local data */
+          CU.music=JSON.parse(JSON.stringify(musicData));
+          tempMusic=JSON.parse(JSON.stringify(musicData));
+          toast('Music saved (could not verify)','in');
+        }
+        rDT();
+      })
+      .catch(function(err){
+        console.error('Music save error:',err);
+        toast('Save failed: '+(err.message||'Unknown error'),'er');
+        muResetBtn();
+      });
+  }catch(e){
+    console.error('muSave exception:',e);
+    toast('Unexpected error','er');
+    muResetBtn();
+  }
+}
+
+/* Discard music changes */
 function muReset(){
   if(!CU)return;
   tempMusic=JSON.parse(JSON.stringify(CU.music||{enabled:false,tracks:[],shuffle:false}));
@@ -371,17 +403,17 @@ function muReset(){
   rDT();
 }
 
-/* Avatar/Background/Color still use instant save */
-function svAv(){if(!CU)return;D.uU(CU.uid,{avatar:document.getElementById('cuAv').value.trim()}).then(function(u){CU=u;toast('Avatar saved!','ok');rDT()}).catch(function(){toast('Error saving','er')})}
-function svBg(){if(!CU)return;D.uU(CU.uid,{backgroundUrl:document.getElementById('cuBg').value.trim()}).then(function(u){CU=u;toast('Background saved!','ok')}).catch(function(){toast('Error saving','er')})}
-function svTc(){if(!CU)return;D.uU(CU.uid,{themeColor:document.getElementById('cuTc').value}).then(function(u){CU=u;toast('Theme color saved!','ok')}).catch(function(){toast('Error saving','er')})}
+/* Avatar/Background/Color */
+function svAv(){if(!CU)return;D.uU(CU.uid,{avatar:document.getElementById('cuAv').value.trim()}).then(function(u){if(u)CU=u;toast('Avatar saved!','ok');rDT()}).catch(function(e){toast('Error: '+e.message,'er')})}
+function svBg(){if(!CU)return;D.uU(CU.uid,{backgroundUrl:document.getElementById('cuBg').value.trim()}).then(function(u){if(u)CU=u;toast('Background saved!','ok')}).catch(function(e){toast('Error: '+e.message,'er')})}
+function svTc(){if(!CU)return;D.uU(CU.uid,{themeColor:document.getElementById('cuTc').value}).then(function(u){if(u)CU=u;toast('Theme color saved!','ok')}).catch(function(e){toast('Error: '+e.message,'er')})}
 
 /* Links */
 function dLn(u){var lks=u.links||[];var list=lks.map(function(l,i){return'<div class="am-item"><div style="width:32px;height:32px;border-radius:8px;background:var(--adim);display:flex;align-items:center;justify-content:center"><i class="'+lI(l.url)+'" style="color:var(--accent);font-size:14px"></i></div><div class="am-item-info"><div class="am-item-t">'+E(l.title)+'</div><div class="am-item-a">'+E(l.url)+'</div></div><div style="display:flex;gap:6px"><button class="bs bsm" onclick="edLink('+i+')"><i class="fa-solid fa-pen"></i></button><button class="bd bsm" onclick="rmLink('+i+')"><i class="fa-solid fa-trash"></i></button></div></div>'}).join('');return'<h2 style="font-size:22px;font-weight:700;margin-bottom:24px;font-family:Outfit,sans-serif">Links</h2><div class="card" style="margin-bottom:16px"><h3 style="font-size:15px;font-weight:600;margin-bottom:16px">Add Link</h3><div style="display:flex;flex-direction:column;gap:10px"><input id="lnTi" class="ifield" type="text" placeholder="Link Title"><input id="lnUr" class="ifield" type="text" placeholder="https://example.com"><button class="bp" onclick="addLink()"><i class="fa-solid fa-plus"></i> Add Link</button></div></div><div class="card"><h3 style="font-size:15px;font-weight:600;margin-bottom:16px">Your Links ('+lks.length+')</h3>'+(list||'<p style="color:var(--muted);font-size:13px">No links added yet.</p>')+'</div>'}
-function addLink(){if(!CU)return;var ti=document.getElementById('lnTi').value.trim(),ur=document.getElementById('lnUr').value.trim();if(!ti||!ur){toast('Title and URL required','er');return}var lks=CU.links||[];lks.push({title:ti,url:ur});D.uU(CU.uid,{links:lks}).then(function(u){CU=u;toast('Link added!','ok');rDT()}).catch(function(){toast('Error adding link','er')})}
-function rmLink(i){if(!CU)return;var lks=CU.links||[];lks.splice(i,1);D.uU(CU.uid,{links:lks}).then(function(u){CU=u;toast('Link removed','ok');rDT()}).catch(function(){toast('Error removing link','er')})}
+function addLink(){if(!CU)return;var ti=document.getElementById('lnTi').value.trim(),ur=document.getElementById('lnUr').value.trim();if(!ti||!ur){toast('Title and URL required','er');return}var lks=CU.links||[];lks.push({title:ti,url:ur});D.uU(CU.uid,{links:lks}).then(function(u){if(u)CU=u;toast('Link added!','ok');rDT()}).catch(function(){toast('Error adding link','er')})}
+function rmLink(i){if(!CU)return;var lks=CU.links||[];lks.splice(i,1);D.uU(CU.uid,{links:lks}).then(function(u){if(u)CU=u;toast('Link removed','ok');rDT()}).catch(function(){toast('Error removing link','er')})}
 function edLink(i){if(!CU)return;var l=CU.links[i];showModal('Edit Link','<div style="display:flex;flex-direction:column;gap:10px"><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Title</label><input id="edLnTi" class="ifield" type="text" value="'+E(l.title)+'"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">URL</label><input id="edLnUr" class="ifield" type="text" value="'+E(l.url)+'"></div></div>',[{l:'Cancel',a:'clM()'},{l:'Save',c:'bp',a:'svLink('+i+')'}])}
-function svLink(i){if(!CU)return;var ti=document.getElementById('edLnTi').value.trim(),ur=document.getElementById('edLnUr').value.trim();if(!ti||!ur){toast('Title and URL required','er');return}var lks=CU.links||[];lks[i]={title:ti,url:ur};D.uU(CU.uid,{links:lks}).then(function(u){CU=u;toast('Link updated!','ok');clM();rDT()}).catch(function(){toast('Error updating link','er')})}
+function svLink(i){if(!CU)return;var ti=document.getElementById('edLnTi').value.trim(),ur=document.getElementById('edLnUr').value.trim();if(!ti||!ur){toast('Title and URL required','er');return}var lks=CU.links||[];lks[i]={title:ti,url:ur};D.uU(CU.uid,{links:lks}).then(function(u){if(u)CU=u;toast('Link updated!','ok');clM();rDT()}).catch(function(){toast('Error updating link','er')})}
 
 /* Admin Panel */
 function pAdmin(){return'<div class="dash-wrap"><div class="aside"><div class="anav '+(aTab==='users'?'on':'')+'" onclick="sAT(\'users\')"><i class="fa-solid fa-users"></i>Users</div><div class="anav '+(aTab==='config'?'on':'')+'" onclick="sAT(\'config\')"><i class="fa-solid fa-sliders"></i>Config</div><div class="dns" style="margin:10px 18px"></div><div class="anav" onclick="nav(\'/dashboard\')"><i class="fa-solid fa-arrow-left"></i>Back to Dashboard</div></div><div class="abody" id="aC"></div></div>'}
@@ -408,7 +440,7 @@ window.sDT=sDT;window.tBadge=tBadge;window.svSt=svSt;window.chPw=chPw;
 window.svAv=svAv;window.svBg=svBg;window.svTc=svTc;
 window.muToggleEnabled=muToggleEnabled;window.muToggleShuffle=muToggleShuffle;
 window.muAddTrack=muAddTrack;window.muRemoveTrack=muRemoveTrack;
-window.muSave=muSave;window.muReset=muReset;
+window.muSave=muSave;window.muReset=muReset;window.muResetBtn=muResetBtn;
 window.addLink=addLink;window.rmLink=rmLink;window.edLink=edLink;window.svLink=svLink;
 window.sAT=sAT;window.togglePlay=togglePlay;window.mpPlayIdx=mpPlayIdx;
 window.mpNext=mpNext;window.mpPrev=mpPrev;window.toggleLoop=toggleLoop;
