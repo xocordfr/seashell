@@ -51,7 +51,6 @@ a{text-decoration:none;color:inherit}
 .ifield{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--fg);font-family:'Space Grotesk',sans-serif;font-size:14px;transition:all .25s;outline:none}
 .ifield:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--adim)}
 .ifield::placeholder{color:var(--muted)}
-.ifield:disabled{opacity:.5;cursor:not-allowed}
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;transition:all .3s}
 .badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px 2px 3px;border-radius:20px;font-size:10px;font-weight:600;vertical-align:middle;line-height:1.6}
 .badge svg{width:16px;height:16px;flex-shrink:0}
@@ -116,7 +115,7 @@ a{text-decoration:none;color:inherit}
 .btoggle::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s}
 .btoggle.on::after{transform:translateX(18px)}
 .mplayer{position:relative;border-radius:16px;overflow:hidden;margin-top:20px;background:var(--card);border:1px solid var(--border)}
-.mp-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(60px) brightness(0.15) saturate(1.5);transform:scale(1.4);z-index:0;pointer-events:none;transition:background-image .6s ease}
+.mp-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(60px) brightness(0.15) saturate(1.5);transform:scale(1.4);z-index:0;pointer-events:none}
 .mp-inner{position:relative;z-index:1;padding:16px 20px}
 .mp-bar{display:flex;align-items:center;gap:14px}
 .mp-cover{width:52px;height:52px;border-radius:10px;overflow:hidden;flex-shrink:0;box-shadow:0 4px 16px rgba(0,0,0,0.4);background:var(--bg2)}
@@ -194,7 +193,6 @@ var RL={user:0,moderator:1,admin:2,manager:3,owner:4};
 var RC={user:'var(--fg2)',moderator:'#22c55e',admin:'#3b82f6',manager:'#a855f7',owner:'#fbbf24'};
 var RB={user:'var(--adim)',moderator:'rgba(34,197,94,0.12)',admin:'rgba(59,130,246,0.12)',manager:'rgba(168,85,247,0.12)',owner:'rgba(251,191,36,0.12)'};
 var ROUTES=['login','signup','dashboard','admin','help','donate','redirect'];
-
 function bH(k,sn){var b=BG[k];if(!b)return'';return'<span class="badge btip" data-tip="'+b.d+'" style="background:'+b.bg+';color:'+b.c+';">'+b.s+(sn?' '+b.n:'')+'</span>'}
 function rT(r){return'<span class="rtag" style="background:'+RB[r]+';color:'+RC[r]+';">'+r.toUpperCase()+'</span>'}
 function E(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
@@ -202,12 +200,10 @@ function lI(u){if(!u)return'fa-solid fa-link';var l=u.toLowerCase();if(l.include
 function canEdit(tr,mr){return mr==='owner'||RL[mr]>RL[tr]}
 function fmtTime(s){if(isNaN(s)||!isFinite(s))return'0:00';var m=Math.floor(s/60),sec=Math.floor(s%60);return m+':'+(sec<10?'0':'')+sec}
 function fmtDate(ts){if(!ts)return'-';return new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
-
-var D={gU:function(uid){if(!db)return Promise.resolve(null);return db.collection('users').doc(uid).get().then(function(d){return d.exists?d.data():null}).catch(function(e){console.error('gU error:',e);return null})},gUN:function(un){if(!db)return Promise.resolve(null);return db.collection('users').where('username','==',un).limit(1).get().then(function(s){return s.empty?null:s.docs[0].data()}).catch(function(e){console.error('gUN error:',e);return null})},gUE:function(un){if(!db)return Promise.resolve(null);return db.collection('usernames').doc(un).get().then(function(d){return d.exists?d.data():null}).catch(function(e){console.error('gUE error:',e);return null})},getNextUid:function(){if(!db)return Promise.resolve(1);var ref=db.collection('config').doc('counter');return db.runTransaction(function(t){return t.get(ref).then(function(d){var n=1;if(d.exists)n=(d.data().nextUid||0)+1;t.set(ref,{nextUid:n},{merge:true});return n})})},cU:function(uid,d){if(!db)return Promise.resolve(null);return this.getNextUid().then(function(num){var u={uid:uid,uidNumber:num,displayName:d.displayName||'',username:d.username||'',bio:'',avatar:'',backgroundUrl:'',links:[],badges:[],activeBadges:[],role:'user',banned:false,createdAt:Date.now(),views:0,themeColor:'#f472b6',music:{enabled:false,tracks:[],shuffle:false}};return db.collection('users').doc(uid).set(u).then(function(){if(d.username&&d.email)return db.collection('usernames').doc(d.username).set({uid:uid,email:d.email});return})}).then(function(){return D.gU(uid)})},uU:function(uid,upd){if(!db)return Promise.resolve(null);return db.collection('users').doc(uid).update(upd).then(function(){return D.gU(uid)})},dU:function(uid){if(!db)return Promise.resolve();return this.gU(uid).then(function(u){if(u&&u.username)return db.collection('usernames').doc(u.username).delete().catch(function(){});return}).then(function(){return db.collection('users').doc(uid).delete()})},aU:function(){if(!db)return Promise.resolve([]);return db.collection('users').get().then(function(s){return s.docs.map(function(d){return d.data()})}).catch(function(e){console.error('aU error:',e);return[]})},iV:function(un){if(!db)return Promise.resolve();return db.collection('users').where('username','==',un).limit(1).get().then(function(s){if(!s.empty){var r=s.docs[0].ref;return db.runTransaction(function(t){return t.get(r).then(function(d){if(d.exists)t.update(r,{views:(d.data().views||0)+1})})})}}).catch(function(){})},chUn:function(o,n,uid,email){if(!db)return Promise.resolve();var p=[];if(o)p.push(db.collection('usernames').doc(o).delete().catch(function(){}));if(n&&email)p.push(db.collection('usernames').doc(n).set({uid:uid,email:email}));return Promise.all(p)}};
+var D={gU:function(uid){if(!db)return Promise.resolve(null);return db.collection('users').doc(uid).get().then(function(d){return d.exists?d.data():null}).catch(function(e){console.error('gU:',e);return null})},gUN:function(un){if(!db)return Promise.resolve(null);return db.collection('users').where('username','==',un).limit(1).get().then(function(s){return s.empty?null:s.docs[0].data()}).catch(function(e){console.error('gUN:',e);return null})},gUE:function(un){if(!db)return Promise.resolve(null);return db.collection('usernames').doc(un).get().then(function(d){return d.exists?d.data():null}).catch(function(e){console.error('gUE:',e);return null})},getNextUid:function(){if(!db)return Promise.resolve(1);var ref=db.collection('config').doc('counter');return db.runTransaction(function(t){return t.get(ref).then(function(d){var n=1;if(d.exists)n=(d.data().nextUid||0)+1;t.set(ref,{nextUid:n},{merge:true});return n})})},cU:function(uid,d){if(!db)return Promise.resolve(null);return this.getNextUid().then(function(num){var u={uid:uid,uidNumber:num,displayName:d.displayName||'',username:d.username||'',bio:'',avatar:'',backgroundUrl:'',links:[],badges:[],activeBadges:[],role:'user',banned:false,createdAt:Date.now(),views:0,themeColor:'#f472b6',music:{enabled:false,tracks:[],shuffle:false}};return db.collection('users').doc(uid).set(u).then(function(){if(d.username&&d.email)return db.collection('usernames').doc(d.username).set({uid:uid,email:d.email});return})}).then(function(){return D.gU(uid)})},uU:function(uid,upd){if(!db)return Promise.resolve(null);return db.collection('users').doc(uid).update(upd).then(function(){return D.gU(uid)})},dU:function(uid){if(!db)return Promise.resolve();return this.gU(uid).then(function(u){if(u&&u.username)return db.collection('usernames').doc(u.username).delete().catch(function(){});return}).then(function(){return db.collection('users').doc(uid).delete()})},aU:function(){if(!db)return Promise.resolve([]);return db.collection('users').get().then(function(s){return s.docs.map(function(d){return d.data()})}).catch(function(e){console.error('aU:',e);return[]})},iV:function(un){if(!db)return Promise.resolve();return db.collection('users').where('username','==',un).limit(1).get().then(function(s){if(!s.empty){var r=s.docs[0].ref;return db.runTransaction(function(t){return t.get(r).then(function(d){if(d.exists)t.update(r,{views:(d.data().views||0)+1})})})}}).catch(function(){})},chUn:function(o,n,uid,email){if(!db)return Promise.resolve();var p=[];if(o)p.push(db.collection('usernames').doc(o).delete().catch(function(){}));if(n&&email)p.push(db.collection('usernames').doc(n).set({uid:uid,email:email}));return Promise.all(p)}};
 
 var CU=null,dTab='overview',aTab='users',allUsers=[],tempMusic=null;
 var mpState={audio:null,trackIdx:0,looping:false,shuffle:false,updateTimer:null,tracks:[],shuffleQueue:[]};
-
 function stopProfileAudio(){if(mpState.audio){mpState.audio.pause();mpState.audio.src='';mpState.audio=null}if(mpState.updateTimer){clearInterval(mpState.updateTimer);mpState.updateTimer=null}mpState.tracks=[];mpState.shuffleQueue=[];mpState.trackIdx=0;mpState.looping=false;mpState.shuffle=false}
 function shuffleArray(arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
 function getShuffleQueue(){var q=[];for(var i=0;i<mpState.tracks.length;i++){if(i!==mpState.trackIdx)q.push(i)}return shuffleArray(q)}
@@ -256,38 +252,34 @@ function p404(){return'<div style="min-height:calc(100vh - 60px);display:flex;al
 
 function pBio(un){if(!FB){document.getElementById('app').innerHTML=p404();return}D.iV(un);D.gUN(un).then(function(u){if(!u||u.banned){document.getElementById('app').innerHTML=p404();return}var ab=(u.activeBadges&&u.activeBadges.length?u.activeBadges:u.badges||[]);var bIcons=ab.map(function(b){return bH(b,false)}).join(' ')||'';var lks=u.links||[];var tc=u.themeColor||'#f472b6';var bgStyle=u.backgroundUrl?"background-image:url('"+u.backgroundUrl+"');background-size:cover;background-position:center;":'';var h='<div class="bwrap" style="'+bgStyle+'"><div style="position:absolute;inset:0;background:'+(u.backgroundUrl?'rgba(10,10,15,0.85)':'var(--bg)')+';z-index:0"></div><div class="bcard"><div style="text-align:center;margin-bottom:20px"><div style="width:100px;height:100px;border-radius:50%;margin:0 auto 16px;overflow:hidden">'+(u.avatar?'<img src="'+u.avatar+'" style="width:100%;height:100%;object-fit:cover">':'<div style="width:100%;height:100%;background:linear-gradient(135deg,'+tc+','+tc+'cc);display:flex;align-items:center;justify-content:center;font-family:Outfit;font-weight:700;font-size:40px;color:var(--bg)">'+(u.displayName||u.username||'?')[0].toUpperCase()+'</div>')+'</div><div style="font-weight:700;font-size:20px;margin-bottom:4px"><span class="uid-tip" data-uid="UID '+(u.uidNumber||'--')+'">'+E(u.displayName||u.username)+'</span></div>'+(bIcons?'<div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;flex-wrap:wrap">'+bIcons+'</div>':'')+'<div style="font-size:13px;color:'+tc+';margin-top:10px">@'+E(u.username)+'</div>'+(u.bio?'<div style="font-size:13px;color:var(--fg2);line-height:1.6;max-width:360px;margin:0 auto">'+E(u.bio)+'</div>':'')+'</div><div style="width:40px;height:1.5px;background:linear-gradient(90deg,transparent,'+tc+',transparent);margin:20px auto;border-radius:2px"></div>';if(lks.length){h+=lks.map(function(l){return'<a href="'+E(l.url)+'" target="_blank" rel="noopener" class="blink" style="border-color:rgba(255,255,255,0.05)"><i class="'+lI(l.url)+'" style="color:'+tc+'"></i><span style="flex:1;font-size:14px">'+E(l.title)+'</span><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;color:var(--muted)"></i></a>'}).join('')}else{h+='<p style="text-align:center;color:var(--muted);font-size:13px;padding:20px 0">No links yet.</p>'}if(u.music&&u.music.enabled&&u.music.tracks&&u.music.tracks.length)h+=buildProfilePlayer(u.music,tc);h+='<div style="text-align:center;margin-top:24px;font-size:11px;color:var(--muted)">'+(u.views||0)+' views &middot; seashell.lol</div></div></div>';document.getElementById('app').innerHTML=h;if(u.music&&u.music.enabled&&u.music.tracks&&u.music.tracks.length)initProfilePlayer(u.music)}).catch(function(err){console.error('Profile load error:',err);document.getElementById('app').innerHTML=p404()})}
 
-/* Dashboard */
 function pDash(){var u=CU,isA=RL[u.role]>=RL.moderator;var ni=[{id:'overview',i:'fa-solid fa-house',l:'Overview'},{id:'analytics',i:'fa-solid fa-chart-line',l:'Analytics'},{id:'badges',i:'fa-solid fa-award',l:'Badges'},{id:'settings',i:'fa-solid fa-gear',l:'Settings'},{id:'customise',i:'fa-solid fa-palette',l:'Customise'},{id:'links',i:'fa-solid fa-link',l:'Links'}];var s=ni.map(function(n){return'<div class="dni '+(dTab===n.id?'on':'')+'" onclick="sDT(\''+n.id+'\')"><i class="'+n.i+'"></i>'+n.l+'</div>'}).join('');if(isA)s+='<div class="dns"></div><div class="dni" onclick="nav(\'/admin\')" style="color:#a855f7"><i class="fa-solid fa-shield-halved"></i>Admin Panel</div>';return'<div class="dash-wrap"><div class="dash-side"><div class="dash-nav">'+s+'</div><div class="dbottom"><button class="dshare" onclick="window.open(\'/'+u.username+'\',\'_blank\')"><i class="fa-solid fa-share-nodes"></i>Share Your Profile</button><div class="duinfo"><span>@'+E(u.username)+'</span><br>UID '+(u.uidNumber||'--')+'</div></div></div><div class="dcontent" id="dC"></div></div>'}
 function iDash(){rDT()}
 function sDT(t){if(dTab==='customise')tempMusic=null;dTab=t;document.querySelectorAll('.dni').forEach(function(e){e.classList.remove('on')});var el=document.querySelector('.dni[onclick*="'+t+'"]');if(el)el.classList.add('on');rDT()}
 
-function rDT(){var el=document.getElementById('dC');if(!el||!CU)return;if(dTab==='customise'){if(!tempMusic)tempMusic=JSON.parse(JSON.stringify(CU.music||{enabled:false,tracks:[],shuffle:false}));el.innerHTML=dCu(CU)}else if(dTab==='overview')el.innerHTML=dOv(CU);else if(dTab==='analytics')el.innerHTML=dAn(CU);else if(dTab==='badges')el.innerHTML=dBg(CU);else if(dTab==='settings')el.innerHTML=dSt(CU);else if(dTab==='links')el.innerHTML=dLn(CU)}
+function rDT(){var el=document.getElementById('dC');if(!el||!CU)return;if(dTab==='customise'){if(!tempMusic)tempMusic=JSON.parse(JSON.stringify(CU.music||{enabled:false,tracks:[],shuffle:false}));el.innerHTML=dCu(CU);var sb=document.getElementById('muSaveBtn');if(sb)sb.onclick=muSave}else if(dTab==='overview')el.innerHTML=dOv(CU);else if(dTab==='analytics')el.innerHTML=dAn(CU);else if(dTab==='badges')el.innerHTML=dBg(CU);else if(dTab==='settings')el.innerHTML=dSt(CU);else if(dTab==='links')el.innerHTML=dLn(CU)}
 
 function dOv(u){var ab=(u.activeBadges&&u.activeBadges.length?u.activeBadges:u.badges||[]);var bHt=ab.map(function(b){return bH(b,true)}).join(' ')||'<span style="color:var(--muted);font-size:13px">No badges</span>';return'<h2 style="font-size:22px;font-weight:700;margin-bottom:24px;font-family:Outfit,sans-serif">Overview</h2><div class="sg" style="margin-bottom:28px"><div class="sc"><div class="sn">'+(u.views||0)+'</div><div class="sl">Profile Views</div></div><div class="sc"><div class="sn">'+(u.links||[]).length+'</div><div class="sl">Total Links</div></div><div class="sc"><div class="sn">'+ab.length+'</div><div class="sl">Badges</div></div><div class="sc"><div class="sn">'+rT(u.role)+'</div><div class="sl">Role</div></div></div><div class="card" style="margin-bottom:20px"><h3 style="font-size:15px;font-weight:600;margin-bottom:12px">Badges</h3><div style="display:flex;gap:8px;flex-wrap:wrap">'+bHt+'</div></div><div class="card"><h3 style="font-size:15px;font-weight:600;margin-bottom:12px">Quick Actions</h3><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="bs bsm" onclick="sDT(\'links\')"><i class="fa-solid fa-plus"></i> Add Link</button><button class="bs bsm" onclick="sDT(\'customise\')"><i class="fa-solid fa-palette"></i> Customise</button><button class="bs bsm" onclick="window.open(\'/'+u.username+'\',\'_blank\')"><i class="fa-solid fa-eye"></i> View Profile</button></div></div>'}
 function dAn(u){return'<h2 style="font-size:22px;font-weight:700;margin-bottom:24px;font-family:Outfit,sans-serif">Analytics</h2><div class="card"><p style="color:var(--fg2);font-size:14px">Profile analytics will be available soon. Your profile has been viewed '+(u.views||0)+' times.</p></div>'}
-function dBg(u){var all=Object.keys(BG);var active=u.activeBadges||[];var owned=u.badges||[];var list=all.map(function(k){var b=BG[k];if(!owned.includes(k))return'';return'<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:10px">'+bH(k,true)+'<span style="font-size:12px;color:var(--fg2)">'+b.d+'</span></div><button class="btoggle '+(active.includes(k)?'on':'')+'" onclick="tBadge(\''+k+'\')"></button></div>'}).join('');return'<h2 style="font-size:22px;font-weight:700;margin-bottom:24px;font-family:Outfit,sans-serif">Badges</h2><div class="card">'+(list||'<p style="color:var(--muted);font-size:13px">No badges yet. Contact staff on Discord to earn badges!</p>')+'</div>'}
-function tBadge(k){if(!CU)return;var ab=CU.activeBadges||[];var idx=ab.indexOf(k);if(idx>=0)ab.splice(idx,1);else ab.push(k);D.uU(CU.uid,{activeBadges:ab}).then(function(u){CU=u;rDT()}).catch(function(){toast('Error updating badge','er')})}
+function dBg(u){var all=Object.keys(BG);var active=u.activeBadges||[];var owned=u.badges||[];var list=all.map(function(k){var b=BG[k];if(!owned.includes(k))return'';return'<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:10px">'+bH(k,true)+'<span style="font-size:12px;color:var(--fg2)">'+b.d+'</span></div><button class="btoggle '+(active.includes(k)?'on':'')+'" onclick="tBadge(\''+k+'\')"></button></div>'}).join('');return'<h2 style="font-size:22px;font-weight:700;margin-bottom:24px;font-family:Outfit,sans-serif">Badges</h2><div class="card">'+(list||'<p style="color:var(--muted);font-size:13px">No badges yet.</p>')+'</div>'}
+function tBadge(k){if(!CU)return;var ab=CU.activeBadges||[];var idx=ab.indexOf(k);if(idx>=0)ab.splice(idx,1);else ab.push(k);D.uU(CU.uid,{activeBadges:ab}).then(function(u){if(u)CU=u;rDT()}).catch(function(e){toast('Error: '+e.message,'er')})}
 
 function dSt(u){return'<h2 style="font-size:22px;font-weight:700;margin-bottom:24px;font-family:Outfit,sans-serif">Settings</h2><div class="card" style="margin-bottom:16px"><h3 style="font-size:15px;font-weight:600;margin-bottom:16px">Profile</h3><div style="display:flex;flex-direction:column;gap:14px"><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Display Name</label><input id="stN" class="ifield" type="text" value="'+E(u.displayName)+'"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Username</label><div style="position:relative"><span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px">seashell.lol/</span><input id="stU" class="ifield" type="text" value="'+E(u.username)+'" style="padding-left:112px"></div></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Bio</label><textarea id="stB" class="ifield" rows="3" style="resize:vertical">'+E(u.bio)+'</textarea></div><button class="bp" onclick="svSt()"><i class="fa-solid fa-check"></i> Save Changes</button></div></div><div class="card"><h3 style="font-size:15px;font-weight:600;margin-bottom:16px">Change Password</h3><div style="display:flex;flex-direction:column;gap:14px"><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">New Password</label><input id="stP" class="ifield" type="password" placeholder="Min 6 characters"></div><button class="bs" onclick="chPw()"><i class="fa-solid fa-key"></i> Update Password</button></div></div>'}
-function svSt(){if(!CU)return;var n=document.getElementById('stN').value.trim(),un=document.getElementById('stU').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,''),bio=document.getElementById('stB').value.trim();if(!n||!un){toast('Name and username required','er');return}if(un.length<3){toast('Username min 3 chars','er');return}var oldUn=CU.username,updates={displayName:n,bio:bio};if(un!==oldUn){D.gUN(un).then(function(ex){if(ex&&ex.uid!==CU.uid){toast('Username taken','er');return null}return D.chUn(oldUn,un,CU.uid,auth.currentUser.email)}).then(function(r){if(r===null)return;updates.username=un;return D.uU(CU.uid,updates)}).then(function(u){if(u){CU=u;toast('Profile updated!','ok');rDT()}}).catch(function(){toast('Error updating profile','er')})}else{D.uU(CU.uid,updates).then(function(u){CU=u;toast('Profile updated!','ok');rDT()}).catch(function(){toast('Error updating profile','er')})}}
+function svSt(){if(!CU)return;var n=document.getElementById('stN').value.trim(),un=document.getElementById('stU').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,''),bio=document.getElementById('stB').value.trim();if(!n||!un){toast('Name and username required','er');return}if(un.length<3){toast('Username min 3 chars','er');return}var oldUn=CU.username,updates={displayName:n,bio:bio};if(un!==oldUn){D.gUN(un).then(function(ex){if(ex&&ex.uid!==CU.uid){toast('Username taken','er');return null}return D.chUn(oldUn,un,CU.uid,auth.currentUser.email)}).then(function(r){if(r===null)return;updates.username=un;return D.uU(CU.uid,updates)}).then(function(u){if(u){CU=u;toast('Profile updated!','ok');rDT()}}).catch(function(e){toast('Error: '+e.message,'er')})}else{D.uU(CU.uid,updates).then(function(u){if(u)CU=u;toast('Profile updated!','ok');rDT()}).catch(function(e){toast('Error: '+e.message,'er')})}}
 function chPw(){if(!auth||!auth.currentUser)return;var p=document.getElementById('stP').value;if(!p||p.length<6){toast('Password min 6 chars','er');return}auth.currentUser.updatePassword(p).then(function(){toast('Password updated!','ok');document.getElementById('stP').value=''}).catch(function(e){toast(e.message,'er')})}
 
-/* ===== MUSIC - completely rewritten with direct DB calls ===== */
+/* ===== MUSIC - uses D.uU like every other save, click handler attached via JS ===== */
 function dCu(u){
   var tc=u.themeColor||'#f472b6';
   var m=tempMusic||{enabled:false,tracks:[],shuffle:false};
   var h='<h2 style="font-size:22px;font-weight:700;margin-bottom:24px;font-family:Outfit,sans-serif">Customise</h2>';
 
-  /* Avatar */
   h+='<div class="card" style="margin-bottom:16px"><h3 style="font-size:15px;font-weight:600;margin-bottom:16px">Avatar</h3><div style="display:flex;align-items:center;gap:16px"><div style="width:64px;height:64px;border-radius:50%;overflow:hidden;background:var(--bg)">'+(u.avatar?'<img src="'+u.avatar+'" style="width:100%;height:100%;object-fit:cover">':'<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted)"><i class="fa-solid fa-user" style="font-size:24px"></i></div>')+'</div><div style="flex:1"><input id="cuAv" class="ifield" type="text" placeholder="Image URL" value="'+E(u.avatar||'')+'"><button class="bs bsm" style="margin-top:8px" onclick="svAv()"><i class="fa-solid fa-check"></i> Save</button></div></div></div>';
 
-  /* Background */
   h+='<div class="card" style="margin-bottom:16px"><h3 style="font-size:15px;font-weight:600;margin-bottom:16px">Background</h3><div><input id="cuBg" class="ifield" type="text" placeholder="Image URL" value="'+E(u.backgroundUrl||'')+'"><button class="bs bsm" style="margin-top:8px" onclick="svBg()"><i class="fa-solid fa-check"></i> Save</button></div></div>';
 
-  /* Theme Color */
   h+='<div class="card" style="margin-bottom:16px"><h3 style="font-size:15px;font-weight:600;margin-bottom:16px">Theme Color</h3><div style="display:flex;align-items:center;gap:12px"><input id="cuTc" type="color" value="'+tc+'" style="width:48px;height:36px;border:none;background:none;cursor:pointer"><input id="cuTcTxt" class="ifield" type="text" value="'+tc+'" style="flex:1"><button class="bs bsm" onclick="svTc()"><i class="fa-solid fa-check"></i> Save</button></div></div>';
 
-  /* Music Player */
+  /* Music Player - NO inline onclick on save button, handled via JS after render */
   h+='<div class="card" id="musicCard"><h3 style="font-size:15px;font-weight:600;margin-bottom:16px"><i class="fa-solid fa-music" style="margin-right:6px;color:var(--accent)"></i>Music Player</h3>';
 
   h+='<div style="margin-bottom:16px"><label style="font-size:12px;font-weight:500;color:var(--fg2);display:flex;align-items:center;gap:8px;cursor:pointer"><button class="btoggle '+(m.enabled?'on':'')+'" onclick="muToggleEnabled()"></button>Enable Music Player</label></div>';
@@ -309,7 +301,8 @@ function dCu(u){
     h+='<div style="margin-top:16px"><label style="font-size:12px;font-weight:500;color:var(--fg2);display:flex;align-items:center;gap:8px;cursor:pointer"><button class="btoggle '+(m.shuffle?'on':'')+'" onclick="muToggleShuffle()"></button>Shuffle by default</label></div>';
   }
 
-  h+='<div class="mu-save-bar"><button class="bs bsm" onclick="muReset()" style="margin-right:auto"><i class="fa-solid fa-rotate-left"></i> Discard</button><button class="bp" id="muSaveBtn" onclick="muSave()"><i class="fa-solid fa-floppy-disk"></i> Save Music Settings</button></div>';
+  /* Save bar - button has ID but NO onclick attribute */
+  h+='<div class="mu-save-bar"><button class="bs bsm" onclick="muReset()" style="margin-right:auto"><i class="fa-solid fa-rotate-left"></i> Discard</button><button class="bp" id="muSaveBtn">Save Music Settings</button></div>';
 
   h+='</div>';
   return h;
@@ -327,7 +320,7 @@ function muToggleShuffle(){
   rDT();
 }
 function muAddTrack(){
-  if(!tempMusic) tempMusic={enabled:false,tracks:[],shuffle:false};
+  if(!tempMusic) tempMusic={enabled:true,tracks:[],shuffle:false};
   if(!tempMusic.tracks) tempMusic.tracks=[];
   var ti=document.getElementById('muTi').value.trim();
   var ar=document.getElementById('muAr').value.trim();
@@ -345,54 +338,41 @@ function muRemoveTrack(i){
   rDT();
 }
 
-/* RESET button state helper */
-function muResetBtn(){
-  var btn=document.getElementById('muSaveBtn');
-  if(btn){btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-floppy-disk"></i> Save Music Settings';btn.style.opacity='1';btn.style.cursor='pointer'}
-}
-
-/* SAVE - writes tempMusic to Firestore directly, bypassing D.uU */
+/* SAVE - uses D.uU exactly like svAv/svBg/svTc, simple and proven */
 function muSave(){
-  try{
-    if(!CU){toast('Not logged in','er');return}
-    if(!tempMusic){toast('No music data','er');return}
-    if(!db){toast('Database not connected','er');return}
+  if(!CU||!CU.uid){toast('Not logged in','er');return}
+  if(!tempMusic){toast('No music data to save','er');return}
 
-    var btn=document.getElementById('muSaveBtn');
-    if(btn){btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Saving...';btn.style.opacity='0.6';btn.style.cursor='wait'}
+  var btn=document.getElementById('muSaveBtn');
+  if(!btn){toast('Save button not found in DOM','er');return}
+  btn.disabled=true;
+  btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+  btn.style.opacity='0.6';
 
-    /* Deep copy to avoid any reference issues */
-    var musicData=JSON.parse(JSON.stringify(tempMusic));
+  /* Deep copy to avoid reference issues */
+  var data=JSON.parse(JSON.stringify(tempMusic));
 
-    /* Write directly to Firestore */
-    db.collection('users').doc(CU.uid).update({music:musicData})
-      .then(function(){
-        /* Re-read from DB to confirm */
-        return db.collection('users').doc(CU.uid).get();
-      })
-      .then(function(doc){
-        if(doc&&doc.exists){
-          CU=doc.data();
-          tempMusic=JSON.parse(JSON.stringify(CU.music||{enabled:false,tracks:[],shuffle:false}));
-          toast('Music settings saved!','ok');
-        } else {
-          /* Fallback: trust our local data */
-          CU.music=JSON.parse(JSON.stringify(musicData));
-          tempMusic=JSON.parse(JSON.stringify(musicData));
-          toast('Music saved (could not verify)','in');
-        }
-        rDT();
-      })
-      .catch(function(err){
-        console.error('Music save error:',err);
-        toast('Save failed: '+(err.message||'Unknown error'),'er');
-        muResetBtn();
-      });
-  }catch(e){
-    console.error('muSave exception:',e);
-    toast('Unexpected error','er');
-    muResetBtn();
-  }
+  /* Use D.uU - THE EXACT SAME FUNCTION that works for avatar, background, links, badges, settings */
+  D.uU(CU.uid,{music:data})
+    .then(function(u){
+      if(u){
+        CU=u;
+        /* Re-sync temp from the saved user data */
+        tempMusic=JSON.parse(JSON.stringify(u.music||{enabled:false,tracks:[],shuffle:false}));
+      } else {
+        /* D.uU returned null (db error) - trust our local copy */
+        CU.music=JSON.parse(JSON.stringify(data));
+        tempMusic=JSON.parse(JSON.stringify(data));
+      }
+      toast('Music settings saved!','ok');
+      rDT();
+    })
+    .catch(function(err){
+      console.error('muSave error:',err);
+      toast('Save failed: '+err.message,'er');
+      /* Re-render to fix button state */
+      rDT();
+    });
 }
 
 /* Discard music changes */
@@ -403,17 +383,17 @@ function muReset(){
   rDT();
 }
 
-/* Avatar/Background/Color */
+/* Avatar/Background/Color - all use D.uU and work */
 function svAv(){if(!CU)return;D.uU(CU.uid,{avatar:document.getElementById('cuAv').value.trim()}).then(function(u){if(u)CU=u;toast('Avatar saved!','ok');rDT()}).catch(function(e){toast('Error: '+e.message,'er')})}
 function svBg(){if(!CU)return;D.uU(CU.uid,{backgroundUrl:document.getElementById('cuBg').value.trim()}).then(function(u){if(u)CU=u;toast('Background saved!','ok')}).catch(function(e){toast('Error: '+e.message,'er')})}
 function svTc(){if(!CU)return;D.uU(CU.uid,{themeColor:document.getElementById('cuTc').value}).then(function(u){if(u)CU=u;toast('Theme color saved!','ok')}).catch(function(e){toast('Error: '+e.message,'er')})}
 
 /* Links */
 function dLn(u){var lks=u.links||[];var list=lks.map(function(l,i){return'<div class="am-item"><div style="width:32px;height:32px;border-radius:8px;background:var(--adim);display:flex;align-items:center;justify-content:center"><i class="'+lI(l.url)+'" style="color:var(--accent);font-size:14px"></i></div><div class="am-item-info"><div class="am-item-t">'+E(l.title)+'</div><div class="am-item-a">'+E(l.url)+'</div></div><div style="display:flex;gap:6px"><button class="bs bsm" onclick="edLink('+i+')"><i class="fa-solid fa-pen"></i></button><button class="bd bsm" onclick="rmLink('+i+')"><i class="fa-solid fa-trash"></i></button></div></div>'}).join('');return'<h2 style="font-size:22px;font-weight:700;margin-bottom:24px;font-family:Outfit,sans-serif">Links</h2><div class="card" style="margin-bottom:16px"><h3 style="font-size:15px;font-weight:600;margin-bottom:16px">Add Link</h3><div style="display:flex;flex-direction:column;gap:10px"><input id="lnTi" class="ifield" type="text" placeholder="Link Title"><input id="lnUr" class="ifield" type="text" placeholder="https://example.com"><button class="bp" onclick="addLink()"><i class="fa-solid fa-plus"></i> Add Link</button></div></div><div class="card"><h3 style="font-size:15px;font-weight:600;margin-bottom:16px">Your Links ('+lks.length+')</h3>'+(list||'<p style="color:var(--muted);font-size:13px">No links added yet.</p>')+'</div>'}
-function addLink(){if(!CU)return;var ti=document.getElementById('lnTi').value.trim(),ur=document.getElementById('lnUr').value.trim();if(!ti||!ur){toast('Title and URL required','er');return}var lks=CU.links||[];lks.push({title:ti,url:ur});D.uU(CU.uid,{links:lks}).then(function(u){if(u)CU=u;toast('Link added!','ok');rDT()}).catch(function(){toast('Error adding link','er')})}
-function rmLink(i){if(!CU)return;var lks=CU.links||[];lks.splice(i,1);D.uU(CU.uid,{links:lks}).then(function(u){if(u)CU=u;toast('Link removed','ok');rDT()}).catch(function(){toast('Error removing link','er')})}
+function addLink(){if(!CU)return;var ti=document.getElementById('lnTi').value.trim(),ur=document.getElementById('lnUr').value.trim();if(!ti||!ur){toast('Title and URL required','er');return}var lks=CU.links||[];lks.push({title:ti,url:ur});D.uU(CU.uid,{links:lks}).then(function(u){if(u)CU=u;toast('Link added!','ok');rDT()}).catch(function(e){toast('Error: '+e.message,'er')})}
+function rmLink(i){if(!CU)return;var lks=CU.links||[];lks.splice(i,1);D.uU(CU.uid,{links:lks}).then(function(u){if(u)CU=u;toast('Link removed','ok');rDT()}).catch(function(e){toast('Error: '+e.message,'er')})}
 function edLink(i){if(!CU)return;var l=CU.links[i];showModal('Edit Link','<div style="display:flex;flex-direction:column;gap:10px"><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Title</label><input id="edLnTi" class="ifield" type="text" value="'+E(l.title)+'"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">URL</label><input id="edLnUr" class="ifield" type="text" value="'+E(l.url)+'"></div></div>',[{l:'Cancel',a:'clM()'},{l:'Save',c:'bp',a:'svLink('+i+')'}])}
-function svLink(i){if(!CU)return;var ti=document.getElementById('edLnTi').value.trim(),ur=document.getElementById('edLnUr').value.trim();if(!ti||!ur){toast('Title and URL required','er');return}var lks=CU.links||[];lks[i]={title:ti,url:ur};D.uU(CU.uid,{links:lks}).then(function(u){if(u)CU=u;toast('Link updated!','ok');clM();rDT()}).catch(function(){toast('Error updating link','er')})}
+function svLink(i){if(!CU)return;var ti=document.getElementById('edLnTi').value.trim(),ur=document.getElementById('edLnUr').value.trim();if(!ti||!ur){toast('Title and URL required','er');return}var lks=CU.links||[];lks[i]={title:ti,url:ur};D.uU(CU.uid,{links:lks}).then(function(u){if(u)CU=u;toast('Link updated!','ok');clM();rDT()}).catch(function(e){toast('Error: '+e.message,'er')})}
 
 /* Admin Panel */
 function pAdmin(){return'<div class="dash-wrap"><div class="aside"><div class="anav '+(aTab==='users'?'on':'')+'" onclick="sAT(\'users\')"><i class="fa-solid fa-users"></i>Users</div><div class="anav '+(aTab==='config'?'on':'')+'" onclick="sAT(\'config\')"><i class="fa-solid fa-sliders"></i>Config</div><div class="dns" style="margin:10px 18px"></div><div class="anav" onclick="nav(\'/dashboard\')"><i class="fa-solid fa-arrow-left"></i>Back to Dashboard</div></div><div class="abody" id="aC"></div></div>'}
@@ -434,13 +414,13 @@ function aDoBan(uid,banned){D.uU(uid,{banned:banned}).then(function(){toast(bann
 function aDelUser(uid,username){showModal('Delete User','<p style="color:var(--fg2);font-size:14px">Are you sure you want to <span style="color:var(--danger);font-weight:600">permanently delete</span> @'+E(username)+'? This cannot be undone.</p>',[{l:'Cancel',a:'clM()'},{l:'Delete Permanently',c:'bd',a:'aDoDel(\''+uid+'\')'}])}
 function aDoDel(uid){D.dU(uid).then(function(){toast('User deleted','ok');clM();loadAdminUsers()}).catch(function(e){toast('Error: '+e.message,'er')})}
 
-/* Expose */
+/* Expose ALL functions to window immediately after definition */
 window.nav=nav;window.router=router;window.hL=hL;window.hS=hS;window.doLogout=doLogout;
 window.sDT=sDT;window.tBadge=tBadge;window.svSt=svSt;window.chPw=chPw;
 window.svAv=svAv;window.svBg=svBg;window.svTc=svTc;
 window.muToggleEnabled=muToggleEnabled;window.muToggleShuffle=muToggleShuffle;
 window.muAddTrack=muAddTrack;window.muRemoveTrack=muRemoveTrack;
-window.muSave=muSave;window.muReset=muReset;window.muResetBtn=muResetBtn;
+window.muSave=muSave;window.muReset=muReset;
 window.addLink=addLink;window.rmLink=rmLink;window.edLink=edLink;window.svLink=svLink;
 window.sAT=sAT;window.togglePlay=togglePlay;window.mpPlayIdx=mpPlayIdx;
 window.mpNext=mpNext;window.mpPrev=mpPrev;window.toggleLoop=toggleLoop;
