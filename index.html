@@ -15,508 +15,383 @@
 tailwind.config={theme:{extend:{fontFamily:{display:['Outfit','sans-serif'],body:['Space Grotesk','sans-serif']}}}}
 </script>
 <style>
-:root{--bg:#0a0a0f;--bg2:#101018;--card:#14141e;--card2:#1a1a28;--border:#222235;--border2:#2a2a40;--fg:#e4e4f0;--fg2:#9898b0;--muted:#5c5c78;--accent:#f472b6;--accent2:#fb7185;--accent-dim:rgba(244,114,182,0.08);--accent-dim2:rgba(244,114,182,0.04);--danger:#ef4444;--success:#22c55e;--warn:#fbbf24}
+:root{--bg:#0a0a0f;--bg2:#101018;--card:#14141e;--card2:#1a1a28;--border:#222235;--fg:#e4e4f0;--fg2:#9898b0;--muted:#5c5c78;--accent:#f472b6;--accent2:#fb7185;--adim:rgba(244,114,182,0.08);--danger:#ef4444;--success:#22c55e}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;overflow-x:hidden}
 h1,h2,h3,h4,h5,h6{font-family:'Outfit',sans-serif}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+a{text-decoration:none;color:inherit}
 
+/* Nav */
 .nav-bar{position:fixed;top:0;left:0;right:0;z-index:100;height:60px;display:flex;align-items:center;backdrop-filter:blur(24px);background:rgba(10,10,15,0.75);border-bottom:1px solid rgba(34,34,53,0.5)}
 .nav-inner{max-width:1200px;width:100%;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between}
-.nav-logo{font-family:'Outfit',sans-serif;font-weight:700;font-size:17px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:8px}
+.nav-logo{font-family:'Outfit',sans-serif;font-weight:700;font-size:17px;color:var(--accent);display:flex;align-items:center;gap:8px;cursor:pointer}
 .nav-links{display:flex;align-items:center;gap:28px}
-.nav-links a.nl{font-size:13px;color:var(--fg2);text-decoration:none;transition:color .2s;font-weight:400}
-.nav-links a.nl:hover{color:var(--fg)}
-.btn-signup{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a0f;font-weight:600;font-size:13px;padding:7px 18px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .25s;font-family:'Space Grotesk',sans-serif}
-.btn-signup:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(244,114,182,0.35)}
+.nav-links .nl{font-size:13px;color:var(--fg2);transition:color .2s;cursor:pointer}
+.nav-links .nl:hover{color:var(--fg)}
+.btn-su{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a0f;font-weight:600;font-size:13px;padding:7px 18px;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .25s;font-family:'Space Grotesk',sans-serif}
+.btn-su:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(244,114,182,0.35)}
 
-.home-wrap{position:relative;min-height:100vh;overflow:hidden}
-.home-bg-pattern{position:absolute;inset:0;z-index:0}
-.home-bg-pattern::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cellipse cx='32' cy='32' rx='20' ry='11' fill='none' stroke='rgba(244,114,182,0.035)' stroke-width='1' transform='rotate(45 32 32)'/%3E%3C/svg%3E");background-size:64px 64px}
-.home-bg-pattern::after{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='72' height='72' viewBox='0 0 72 72' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M36 16C40 12,48 12,48 18C48 24,36 32,36 32C36 32,24 24,24 18C24 12,32 12,36 16Z' fill='none' stroke='rgba(244,114,182,0.025)' stroke-width='0.8'/%3E%3C/svg%3E");background-size:72px 72px}
-.home-glow{position:absolute;border-radius:50%;filter:blur(120px);pointer-events:none}
+/* Home */
+.hwrap{position:relative;min-height:100vh;overflow:hidden}
+.hpat{position:absolute;inset:0;z-index:0}
+.hpat::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cellipse cx='32' cy='32' rx='20' ry='11' fill='none' stroke='rgba(244,114,182,0.035)' stroke-width='1' transform='rotate(45 32 32)'/%3E%3C/svg%3E");background-size:64px 64px}
+.hpat::after{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='72' height='72' viewBox='0 0 72 72' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M36 16C40 12,48 12,48 18C48 24,36 32,36 32C36 32,24 24,24 18C24 12,32 12,36 16Z' fill='none' stroke='rgba(244,114,182,0.025)' stroke-width='0.8'/%3E%3C/svg%3E");background-size:72px 72px}
+.hgl{position:absolute;border-radius:50%;filter:blur(120px);pointer-events:none}
 .hg1{width:500px;height:500px;background:rgba(244,114,182,0.06);top:-15%;left:-8%;animation:hf1 22s ease-in-out infinite}
 .hg2{width:350px;height:350px;background:rgba(251,113,133,0.04);bottom:5%;right:-5%;animation:hf2 28s ease-in-out infinite}
 .hg3{width:250px;height:250px;background:rgba(244,114,182,0.035);top:40%;right:20%;animation:hf3 18s ease-in-out infinite}
 @keyframes hf1{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,25px)}}
 @keyframes hf2{0%,100%{transform:translate(0,0)}50%{transform:translate(-25px,-30px)}}
 @keyframes hf3{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.hhero{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:60px 28px 40px;gap:60px}
+.htxt{flex:1;max-width:560px}
+.htag{display:inline-flex;align-items:center;gap:6px;background:var(--adim);border:1px solid rgba(244,114,182,0.12);border-radius:100px;padding:5px 14px;margin-bottom:28px;font-size:12px;color:var(--accent);font-weight:500}
+.htag span{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:bk 2s infinite}
+@keyframes bk{0%,100%{opacity:1}50%{opacity:.3}}
+.htitle{font-size:clamp(34px,5.5vw,56px);font-weight:900;line-height:1.08;margin-bottom:20px;color:#fff;letter-spacing:-0.02em}
+.hdesc{font-size:15px;line-height:1.75;color:var(--fg2);margin-bottom:32px;max-width:440px}
+.hbtns{display:flex;gap:12px;flex-wrap:wrap}
+.hlaunch{margin-top:56px;font-size:13px;color:var(--muted)}
+.hprev{flex-shrink:0;width:320px;position:relative}
+.pglow{position:absolute;inset:-20px;background:radial-gradient(ellipse,rgba(244,114,182,0.08),transparent 70%);border-radius:24px;filter:blur(20px);z-index:0}
+.pcard{position:relative;z-index:1;background:rgba(20,20,30,0.7);backdrop-filter:blur(16px);border:1px solid rgba(244,114,182,0.1);border-radius:20px;padding:32px 24px;width:100%}
+.pav{width:80px;height:80px;border-radius:50%;margin:0 auto 14px;padding:2px;background:linear-gradient(135deg,var(--accent),var(--accent2),#c084fc);animation:pr 4s linear infinite}
+@keyframes pr{0%{filter:hue-rotate(0)}100%{filter:hue-rotate(360deg)}}
+.pav img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid var(--bg)}
+.plink{display:flex;align-items:center;gap:10px;padding:9px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:10px;margin-bottom:8px;font-size:12px;color:var(--fg2);transition:all .2s}
+.plink i{color:var(--accent);font-size:14px;width:18px;text-align:center}
+.plink:hover{border-color:rgba(244,114,182,0.2);color:var(--fg)}
 
-.home-hero{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:60px 28px 40px;gap:60px}
-.home-text{flex:1;max-width:560px}
-.home-tag{display:inline-flex;align-items:center;gap:6px;background:var(--accent-dim);border:1px solid rgba(244,114,182,0.12);border-radius:100px;padding:5px 14px;margin-bottom:28px;font-size:12px;color:var(--accent);font-weight:500}
-.home-tag span{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:blink 2s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.home-title{font-size:clamp(34px,5.5vw,56px);font-weight:900;line-height:1.08;margin-bottom:20px;color:#fff;letter-spacing:-0.02em}
-.home-desc{font-size:15px;line-height:1.75;color:var(--fg2);margin-bottom:32px;max-width:440px}
-.home-btns{display:flex;gap:12px;flex-wrap:wrap}
-.home-launch{margin-top:56px;font-size:13px;color:var(--muted)}
-
-.home-preview{flex-shrink:0;width:320px;position:relative}
-.preview-glow{position:absolute;inset:-20px;background:radial-gradient(ellipse,rgba(244,114,182,0.08),transparent 70%);border-radius:24px;filter:blur(20px);z-index:0}
-.preview-card{position:relative;z-index:1;background:rgba(20,20,30,0.7);backdrop-filter:blur(16px);border:1px solid rgba(244,114,182,0.1);border-radius:20px;padding:32px 24px;width:100%}
-.preview-avatar{width:80px;height:80px;border-radius:50%;margin:0 auto 14px;padding:2px;background:linear-gradient(135deg,var(--accent),var(--accent2),#c084fc);animation:prering 4s linear infinite}
-@keyframes prering{0%{filter:hue-rotate(0)}100%{filter:hue-rotate(360deg)}}
-.preview-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid var(--bg)}
-.preview-name{text-align:center;font-weight:700;font-size:17px;margin-bottom:2px}
-.preview-user{text-align:center;font-size:12px;color:var(--accent);margin-bottom:10px}
-.preview-bio{text-align:center;font-size:12px;color:var(--fg2);margin-bottom:16px;line-height:1.5}
-.preview-divider{width:40px;height:1.5px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:0 auto 16px;border-radius:2px}
-.preview-link{display:flex;align-items:center;gap:10px;padding:9px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:10px;margin-bottom:8px;font-size:12px;color:var(--fg2);transition:all .2s}
-.preview-link i{color:var(--accent);font-size:14px;width:18px;text-align:center}
-.preview-link:hover{border-color:rgba(244,114,182,0.2);color:var(--fg)}
-
-.input-field{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--fg);font-family:'Space Grotesk',sans-serif;font-size:14px;transition:all .25s;outline:none}
-.input-field:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
-.input-field::placeholder{color:var(--muted)}
+/* Shared */
+.ifield{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--fg);font-family:'Space Grotesk',sans-serif;font-size:14px;transition:all .25s;outline:none}
+.ifield:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--adim)}
+.ifield::placeholder{color:var(--muted)}
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;transition:all .3s}
-
 .badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px 2px 3px;border-radius:20px;font-size:10px;font-weight:600;vertical-align:middle;line-height:1.6}
 .badge svg{width:16px;height:16px;flex-shrink:0}
-.badge-tip{position:relative}.badge-tip::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--border);color:var(--fg);padding:4px 10px;border-radius:6px;font-size:10px;font-weight:400;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;z-index:50}.badge-tip:hover::after{opacity:1}
-.role-tag{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:5px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.btip{position:relative}.btip::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--border);color:var(--fg);padding:4px 10px;border-radius:6px;font-size:10px;font-weight:400;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;z-index:50}.btip:hover::after{opacity:1}
+.rtag{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:5px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
 
-#toast-box{position:fixed;top:72px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px}
-.toast{padding:11px 18px;border-radius:10px;font-size:13px;font-weight:500;backdrop-filter:blur(10px);animation:tin .3s ease;min-width:240px;display:flex;align-items:center;gap:10px;border:1px solid}
-.toast-ok{background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.25);color:var(--success)}
-.toast-err{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.25);color:var(--danger)}
-.toast-info{background:rgba(244,114,182,0.12);border-color:rgba(244,114,182,0.25);color:var(--accent)}
-@keyframes tin{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
-@keyframes tout{from{opacity:1}to{transform:translateX(100%);opacity:0}}
+/* Toast */
+#tbox{position:fixed;top:72px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px}
+.tst{padding:11px 18px;border-radius:10px;font-size:13px;font-weight:500;backdrop-filter:blur(10px);animation:ti .3s ease;min-width:240px;display:flex;align-items:center;gap:10px;border:1px solid}
+.t-ok{background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.25);color:var(--success)}
+.t-er{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.25);color:var(--danger)}
+.t-in{background:rgba(244,114,182,0.12);border-color:rgba(244,114,182,0.25);color:var(--accent)}
+@keyframes ti{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes to{from{opacity:1}to{transform:translateX(100%);opacity:0}}
 
-.modal-bg{position:fixed;inset:0;z-index:150;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;animation:mfin .2s}
-.modal-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:500px;width:92%;max-height:85vh;overflow-y:auto;animation:msin .25s}
-@keyframes mfin{from{opacity:0}to{opacity:1}}
-@keyframes msin{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+/* Modal */
+.mbg{position:fixed;inset:0;z-index:150;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;animation:mf .2s}
+.mbox{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:500px;width:92%;max-height:85vh;overflow-y:auto;animation:ms .25s}
+@keyframes mf{from{opacity:0}to{opacity:1}}
+@keyframes ms{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
 
-.bio-wrap{min-height:100vh;position:relative;overflow:hidden}
-.bio-bg{position:absolute;inset:0;z-index:0}
-.bio-card{position:relative;z-index:1;max-width:440px;width:90%;margin:0 auto;padding:50px 0 36px}
-.bio-avatar-ring{width:100px;height:100px;border-radius:50%;padding:2.5px;background:linear-gradient(135deg,var(--accent),var(--accent2),#c084fc);animation:prering 4s linear infinite;margin:0 auto}
-.bio-avatar-ring>*{width:100%;height:100%;border-radius:50%;object-fit:cover;border:3px solid var(--bg);display:flex;align-items:center;justify-content:center}
-.bio-link{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:11px 15px;display:flex;align-items:center;gap:11px;cursor:pointer;transition:all .25s;text-decoration:none;color:var(--fg)}
-.bio-link:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 5px 18px rgba(244,114,182,0.08)}
-.bio-link i{font-size:16px;width:22px;text-align:center;color:var(--accent)}
+/* Bio */
+.bwrap{min-height:100vh;position:relative;overflow:hidden}
+.bbg{position:absolute;inset:0;z-index:0}
+.bcard{position:relative;z-index:1;max-width:440px;width:90%;margin:0 auto;padding:50px 0 36px}
+.baring{width:100px;height:100px;border-radius:50%;padding:2.5px;background:linear-gradient(135deg,var(--accent),var(--accent2),#c084fc);animation:pr 4s linear infinite;margin:0 auto}
+.blink{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:11px 15px;display:flex;align-items:center;gap:11px;cursor:pointer;transition:all .25s;color:var(--fg)}
+.blink:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 5px 18px rgba(244,114,182,0.08)}
+.blink i{font-size:16px;width:22px;text-align:center;color:var(--accent)}
 
-.admin-side{width:230px;min-height:calc(100vh - 60px);background:var(--bg2);border-right:1px solid var(--border);padding:18px 0;position:fixed;top:60px;left:0}
-.admin-nav{padding:9px 22px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:9px;font-size:13px;color:var(--fg2);border-left:3px solid transparent}
-.admin-nav:hover{background:var(--accent-dim);color:var(--fg)}
-.admin-nav.on{color:var(--accent);border-left-color:var(--accent);background:var(--accent-dim)}
-.admin-body{margin-left:230px;padding:28px;min-height:calc(100vh - 60px)}
-.user-tbl{width:100%;border-collapse:separate;border-spacing:0}
-.user-tbl th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
-.user-tbl td{padding:10px 14px;font-size:12px;border-bottom:1px solid rgba(34,34,53,0.4);vertical-align:middle}
-.user-tbl tr:hover td{background:var(--accent-dim)}
+/* Admin */
+.aside{width:230px;min-height:calc(100vh - 60px);background:var(--bg2);border-right:1px solid var(--border);padding:18px 0;position:fixed;top:60px;left:0}
+.anav{padding:9px 22px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:9px;font-size:13px;color:var(--fg2);border-left:3px solid transparent}
+.anav:hover{background:var(--adim);color:var(--fg)}
+.anav.on{color:var(--accent);border-left-color:var(--accent);background:var(--adim)}
+.abody{margin-left:230px;padding:28px;min-height:calc(100vh - 60px)}
+.utbl{width:100%;border-collapse:separate;border-spacing:0}
+.utbl th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+.utbl td{padding:10px 14px;font-size:12px;border-bottom:1px solid rgba(34,34,53,0.4);vertical-align:middle}
+.utbl tr:hover td{background:var(--adim)}
 
-.dash-tab{padding:9px 16px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .2s;font-family:'Space Grotesk',sans-serif}
-.dash-tab:hover{color:var(--fg2)}
-.dash-tab.on{color:var(--accent);border-bottom-color:var(--accent)}
-.btn-pri{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a0f;font-weight:600;font-size:13px;padding:9px 20px;border-radius:9px;border:none;cursor:pointer;transition:all .25s;font-family:'Space Grotesk',sans-serif;display:inline-flex;align-items:center;gap:7px}
-.btn-pri:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(244,114,182,0.3)}
-.btn-sec{background:var(--card);color:var(--fg);font-weight:500;font-size:13px;padding:9px 20px;border-radius:9px;border:1px solid var(--border);cursor:pointer;transition:all .25s;font-family:'Space Grotesk',sans-serif;display:inline-flex;align-items:center;gap:7px}
-.btn-sec:hover{background:var(--card2);border-color:var(--accent);color:var(--accent)}
-.btn-dan{background:rgba(239,68,68,0.12);color:var(--danger);font-weight:500;font-size:12px;padding:7px 14px;border-radius:7px;border:1px solid rgba(239,68,68,0.25);cursor:pointer;transition:all .25s;font-family:'Space Grotesk',sans-serif;display:inline-flex;align-items:center;gap:5px}
-.btn-dan:hover{background:rgba(239,68,68,0.2)}
-.btn-sm{padding:5px 12px;font-size:11px;border-radius:6px}
-.btn-com{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a0f;font-weight:600;font-size:14px;padding:11px 26px;border-radius:10px;border:none;cursor:pointer;transition:all .25s;font-family:'Space Grotesk',sans-serif;display:inline-flex;align-items:center;gap:8px}
-.btn-com:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(244,114,182,0.3)}
-.btn-con{background:rgba(255,255,255,0.04);color:var(--fg);font-weight:500;font-size:14px;padding:11px 26px;border-radius:10px;border:1px solid var(--border);cursor:pointer;transition:all .25s;font-family:'Space Grotesk',sans-serif;display:inline-flex;align-items:center;gap:8px}
-.btn-con:hover{background:rgba(255,255,255,0.07);border-color:var(--accent)}
+/* Buttons */
+.dtab{padding:9px 16px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .2s;font-family:'Space Grotesk',sans-serif}
+.dtab:hover{color:var(--fg2)}.dtab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.bp{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a0f;font-weight:600;font-size:13px;padding:9px 20px;border-radius:9px;border:none;cursor:pointer;transition:all .25s;font-family:'Space Grotesk',sans-serif;display:inline-flex;align-items:center;gap:7px}
+.bp:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(244,114,182,0.3)}
+.bs{background:var(--card);color:var(--fg);font-weight:500;font-size:13px;padding:9px 20px;border-radius:9px;border:1px solid var(--border);cursor:pointer;transition:all .25s;font-family:'Space Grotesk',sans-serif;display:inline-flex;align-items:center;gap:7px}
+.bs:hover{background:var(--card2);border-color:var(--accent);color:var(--accent)}
+.bd{background:rgba(239,68,68,0.12);color:var(--danger);font-weight:500;font-size:12px;padding:7px 14px;border-radius:7px;border:1px solid rgba(239,68,68,0.25);cursor:pointer;transition:all .25s;font-family:'Space Grotesk',sans-serif;display:inline-flex;align-items:center;gap:5px}
+.bd:hover{background:rgba(239,68,68,0.2)}
+.bsm{padding:5px 12px;font-size:11px;border-radius:6px}
+.bc{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a0f;font-weight:600;font-size:14px;padding:11px 26px;border-radius:10px;border:none;cursor:pointer;transition:all .25s;font-family:'Space Grotesk',sans-serif;display:inline-flex;align-items:center;gap:8px}
+.bc:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(244,114,182,0.3)}
 
-.loading-screen{position:fixed;inset:0;z-index:300;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s}
-.loading-screen.done{opacity:0;pointer-events:none}
-.ld-spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* Loading */
+.lds{position:fixed;inset:0;z-index:300;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s}
+.lds.done{opacity:0;pointer-events:none}
+.ldsp{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
 
-@media(max-width:900px){.home-hero{flex-direction:column;text-align:center}.home-text{max-width:100%}.home-desc{margin-left:auto;margin-right:auto}.home-btns{justify-content:center}.home-preview{width:280px}.admin-side{display:none}.admin-body{margin-left:0}.nav-links .nl-hide{display:none!important}}
+/* Static pages */
+.spage{max-width:640px;margin:0 auto;padding:60px 20px}
+.spage h1{font-size:28px;font-weight:800;margin-bottom:8px}
+.spage h2{font-size:20px;font-weight:700;margin:24px 0 10px}
+.spage p{color:var(--fg2);font-size:14px;line-height:1.75;margin-bottom:12px}
+.spage ul{color:var(--fg2);font-size:14px;line-height:2;padding-left:20px;margin-bottom:16px}
+
+@media(max-width:900px){.hhero{flex-direction:column;text-align:center}.htxt{max-width:100%}.hdesc{margin-left:auto;margin-right:auto}.hbtns{justify-content:center}.hprev{width:280px}.aside{display:none}.abody{margin-left:0}.nav-links .nh{display:none!important}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
+<div class="lds" id="lds"><div class="ldsp"></div><p style="margin-top:14px;font-size:13px;color:var(--muted)">Connecting...</p></div>
 
-<!-- Loading screen -->
-<div class="loading-screen" id="loadScreen">
-  <div class="ld-spinner"></div>
-  <p style="margin-top:14px;font-size:13px;color:var(--muted)">Connecting...</p>
-</div>
-
-<!-- Navigation -->
 <nav class="nav-bar">
   <div class="nav-inner">
-    <a href="#/" class="nav-logo">
+    <div class="nav-logo" onclick="nav('/')">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2C8 2 4 6 4 10c0 4 3 7 5 9 1 1 2 2 3 3 1-1 2-2 3-3 2-2 5-5 5-9 0-4-4-8-8-8z" fill="rgba(244,114,182,0.2)" stroke="var(--accent)" stroke-width="1.5"/><path d="M12 6c-2 0-4 2-4 4s2 4 4 4 4-2 4-4-2-4-4-4z" fill="var(--accent)" opacity="0.3"/></svg>
       seashell.lol
-    </a>
-    <div class="nav-links" id="navLinks">
-      <a href="#/" class="nl nl-hide">Help Centre</a>
-      <a href="https://discord.gg/wvTcFqa9Ej" target="_blank" rel="noopener" class="nl nl-hide">Community</a>
-      <a href="#/" class="nl nl-hide">Donations</a>
-      <div id="navAuth" style="display:flex;align-items:center;gap:12px"></div>
+    </div>
+    <div class="nav-links" id="navL">
+      <span class="nl nh" onclick="nav('/help')">Help Centre</span>
+      <span class="nl nh" onclick="window.open('https://discord.gg/wvTcFqa9Ej','_blank')">Community</span>
+      <span class="nl nh" onclick="nav('/donate')">Donations</span>
+      <div id="navA" style="display:flex;align-items:center;gap:12px"></div>
     </div>
   </div>
 </nav>
 
 <main id="app" style="padding-top:60px;min-height:100vh;position:relative;z-index:1"></main>
-<div id="toast-box"></div>
-<div id="modal-box"></div>
+<div id="tbox"></div>
+<div id="mbox"></div>
 
 <script>
-/* ===== Firebase Configuration ===== */
-const firebaseConfig = {
-  apiKey: "AIzaSyDbvpzYvPDxzYBXr7-WLFWabmeIRkJlTnw",
-  authDomain: "seashell-27f34.firebaseapp.com",
-  projectId: "seashell-27f34",
-  storageBucket: "seashell-27f34.firebasestorage.app",
-  messagingSenderId: "225540891149",
-  appId: "1:225540891149:web:a2dd3060fe7ab6d975ab44"
+/* ===================== FIREBASE ===================== */
+const FC={apiKey:"AIzaSyDbvpzYvPDxzYBXr7-WLFWabmeIRkJlTnw",authDomain:"seashell-27f34.firebaseapp.com",projectId:"seashell-27f34",storageBucket:"seashell-27f34.firebasestorage.app",messagingSenderId:"225540891149",appId:"1:225540891149:web:a2dd3060fe7ab6d975ab44"};
+
+let FB=false,auth=null,db=null;
+try{firebase.initializeApp(FC);auth=firebase.auth();db=firebase.firestore();FB=true}catch(e){console.error('Firebase init failed:',e)}
+
+/* ===================== BADGES ===================== */
+const B={
+verified:{n:'Verified',c:'#f472b6',bg:'rgba(244,114,182,0.12)',d:'Verified identity',s:`<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#f472b6"/><path d="M6 10l3 3 5-6" stroke="#0a0a0f" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`},
+premium:{n:'Premium',c:'#fbbf24',bg:'rgba(251,191,36,0.12)',d:'Premium member',s:`<svg viewBox="0 0 20 20"><polygon points="10,1 19,10 10,19 1,10" fill="#fbbf24"/><polygon points="10,4 16,10 10,16 4,10" fill="#f59e0b"/></svg>`},
+early_adopter:{n:'Early Adopter',c:'#a78bfa',bg:'rgba(167,139,250,0.12)',d:'Joined during early access',s:`<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#7c3aed"/><path d="M11 3L7 11h4l-2 6 4-8h-4l2-6z" fill="#e0e7ff"/></svg>`},
+developer:{n:'Developer',c:'#34d399',bg:'rgba(52,211,153,0.12)',d:'Developer',s:`<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#065f46"/><path d="M7 7L4 10l3 3M13 7l3 3-3 3" stroke="#34d399" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`},
+donator:{n:'Donator',c:'#fb7185',bg:'rgba(251,113,133,0.12)',d:'Donated to the project',s:`<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#881337"/><path d="M10 14s-4-2.5-4-5a2 2 0 014 0 2 2 0 014 0c0 2.5-4 5-4 5z" fill="#fb7185"/></svg>`},
+og:{n:'OG',c:'#ef4444',bg:'rgba(239,68,68,0.12)',d:'Original member',s:`<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#7f1d1d"/><path d="M10 3c0 4-3 5-3 8a3 3 0 006 0c0-3-3-4-3-8z" fill="#ef4444"/></svg>`},
+designer:{n:'Designer',c:'#c084fc',bg:'rgba(192,132,252,0.12)',d:'Designer',s:`<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#581c87"/><path d="M7 14l2-10h2l2 10M8 11h4" stroke="#c084fc" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg>`},
+supporter:{n:'Supporter',c:'#fb923c',bg:'rgba(251,146,60,0.12)',d:'Active supporter',s:`<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#7c2d12"/><path d="M10 4l1.8 3.6 4 .6-2.9 2.8.7 4L10 13.2 6.4 15l.7-4-2.9-2.8 4-.6z" fill="#fb923c"/></svg>`},
+moderator:{n:'Moderator',c:'#22c55e',bg:'rgba(34,197,94,0.12)',d:'Staff — Moderator',s:`<svg viewBox="0 0 20 20"><path d="M10 1l7 3v5c0 4-3 7.5-7 9-4-1.5-7-5-7-9V4l7-3z" fill="#166534"/><path d="M10 3l5 2v4c0 3-2 5.5-5 7-3-1.5-5-4-5-7V5l5-2z" fill="#22c55e"/><path d="M8 10l1.5 1.5L12 8.5" stroke="#166534" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`},
+admin:{n:'Admin',c:'#3b82f6',bg:'rgba(59,130,246,0.12)',d:'Staff — Admin',s:`<svg viewBox="0 0 20 20"><path d="M10 1l7 3v5c0 4-3 7.5-7 9-4-1.5-7-5-7-9V4l7-3z" fill="#1e40af"/><path d="M10 3l5 2v4c0 3-2 5.5-5 7-3-1.5-5-4-5-7V5l5-2z" fill="#3b82f6"/><path d="M10 6.5l.8 1.7h1.8l-1.4 1.1.5 1.7-1.7-1.1-1.7 1.1.5-1.7-1.4-1.1h1.8z" fill="#fbbf24"/></svg>`},
+manager:{n:'Manager',c:'#a855f7',bg:'rgba(168,85,247,0.12)',d:'Staff — Manager',s:`<svg viewBox="0 0 20 20"><path d="M10 1l7 3v5c0 4-3 7.5-7 9-4-1.5-7-5-7-9V4l7-3z" fill="#581c87"/><path d="M10 3l5 2v4c0 3-2 5.5-5 7-3-1.5-5-4-5-7V5l5-2z" fill="#a855f7"/><path d="M7 11.5l1-3h4l1 3z" fill="#fbbf24"/><circle cx="8" cy="8" r=".9" fill="#fbbf24"/><circle cx="10" cy="7" r=".9" fill="#fbbf24"/><circle cx="12" cy="8" r=".9" fill="#fbbf24"/></svg>`},
+owner:{n:'Owner',c:'#fbbf24',bg:'rgba(251,191,36,0.15)',d:'Staff — Owner',s:`<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#78350f"/><path d="M5 13V8l2 2 3-4 3 4 2-2v5H5z" fill="#fbbf24"/><rect x="5" y="12" width="10" height="2" rx=".5" fill="#f59e0b"/><circle cx="5" cy="8" r="1" fill="#fbbf24"/><circle cx="10" cy="6" r="1" fill="#fbbf24"/><circle cx="15" cy="8" r="1" fill="#fbbf24"/></svg>`}
 };
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-/* ===== Badge Definitions ===== */
-const BADGES={
-  verified:{n:'Verified',c:'#f472b6',bg:'rgba(244,114,182,0.12)',d:'Verified identity',svg:`<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#f472b6"/><path d="M6 10l3 3 5-6" stroke="#0a0a0f" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`},
-  premium:{n:'Premium',c:'#fbbf24',bg:'rgba(251,191,36,0.12)',d:'Premium member',svg:`<svg viewBox="0 0 20 20"><polygon points="10,1 19,10 10,19 1,10" fill="#fbbf24"/><polygon points="10,4 16,10 10,16 4,10" fill="#f59e0b"/></svg>`},
-  early_adopter:{n:'Early Adopter',c:'#a78bfa',bg:'rgba(167,139,250,0.12)',d:'Joined during early access',svg:`<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#7c3aed"/><path d="M11 3L7 11h4l-2 6 4-8h-4l2-6z" fill="#e0e7ff"/></svg>`},
-  developer:{n:'Developer',c:'#34d399',bg:'rgba(52,211,153,0.12)',d:'Developer',svg:`<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#065f46"/><path d="M7 7L4 10l3 3M13 7l3 3-3 3" stroke="#34d399" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`},
-  donator:{n:'Donator',c:'#fb7185',bg:'rgba(251,113,133,0.12)',d:'Donated to the project',svg:`<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#881337"/><path d="M10 14s-4-2.5-4-5a2 2 0 014 0 2 2 0 014 0c0 2.5-4 5-4 5z" fill="#fb7185"/></svg>`},
-  og:{n:'OG',c:'#ef4444',bg:'rgba(239,68,68,0.12)',d:'Original member',svg:`<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#7f1d1d"/><path d="M10 3c0 4-3 5-3 8a3 3 0 006 0c0-3-3-4-3-8z" fill="#ef4444"/></svg>`},
-  designer:{n:'Designer',c:'#c084fc',bg:'rgba(192,132,252,0.12)',d:'Designer',svg:`<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#581c87"/><path d="M7 14l2-10h2l2 10M8 11h4" stroke="#c084fc" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg>`},
-  supporter:{n:'Supporter',c:'#fb923c',bg:'rgba(251,146,60,0.12)',d:'Active supporter',svg:`<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#7c2d12"/><path d="M10 4l1.8 3.6 4 .6-2.9 2.8.7 4L10 13.2 6.4 15l.7-4-2.9-2.8 4-.6z" fill="#fb923c"/></svg>`},
-  moderator:{n:'Moderator',c:'#22c55e',bg:'rgba(34,197,94,0.12)',d:'Staff — Moderator',svg:`<svg viewBox="0 0 20 20"><path d="M10 1l7 3v5c0 4-3 7.5-7 9-4-1.5-7-5-7-9V4l7-3z" fill="#166534"/><path d="M10 3l5 2v4c0 3-2 5.5-5 7-3-1.5-5-4-5-7V5l5-2z" fill="#22c55e"/><path d="M8 10l1.5 1.5L12 8.5" stroke="#166534" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`},
-  admin:{n:'Admin',c:'#3b82f6',bg:'rgba(59,130,246,0.12)',d:'Staff — Admin',svg:`<svg viewBox="0 0 20 20"><path d="M10 1l7 3v5c0 4-3 7.5-7 9-4-1.5-7-5-7-9V4l7-3z" fill="#1e40af"/><path d="M10 3l5 2v4c0 3-2 5.5-5 7-3-1.5-5-4-5-7V5l5-2z" fill="#3b82f6"/><path d="M10 6.5l.8 1.7h1.8l-1.4 1.1.5 1.7-1.7-1.1-1.7 1.1.5-1.7-1.4-1.1h1.8z" fill="#fbbf24"/></svg>`},
-  manager:{n:'Manager',c:'#a855f7',bg:'rgba(168,85,247,0.12)',d:'Staff — Manager',svg:`<svg viewBox="0 0 20 20"><path d="M10 1l7 3v5c0 4-3 7.5-7 9-4-1.5-7-5-7-9V4l7-3z" fill="#581c87"/><path d="M10 3l5 2v4c0 3-2 5.5-5 7-3-1.5-5-4-5-7V5l5-2z" fill="#a855f7"/><path d="M7 11.5l1-3h4l1 3z" fill="#fbbf24"/><circle cx="8" cy="8" r=".9" fill="#fbbf24"/><circle cx="10" cy="7" r=".9" fill="#fbbf24"/><circle cx="12" cy="8" r=".9" fill="#fbbf24"/></svg>`},
-  owner:{n:'Owner',c:'#fbbf24',bg:'rgba(251,191,36,0.15)',d:'Staff — Owner',svg:`<svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#78350f"/><path d="M5 13V8l2 2 3-4 3 4 2-2v5H5z" fill="#fbbf24"/><rect x="5" y="12" width="10" height="2" rx=".5" fill="#f59e0b"/><circle cx="5" cy="8" r="1" fill="#fbbf24"/><circle cx="10" cy="6" r="1" fill="#fbbf24"/><circle cx="15" cy="8" r="1" fill="#fbbf24"/></svg>`}
-};
-
-/* ===== Role Hierarchy ===== */
-const ROLES={user:0,moderator:1,admin:2,manager:3,owner:4};
+/* ===================== ROLES ===================== */
+const RL={user:0,moderator:1,admin:2,manager:3,owner:4};
 const RC={user:'var(--fg2)',moderator:'#22c55e',admin:'#3b82f6',manager:'#a855f7',owner:'#fbbf24'};
-const RB={user:'var(--accent-dim)',moderator:'rgba(34,197,94,0.12)',admin:'rgba(59,130,246,0.12)',manager:'rgba(168,85,247,0.12)',owner:'rgba(251,191,36,0.12)'};
+const RB={user:'var(--adim)',moderator:'rgba(34,197,94,0.12)',admin:'rgba(59,130,246,0.12)',manager:'rgba(168,85,247,0.12)',owner:'rgba(251,191,36,0.12)'};
+const ROUTES=['login','signup','dashboard','admin','help','donate','redirect'];
 
-/* ===== Known Routes (to distinguish from usernames) ===== */
-const KNOWN_ROUTES = ['/', '/login', '/signup', '/dashboard', '/admin'];
+/* ===================== HELPERS ===================== */
+function bH(k,sn){const b=B[k];if(!b)return'';return`<span class="badge btip" data-tip="${b.d}" style="background:${b.bg};color:${b.c};">${b.s}${sn?' '+b.n:''}</span>`}
+function rT(r){return`<span class="rtag" style="background:${RB[r]};color:${RC[r]};">${r.toUpperCase()}</span>`}
+function E(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
+function lI(u){if(!u)return'fa-solid fa-link';const l=u.toLowerCase();if(l.includes('github'))return'fa-brands fa-github';if(l.includes('twitter')||l.includes('x.com'))return'fa-brands fa-x-twitter';if(l.includes('discord'))return'fa-brands fa-discord';if(l.includes('youtube'))return'fa-brands fa-youtube';if(l.includes('twitch'))return'fa-brands fa-twitch';if(l.includes('spotify'))return'fa-brands fa-spotify';if(l.includes('instagram'))return'fa-brands fa-instagram';if(l.includes('tiktok'))return'fa-brands fa-tiktok';if(l.includes('reddit'))return'fa-brands fa-reddit';if(l.includes('steam'))return'fa-brands fa-steam';if(l.includes('telegram'))return'fa-brands fa-telegram';if(l.includes('linkedin'))return'fa-brands fa-linkedin';if(l.includes('paypal'))return'fa-brands fa-paypal';if(l.includes('ko-fi'))return'fa-solid fa-mug-hot';return'fa-solid fa-arrow-up-right-from-square'}
 
-function bHTML(k,showN){const b=BADGES[k];if(!b)return'';return`<span class="badge badge-tip" data-tip="${b.d}" style="background:${b.bg};color:${b.c};">${b.svg}${showN?' '+b.n:''}</span>`}
-function rTag(r){return`<span class="role-tag" style="background:${RB[r]};color:${RC[r]};">${r.toUpperCase()}</span>`}
-function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
-function linkIcon(u){if(!u)return'fa-solid fa-link';const l=u.toLowerCase();if(l.includes('github'))return'fa-brands fa-github';if(l.includes('twitter')||l.includes('x.com'))return'fa-brands fa-x-twitter';if(l.includes('discord'))return'fa-brands fa-discord';if(l.includes('youtube'))return'fa-brands fa-youtube';if(l.includes('twitch'))return'fa-brands fa-twitch';if(l.includes('spotify'))return'fa-brands fa-spotify';if(l.includes('instagram'))return'fa-brands fa-instagram';if(l.includes('tiktok'))return'fa-brands fa-tiktok';if(l.includes('reddit'))return'fa-brands fa-reddit';if(l.includes('steam'))return'fa-brands fa-steam';if(l.includes('telegram'))return'fa-brands fa-telegram';if(l.includes('linkedin'))return'fa-brands fa-linkedin';if(l.includes('paypal'))return'fa-brands fa-paypal';if(l.includes('ko-fi'))return'fa-solid fa-mug-hot';return'fa-solid fa-arrow-up-right-from-square'}
-
-/* ===== Firestore Data Layer ===== */
+/* ===================== DATA LAYER ===================== */
 const D={
-  async getU(uid){try{const doc=await db.collection('users').doc(uid).get();return doc.exists?doc.data():null}catch(e){console.error('getU error:',e);return null}},
-  async getUN(un){try{const snap=await db.collection('users').where('username','==',un).limit(1).get();if(snap.empty)return null;return snap.docs[0].data()}catch(e){console.error('getUN error:',e);return null}},
-  async createU(uid,data){const userData={uid,displayName:data.displayName||'',username:data.username||'',bio:'',avatar:'',links:[],badges:[],role:'user',banned:false,createdAt:Date.now(),views:0,themeColor:'#f472b6'};await db.collection('users').doc(uid).set(userData);return userData},
-  async updateU(uid,data){await db.collection('users').doc(uid).update(data);const u=await this.getU(uid);return u},
-  async delU(uid){await db.collection('users').doc(uid).delete()},
-  async allU(){try{const snap=await db.collection('users').get();return snap.docs.map(d=>d.data())}catch(e){console.error('allU error:',e);return[]}},
-  async incV(un){try{const snap=await db.collection('users').where('username','==',un).limit(1).get();if(!snap.empty){const ref=snap.docs[0].ref;await db.runTransaction(async tx=>{const doc=await tx.get(ref);if(doc.exists){tx.update(ref,{views:(doc.data().views||0)+1})}})}}catch(e){console.error('incV error:',e)}}
+  async gU(uid){try{const d=await db.collection('users').doc(uid).get();return d.exists?d.data():null}catch(e){console.error(e);return null}},
+  async gUN(un){try{const s=await db.collection('users').where('username','==',un).limit(1).get();return s.empty?null:s.docs[0].data()}catch(e){console.error(e);return null}},
+  async cU(uid,d){const u={uid,displayName:d.displayName||'',username:d.username||'',bio:'',avatar:'',links:[],badges:[],role:'user',banned:false,createdAt:Date.now(),views:0,themeColor:'#f472b6'};await db.collection('users').doc(uid).set(u);return u},
+  async uU(uid,d){await db.collection('users').doc(uid).update(d);return this.gU(uid)},
+  async dU(uid){await db.collection('users').doc(uid).delete()},
+  async aU(){try{const s=await db.collection('users').get();return s.docs.map(d=>d.data())}catch(e){console.error(e);return[]}},
+  async iV(un){try{const s=await db.collection('users').where('username','==',un).limit(1).get();if(!s.empty){const r=s.docs[0].ref;await db.runTransaction(async t=>{const d=await t.get(r);if(d.exists)t.update(r,{views:(d.data().views||0)+1})})}}catch(e){console.error(e)}}
 };
 
-/* ===== App State ===== */
-let CU = null;
+/* ===================== STATE ===================== */
+let CU=null;
 
-/* ===== Toast Notifications ===== */
-function toast(m,t='info'){const c=document.getElementById('toast-box'),e=document.createElement('div');const ic={ok:'fa-check-circle',err:'fa-times-circle',info:'fa-info-circle'};e.className=`toast toast-${t}`;e.innerHTML=`<i class="fa-solid ${ic[t]||ic.info}"></i><span>${m}</span>`;c.appendChild(e);setTimeout(()=>{e.style.animation='tout .3s ease forwards';setTimeout(()=>e.remove(),300)},3000)}
+/* ===================== TOAST ===================== */
+function toast(m,t){const c=document.getElementById('tbox'),e=document.createElement('div');const i={ok:'fa-check-circle',er:'fa-times-circle',in:'fa-info-circle'};e.className=`tst t-${t||'in'}`;e.innerHTML=`<i class="fa-solid ${i[t]||i.in}"></i><span>${m}</span>`;c.appendChild(e);setTimeout(()=>{e.style.animation='to .3s ease forwards';setTimeout(()=>e.remove(),300)},3000)}
 
-/* ===== Modal ===== */
-function showModal(title,html,acts){document.getElementById('modal-box').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal-box"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px"><h3 class="font-display" style="font-size:17px;font-weight:700">${title}</h3><button onclick="closeModal()" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:8px;border:none;background:none;color:var(--muted);cursor:pointer;font-size:15px;transition:background .2s" onmouseover="this.style.background='var(--card2)'" onmouseout="this.style.background='none'"><i class="fa-solid fa-xmark"></i></button></div><div>${html}</div>${acts&&acts.length?`<div style="display:flex;gap:10px;margin-top:22px;justify-content:flex-end">${acts.map(a=>`<button class="${a.c||'btn-sec'}" onclick="${a.a}">${a.l}</button>`).join('')}</div>`:''}</div></div>`}
-function closeModal(){document.getElementById('modal-box').innerHTML=''}
+/* ===================== MODAL ===================== */
+function showModal(t,h,a){document.getElementById('mbox').innerHTML=`<div class="mbg" onclick="if(event.target===this)clM()"><div class="mbox"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px"><h3 class="font-display" style="font-size:17px;font-weight:700">${t}</h3><button onclick="clM()" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:8px;border:none;background:none;color:var(--muted);cursor:pointer;font-size:15px" onmouseover="this.style.background='var(--card2)'" onmouseout="this.style.background='none'"><i class="fa-solid fa-xmark"></i></button></div><div>${h}</div>${a&&a.length?`<div style="display:flex;gap:10px;margin-top:22px;justify-content:flex-end">${a.map(x=>`<button class="${x.c||'bs'}" onclick="${x.a}">${x.l}</button>`).join('')}</div>`:''}</div></div>`}
+function clM(){document.getElementById('mbox').innerHTML=''}
 
-/* ===== Authentication ===== */
+/* ===================== AUTH ===================== */
 async function doSignup(email,pw,name,un){
-  if(await D.getUN(un)){toast('Username already taken','err');return}
+  if(!FB){toast('Authentication is not configured','er');return}
+  if(await D.gUN(un)){toast('Username already taken','er');return}
   try{
     const cr=await auth.createUserWithEmailAndPassword(email,pw);
-    await D.createU(cr.user.uid,{displayName:name,username:un});
-    CU=await D.getU(cr.user.uid);
-    toast('Account created successfully!','ok');
-    nav('/dashboard');
-  }catch(e){toast(e.message,'err')}
+    await D.cU(cr.user.uid,{displayName:name,username:un});
+    CU=await D.gU(cr.user.uid);
+    toast('Account created successfully!','ok');nav('/dashboard');
+  }catch(e){
+    if(e.code==='auth/configuration-not-found'){toast('Email/Password sign-in is not enabled in Firebase Console','er');return}
+    toast(e.message,'er');
+  }
 }
-
 async function doLogin(email,pw){
+  if(!FB){toast('Authentication is not configured','er');return}
   try{
     const cr=await auth.signInWithEmailAndPassword(email,pw);
-    const u=await D.getU(cr.user.uid);
-    if(u&&u.banned){auth.signOut();toast('This account has been banned','err');return}
-    CU=u;
-    toast('Welcome back!','ok');
-    nav('/dashboard');
-  }catch(e){toast(e.message,'err')}
+    const u=await D.gU(cr.user.uid);
+    if(u&&u.banned){auth.signOut();toast('This account has been banned','er');return}
+    CU=u;toast('Welcome back!','ok');nav('/dashboard');
+  }catch(e){
+    if(e.code==='auth/configuration-not-found'){toast('Email/Password sign-in is not enabled in Firebase Console. Go to Firebase Console > Authentication > Sign-in method and enable Email/Password.','er');return}
+    toast(e.message,'er');
+  }
 }
-
-async function doLogout(){
-  try{await auth.signOut()}catch(e){}
-  CU=null;
-  toast('Logged out','info');
-  nav('/');
-}
-
+async function doLogout(){try{await auth.signOut()}catch(e){}CU=null;toast('Logged out','in');nav('/')}
 async function restoreSess(){
-  return new Promise((resolve)=>{
-    const unsub=auth.onAuthStateChanged(async user=>{
-      unsub();
-      if(user){
-        CU=await D.getU(user.uid);
-        if(CU&&CU.banned){await auth.signOut();CU=null}
-      }
-      resolve();
-    });
-  });
+  if(!FB)return;
+  return new Promise(r=>{const u=auth.onAuthStateChanged(async us=>{u();if(us){CU=await D.gU(us.uid);if(CU&&CU.banned){await auth.signOut();CU=null}}r()})});
 }
 
-/* ===== Router ===== */
-function nav(p){window.location.hash=p}
-function getP(){return window.location.hash.slice(1)||'/'}
+/* ===================== ROUTER (History API) ===================== */
+function nav(path){window.history.pushState({},'',path);router()}
+
+function getPath(){
+  let p=window.location.pathname;
+  if(p==='/'||!p)return '/';
+  return p.startsWith('/')?p:'/'+p;
+}
+
+function isRoute(name){return getPath()===('/'+name)}
 
 async function router(){
-  const p=getP();
-  updateNav();
+  const p=getPath();
+  upNav();
   const a=document.getElementById('app');
 
-  /* Check known routes first */
-  if(p==='/'){a.innerHTML=pgHome()}
-  else if(p==='/login'){a.innerHTML=pgLogin()}
-  else if(p==='/signup'){a.innerHTML=pgSignup()}
-  else if(p==='/dashboard'){
-    if(!CU){nav('/login');return}
-    a.innerHTML=pgDash();initDash();
-  }
-  else if(p==='/admin'){
-    if(!CU||ROLES[CU.role]<ROLES.moderator){toast('Access denied','err');nav('/');return}
-    a.innerHTML=pgAdmin();await renderAC();
-  }
+  if(p==='/')a.innerHTML=pHome();
+  else if(p==='/login')a.innerHTML=pLogin();
+  else if(p==='/signup')a.innerHTML=pSignup();
+  else if(p==='/redirect')a.innerHTML=pRedirect();
+  else if(p==='/help')a.innerHTML=pHelp();
+  else if(p==='/donate')a.innerHTML=pDonate();
+  else if(p==='/dashboard'){if(!CU){nav('/login');return}a.innerHTML=pDash();iDash()}
+  else if(p==='/admin'){if(!CU||RL[CU.role]<RL.moderator){toast('Access denied','er');nav('/');return}a.innerHTML=pAdmin();await rAC()}
   else{
-    /* Treat everything else as a username — seashell.lol/username */
-    const username=p.startsWith('/')?p.slice(1):p;
-    if(username){await pgBio(username)}
-    else{a.innerHTML=pg404()}
+    const un=p.startsWith('/')?p.slice(1):p;
+    if(un&&!ROUTES.includes(un))await pBio(un);
+    else a.innerHTML=p404();
   }
   window.scrollTo(0,0);
 }
 
-function updateNav(){
-  const e=document.getElementById('navAuth');
+function upNav(){
+  const e=document.getElementById('navA');
   if(CU){
-    let ab='';
-    if(ROLES[CU.role]>=ROLES.moderator)ab=`<a href="#/admin" class="nl nl-hide" style="font-size:13px;color:var(--fg2);text-decoration:none">Admin</a>`;
-    e.innerHTML=`${ab}<a href="#/dashboard" class="nl" style="font-size:13px;color:var(--accent);text-decoration:none;font-weight:500">Dashboard</a><a href="#/login" class="nl" style="font-size:13px;color:var(--fg2);text-decoration:none" onclick="event.preventDefault();doLogout()">Logout</a><a href="#/signup" class="btn-signup" style="margin-left:4px">Sign Up Free</a>`;
+    let ab='';if(RL[CU.role]>=RL.moderator)ab=`<span class="nl nh" onclick="nav('/admin')">Admin</span>`;
+    e.innerHTML=`${ab}<span class="nl" onclick="nav('/dashboard')" style="color:var(--accent);font-weight:500">Dashboard</span><span class="nl" onclick="doLogout()">Logout</span><span class="btn-su" onclick="nav('/signup')" style="margin-left:4px">Sign Up Free</span>`;
   }else{
-    e.innerHTML=`<a href="#/login" class="nl" style="font-size:13px;color:var(--fg2);text-decoration:none">Login</a><a href="#/signup" class="btn-signup" style="margin-left:4px">Sign Up Free</a>`;
+    e.innerHTML=`<span class="nl" onclick="nav('/login')">Login</span><span class="btn-su" onclick="nav('/signup')" style="margin-left:4px">Sign Up Free</span>`;
   }
 }
 
-/* ===== Homepage ===== */
-function pgHome(){
-  return`<div class="home-wrap"><div class="home-bg-pattern"><div class="home-glow hg1"></div><div class="home-glow hg2"></div><div class="home-glow hg3"></div></div><div class="home-hero"><div class="home-text"><div class="home-tag"><span></span>Now in Early Access</div><h1 class="home-title">Your Next Gen<br>Link-In-Bio</h1><p class="home-desc">seashell.lol provides cute link-in-bio pages and safe file hosting services with powerful features and a vibrant community.</p><div class="home-btns"><a href="https://discord.gg/wvTcFqa9Ej" target="_blank" rel="noopener" class="btn-com"><i class="fa-brands fa-discord"></i> Community</a></div><p class="home-launch">Expected Launch by February 20th, 2025</p></div><div class="home-preview"><div class="preview-glow"></div><div class="preview-card"><div class="preview-avatar"><img src="https://picsum.photos/seed/seashell42/200/200.jpg" alt="preview"></div><div class="preview-name">Luna</div><div class="preview-user">@luna</div><div class="preview-bio">Digital artist and dreamer</div><div class="preview-divider"></div><div class="preview-link"><i class="fa-brands fa-instagram"></i>Instagram</div><div class="preview-link"><i class="fa-brands fa-x-twitter"></i>Twitter / X</div><div class="preview-link"><i class="fa-brands fa-discord"></i>Discord Server</div><div class="preview-link"><i class="fa-solid fa-palette"></i>Portfolio</div></div></div></div></div>`;
-}
+/* ===================== PAGES ===================== */
+function pHome(){return`<div class="hwrap"><div class="hpat"><div class="hgl hg1"></div><div class="hgl hg2"></div><div class="hgl hg3"></div></div><div class="hhero"><div class="htxt"><div class="htag"><span></span>Now in Early Access</div><h1 class="htitle">Your Next Gen<br>Link-In-Bio</h1><p class="hdesc">seashell.lol provides cute link-in-bio pages and safe file hosting services with powerful features and a vibrant community.</p><div class="hbtns"><a href="https://discord.gg/wvTcFqa9Ej" target="_blank" rel="noopener" class="bc"><i class="fa-brands fa-discord"></i> Community</a></div><p class="hlaunch">Expected Launch by February 20th, 2025</p></div><div class="hprev"><div class="pglow"></div><div class="pcard"><div class="pav"><img src="https://picsum.photos/seed/seashell42/200/200.jpg" alt="preview"></div><div style="text-align:center;font-weight:700;font-size:17px;margin-bottom:2px">Luna</div><div style="text-align:center;font-size:12px;color:var(--accent);margin-bottom:10px">@luna</div><div style="text-align:center;font-size:12px;color:var(--fg2);margin-bottom:16px;line-height:1.5">Digital artist and dreamer</div><div style="width:40px;height:1.5px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:0 auto 16px;border-radius:2px"></div><div class="plink"><i class="fa-brands fa-instagram"></i>Instagram</div><div class="plink"><i class="fa-brands fa-x-twitter"></i>Twitter / X</div><div class="plink"><i class="fa-brands fa-discord"></i>Discord Server</div><div class="plink"><i class="fa-solid fa-palette"></i>Portfolio</div></div></div></div></div>`}
 
-/* ===== Login Page ===== */
-function pgLogin(){
-  return`<div style="min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center;padding:40px 20px"><div class="card" style="max-width:380px;width:100%"><h2 class="font-display" style="font-size:22px;font-weight:700;margin-bottom:4px">Welcome back</h2><p style="color:var(--fg2);font-size:13px;margin-bottom:22px">Sign in to your seashell.lol account</p><div style="display:flex;flex-direction:column;gap:15px"><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Email</label><input id="lE" class="input-field" type="email" placeholder="Enter your email" autocomplete="off"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Password</label><input id="lP" class="input-field" type="password" placeholder="Enter your password"></div><button class="btn-pri" style="width:100%;justify-content:center;padding:11px" onclick="hLogin()"><i class="fa-solid fa-right-to-bracket"></i> Sign In</button></div><p style="text-align:center;margin-top:18px;font-size:13px;color:var(--fg2)">Don't have an account? <a href="#/signup" style="color:var(--accent);text-decoration:none;font-weight:600">Sign up</a></p></div></div>`;
-}
-function hLogin(){
-  const a=document.getElementById('lE').value.trim(),b=document.getElementById('lP').value;
-  if(!a||!b){toast('Please fill in all fields','err');return}
-  doLogin(a,b);
-}
+function pLogin(){return`<div style="min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center;padding:40px 20px"><div class="card" style="max-width:380px;width:100%"><h2 class="font-display" style="font-size:22px;font-weight:700;margin-bottom:4px">Welcome back</h2><p style="color:var(--fg2);font-size:13px;margin-bottom:22px">Sign in to your seashell.lol account</p><div style="display:flex;flex-direction:column;gap:15px"><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Email</label><input id="lE" class="ifield" type="email" placeholder="Enter your email" autocomplete="off"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Password</label><input id="lP" class="ifield" type="password" placeholder="Enter your password"></div><button class="bp" style="width:100%;justify-content:center;padding:11px" onclick="hL()"><i class="fa-solid fa-right-to-bracket"></i> Sign In</button></div><p style="text-align:center;margin-top:18px;font-size:13px;color:var(--fg2)">Don't have an account? <span style="color:var(--accent);font-weight:600;cursor:pointer" onclick="nav('/signup')">Sign up</span></p></div></div>`}
+function hL(){const a=document.getElementById('lE').value.trim(),b=document.getElementById('lP').value;if(!a||!b){toast('Please fill in all fields','er');return}doLogin(a,b)}
 
-/* ===== Signup Page ===== */
-function pgSignup(){
-  return`<div style="min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center;padding:40px 20px"><div class="card" style="max-width:380px;width:100%"><h2 class="font-display" style="font-size:22px;font-weight:700;margin-bottom:4px">Create account</h2><p style="color:var(--fg2);font-size:13px;margin-bottom:22px">Join seashell.lol for free</p><div style="display:flex;flex-direction:column;gap:15px"><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Display Name</label><input id="sN" class="input-field" type="text" placeholder="Your display name" autocomplete="off"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Username</label><div style="position:relative"><span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px">seashell.lol/</span><input id="sU" class="input-field" type="text" placeholder="username" style="padding-left:112px" autocomplete="off"></div></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Email</label><input id="sE" class="input-field" type="email" placeholder="your@email.com" autocomplete="off"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Password</label><input id="sP" class="input-field" type="password" placeholder="Min 6 characters"></div><button class="btn-pri" style="width:100%;justify-content:center;padding:11px" onclick="hSignup()"><i class="fa-solid fa-user-plus"></i> Create Account</button></div><p style="text-align:center;margin-top:18px;font-size:13px;color:var(--fg2)">Already have an account? <a href="#/login" style="color:var(--accent);text-decoration:none;font-weight:600">Sign in</a></p></div></div>`;
-}
-function hSignup(){
-  const n=document.getElementById('sN').value.trim(),
-        u=document.getElementById('sU').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,''),
-        e=document.getElementById('sE').value.trim(),
-        p=document.getElementById('sP').value;
-  if(!n||!u||!e||!p){toast('Please fill in all fields','err');return}
-  if(u.length<3){toast('Username must be at least 3 characters','err');return}
-  if(p.length<6){toast('Password must be at least 6 characters','err');return}
-  doSignup(e,p,n,u);
-}
+function pSignup(){return`<div style="min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center;padding:40px 20px"><div class="card" style="max-width:380px;width:100%"><h2 class="font-display" style="font-size:22px;font-weight:700;margin-bottom:4px">Create account</h2><p style="color:var(--fg2);font-size:13px;margin-bottom:22px">Join seashell.lol for free</p><div style="display:flex;flex-direction:column;gap:15px"><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Display Name</label><input id="sN" class="ifield" type="text" placeholder="Your display name" autocomplete="off"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Username</label><div style="position:relative"><span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px">seashell.lol/</span><input id="sU" class="ifield" type="text" placeholder="username" style="padding-left:112px" autocomplete="off"></div></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Email</label><input id="sE" class="ifield" type="email" placeholder="your@email.com" autocomplete="off"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Password</label><input id="sP" class="ifield" type="password" placeholder="Min 6 characters"></div><button class="bp" style="width:100%;justify-content:center;padding:11px" onclick="hS()"><i class="fa-solid fa-user-plus"></i> Create Account</button></div><p style="text-align:center;margin-top:18px;font-size:13px;color:var(--fg2)">Already have an account? <span style="color:var(--accent);font-weight:600;cursor:pointer" onclick="nav('/login')">Sign in</span></p></div></div>`}
+function hS(){const n=document.getElementById('sN').value.trim(),u=document.getElementById('sU').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,''),e=document.getElementById('sE').value.trim(),p=document.getElementById('sP').value;if(!n||!u||!e||!p){toast('Please fill in all fields','er');return}if(u.length<3){toast('Username must be at least 3 characters','er');return}if(p.length<6){toast('Password must be at least 6 characters','er');return}doSignup(e,p,n,u)}
 
-/* ===== Dashboard ===== */
-function pgDash(){
+function pRedirect(){return`<div style="min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center;padding:40px 20px"><div class="card" style="max-width:420px;width:100%;text-align:center"><i class="fa-solid fa-arrow-right-to-bracket" style="font-size:36px;color:var(--accent);margin-bottom:16px"></i><h2 class="font-display" style="font-size:22px;font-weight:700;margin-bottom:8px">Welcome to seashell.lol</h2><p style="color:var(--fg2);font-size:14px;margin-bottom:24px;line-height:1.6">Sign in to manage your bio link page, or create a new account to get started.</p><div style="display:flex;flex-direction:column;gap:10px"><a class="bp" style="width:100%;justify-content:center;padding:12px" onclick="nav('/login')"><i class="fa-solid fa-right-to-bracket"></i> Sign In</a><a class="bs" style="width:100%;justify-content:center;padding:12px" onclick="nav('/signup')"><i class="fa-solid fa-user-plus"></i> Create Account</a></div><span style="display:inline-block;margin-top:16px;font-size:12px;color:var(--muted);cursor:pointer" onclick="nav('/')"><i class="fa-solid fa-arrow-left" style="margin-right:4px"></i>Back to home</span></div></div>`}
+
+function pHelp(){return`<div class="spage"><h1>Help Centre</h1><p>Welcome to the seashell.lol help centre. Find answers to common questions below.</p><h2>Getting Started</h2><p>Create an account, set up your profile, and add your links. Your bio page will be live at seashell.lol/yourusername.</p><h2>Customizing Your Page</h2><p>In the dashboard, go to the Appearance tab to change your theme color. Use the Profile tab to update your avatar, display name, and bio. Add links in the Links tab.</p><h2>Badges</h2><p>Badges are awarded by staff members. They appear on your public profile. Contact an admin on our Discord server if you think you qualify for a badge.</p><h2>Account Issues</h2><p>If you are having trouble signing up or logging in, make sure Email/Password authentication is enabled in your Firebase project settings. Join our Discord for live support.</p><h2>Privacy & Safety</h2><p>Your email is never shown publicly. You can update your display name and bio at any time from the dashboard. If your account is banned, contact staff through Discord.</p><div style="margin-top:32px"><span class="bs" onclick="nav('/')" style="cursor:pointer"><i class="fa-solid fa-arrow-left" style="margin-right:6px"></i>Back to Home</span></div></div>`}
+
+function pDonate(){return`<div class="spage"><h1>Support seashell.lol</h1><p>We rely on community support to keep seashell.lol running and free for everyone. Every contribution helps cover server costs and development time.</p><h2>Ways to Support</h2><ul><li>Join our <a href="https://discord.gg/wvTcFqa9Ej" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline">Discord server</a> and be an active community member</li><li>Share seashell.lol with your friends and on social media</li><li>Contribute to development on GitHub</li><li>Donate directly (link coming soon)</li></ul><h2>Donator Badge</h2><p>Donators receive a special pink Donator badge on their profile. Contact an admin on Discord after donating to receive your badge.</p><div style="margin-top:32px;display:flex;gap:12px;flex-wrap:wrap"><span class="bs" onclick="nav('/')" style="cursor:pointer"><i class="fa-solid fa-arrow-left" style="margin-right:6px"></i>Back to Home</span><a href="https://discord.gg/wvTcFqa9Ej" target="_blank" rel="noopener" class="bp" style="cursor:pointer"><i class="fa-brands fa-discord"></i>Join Discord</a></div></div>`}
+
+function p404(){return`<div style="min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center"><div style="text-align:center"><div class="font-display" style="font-size:88px;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">404</div><p style="color:var(--fg2);font-size:15px;margin-top:6px">Page not found</p><span class="bp" style="margin-top:18px;display:inline-flex;cursor:pointer" onclick="nav('/')">Go Home</span></div></div>`}
+
+/* ===================== DASHBOARD ===================== */
+function pDash(){
   const u=CU;
-  const bH=u.badges.map(b=>bHTML(b,true)).join(' ')||'<span style="color:var(--muted);font-size:12px">No badges yet</span>';
-  const lH=u.links.map((l,i)=>`<div style="display:flex;align-items:center;gap:9px;padding:9px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:9px"><i class="fa-solid fa-grip-vertical" style="color:var(--muted);cursor:grab;font-size:11px"></i><i class="${linkIcon(l.url)}" style="color:var(--accent);width:18px;text-align:center;font-size:14px"></i><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(l.title)}</div><div style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(l.url)}</div></div><button onclick="editLink(${i})" style="background:none;border:none;color:var(--fg2);cursor:pointer;padding:3px" title="Edit"><i class="fa-solid fa-pen" style="font-size:11px"></i></button><button onclick="rmLink(${i})" style="background:none;border:none;color:var(--danger);cursor:pointer;padding:3px" title="Delete"><i class="fa-solid fa-trash" style="font-size:11px"></i></button></div>`).join('');
-
-  return`<div style="max-width:860px;margin:0 auto;padding:28px 20px"><div style="display:flex;align-items:center;gap:14px;margin-bottom:28px;flex-wrap:wrap"><div style="width:56px;height:56px;border-radius:50%;overflow:hidden;border:2px solid var(--accent);flex-shrink:0">${u.avatar?`<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover">`:`<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:Outfit;font-weight:700;font-size:22px;color:var(--bg)">${(u.displayName||'?')[0].toUpperCase()}</div>`}</div><div style="flex:1"><h2 class="font-display" style="font-size:20px;font-weight:700">${esc(u.displayName||'No name')}</h2><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap"><span style="color:var(--accent);font-size:12px">@${esc(u.username)}</span>${rTag(u.role)}<span style="font-size:11px;color:var(--muted)">${u.views||0} views</span></div></div><a href="#/${u.username}" target="_blank" class="btn-sec btn-sm"><i class="fa-solid fa-external-link"></i> View Profile</a></div><div style="display:flex;gap:2px;margin-bottom:22px;border-bottom:1px solid var(--border)"><button class="dash-tab on" data-t="profile" onclick="sDT('profile')">Profile</button><button class="dash-tab" data-t="links" onclick="sDT('links')">Links</button><button class="dash-tab" data-t="appearance" onclick="sDT('appearance')">Appearance</button><button class="dash-tab" data-t="badges" onclick="sDT('badges')">Badges</button></div><div id="t-profile"><div class="card"><h3 class="font-display" style="font-size:15px;font-weight:600;margin-bottom:18px">Edit Profile</h3><div style="display:flex;flex-direction:column;gap:16px"><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Avatar URL</label><input id="dA" class="input-field" type="url" placeholder="https://example.com/avatar.png" value="${esc(u.avatar||'')}"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Display Name</label><input id="dN" class="input-field" type="text" placeholder="Your display name" value="${esc(u.displayName||'')}"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Bio</label><textarea id="dB" class="input-field" placeholder="Tell us about yourself..." style="min-height:70px;resize:vertical">${esc(u.bio||'')}</textarea></div><button class="btn-pri" onclick="saveProf()"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button></div></div></div><div id="t-links" style="display:none"><div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px"><h3 class="font-display" style="font-size:15px;font-weight:600">Your Links</h3><button class="btn-pri btn-sm" onclick="addLinkM()"><i class="fa-solid fa-plus"></i> Add Link</button></div><div style="display:flex;flex-direction:column;gap:7px">${lH||'<p style="color:var(--muted);font-size:12px;text-align:center;padding:18px">No links yet. Click "Add Link" to get started.</p>'}</div></div></div><div id="t-appearance" style="display:none"><div class="card"><h3 class="font-display" style="font-size:15px;font-weight:600;margin-bottom:18px">Appearance</h3><div style="display:flex;flex-direction:column;gap:16px"><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:7px">Theme Color</label><div style="display:flex;gap:7px;flex-wrap:wrap">${['#f472b6','#fb7185','#f43f5e','#f97316','#fbbf24','#22c55e','#14b8a6','#06b6d4','#3b82f6','#a855f7'].map(c=>`<button onclick="setTC('${c}')" style="width:34px;height:34px;border-radius:9px;background:${c};border:2px solid ${u.themeColor===c?'#fff':'transparent'};cursor:pointer;transition:all .2s" title="${c}"></button>`).join('')}</div></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:7px">Custom Color</label><div style="display:flex;gap:10px;align-items:center"><input type="color" id="ccI" value="${u.themeColor||'#f472b6'}" style="width:42px;height:34px;border:none;border-radius:8px;cursor:pointer;background:none"><span id="ccV" style="font-size:12px;color:var(--fg2)">${u.themeColor||'#f472b6'}</span></div></div></div></div></div><div id="t-badges" style="display:none"><div class="card"><h3 class="font-display" style="font-size:15px;font-weight:600;margin-bottom:18px">Your Badges</h3><div style="display:flex;flex-wrap:wrap;gap:9px">${bH}</div></div></div></div>`;
+  const bHt=u.badges.map(b=>bH(b,true)).join(' ')||'<span style="color:var(--muted);font-size:12px">No badges yet</span>';
+  const lHt=u.links.map((l,i)=>`<div style="display:flex;align-items:center;gap:9px;padding:9px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:9px"><i class="fa-solid fa-grip-vertical" style="color:var(--muted);cursor:grab;font-size:11px"></i><i class="${lI(l.url)}" style="color:var(--accent);width:18px;text-align:center;font-size:14px"></i><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${E(l.title)}</div><div style="font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${E(l.url)}</div></div><button onclick="eL(${i})" style="background:none;border:none;color:var(--fg2);cursor:pointer;padding:3px"><i class="fa-solid fa-pen" style="font-size:11px"></i></button><button onclick="rL(${i})" style="background:none;border:none;color:var(--danger);cursor:pointer;padding:3px"><i class="fa-solid fa-trash" style="font-size:11px"></i></button></div>`).join('');
+  return`<div style="max-width:860px;margin:0 auto;padding:28px 20px"><div style="display:flex;align-items:center;gap:14px;margin-bottom:28px;flex-wrap:wrap"><div style="width:56px;height:56px;border-radius:50%;overflow:hidden;border:2px solid var(--accent);flex-shrink:0">${u.avatar?`<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover">`:`<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:Outfit;font-weight:700;font-size:22px;color:var(--bg)">${(u.displayName||'?')[0].toUpperCase()}</div>`}</div><div style="flex:1"><h2 class="font-display" style="font-size:20px;font-weight:700">${E(u.displayName||'No name')}</h2><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap"><span style="color:var(--accent);font-size:12px">@${E(u.username)}</span>${rT(u.role)}<span style="font-size:11px;color:var(--muted)">${u.views||0} views</span></div></div><span class="bs bsm" onclick="window.open('/${u.username}','_blank')" style="cursor:pointer"><i class="fa-solid fa-external-link"></i> View Profile</span></div><div style="display:flex;gap:2px;margin-bottom:22px;border-bottom:1px solid var(--border)"><button class="dtab on" data-t="profile" onclick="sDT('profile')">Profile</button><button class="dtab" data-t="links" onclick="sDT('links')">Links</button><button class="dtab" data-t="appearance" onclick="sDT('appearance')">Appearance</button><button class="dtab" data-t="badges" onclick="sDT('badges')">Badges</button></div><div id="t-profile"><div class="card"><h3 class="font-display" style="font-size:15px;font-weight:600;margin-bottom:18px">Edit Profile</h3><div style="display:flex;flex-direction:column;gap:16px"><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Avatar URL</label><input id="dA" class="ifield" type="url" placeholder="https://example.com/avatar.png" value="${E(u.avatar||'')}"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Display Name</label><input id="dN" class="ifield" type="text" placeholder="Your display name" value="${E(u.displayName||'')}"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Bio</label><textarea id="dB" class="ifield" placeholder="Tell us about yourself..." style="min-height:70px;resize:vertical">${E(u.bio||'')}</textarea></div><button class="bp" onclick="sPr()"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button></div></div></div><div id="t-links" style="display:none"><div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px"><h3 class="font-display" style="font-size:15px;font-weight:600">Your Links</h3><button class="bp bsm" onclick="aLM()"><i class="fa-solid fa-plus"></i> Add Link</button></div><div style="display:flex;flex-direction:column;gap:7px">${lHt||'<p style="color:var(--muted);font-size:12px;text-align:center;padding:18px">No links yet. Click "Add Link" to get started.</p>'}</div></div></div><div id="t-appearance" style="display:none"><div class="card"><h3 class="font-display" style="font-size:15px;font-weight:600;margin-bottom:18px">Appearance</h3><div style="display:flex;flex-direction:column;gap:16px"><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:7px">Theme Color</label><div style="display:flex;gap:7px;flex-wrap:wrap">${['#f472b6','#fb7185','#f43f5e','#f97316','#fbbf24','#22c55e','#14b8a6','#06b6d4','#3b82f6','#a855f7'].map(c=>`<button onclick="sTC('${c}')" style="width:34px;height:34px;border-radius:9px;background:${c};border:2px solid ${u.themeColor===c?'#fff':'transparent'};cursor:pointer;transition:all .2s" title="${c}"></button>`).join('')}</div></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:7px">Custom Color</label><div style="display:flex;gap:10px;align-items:center"><input type="color" id="ccI" value="${u.themeColor||'#f472b6'}" style="width:42px;height:34px;border:none;border-radius:8px;cursor:pointer;background:none"><span id="ccV" style="font-size:12px;color:var(--fg2)">${u.themeColor||'#f472b6'}</span></div></div></div></div></div><div id="t-badges" style="display:none"><div class="card"><h3 class="font-display" style="font-size:15px;font-weight:600;margin-bottom:18px">Your Badges</h3><div style="display:flex;flex-wrap:wrap;gap:9px">${bHt}</div></div></div></div>`;
 }
 
-function sDT(t){document.querySelectorAll('.dash-tab').forEach(e=>e.classList.toggle('on',e.dataset.t===t));['profile','links','appearance','badges'].forEach(x=>{const el=document.getElementById('t-'+x);if(el)el.style.display=x===t?'block':'none'})}
-function initDash(){const cc=document.getElementById('ccI');if(cc)cc.addEventListener('input',function(){document.getElementById('ccV').textContent=this.value;setTC(this.value)})}
+function sDT(t){document.querySelectorAll('.dtab').forEach(e=>e.classList.toggle('on',e.dataset.t===t));['profile','links','appearance','badges'].forEach(x=>{const el=document.getElementById('t-'+x);if(el)el.style.display=x===t?'block':'none'})}
+function iDash(){const c=document.getElementById('ccI');if(c)c.addEventListener('input',function(){document.getElementById('ccV').textContent=this.value;sTC(this.value)})}
+async function sPr(){const a=document.getElementById('dA').value.trim(),n=document.getElementById('dN').value.trim(),b=document.getElementById('dB').value.trim();if(!n){toast('Display name is required','er');return}await D.uU(CU.uid,{avatar:a,displayName:n,bio:b});CU=await D.gU(CU.uid);toast('Profile saved!','ok');router()}
+async function sTC(c){await D.uU(CU.uid,{themeColor:c});CU=await D.gU(CU.uid);document.querySelectorAll('#t-appearance button[onclick^="sTC"]').forEach(b=>{b.style.borderColor=b.onclick.toString().includes(c)?'#fff':'transparent'})}
+function aLM(idx){const i=typeof idx==='number'?idx:-1;const l=i>=0?CU.links[i]:null;showModal(l?'Edit Link':'Add Link',`<div style="display:flex;flex-direction:column;gap:14px"><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Title</label><input id="lT" class="ifield" type="text" placeholder="My Website" value="${l?E(l.title):''}"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">URL</label><input id="lU" class="ifield" type="url" placeholder="https://example.com" value="${l?E(l.url):''}"></div></div>`,[{l:'Cancel',c:'bs',a:'clM()'},{l:l?'Save':'Add',c:'bp',a:`sLk(${i})`}])}
+async function sLk(idx){const t=document.getElementById('lT').value.trim(),u=document.getElementById('lU').value.trim();if(!t||!u){toast('Please fill in all fields','er');return}const ls=[...CU.links];if(idx>=0)ls[idx]={title:t,url:u};else ls.push({title:t,url:u});await D.uU(CU.uid,{links:ls});CU=await D.gU(CU.uid);clM();toast(idx>=0?'Link updated':'Link added','ok');router()}
+function eL(i){aLM(i)}
+async function rL(i){const ls=CU.links.filter((_,x)=>x!==i);await D.uU(CU.uid,{links:ls});CU=await D.gU(CU.uid);toast('Link removed','ok');router()}
 
-async function saveProf(){
-  const a=document.getElementById('dA').value.trim(),n=document.getElementById('dN').value.trim(),b=document.getElementById('dB').value.trim();
-  if(!n){toast('Display name is required','err');return}
-  await D.updateU(CU.uid,{avatar:a,displayName:n,bio:b});
-  CU=await D.getU(CU.uid);
-  toast('Profile saved!','ok');router();
+/* ===================== BIO PAGE ===================== */
+async function pBio(un){
+  const a=document.getElementById('app');await D.iV(un);const u=await D.gUN(un);
+  if(!u||u.banned){a.innerHTML=`<div style="min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center"><div style="text-align:center"><i class="fa-solid fa-ghost" style="font-size:44px;color:var(--muted);margin-bottom:14px"></i><h2 class="font-display" style="font-size:20px;font-weight:700">User not found</h2><p style="color:var(--muted);margin-top:6px;font-size:14px">This profile doesn't exist or has been removed.</p><span class="bp" style="margin-top:18px;display:inline-flex;cursor:pointer" onclick="nav('/')">Go Home</span></div></div>`;return}
+  const tc=u.themeColor||'#f472b6';const bHt=u.badges.map(b=>bH(b)).join(' ');const lHt=u.links.map(l=>`<a href="${E(l.url)}" target="_blank" rel="noopener" class="blink" style="--accent:${tc}"><i class="${lI(l.url)}" style="color:${tc}"></i><span style="flex:1;font-size:13px;font-weight:500">${E(l.title)}</span><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;color:var(--muted)"></i></a>`).join('');
+  a.innerHTML=`<div class="bwrap" style="--accent:${tc}"><div class="bbg"><div style="position:absolute;inset:0;background:var(--bg)"></div><div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 15%,${tc}12 0%,transparent 55%)"></div><div style="position:absolute;inset:0;background:radial-gradient(ellipse at 30% 75%,${tc}06 0%,transparent 45%)"></div><canvas id="bpC" style="position:absolute;inset:0;z-index:0"></canvas></div><div class="bcard" style="position:relative;z-index:2"><div style="display:flex;flex-direction:column;align-items:center;text-align:center"><div class="baring">${u.avatar?`<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;border:3px solid var(--bg)">`:`<div style="width:100%;height:100%;border-radius:50%;border:3px solid var(--bg);background:linear-gradient(135deg,${tc},#c084fc);display:flex;align-items:center;justify-content:center;font-family:Outfit;font-weight:700;font-size:38px;color:var(--bg)">${(u.displayName||'?')[0].toUpperCase()}</div>`}</div><div style="margin-top:14px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:center"><h1 class="font-display" style="font-size:22px;font-weight:800">${E(u.displayName||u.username)}</h1>${bHt}</div><p style="color:var(--accent);font-size:12px;margin-top:3px">@${E(u.username)}</p>${u.bio?`<p style="color:var(--fg2);font-size:13px;line-height:1.6;margin-top:10px;max-width:360px">${E(u.bio)}</p>`:''}<div style="width:44px;height:1.5px;background:linear-gradient(90deg,transparent,${tc},transparent);margin:22px 0;border-radius:2px"></div>${lHt?`<div style="width:100%;display:flex;flex-direction:column;gap:9px">${lHt}</div>`:'<p style="color:var(--muted);font-size:12px;margin-top:6px">No links yet.</p>'}<div style="margin-top:24px;display:flex;align-items:center;gap:5px;color:var(--muted);font-size:11px"><i class="fa-solid fa-eye" style="font-size:10px"></i> ${u.views||0} views<span style="margin:0 7px">·</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 2C8 2 4 6 4 10c0 4 3 7 5 9 1 1 2 2 3 3 1-1 2-2 3-3 2-2 5-5 5-9 0-4-4-8-8-8z" fill="${tc}30" stroke="${tc}" stroke-width="1.5"/></svg>seashell.lol</div></div></div></div>`;
+  iBP(tc);
 }
 
-async function setTC(c){
-  await D.updateU(CU.uid,{themeColor:c});
-  CU=await D.getU(CU.uid);
-  document.querySelectorAll('#t-appearance button[onclick^="setTC"]').forEach(b=>{b.style.borderColor=b.onclick.toString().includes(c)?'#fff':'transparent'});
-}
+function iBP(c){const cv=document.getElementById('bpC');if(!cv)return;const ctx=cv.getContext('2d');let w,h,ps=[];function rs(){w=cv.width=cv.parentElement.offsetWidth;h=cv.height=cv.parentElement.offsetHeight}rs();window.addEventListener('resize',rs);for(let i=0;i<45;i++)ps.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.8+.4,dx:(Math.random()-.5)*.25,dy:(Math.random()-.5)*.25,o:Math.random()*.35+.08});function dr(){ctx.clearRect(0,0,w,h);ps.forEach(p=>{p.x+=p.dx;p.y+=p.dy;if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;ctx.beginPath();ctx.arc(p.x,p.y,Math.max(.4,p.r),0,Math.PI*2);ctx.fillStyle=c;ctx.globalAlpha=p.o;ctx.fill()});ctx.globalAlpha=1;requestAnimationFrame(dr)}dr()}
 
-function addLinkM(idx){
-  const i=typeof idx==='number'?idx:-1;
-  const l=i>=0?CU.links[i]:null;
-  showModal(l?'Edit Link':'Add Link',`<div style="display:flex;flex-direction:column;gap:14px"><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Title</label><input id="lT" class="input-field" type="text" placeholder="My Website" value="${l?esc(l.title):''}"></div><div><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">URL</label><input id="lU" class="input-field" type="url" placeholder="https://example.com" value="${l?esc(l.url):''}"></div></div>`,[{l:'Cancel',c:'btn-sec',a:'closeModal()'},{l:l?'Save':'Add',c:'btn-pri',a:`saveLink(${i})`}]);
-}
+/* ===================== ADMIN ===================== */
+let aT='users',aS='';
 
-async function saveLink(idx){
-  const t=document.getElementById('lT').value.trim(),u=document.getElementById('lU').value.trim();
-  if(!t||!u){toast('Please fill in all fields','err');return}
-  const ls=[...CU.links];
-  if(idx>=0)ls[idx]={title:t,url:u};else ls.push({title:t,url:u});
-  await D.updateU(CU.uid,{links:ls});
-  CU=await D.getU(CU.uid);
-  closeModal();toast(idx>=0?'Link updated':'Link added','ok');router();
-}
-function editLink(i){addLinkM(i)}
-async function rmLink(i){const ls=CU.links.filter((_,x)=>x!==i);await D.updateU(CU.uid,{links:ls});CU=await D.getU(CU.uid);toast('Link removed','ok');router()}
+function pAdmin(){return`<div class="aside"><div style="padding:0 18px 16px;border-bottom:1px solid var(--border);margin-bottom:8px"><div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Admin Panel</div><div style="font-size:12px;color:var(--fg2);margin-top:3px">${rT(CU.role)} ${E(CU.displayName)}</div></div><div class="anav ${aT==='users'?'on':''}" onclick="sAT('users')"><i class="fa-solid fa-users" style="width:16px;font-size:13px"></i>Users</div><div class="anav ${aT==='badges-mgmt'?'on':''}" onclick="sAT('badges-mgmt')"><i class="fa-solid fa-award" style="width:16px;font-size:13px"></i>Badge Manager</div><div class="anav ${aT==='roles'?'on':''}" onclick="sAT('roles')"><i class="fa-solid fa-shield-halved" style="width:16px;font-size:13px"></i>Roles</div><div class="anav ${aT==='stats'?'on':''}" onclick="sAT('stats')"><i class="fa-solid fa-chart-bar" style="width:16px;font-size:13px"></i>Statistics</div></div><div class="abody" id="aC"></div>`}
 
-/* ===== Bio Profile Page ===== */
-async function pgBio(un){
-  const a=document.getElementById('app');
-  await D.incV(un);
-  const u=await D.getUN(un);
-  if(!u||u.banned){
-    a.innerHTML=`<div style="min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center"><div style="text-align:center"><i class="fa-solid fa-ghost" style="font-size:44px;color:var(--muted);margin-bottom:14px"></i><h2 class="font-display" style="font-size:20px;font-weight:700">User not found</h2><p style="color:var(--muted);margin-top:6px;font-size:14px">This profile doesn't exist or has been removed.</p><a href="#/" class="btn-pri" style="margin-top:18px;display:inline-flex">Go Home</a></div></div>`;
-    return;
-  }
-  const tc=u.themeColor||'#f472b6';
-  const bH=u.badges.map(b=>bHTML(b)).join(' ');
-  const lH=u.links.map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener" class="bio-link" style="--accent:${tc}"><i class="${linkIcon(l.url)}" style="color:${tc}"></i><span style="flex:1;font-size:13px;font-weight:500">${esc(l.title)}</span><i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;color:var(--muted)"></i></a>`).join('');
+async function sAT(t){aT=t;document.querySelectorAll('.anav').forEach(n=>n.classList.remove('on'));document.querySelector(`.anav[onclick*="'${t}'"]`)?.classList.add('on');await rAC()}
 
-  a.innerHTML=`<div class="bio-wrap" style="--accent:${tc}"><div class="bio-bg"><div style="position:absolute;inset:0;background:var(--bg)"></div><div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 15%,${tc}12 0%,transparent 55%)"></div><div style="position:absolute;inset:0;background:radial-gradient(ellipse at 30% 75%,${tc}06 0%,transparent 45%)"></div><canvas id="bpC" style="position:absolute;inset:0;z-index:0"></canvas></div><div class="bio-card" style="position:relative;z-index:2"><div style="display:flex;flex-direction:column;align-items:center;text-align:center"><div class="bio-avatar-ring">${u.avatar?`<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;border:3px solid var(--bg)">`:`<div style="width:100%;height:100%;border-radius:50%;border:3px solid var(--bg);background:linear-gradient(135deg,${tc},#c084fc);display:flex;align-items:center;justify-content:center;font-family:Outfit;font-weight:700;font-size:38px;color:var(--bg)">${(u.displayName||'?')[0].toUpperCase()}</div>`}</div><div style="margin-top:14px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:center"><h1 class="font-display" style="font-size:22px;font-weight:800">${esc(u.displayName||u.username)}</h1>${bH}</div><p style="color:var(--accent);font-size:12px;margin-top:3px">@${esc(u.username)}</p>${u.bio?`<p style="color:var(--fg2);font-size:13px;line-height:1.6;margin-top:10px;max-width:360px">${esc(u.bio)}</p>`:''}<div style="width:44px;height:1.5px;background:linear-gradient(90deg,transparent,${tc},transparent);margin:22px 0;border-radius:2px"></div>${lH?`<div style="width:100%;display:flex;flex-direction:column;gap:9px">${lH}</div>`:'<p style="color:var(--muted);font-size:12px;margin-top:6px">No links yet.</p>'}<div style="margin-top:24px;display:flex;align-items:center;gap:5px;color:var(--muted);font-size:11px"><i class="fa-solid fa-eye" style="font-size:10px"></i> ${u.views||0} views<span style="margin:0 7px">·</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 2C8 2 4 6 4 10c0 4 3 7 5 9 1 1 2 2 3 3 1-1 2-2 3-3 2-2 5-5 5-9 0-4-4-8-8-8z" fill="${tc}30" stroke="${tc}" stroke-width="1.5"/></svg>seashell.lol</div></div></div></div>`;
-  initBP(tc);
-}
-
-function initBP(c){
-  const cv=document.getElementById('bpC');if(!cv)return;
-  const ctx=cv.getContext('2d');let w,h,ps=[];
-  function rs(){w=cv.width=cv.parentElement.offsetWidth;h=cv.height=cv.parentElement.offsetHeight}rs();
-  window.addEventListener('resize',rs);
-  for(let i=0;i<45;i++)ps.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.8+.4,dx:(Math.random()-.5)*.25,dy:(Math.random()-.5)*.25,o:Math.random()*.35+.08});
-  function dr(){ctx.clearRect(0,0,w,h);ps.forEach(p=>{p.x+=p.dx;p.y+=p.dy;if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;ctx.beginPath();ctx.arc(p.x,p.y,Math.max(.4,p.r),0,Math.PI*2);ctx.fillStyle=c;ctx.globalAlpha=p.o;ctx.fill()});ctx.globalAlpha=1;requestAnimationFrame(dr)}dr();
-}
-
-/* ===== Admin Panel ===== */
-let aTab='users',aSearch='';
-
-function pgAdmin(){
-  return`<div class="admin-side"><div style="padding:0 18px 16px;border-bottom:1px solid var(--border);margin-bottom:8px"><div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Admin Panel</div><div style="font-size:12px;color:var(--fg2);margin-top:3px">${rTag(CU.role)} ${esc(CU.displayName)}</div></div><div class="admin-nav ${aTab==='users'?'on':''}" onclick="sAT('users')"><i class="fa-solid fa-users" style="width:16px;font-size:13px"></i>Users</div><div class="admin-nav ${aTab==='badges-mgmt'?'on':''}" onclick="sAT('badges-mgmt')"><i class="fa-solid fa-award" style="width:16px;font-size:13px"></i>Badge Manager</div><div class="admin-nav ${aTab==='roles'?'on':''}" onclick="sAT('roles')"><i class="fa-solid fa-shield-halved" style="width:16px;font-size:13px"></i>Roles</div><div class="admin-nav ${aTab==='stats'?'on':''}" onclick="sAT('stats')"><i class="fa-solid fa-chart-bar" style="width:16px;font-size:13px"></i>Statistics</div></div><div class="admin-body" id="aC"></div>`;
-}
-
-async function sAT(t){aTab=t;document.querySelectorAll('.admin-nav').forEach(n=>n.classList.remove('on'));document.querySelector(`.admin-nav[onclick*="'${t}'"]`)?.classList.add('on');await renderAC()}
-
-async function renderAC(){
+async function rAC(){
   const el=document.getElementById('aC');if(!el)return;
-
-  if(aTab==='users'){
-    let us=await D.allU();
-    if(aSearch){const q=aSearch.toLowerCase();us=us.filter(u=>(u.displayName||'').toLowerCase().includes(q)||(u.username||'').toLowerCase().includes(q)||u.uid.toLowerCase().includes(q))}
-    us.sort((a,b)=>(ROLES[b.role]||0)-(ROLES[a.role]||0));
-    el.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px"><h2 class="font-display" style="font-size:20px;font-weight:700">User Management</h2><div style="display:flex;gap:9px;align-items:center"><input id="aS" class="input-field" type="text" placeholder="Search users..." style="width:220px" value="${esc(aSearch)}" oninput="aSearch=this.value;renderAC()"><span style="font-size:12px;color:var(--muted)">${us.length} users</span></div></div><div style="overflow-x:auto;border:1px solid var(--border);border-radius:11px"><table class="user-tbl"><thead><tr><th>User</th><th>Username</th><th>Role</th><th>Badges</th><th>Views</th><th>Status</th><th>Actions</th></tr></thead><tbody>${us.map(u=>`<tr><td><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1px solid var(--border)">${u.avatar?`<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover">`:`<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--bg)">${(u.displayName||'?')[0].toUpperCase()}</div>`}</div><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px" title="${esc(u.displayName||'')}">${esc(u.displayName||'Unnamed')}</div></div></td><td style="color:var(--accent);font-size:11px">@${esc(u.username||'—')}</td><td>${rTag(u.role)}</td><td style="max-width:100px">${u.badges&&u.badges.length?u.badges.slice(0,2).map(b=>bHTML(b)).join(' ')+(u.badges.length>2?`<span style="font-size:10px;color:var(--muted)">+${u.badges.length-2}</span>`:''):'<span style="color:var(--muted);font-size:11px">None</span>'}</td><td style="font-size:12px">${u.views||0}</td><td>${u.banned?'<span style="color:var(--danger);font-size:11px;font-weight:600">BANNED</span>':'<span style="color:var(--success);font-size:11px">Active</span>'}</td><td><button onclick="adminUA('${u.uid}')" class="btn-sec btn-sm" style="padding:4px 10px;font-size:10px">Manage</button></td></tr>`).join('')}</tbody></table></div>`;
+  if(aT==='users'){
+    let us=await D.aU();if(aS){const q=aS.toLowerCase();us=us.filter(u=>(u.displayName||'').toLowerCase().includes(q)||(u.username||'').toLowerCase().includes(q)||u.uid.toLowerCase().includes(q))}us.sort((a,b)=>(RL[b.role]||0)-(RL[a.role]||0));
+    el.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px"><h2 class="font-display" style="font-size:20px;font-weight:700">User Management</h2><div style="display:flex;gap:9px;align-items:center"><input id="aSI" class="ifield" type="text" placeholder="Search users..." style="width:220px" value="${E(aS)}" oninput="aS=this.value;rAC()"><span style="font-size:12px;color:var(--muted)">${us.length} users</span></div></div><div style="overflow-x:auto;border:1px solid var(--border);border-radius:11px"><table class="utbl"><thead><tr><th>User</th><th>Username</th><th>Role</th><th>Badges</th><th>Views</th><th>Status</th><th>Actions</th></tr></thead><tbody>${us.map(u=>`<tr><td><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1px solid var(--border)">${u.avatar?`<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover">`:`<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--bg)">${(u.displayName||'?')[0].toUpperCase()}</div>`}</div><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px" title="${E(u.displayName||'')}">${E(u.displayName||'Unnamed')}</div></div></td><td style="color:var(--accent);font-size:11px">@${E(u.username||'—')}</td><td>${rT(u.role)}</td><td style="max-width:100px">${u.badges&&u.badges.length?u.badges.slice(0,2).map(b=>bH(b)).join(' ')+(u.badges.length>2?`<span style="font-size:10px;color:var(--muted)">+${u.badges.length-2}</span>`:''):'<span style="color:var(--muted);font-size:11px">None</span>'}</td><td style="font-size:12px">${u.views||0}</td><td>${u.banned?'<span style="color:var(--danger);font-size:11px;font-weight:600">BANNED</span>':'<span style="color:var(--success);font-size:11px">Active</span>'}</td><td><button onclick="aUA('${u.uid}')" class="bs bsm" style="padding:4px 10px;font-size:10px">Manage</button></td></tr>`).join('')}</tbody></table></div>`;
   }
-
-  else if(aTab==='badges-mgmt'){
-    const ab=Object.entries(BADGES);
-    el.innerHTML=`<h2 class="font-display" style="font-size:20px;font-weight:700;margin-bottom:6px">Badge Manager</h2><p style="color:var(--fg2);font-size:13px;margin-bottom:20px">All available badges. Assign them through User Management.</p><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">${ab.map(([k,b])=>`<div class="card" style="padding:16px;display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:10px;background:${b.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="width:26px;height:26px;display:flex">${b.svg}</span></div><div><div style="font-weight:600;font-size:13px">${b.n}</div><div style="font-size:11px;color:var(--fg2)">${b.d}</div><div style="font-size:10px;color:var(--muted);margin-top:1px">ID: ${k}</div></div></div>`).join('')}</div>`;
+  else if(aT==='badges-mgmt'){
+    el.innerHTML=`<h2 class="font-display" style="font-size:20px;font-weight:700;margin-bottom:6px">Badge Manager</h2><p style="color:var(--fg2);font-size:13px;margin-bottom:20px">All available badges. Assign them through User Management.</p><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">${Object.entries(B).map(([k,b])=>`<div class="card" style="padding:16px;display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:10px;background:${b.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="width:26px;height:26px;display:flex">${b.s}</span></div><div><div style="font-weight:600;font-size:13px">${b.n}</div><div style="font-size:11px;color:var(--fg2)">${b.d}</div><div style="font-size:10px;color:var(--muted);margin-top:1px">ID: ${k}</div></div></div>`).join('')}</div>`;
   }
-
-  else if(aTab==='roles'){
+  else if(aT==='roles'){
     const ri=[{r:'owner',l:4,d:'Full access to everything. Can manage all users including other Owners.',c:RC.owner},{r:'manager',l:3,d:'Can manage Admins, Moderators, and Users. Cannot edit Owners.',c:RC.manager},{r:'admin',l:2,d:'Can manage Moderators and Users. Cannot edit Managers or Owners.',c:RC.admin},{r:'moderator',l:1,d:'Can manage regular Users only. Cannot edit any staff members.',c:RC.moderator},{r:'user',l:0,d:'Default role. No admin privileges.',c:RC.user}];
-    el.innerHTML=`<h2 class="font-display" style="font-size:20px;font-weight:700;margin-bottom:6px">Role Hierarchy</h2><p style="color:var(--fg2);font-size:13px;margin-bottom:20px">Higher roles can manage all roles below them. Lower roles cannot edit higher roles.</p><div style="display:flex;flex-direction:column;gap:10px;max-width:560px">${ri.map(x=>`<div class="card" style="padding:16px;display:flex;align-items:flex-start;gap:14px;border-left:3px solid ${x.c}"><div style="flex:1"><div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">${rTag(x.r)}<span style="font-size:10px;color:var(--muted)">Level ${x.l}</span></div><p style="font-size:12px;color:var(--fg2);line-height:1.5">${x.d}</p></div></div>`).join('')}</div>`;
+    el.innerHTML=`<h2 class="font-display" style="font-size:20px;font-weight:700;margin-bottom:6px">Role Hierarchy</h2><p style="color:var(--fg2);font-size:13px;margin-bottom:20px">Higher roles can manage all roles below them. Lower roles cannot edit higher roles.</p><div style="display:flex;flex-direction:column;gap:10px;max-width:560px">${ri.map(x=>`<div class="card" style="padding:16px;display:flex;align-items:flex-start;gap:14px;border-left:3px solid ${x.c}"><div style="flex:1"><div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">${rT(x.r)}<span style="font-size:10px;color:var(--muted)">Level ${x.l}</span></div><p style="font-size:12px;color:var(--fg2);line-height:1.5">${x.d}</p></div></div>`).join('')}</div>`;
   }
-
-  else if(aTab==='stats'){
-    const us=await D.allU();
-    const tv=us.reduce((s,u)=>s+(u.views||0),0);
-    const tl=us.reduce((s,u)=>s+(u.links||[]).length,0);
-    const rc={};us.forEach(u=>{rc[u.role]=(rc[u.role]||0)+1});
-    const bc={};us.forEach(u=>(u.badges||[]).forEach(b=>{bc[b]=(bc[b]||0)+1}));
-    el.innerHTML=`<h2 class="font-display" style="font-size:20px;font-weight:700;margin-bottom:20px">Statistics</h2><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:26px"><div class="card" style="text-align:center"><div class="font-display" style="font-size:28px;font-weight:800;color:var(--accent)">${us.length}</div><div style="font-size:12px;color:var(--fg2);margin-top:3px">Total Users</div></div><div class="card" style="text-align:center"><div class="font-display" style="font-size:28px;font-weight:800;color:var(--accent)">${tv}</div><div style="font-size:12px;color:var(--fg2);margin-top:3px">Total Views</div></div><div class="card" style="text-align:center"><div class="font-display" style="font-size:28px;font-weight:800;color:var(--accent)">${tl}</div><div style="font-size:12px;color:var(--fg2);margin-top:3px">Total Links</div></div><div class="card" style="text-align:center"><div class="font-display" style="font-size:28px;font-weight:800;color:var(--accent)">${Object.keys(BADGES).length}</div><div style="font-size:12px;color:var(--fg2);margin-top:3px">Badge Types</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="card"><h3 class="font-display" style="font-size:14px;font-weight:600;margin-bottom:14px">Users by Role</h3>${Object.entries(rc).sort((a,b)=>ROLES[b[0]]-ROLES[a[0]]).map(([r,c])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:7px">${rTag(r)}</div><span style="font-size:13px;font-weight:600">${c}</span></div>`).join('')}</div><div class="card"><h3 class="font-display" style="font-size:14px;font-weight:600;margin-bottom:14px">Badge Distribution</h3>${Object.entries(bc).sort((a,b)=>b[1]-a[1]).map(([b,c])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:7px">${bHTML(b)}</div><span style="font-size:13px;font-weight:600">${c}</span></div>`).join('')||'<p style="color:var(--muted);font-size:12px">No badges assigned yet.</p>'}</div></div>`;
+  else if(aT==='stats'){
+    const us=await D.aU();const tv=us.reduce((s,u)=>s+(u.views||0),0);const tl=us.reduce((s,u)=>s+(u.links||[]).length,0);const rc={};us.forEach(u=>{rc[u.role]=(rc[u.role]||0)+1});const bc={};us.forEach(u=>(u.badges||[]).forEach(b=>{bc[b]=(bc[b]||0)+1}));
+    el.innerHTML=`<h2 class="font-display" style="font-size:20px;font-weight:700;margin-bottom:20px">Statistics</h2><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:26px"><div class="card" style="text-align:center"><div class="font-display" style="font-size:28px;font-weight:800;color:var(--accent)">${us.length}</div><div style="font-size:12px;color:var(--fg2);margin-top:3px">Total Users</div></div><div class="card" style="text-align:center"><div class="font-display" style="font-size:28px;font-weight:800;color:var(--accent)">${tv}</div><div style="font-size:12px;color:var(--fg2);margin-top:3px">Total Views</div></div><div class="card" style="text-align:center"><div class="font-display" style="font-size:28px;font-weight:800;color:var(--accent)">${tl}</div><div style="font-size:12px;color:var(--fg2);margin-top:3px">Total Links</div></div><div class="card" style="text-align:center"><div class="font-display" style="font-size:28px;font-weight:800;color:var(--accent)">${Object.keys(B).length}</div><div style="font-size:12px;color:var(--fg2);margin-top:3px">Badge Types</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="card"><h3 class="font-display" style="font-size:14px;font-weight:600;margin-bottom:14px">Users by Role</h3>${Object.entries(rc).sort((a,b)=>RL[b[0]]-RL[a[0]]).map(([r,c])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:7px">${rT(r)}</div><span style="font-size:13px;font-weight:600">${c}</span></div>`).join('')}</div><div class="card"><h3 class="font-display" style="font-size:14px;font-weight:600;margin-bottom:14px">Badge Distribution</h3>${Object.entries(bc).sort((a,b)=>b[1]-a[1]).map(([b,c])=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:7px">${bH(b)}</div><span style="font-size:13px;font-weight:600">${c}</span></div>`).join('')||'<p style="color:var(--muted);font-size:12px">No badges assigned yet.</p>'}</div></div>`;
   }
 }
 
-/* ===== Admin User Actions ===== */
-async function adminUA(uid){
-  const t=await D.getU(uid);if(!t){toast('User not found','err');return}
-  const canE=ROLES[CU.role]>ROLES[t.role];
-  const isS=CU.uid===uid;
-  const aks=Object.keys(BADGES);
-  const ubH=aks.map(k=>{const h=(t.badges||[]).includes(k);const b=BADGES[k];return`<label style="display:flex;align-items:center;gap:7px;padding:5px 9px;border-radius:7px;cursor:pointer;transition:background .2s;${h?'background:'+b.bg:''}" onmouseover="this.style.background=this.style.background||'var(--card2)'" onmouseout="this.style.background='${h?b.bg:'transparent'}'"><input type="checkbox" value="${k}" ${h?'checked':''} style="accent-color:var(--accent)"><span style="width:18px;height:18px;display:flex">${b.svg}</span><span style="font-size:12px">${b.n}</span></label>`}).join('');
-  const rO=Object.keys(ROLES).map(r=>`<option value="${r}" ${t.role===r?'selected':''} ${!canE&&ROLES[r]>ROLES[CU.role]?'disabled':''}>${r.charAt(0).toUpperCase()+r.slice(1)}${!canE&&ROLES[r]>ROLES[CU.role]?' (no permission)':''}</option>`).join('');
-
-  showModal(`Manage @${t.username}`,`${!canE&&!isS?`<div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.18);border-radius:9px;padding:10px 14px;margin-bottom:18px;font-size:12px;color:var(--danger)"><i class="fa-solid fa-triangle-exclamation" style="margin-right:5px"></i>You cannot modify this user — their role is higher than or equal to yours.</div>`:''}<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding:12px;background:var(--bg2);border-radius:10px"><div style="width:42px;height:42px;border-radius:50%;overflow:hidden;border:2px solid var(--accent);flex-shrink:0">${t.avatar?`<img src="${t.avatar}" style="width:100%;height:100%;object-fit:cover">`:`<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--bg);font-size:16px">${(t.displayName||'?')[0].toUpperCase()}</div>`}</div><div><div style="font-weight:600;font-size:14px">${esc(t.displayName||'Unnamed')}</div><div style="font-size:11px;color:var(--accent)">@${esc(t.username)} · ${rTag(t.role)}</div><div style="font-size:10px;color:var(--muted);margin-top:1px">UID: ${t.uid.substring(0,18)}...</div></div></div><div style="margin-bottom:18px"><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Change Username</label><div style="display:flex;gap:7px"><input id="aNU" class="input-field" type="text" placeholder="New username" value="${esc(t.username)}" style="flex:1"><button class="btn-sec btn-sm" onclick="aCU('${uid}')" ${!canE?'disabled style="opacity:.35;cursor:not-allowed"':''}>Update</button></div></div><div style="margin-bottom:18px"><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Change Role</label><select id="aNR" class="input-field" ${!canE?'disabled style="opacity:.35"':''}>${rO}</select></div><div style="margin-bottom:18px"><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Manage Badges</label><div id="aBL" style="display:grid;grid-template-columns:1fr 1fr;gap:3px;max-height:220px;overflow-y:auto;padding:3px">${ubH}</div></div><div style="border-top:1px solid var(--border);padding-top:18px"><label style="font-size:11px;font-weight:600;color:var(--danger);display:block;margin-bottom:9px">Danger Zone</label><div style="display:flex;gap:9px;flex-wrap:wrap"><button class="btn-dan" onclick="aTB('${uid}',${!t.banned})" ${!canE?'disabled style="opacity:.35;cursor:not-allowed"':''}><i class="fa-solid fa-${t.banned?'unlock':'ban'}" style="margin-right:3px"></i>${t.banned?'Unban':'Ban'} User</button><button class="btn-dan" onclick="aCD('${uid}','${esc(t.displayName||t.username)}')" ${!canE?'disabled style="opacity:.35;cursor:not-allowed"':''}><i class="fa-solid fa-trash" style="margin-right:3px"></i>Delete Account</button></div></div>`,[{l:'Cancel',c:'btn-sec',a:'closeModal()'},{l:'Save Changes',c:'btn-pri',a:`aSU('${uid}')`,id:'aSB'}]);
+/* ===================== ADMIN USER ACTIONS ===================== */
+async function aUA(uid){
+  const t=await D.gU(uid);if(!t){toast('User not found','er');return}
+  const canE=RL[CU.role]>RL[t.role];const aks=Object.keys(B);
+  const ubH=aks.map(k=>{const h=(t.badges||[]).includes(k);const b=B[k];return`<label style="display:flex;align-items:center;gap:7px;padding:5px 9px;border-radius:7px;cursor:pointer;transition:background .2s;${h?'background:'+b.bg:''}" onmouseover="this.style.background=this.style.background||'var(--card2)'" onmouseout="this.style.background='${h?b.bg:'transparent'}'"><input type="checkbox" value="${k}" ${h?'checked':''} style="accent-color:var(--accent)"><span style="width:18px;height:18px;display:flex">${b.s}</span><span style="font-size:12px">${b.n}</span></label>`}).join('');
+  const rO=Object.keys(RL).map(r=>`<option value="${r}" ${t.role===r?'selected':''} ${!canE&&RL[r]>RL[CU.role]?'disabled':''}>${r.charAt(0).toUpperCase()+r.slice(1)}${!canE&&RL[r]>RL[CU.role]?' (no permission)':''}</option>`).join('');
+  showModal(`Manage @${t.username}`,`${!canE?`<div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.18);border-radius:9px;padding:10px 14px;margin-bottom:18px;font-size:12px;color:var(--danger)"><i class="fa-solid fa-triangle-exclamation" style="margin-right:5px"></i>You cannot modify this user — their role is higher than or equal to yours.</div>`:''}<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding:12px;background:var(--bg2);border-radius:10px"><div style="width:42px;height:42px;border-radius:50%;overflow:hidden;border:2px solid var(--accent);flex-shrink:0">${t.avatar?`<img src="${t.avatar}" style="width:100%;height:100%;object-fit:cover">`:`<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--bg);font-size:16px">${(t.displayName||'?')[0].toUpperCase()}</div>`}</div><div><div style="font-weight:600;font-size:14px">${E(t.displayName||'Unnamed')}</div><div style="font-size:11px;color:var(--accent)">@${E(t.username)} · ${rT(t.role)}</div><div style="font-size:10px;color:var(--muted);margin-top:1px">UID: ${t.uid.substring(0,18)}...</div></div></div><div style="margin-bottom:18px"><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Change Username</label><div style="display:flex;gap:7px"><input id="aNU" class="ifield" type="text" placeholder="New username" value="${E(t.username)}" style="flex:1"><button class="bs bsm" onclick="aCU('${uid}')" ${!canE?'disabled style="opacity:.35;cursor:not-allowed"':''}>Update</button></div></div><div style="margin-bottom:18px"><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Change Role</label><select id="aNR" class="ifield" ${!canE?'disabled style="opacity:.35"':''}>${rO}</select></div><div style="margin-bottom:18px"><label style="font-size:11px;font-weight:600;color:var(--fg2);display:block;margin-bottom:5px">Manage Badges</label><div id="aBL" style="display:grid;grid-template-columns:1fr 1fr;gap:3px;max-height:220px;overflow-y:auto;padding:3px">${ubH}</div></div><div style="border-top:1px solid var(--border);padding-top:18px"><label style="font-size:11px;font-weight:600;color:var(--danger);display:block;margin-bottom:9px">Danger Zone</label><div style="display:flex;gap:9px;flex-wrap:wrap"><button class="bd" onclick="aTB('${uid}',${!t.banned})" ${!canE?'disabled style="opacity:.35;cursor:not-allowed"':''}><i class="fa-solid fa-${t.banned?'unlock':'ban'}" style="margin-right:3px"></i>${t.banned?'Unban':'Ban'} User</button><button class="bd" onclick="aCD('${uid}','${E(t.displayName||t.username)}')" ${!canE?'disabled style="opacity:.35;cursor:not-allowed"':''}><i class="fa-solid fa-trash" style="margin-right:3px"></i>Delete Account</button></div></div>`,[{l:'Cancel',c:'bs',a:'clM()'},{l:'Save Changes',c:'bp',a:`aSU('${uid}')`,id:'aSB'}]);
   if(!canE){const b=document.getElementById('aSB');if(b){b.disabled=true;b.style.opacity='.35';b.style.cursor='not-allowed'}}
 }
 
-async function aSU(uid){
-  const t=await D.getU(uid);if(!t||ROLES[CU.role]<=ROLES[t.role]){toast('Permission denied','err');return}
-  const nr=document.getElementById('aNR').value;
-  if(ROLES[nr]>ROLES[CU.role]){toast('Cannot assign a role higher than your own','err');return}
-  const cbs=document.querySelectorAll('#aBL input[type="checkbox"]:checked');
-  const nb=Array.from(cbs).map(c=>c.value);
-  await D.updateU(uid,{role:nr,badges:nb});
-  toast('User updated successfully','ok');closeModal();await renderAC();
-}
+async function aSU(uid){const t=await D.gU(uid);if(!t||RL[CU.role]<=RL[t.role]){toast('Permission denied','er');return}const nr=document.getElementById('aNR').value;if(RL[nr]>RL[CU.role]){toast('Cannot assign a role higher than your own','er');return}const cbs=document.querySelectorAll('#aBL input[type="checkbox"]:checked');const nb=Array.from(cbs).map(c=>c.value);await D.uU(uid,{role:nr,badges:nb});toast('User updated successfully','ok');clM();await rAC()}
+async function aCU(uid){const t=await D.gU(uid);if(!t||RL[CU.role]<=RL[t.role]){toast('Permission denied','er');return}const nu=document.getElementById('aNU').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');if(!nu||nu.length<3){toast('Username must be at least 3 characters','er');return}const ex=await D.gUN(nu);if(ex&&ex.uid!==uid){toast('Username already taken','er');return}await D.uU(uid,{username:nu});toast('Username changed to @'+nu,'ok');clM();await rAC()}
+async function aTB(uid,ban){const t=await D.gU(uid);if(!t||RL[CU.role]<=RL[t.role]){toast('Permission denied','er');return}await D.uU(uid,{banned:ban});toast(ban?'User has been banned':'User has been unbanned',ban?'er':'ok');if(ban&&CU.uid===uid){doLogout();return}clM();await rAC()}
+function aCD(uid,name){showModal('Confirm Deletion',`<div style="text-align:center;padding:8px 0"><i class="fa-solid fa-triangle-exclamation" style="font-size:36px;color:var(--danger);margin-bottom:14px"></i><p style="font-size:14px;margin-bottom:6px">Are you sure you want to delete <strong>${name}</strong>'s account?</p><p style="font-size:12px;color:var(--muted)">This action cannot be undone.</p></div>`,[{l:'Cancel',c:'bs',a:'clM()'},{l:'Delete Forever',c:'bd',a:`aDU('${uid})'`}])}
+async function aDU(uid){const t=await D.gU(uid);if(!t||RL[CU.role]<=RL[t.role]){toast('Permission denied','er');return}await D.dU(uid);toast('Account has been deleted','er');if(uid===CU.uid){doLogout();return}clM();await rAC()}
 
-async function aCU(uid){
-  const t=await D.getU(uid);if(!t||ROLES[CU.role]<=ROLES[t.role]){toast('Permission denied','err');return}
-  const nu=document.getElementById('aNU').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
-  if(!nu||nu.length<3){toast('Username must be at least 3 characters','err');return}
-  const existing=await D.getUN(nu);
-  if(existing&&existing.uid!==uid){toast('Username already taken','err');return}
-  await D.updateU(uid,{username:nu});
-  toast('Username changed to @'+nu,'ok');closeModal();await renderAC();
-}
-
-async function aTB(uid,ban){
-  const t=await D.getU(uid);if(!t||ROLES[CU.role]<=ROLES[t.role]){toast('Permission denied','err');return}
-  await D.updateU(uid,{banned:ban});
-  toast(ban?'User has been banned':'User has been unbanned',ban?'err':'ok');
-  if(ban&&CU.uid===uid){doLogout();return}
-  closeModal();await renderAC();
-}
-
-function aCD(uid,name){
-  showModal('Confirm Deletion',`<div style="text-align:center;padding:8px 0"><i class="fa-solid fa-triangle-exclamation" style="font-size:36px;color:var(--danger);margin-bottom:14px"></i><p style="font-size:14px;margin-bottom:6px">Are you sure you want to delete <strong>${name}</strong>'s account?</p><p style="font-size:12px;color:var(--muted)">This action cannot be undone.</p></div>`,[{l:'Cancel',c:'btn-sec',a:'closeModal()'},{l:'Delete Forever',c:'btn-dan',a:`aDU('${uid}')`}]);
-}
-
-async function aDU(uid){
-  const t=await D.getU(uid);if(!t||ROLES[CU.role]<=ROLES[t.role]){toast('Permission denied','err');return}
-  await D.delU(uid);
-  toast('Account has been deleted','err');
-  if(uid===CU.uid){doLogout();return}
-  closeModal();await renderAC();
-}
-
-function pg404(){return`<div style="min-height:calc(100vh - 60px);display:flex;align-items:center;justify-content:center"><div style="text-align:center"><div class="font-display" style="font-size:88px;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">404</div><p style="color:var(--fg2);font-size:15px;margin-top:6px">Page not found</p><a href="#/" class="btn-pri" style="margin-top:18px;display:inline-flex">Go Home</a></div></div>`}
-
-/* ===== Bootstrap ===== */
+/* ===================== BOOT ===================== */
 (async function(){
-  try{
-    await restoreSess();
-  }catch(e){
-    console.error('Session restore error:',e);
-    CU=null;
-  }
-  /* Hide loading screen */
-  const ls=document.getElementById('loadScreen');
+  try{await restoreSess()}catch(e){console.error('Session error:',e);CU=null}
+  const ls=document.getElementById('lds');
   if(ls){ls.classList.add('done');setTimeout(()=>ls.remove(),500)}
   router();
-  window.addEventListener('hashchange',router);
+  window.addEventListener('popstate',router);
+  /* Intercept all link clicks for clean routing */
+  document.addEventListener('click',function(e){
+    const a=e.target.closest('a');
+    if(a&&a.getAttribute('href')&&a.getAttribute('href').startsWith('/')&&!a.getAttribute('target')&&!a.getAttribute('rel')){
+      e.preventDefault();nav(a.getAttribute('href'));
+    }
+  });
 })();
 </script>
 </body>
