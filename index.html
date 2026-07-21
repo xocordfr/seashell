@@ -11,368 +11,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script>
-tailwind.config={theme:{extend:{colors:{ss:{bg:'#0A0A0F',surface:'#12121A',card:'#16161F',pink:'#FF1493',rose:'#FF69B4',deep:'#DB2777',pastel:'#FDE2F3',muted:'#8B7A8E',text:'#F5F0F2',dim:'#4A3F4E',border:'rgba(255,20,147,0.18)'}},fontFamily:{display:['Playfair Display','serif'],body:['Outfit','sans-serif'],mono:['JetBrains Mono','monospace']}}}}
-</script>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'Outfit',sans-serif;background:#0A0A0F;color:#F5F0F2;overflow-x:hidden;min-height:100vh}
-::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:#0A0A0F}
-::-webkit-scrollbar-thumb{background:rgba(255,20,147,0.3);border-radius:3px}
-#fx-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
-.page{display:none;position:relative;z-index:1;min-height:100vh}
-.page.active{display:block}
-.nav-glass{background:rgba(10,10,15,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,20,147,0.1)}
-.glass{background:rgba(22,22,31,0.75);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,20,147,0.12);box-shadow:0 0 40px rgba(255,20,147,0.06),0 25px 60px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.04)}
-.glass-strong{background:rgba(22,22,31,0.9);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:1px solid rgba(255,20,147,0.18);box-shadow:0 0 60px rgba(255,20,147,0.08),0 30px 80px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06)}
-.text-pearl{background:linear-gradient(135deg,#FF1493,#FF69B4,#FDE2F3,#FF69B4,#DB2777,#FF1493);background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:pearl-shift 6s ease infinite}
-@keyframes pearl-shift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-.name-neon{color:#FF1493;text-shadow:0 0 7px #FF1493,0 0 12px #FF1493,0 0 24px rgba(255,20,147,0.6),0 0 48px rgba(219,39,119,0.4)}
-.name-glitch{position:relative;color:#F5F0F2;animation:glitch-skew 4s infinite linear alternate-reverse}
-.name-glitch::before,.name-glitch::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
-.name-glitch::before{color:#FF69B4;animation:glitch-c1 3s infinite linear alternate-reverse;clip-path:polygon(0 0,100% 0,100% 40%,0 40%);transform:translate(-3px,-1px)}
-.name-glitch::after{color:#DB2777;animation:glitch-c2 2s infinite linear alternate-reverse;clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%);transform:translate(3px,1px)}
-@keyframes glitch-skew{0%{transform:skew(0deg)}20%{transform:skew(-0.5deg)}40%{transform:skew(0.3deg)}60%{transform:skew(0deg)}80%{transform:skew(-0.2deg)}100%{transform:skew(0deg)}}
-@keyframes glitch-c1{0%{clip-path:polygon(0 0,100% 0,100% 40%,0 40%);transform:translate(-3px,-1px)}50%{clip-path:polygon(0 15%,100% 15%,100% 50%,0 50%);transform:translate(2px,0)}100%{clip-path:polygon(0 0,100% 0,100% 40%,0 40%);transform:translate(-3px,-1px)}}
-@keyframes glitch-c2{0%{clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%);transform:translate(3px,1px)}50%{clip-path:polygon(0 50%,100% 50%,100% 85%,0 85%);transform:translate(-2px,0)}100%{clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%);transform:translate(3px,1px)}}
-.name-gradient{background:linear-gradient(90deg,#FF1493,#FF69B4,#FDE2F3,#FF69B4,#FF1493);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:grad-slide 3s linear infinite}
-@keyframes grad-slide{0%{background-position:0% 50%}100%{background-position:200% 50%}}
-.name-holographic{background:linear-gradient(90deg,#FF1493,#FF69B4,#FDE2F3,#C084FC,#FF69B4,#FF1493);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:holo-shift 4s ease infinite;filter:drop-shadow(0 0 8px rgba(255,20,147,0.4))}
-@keyframes holo-shift{0%{background-position:0% 50%}50%{background-position:150% 50%}100%{background-position:300% 50%}}
-.name-sparkle{position:relative;color:#F5F0F2;overflow:hidden}
-.name-sparkle::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.35),transparent);animation:sparkle-sweep 3s ease-in-out infinite;transform:skewX(-15deg)}
-@keyframes sparkle-sweep{0%{left:-100%}50%,100%{left:200%}}
-.btn-pink{background:linear-gradient(135deg,#FF1493,#DB2777);color:#fff;border:none;padding:12px 28px;border-radius:12px;font-weight:600;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(255,20,147,0.3);font-family:'Outfit',sans-serif;font-size:15px}
-.btn-pink:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,20,147,0.45)}
-.btn-pink:disabled{opacity:0.6;cursor:not-allowed;transform:none}
-.btn-outline{background:transparent;color:#FF69B4;border:1px solid rgba(255,20,147,0.3);padding:12px 28px;border-radius:12px;font-weight:500;cursor:pointer;transition:all .3s;font-family:'Outfit',sans-serif;font-size:15px}
-.btn-outline:hover{background:rgba(255,20,147,0.08);border-color:rgba(255,20,147,0.5);transform:translateY(-2px)}
-.btn-ghost{background:rgba(255,20,147,0.08);color:#FF69B4;border:none;padding:8px 16px;border-radius:8px;font-weight:500;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;font-size:14px}
-.btn-ghost:hover{background:rgba(255,20,147,0.15)}
-.link-btn{display:flex;align-items:center;gap:12px;width:100%;padding:14px 18px;background:rgba(255,20,147,0.06);border:1px solid rgba(255,20,147,0.1);border-radius:14px;color:#F5F0F2;text-decoration:none;font-weight:500;transition:all .3s;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px}
-.link-btn:hover{background:rgba(255,20,147,0.12);border-color:rgba(255,20,147,0.25);transform:translateX(4px);box-shadow:0 4px 20px rgba(255,20,147,0.1)}
-.link-btn i{width:20px;text-align:center;color:#FF69B4;font-size:16px}
-.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;cursor:default;transition:all .3s;position:relative;white-space:nowrap}
-.badge:hover{transform:scale(1.1)}
-.badge-verified{background:rgba(59,130,246,0.15);color:#60A5FA;border:1px solid rgba(59,130,246,0.2)}
-.badge-premium{background:rgba(255,20,147,0.15);color:#FF69B4;border:1px solid rgba(255,20,147,0.25)}
-.badge-staff{background:rgba(168,85,247,0.15);color:#C084FC;border:1px solid rgba(168,85,247,0.2)}
-.badge-early{background:rgba(251,191,36,0.12);color:#FCD34D;border:1px solid rgba(251,191,36,0.2)}
-.badge-pearl{background:rgba(253,226,243,0.12);color:#FDE2F3;border:1px solid rgba(253,226,243,0.2)}
-.badge .badge-tip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) scale(0.9);background:#1A1A24;border:1px solid rgba(255,20,147,0.2);padding:6px 12px;border-radius:8px;font-size:11px;color:#F5F0F2;white-space:nowrap;opacity:0;pointer-events:none;transition:all .2s;z-index:50}
-.badge:hover .badge-tip{opacity:1;transform:translateX(-50%) scale(1)}
-.status-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
-.status-online{background:#22C55E;box-shadow:0 0 6px rgba(34,197,94,0.5)}
-.status-idle{background:#FCD34D;box-shadow:0 0 6px rgba(252,211,77,0.5)}
-.status-dnd{background:#EF4444;box-shadow:0 0 6px rgba(239,68,68,0.5)}
-.music-bar{width:100%;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden}
-.music-fill{height:100%;background:linear-gradient(90deg,#FF1493,#FF69B4);border-radius:2px;transition:width .3s linear}
-.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.open{display:flex}
-.toast{position:fixed;bottom:24px;right:24px;padding:14px 24px;border-radius:12px;font-size:14px;font-weight:500;z-index:2000;transform:translateY(100px);opacity:0;transition:all .4s cubic-bezier(0.16,1,0.3,1);max-width:360px}
-.toast.show{transform:translateY(0);opacity:1}
-.toast-success{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#86EFAC}
-.toast-error{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#FCA5A5}
-.toast-info{background:rgba(255,20,147,0.15);border:1px solid rgba(255,20,147,0.3);color:#FF69B4}
-.fx-switcher{position:fixed;bottom:24px;right:24px;z-index:100}
-.fx-toggle-btn{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#FF1493,#DB2777);border:none;color:#fff;font-size:18px;cursor:pointer;box-shadow:0 4px 20px rgba(255,20,147,0.4);transition:all .3s;display:flex;align-items:center;justify-content:center}
-.fx-toggle-btn:hover{transform:scale(1.1)}
-.fx-panel{position:absolute;bottom:60px;right:0;background:rgba(22,22,31,0.95);backdrop-filter:blur(20px);border:1px solid rgba(255,20,147,0.2);border-radius:16px;padding:16px;min-width:200px;display:none;box-shadow:0 10px 40px rgba(0,0,0,0.5)}
-.fx-panel.open{display:block}
-.fx-option{display:block;width:100%;padding:8px 12px;background:transparent;border:1px solid transparent;border-radius:8px;color:#F5F0F2;font-size:13px;cursor:pointer;transition:all .2s;text-align:left;font-family:'Outfit',sans-serif}
-.fx-option:hover{background:rgba(255,20,147,0.08)}
-.fx-option.active{background:rgba(255,20,147,0.12);border-color:rgba(255,20,147,0.3);color:#FF69B4}
-.admin-sidebar{width:240px;background:rgba(16,16,24,0.95);border-right:1px solid rgba(255,20,147,0.08);height:calc(100vh - 65px);position:sticky;top:65px;flex-shrink:0}
-.admin-nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:#8B7A8E;font-size:14px;cursor:pointer;transition:all .2s;border-left:2px solid transparent;font-family:'Outfit',sans-serif;background:none;border-right:none;border-top:none;border-bottom:none;width:100%;text-align:left}
-.admin-nav-item:hover{color:#F5F0F2;background:rgba(255,20,147,0.04)}
-.admin-nav-item.active{color:#FF69B4;background:rgba(255,20,147,0.08);border-left-color:#FF1493}
-.admin-nav-item i{width:18px;text-align:center}
-.stat-card{background:rgba(22,22,31,0.6);border:1px solid rgba(255,20,147,0.1);border-radius:16px;padding:20px;transition:all .3s}
-.stat-card:hover{border-color:rgba(255,20,147,0.2);box-shadow:0 4px 20px rgba(255,20,147,0.06)}
-.data-table{width:100%;border-collapse:separate;border-spacing:0}
-.data-table th{padding:12px 16px;text-align:left;font-size:12px;font-weight:600;color:#8B7A8E;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid rgba(255,20,147,0.08)}
-.data-table td{padding:12px 16px;font-size:13px;border-bottom:1px solid rgba(255,20,147,0.05);vertical-align:middle}
-.data-table tr:hover td{background:rgba(255,20,147,0.03)}
-.input-field{width:100%;padding:10px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,20,147,0.12);border-radius:10px;color:#F5F0F2;font-size:14px;font-family:'Outfit',sans-serif;transition:all .2s;outline:none}
-.input-field:focus{border-color:rgba(255,20,147,0.4);box-shadow:0 0 0 3px rgba(255,20,147,0.08)}
-.input-field::placeholder{color:#4A3F4E}
-.custom-tab{padding:8px 16px;font-size:13px;font-weight:500;color:#8B7A8E;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:'Outfit',sans-serif}
-.custom-tab:hover{color:#F5F0F2}
-.custom-tab.active{color:#FF69B4;border-bottom-color:#FF1493}
-.deco-orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.15;pointer-events:none;animation:orb-float 20s ease-in-out infinite}
-@keyframes orb-float{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(30px,-40px) scale(1.1)}50%{transform:translate(-20px,20px) scale(.9)}75%{transform:translate(40px,30px) scale(1.05)}}
-.fade-up{opacity:0;transform:translateY(30px);transition:all .8s cubic-bezier(0.16,1,0.3,1)}
-.fade-up.visible{opacity:1;transform:translateY(0)}
-.profile-card-default{border-radius:24px;background:rgba(22,22,31,0.85);border:1px solid rgba(255,20,147,0.12)}
-.profile-card-glass{border-radius:24px;background:rgba(15,10,18,0.7);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,20,147,0.15);box-shadow:0 0 40px rgba(255,20,147,0.08),0 25px 60px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.04)}
-.profile-card-minimal{border-radius:12px;background:rgba(22,22,31,0.92);border:1px solid rgba(255,255,255,0.06)}
-.profile-card-portfolio{border-radius:8px;background:rgba(22,22,31,0.88);border-left:3px solid #FF1493}
-.role-tag{padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace}
-.role-owner{background:rgba(255,20,147,0.15);color:#FF69B4}
-.role-manager{background:rgba(168,85,247,0.15);color:#C084FC}
-.role-admin{background:rgba(59,130,246,0.15);color:#60A5FA}
-.role-mod{background:rgba(52,211,153,0.12);color:#6EE7B7}
-.role-user{background:rgba(255,255,255,0.06);color:#8B7A8E}
-.pricing-highlight{border:1px solid rgba(255,20,147,0.4)!important;box-shadow:0 0 60px rgba(255,20,147,0.12),0 25px 60px rgba(0,0,0,0.4)!important;position:relative}
-.pricing-highlight::before{content:'Most Popular';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#FF1493,#DB2777);color:#fff;padding:4px 16px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.03em}
-.uid-hover{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:rgba(22,22,31,0.95);border:1px solid rgba(255,20,147,0.2);padding:3px 8px;border-radius:6px;font-size:11px;color:#FF69B4;white-space:nowrap;font-family:'JetBrains Mono',monospace;z-index:10}
-.uid-trigger:hover .uid-hover{display:block}
-.loading-spinner{width:20px;height:20px;border:2px solid rgba(255,20,147,0.2);border-top-color:#FF1493;border-radius:50%;animation:spin 0.6s linear infinite;display:inline-block}
-@keyframes spin{to{transform:rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-@media(max-width:768px){.admin-sidebar{display:none}.fx-switcher{bottom:16px;right:16px}}
-</style>
-</head>
-<body>
-<canvas id="fx-canvas" aria-hidden="true"></canvas>
-
-<nav class="nav-glass fixed top-0 left-0 w-full z-50" role="navigation" aria-label="Main navigation">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-    <a href="#/" class="flex items-center gap-2 no-underline" aria-label="Home">
-      <i class="fa-solid fa-shrimp text-ss-pink text-xl"></i>
-      <span class="font-display font-bold text-lg text-pearl">seashell.lol</span>
-    </a>
-    <div id="nav-links" class="hidden sm:flex items-center gap-6"></div>
-    <div id="nav-actions" class="flex items-center gap-3"></div>
-  </div>
-</nav>
-
-<div id="auth-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Authentication">
-  <div class="glass-strong rounded-2xl p-8 w-full max-w-md relative">
-    <button onclick="closeAuth()" class="absolute top-4 right-4 text-ss-muted hover:text-ss-text transition-colors text-lg bg-transparent border-none cursor-pointer" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-    <div class="text-center mb-6">
-      <i class="fa-solid fa-shrimp text-ss-pink text-3xl mb-3"></i>
-      <h2 class="font-display text-2xl font-bold" id="auth-title">Welcome Back</h2>
-      <p class="text-ss-muted text-sm mt-1" id="auth-subtitle">Sign in to your seashell account</p>
-    </div>
-    <div id="auth-error" class="hidden mb-4 p-3 rounded-lg text-sm" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#FCA5A5"></div>
-    <div id="auth-form" class="space-y-4">
-      <div id="auth-username-field" style="display:none">
-        <label class="block text-xs font-medium text-ss-muted mb-1.5">Username</label>
-        <input type="text" class="input-field" placeholder="Choose a username" id="auth-username" autocomplete="username">
-      </div>
-      <div id="auth-name-field" style="display:none">
-        <label class="block text-xs font-medium text-ss-muted mb-1.5">Display Name</label>
-        <input type="text" class="input-field" placeholder="Your display name" id="auth-name">
-      </div>
-      <div>
-        <label class="block text-xs font-medium text-ss-muted mb-1.5">Email</label>
-        <input type="email" class="input-field" placeholder="you@example.com" id="auth-email" autocomplete="email">
-      </div>
-      <div>
-        <label class="block text-xs font-medium text-ss-muted mb-1.5">Password</label>
-        <input type="password" class="input-field" placeholder="Enter your password" id="auth-password" autocomplete="current-password">
-      </div>
-      <button class="btn-pink w-full !mt-6" id="auth-submit" onclick="handleAuth()">Sign In</button>
-    </div>
-    <div class="flex items-center gap-3 my-5">
-      <div class="flex-1 h-px" style="background:rgba(255,20,147,0.18)"></div>
-      <span class="text-ss-muted text-xs">or continue with</span>
-      <div class="flex-1 h-px" style="background:rgba(255,20,147,0.18)"></div>
-    </div>
-    <div class="grid grid-cols-2 gap-3">
-      <button class="btn-outline !py-3 flex items-center justify-center gap-2 text-sm" onclick="socialAuth('google')" id="btn-google"><i class="fa-brands fa-google"></i> Google</button>
-      <button class="btn-outline !py-3 flex items-center justify-center gap-2 text-sm" onclick="socialAuth('discord')" id="btn-discord"><i class="fa-brands fa-discord"></i> Discord</button>
-    </div>
-    <p class="text-center text-sm text-ss-muted mt-5">
-      <span id="auth-toggle-text">Don't have an account?</span>
-      <button class="text-ss-pink hover:underline font-medium ml-1 bg-transparent border-none cursor-pointer" style="font-family:'Outfit',sans-serif" id="auth-toggle-btn" onclick="toggleAuthMode()">Sign Up</button>
-    </p>
-  </div>
-</div>
-
-<section id="page-unauthorized" class="page">
-  <div class="min-h-screen flex items-center justify-center px-4 pt-16">
-    <div class="text-center">
-      <div class="w-20 h-20 rounded-full bg-ss-pink/10 flex items-center justify-center mx-auto mb-6">
-        <i class="fa-solid fa-lock text-ss-pink text-2xl"></i>
-      </div>
-      <h1 class="font-display text-3xl font-bold mb-3">Access Denied</h1>
-      <p class="text-ss-muted text-lg mb-8 max-w-md" id="unauth-msg">You need to sign in to access this page.</p>
-      <button class="btn-pink" onclick="openAuth('login')">Sign In</button>
-    </div>
-  </div>
-</section>
-
-<section id="page-landing" class="page">
-  <div class="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-    <div class="deco-orb w-96 h-96 bg-ss-pink top-1/4 -left-48" style="animation-delay:-5s"></div>
-    <div class="deco-orb w-80 h-80 bg-purple-500 bottom-1/4 -right-40" style="animation-delay:-10s"></div>
-    <div class="deco-orb w-64 h-64 bg-rose-400 top-10 right-1/3" style="animation-delay:-15s;opacity:.08"></div>
-    <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
-      <div class="fade-up" data-delay="0">
-        <div class="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-8 text-sm text-ss-muted">
-          <span class="status-dot status-online"></span>
-          <span>Join thousands creating beautiful profiles</span>
-        </div>
-      </div>
-      <h1 class="fade-up font-display text-5xl sm:text-7xl lg:text-8xl font-black leading-[0.95] mb-6" data-delay="100">
-        Your beautiful<br><span class="text-pearl">corner of the</span><br>internet
-      </h1>
-      <p class="fade-up text-ss-muted text-lg sm:text-xl max-w-xl mx-auto mb-10 leading-relaxed" data-delay="200">
-        Claim your username, customize every pixel, and create a stunning bio page that truly represents you.
-      </p>
-      <div class="fade-up flex flex-col sm:flex-row items-center justify-center gap-4" data-delay="300">
-        <button class="btn-pink text-base !px-8 !py-4" onclick="openAuth('register')">Claim Your Name</button>
-        <button class="btn-outline text-base !px-8 !py-4" onclick="showToast('Create a profile first to view examples','info')">View Examples</button>
-      </div>
-    </div>
-  </div>
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-24">
-    <div class="text-center mb-16 fade-up">
-      <h2 class="font-display text-3xl sm:text-5xl font-bold mb-4">Everything you need to <span class="text-pearl">shine</span></h2>
-      <p class="text-ss-muted text-lg max-w-lg mx-auto">Powerful customization, stunning effects, and seamless integrations.</p>
-    </div>
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      <div class="glass rounded-2xl p-6 fade-up" data-delay="0"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-wand-magic-sparkles text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Stunning Effects</h3><p class="text-ss-muted text-sm leading-relaxed">Aurora, petals, sparkles, rain, snow, and more — transform your profile into a living canvas.</p></div>
-      <div class="glass rounded-2xl p-6 fade-up" data-delay="50"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-palette text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Full Customization</h3><p class="text-ss-muted text-sm leading-relaxed">Colors, fonts, card styles, name effects, badges, cursor, audio — every detail is yours.</p></div>
-      <div class="glass rounded-2xl p-6 fade-up" data-delay="100"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-music text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Music Player</h3><p class="text-ss-muted text-sm leading-relaxed">Embed a sleek music player with cover art, progress bar, and track info.</p></div>
-      <div class="glass rounded-2xl p-6 fade-up" data-delay="150"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-brands fa-discord text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Discord Integration</h3><p class="text-ss-muted text-sm leading-relaxed">Sync your avatar, show Discord status, and display current activity.</p></div>
-      <div class="glass rounded-2xl p-6 fade-up" data-delay="200"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-shield-halved text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Badges System</h3><p class="text-ss-muted text-sm leading-relaxed">Earn official badges or upload custom ones with beautiful hover effects.</p></div>
-      <div class="glass rounded-2xl p-6 fade-up" data-delay="250"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-chart-line text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Analytics</h3><p class="text-ss-muted text-sm leading-relaxed">Track profile views, link clicks, and visitor data with a built-in dashboard.</p></div>
-    </div>
-  </div>
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-24">
-    <div class="text-center mb-14 fade-up">
-      <h2 class="font-display text-3xl sm:text-5xl font-bold mb-4">Choose your <span class="text-pearl">plan</span></h2>
-      <p class="text-ss-muted text-lg">Start free, upgrade when you're ready.</p>
-    </div>
-    <div class="grid sm:grid-cols-3 gap-5 fade-up" data-delay="100">
-      <div class="glass rounded-2xl p-7">
-        <h3 class="font-semibold text-lg mb-1">Free</h3><p class="text-ss-muted text-sm mb-5">Perfect to get started</p>
-        <div class="font-display text-4xl font-bold mb-6">$0<span class="text-ss-muted text-base font-body font-normal">/mo</span></div>
-        <ul class="space-y-3 text-sm text-ss-muted mb-8">
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Basic profile page</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 5 link slots</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 2 background effects</li>
-          <li class="flex items-center gap-2 text-ss-dim"><i class="fa-solid fa-xmark text-xs"></i> Custom badges</li>
-          <li class="flex items-center gap-2 text-ss-dim"><i class="fa-solid fa-xmark text-xs"></i> Custom domain</li>
-        </ul>
-        <button class="btn-outline w-full" onclick="openAuth('register')">Get Started</button>
-      </div>
-      <div class="glass rounded-2xl p-7 pricing-highlight">
-        <h3 class="font-semibold text-lg mb-1">Premium</h3><p class="text-ss-muted text-sm mb-5">For creators who stand out</p>
-        <div class="font-display text-4xl font-bold mb-6">$4.99<span class="text-ss-muted text-base font-body font-normal">/mo</span></div>
-        <ul class="space-y-3 text-sm text-ss-muted mb-8">
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Everything in Free</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 20 link slots</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> All background effects</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Music player widget</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 3 custom badges</li>
-        </ul>
-        <button class="btn-pink w-full" onclick="openAuth('register')">Get Started</button>
-      </div>
-      <div class="glass rounded-2xl p-7">
-        <h3 class="font-semibold text-lg mb-1">Ultimate</h3><p class="text-ss-muted text-sm mb-5">Unlimited everything</p>
-        <div class="font-display text-4xl font-bold mb-6">$9.99<span class="text-ss-muted text-base font-body font-normal">/mo</span></div>
-        <ul class="space-y-3 text-sm text-ss-muted mb-8">
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Everything in Premium</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Unlimited links</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Custom domain</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 10 custom badges</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Priority support</li>
-        </ul>
-        <button class="btn-outline w-full" onclick="openAuth('register')">Get Started</button>
-      </div>
-    </div>
-  </div>
-  <footer class="border-t py-10" style="border-color:rgba(255,20,147,0.08)">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2"><i class="fa-solid fa-shrimp text-ss-pink"></i><span class="font-display font-bold text-pearl">seashell.lol</span></div>
-      <div class="flex items-center gap-5">
-        <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors text-sm no-underline">Terms</a>
-        <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors text-sm no-underline">Privacy</a>
-        <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors text-sm no-underline">Support</a>
-      </div>
-      <div class="flex items-center gap-4">
-        <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors no-underline" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
-        <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors no-underline" aria-label="Discord"><i class="fa-brands fa-discord"></i></a>
-      </div>
-    </div>
-  </footer>
-</section>
-
-<section id="page-profile" class="page">
-  <div class="min-h-screen flex items-center justify-center px-4 py-20" id="profile-wrapper"></div>
-  <div class="fx-switcher" id="fx-switcher" style="display:none">
-    <button class="fx-toggle-btn" onclick="toggleFxPanel()" aria-label="Toggle effects"><i class="fa-solid fa-sparkles"></i></button>
-    <div class="fx-panel" id="fx-panel">
-      <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-2 px-2">Background</p>
-      <button class="fx-option" data-fx="aurora" onclick="switchFx('aurora')"><i class="fa-solid fa-sun w-4 text-center mr-1"></i> Aurora</button>
-      <button class="fx-option" data-fx="petals" onclick="switchFx('petals')"><i class="fa-solid fa-leaf w-4 text-center mr-1"></i> Petals</button>
-      <button class="fx-option" data-fx="sparkles" onclick="switchFx('sparkles')"><i class="fa-solid fa-star w-4 text-center mr-1"></i> Sparkles</button>
-      <button class="fx-option" data-fx="rain" onclick="switchFx('rain')"><i class="fa-solid fa-cloud-rain w-4 text-center mr-1"></i> Rain</button>
-      <button class="fx-option" data-fx="snow" onclick="switchFx('snow')"><i class="fa-solid fa-snowflake w-4 text-center mr-1"></i> Snow</button>
-      <button class="fx-option" data-fx="orbs" onclick="switchFx('orbs')"><i class="fa-solid fa-circle w-4 text-center mr-1"></i> Orbs</button>
-      <div class="border-t my-2" style="border-color:rgba(255,20,147,0.08)"></div>
-      <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-2 px-2">Name Effect</p>
-      <button class="fx-option" data-nfx="neon" onclick="switchNameFx('neon')">Neon Glow</button>
-      <button class="fx-option" data-nfx="glitch" onclick="switchNameFx('glitch')">Glitch</button>
-      <button class="fx-option" data-nfx="gradient" onclick="switchNameFx('gradient')">Gradient</button>
-      <button class="fx-option" data-nfx="holographic" onclick="switchNameFx('holographic')">Holographic</button>
-      <button class="fx-option" data-nfx="sparkle" onclick="switchNameFx('sparkle')">Sparkle</button>
-      <div class="border-t my-2" style="border-color:rgba(255,20,147,0.08)"></div>
-      <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-2 px-2">Card Style</p>
-      <button class="fx-option" data-cs="glass" onclick="switchCardStyle('glass')">Glass</button>
-      <button class="fx-option" data-cs="default" onclick="switchCardStyle('default')">Default</button>
-      <button class="fx-option" data-cs="minimal" onclick="switchCardStyle('minimal')">Minimal</button>
-      <button class="fx-option" data-cs="portfolio" onclick="switchCardStyle('portfolio')">Portfolio</button>
-    </div>
-  </div>
-</section>
-
-<section id="page-customize" class="page">
-  <div class="pt-20 min-h-screen">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <h1 class="font-display text-3xl font-bold mb-2">Customize Your Profile</h1>
-      <p class="text-ss-muted mb-8">Changes preview in real-time on the right.</p>
-      <div class="flex flex-col lg:flex-row gap-8">
-        <div class="flex-1 min-w-0">
-          <div class="glass rounded-2xl overflow-hidden">
-            <div class="flex border-b overflow-x-auto" style="border-color:rgba(255,20,147,0.08)">
-              <button class="custom-tab active" data-ctab="info" onclick="switchCustomTab('info')">Info</button>
-              <button class="custom-tab" data-ctab="bg" onclick="switchCustomTab('bg')">Background</button>
-              <button class="custom-tab" data-ctab="effects" onclick="switchCustomTab('effects')">Effects</button>
-              <button class="custom-tab" data-ctab="card" onclick="switchCustomTab('card')">Card</button>
-              <button class="custom-tab" data-ctab="links" onclick="switchCustomTab('links')">Links</button>
-              <button class="custom-tab" data-ctab="music" onclick="switchCustomTab('music')">Music</button>
-            </div>
-            <div class="p-6" id="custom-tab-content"></div>
-          </div>
-        </div>
-        <div class="w-full lg:w-[380px] flex-shrink-0">
-          <div class="sticky top-20">
-            <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-3">Live Preview</p>
-            <div class="glass rounded-2xl p-4" style="transform:scale(0.85);transform-origin:top center"><div id="customize-preview"></div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="page-admin" class="page">
-  <div class="pt-16 flex min-h-screen">
-    <aside class="admin-sidebar">
-      <div class="p-4">
-        <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-3 px-3">Admin Panel</p>
-        <nav class="space-y-1" aria-label="Admin navigation">
-          <button class="admin-nav-item active" data-atab="dashboard" onclick="switchAdminTab('dashboard')"><i class="fa-solid fa-chart-pie"></i> Dashboard</button>
-          <button class="admin-nav-item" data-atab="users" onclick="switchAdminTab('users')"><i class="fa-solid fa-users"></i> Users</button>
-          <button class="admin-nav-item" data-atab="badges" onclick="switchAdminTab('badges')"><i class="fa-solid fa-award"></i> Badges</button>
-          <button class="admin-nav-item" data-atab="roles" onclick="switchAdminTab('roles')"><i class="fa-solid fa-user-shield"></i> Roles</button>
-          <button class="admin-nav-item" data-atab="audit" onclick="switchAdminTab('audit')"><i class="fa-solid fa-clock-rotate-left"></i> Audit Log</button>
-        </nav>
-      </div>
-    </aside>
-    <div class="flex-1 min-w-0 p-6 lg:p-8 overflow-y-auto" id="admin-content"></div>
-  </div>
-</section>
-
-<div id="toast-container"></div>
-
-<script>
 /* ============================
    Firebase Initialization
    ============================ */
@@ -389,12 +27,9 @@ firebase.initializeApp(firebaseConfig);
 var auth = firebase.auth();
 var db = firebase.firestore();
 
-// Enable offline persistence
 db.enablePersistence({ synchronizeTabs: true }).catch(function(err) {
-  if (err.code === 'failed-precondition') {
-    console.warn('Persistence failed: multiple tabs open');
-  } else if (err.code === 'unimplemented') {
-    console.warn('Persistence not available');
+  if (err.code !== 'failed-precondition' && err.code !== 'unimplemented') {
+    console.warn('Persistence error:', err);
   }
 });
 
@@ -411,9 +46,11 @@ var appState = {
   currentNameEffect: 'neon',
   currentCardStyle: 'glass',
   currentAdminTab: 'dashboard',
-  currentCustomTab: 'info',
-  isLoading: false
+  currentCustomTab: 'info'
 };
+
+// THIS FLAG PREVENTS THE OBSERVER FROM INTERFERING DURING REGISTRATION
+var isRegistering = false;
 
 var ROLE_LEVELS = { owner: 5, manager: 4, admin: 3, mod: 2, user: 1 };
 
@@ -457,13 +94,13 @@ function setLoading(btn, loading) {
 function formatNumber(num) {
   if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
   if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-  return num.toString();
+  return (num || 0).toString();
 }
 
 function validateUsername(username) {
   if (!username || username.length < 3) return 'Username must be at least 3 characters';
   if (username.length > 20) return 'Username must be 20 characters or less';
-  if (!/^[a-zA-Z0-9_]+$/.test(username)) return 'Username can only contain letters, numbers, and underscores';
+  if (!/^[a-zA-Z0-9_]+$/.test(username)) return 'Only letters, numbers, and underscores';
   return null;
 }
 
@@ -480,7 +117,7 @@ function validatePassword(password) {
 }
 
 /* ============================
-   UID Counter (Firestore Transaction)
+   UID Counter
    ============================ */
 async function getNextUid() {
   var counterRef = db.collection('meta').doc('uidCounter');
@@ -502,9 +139,8 @@ async function getNextUid() {
 function openAuth(mode) {
   appState.authMode = mode || 'login';
   hideAuthError();
-  var modal = document.getElementById('auth-modal');
-  modal.classList.add('open');
-  
+  document.getElementById('auth-modal').classList.add('open');
+
   if (appState.authMode === 'register') {
     document.getElementById('auth-title').textContent = 'Create Account';
     document.getElementById('auth-subtitle').textContent = 'Join seashell.lol';
@@ -538,40 +174,41 @@ async function handleAuth() {
   var email = document.getElementById('auth-email').value.trim();
   var password = document.getElementById('auth-password').value;
   var btn = document.getElementById('auth-submit');
-  
-  var emailError = validateEmail(email);
-  if (emailError) { showAuthError(emailError); return; }
-  
-  var passwordError = validatePassword(password);
-  if (passwordError) { showAuthError(passwordError); return; }
-  
+
+  var emailErr = validateEmail(email);
+  if (emailErr) { showAuthError(emailErr); return; }
+  var passErr = validatePassword(password);
+  if (passErr) { showAuthError(passErr); return; }
+
   setLoading(btn, true);
-  
+
   try {
     if (appState.authMode === 'register') {
       var username = document.getElementById('auth-username').value.trim().toLowerCase();
       var displayName = document.getElementById('auth-name').value.trim();
-      
-      var usernameError = validateUsername(username);
-      if (usernameError) { showAuthError(usernameError); setLoading(btn, false); return; }
-      
+
+      var userErr = validateUsername(username);
+      if (userErr) { showAuthError(userErr); setLoading(btn, false); return; }
       if (!displayName) { showAuthError('Display name is required'); setLoading(btn, false); return; }
-      
-      // Check if username is taken
+
+      // Check username taken BEFORE creating auth account
       var usernameDoc = await db.collection('usernames').doc(username).get();
       if (usernameDoc.exists) {
         showAuthError('Username is already taken');
         setLoading(btn, false);
         return;
       }
-      
-      // Create auth account
+
+      // FLAG: tell the observer to stand down
+      isRegistering = true;
+
+      // Create the auth account
       var credential = await auth.createUserWithEmailAndPassword(email, password);
-      
-      // Get next UID
+
+      // Get sequential UID
       var uid = await getNextUid();
-      
-      // Create user document
+
+      // Build user document
       var userData = {
         uid: uid,
         username: username,
@@ -597,27 +234,36 @@ async function handleAuth() {
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       };
-      
+
+      // Write to Firestore (auth user is still signed in here)
       await db.collection('users').doc(credential.user.uid).set(userData);
       await db.collection('usernames').doc(username).set({ uid: credential.user.uid });
-      
-      // Log audit
+
+      // Audit
       await db.collection('audit').add({
         action: 'User registered',
         userId: credential.user.uid,
         username: username,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       });
-      
+
+      // MANUALLY set state — do NOT rely on the observer for this
+      appState.currentUserData = userData;
+      isRegistering = false;
+
+      closeAuth();
       showToast('Account created successfully!', 'success');
-      
+      updateNav();
+      navigate('/u/' + username);
+
     } else {
+      // LOGIN — observer will handle loading user data
       await auth.signInWithEmailAndPassword(email, password);
+      closeAuth();
       showToast('Welcome back!', 'success');
     }
-    
-    closeAuth();
   } catch (error) {
+    isRegistering = false;
     var msg = 'Authentication failed';
     if (error.code === 'auth/user-not-found') msg = 'No account found with this email';
     else if (error.code === 'auth/wrong-password') msg = 'Incorrect password';
@@ -625,17 +271,18 @@ async function handleAuth() {
     else if (error.code === 'auth/weak-password') msg = 'Password is too weak';
     else if (error.code === 'auth/invalid-email') msg = 'Invalid email address';
     else if (error.code === 'auth/too-many-requests') msg = 'Too many attempts, try again later';
+    else if (error.code === 'auth/network-request-failed') msg = 'Network error — check your connection';
     else if (error.message) msg = error.message;
     showAuthError(msg);
   }
-  
+
   setLoading(btn, false);
 }
 
 async function socialAuth(provider) {
   hideAuthError();
   var providerObj;
-  
+
   if (provider === 'google') {
     providerObj = new firebase.auth.GoogleAuthProvider();
   } else if (provider === 'discord') {
@@ -643,33 +290,38 @@ async function socialAuth(provider) {
   } else {
     return;
   }
-  
+
   try {
     var result = await auth.signInWithPopup(providerObj);
-    
-    // Check if user document exists
+
     var userDoc = await db.collection('users').doc(result.user.uid).get();
-    
+
     if (!userDoc.exists) {
-      // New social user - need username
+      // New social user — need to create Firestore doc
+      isRegistering = true;
+
       var email = result.user.email || '';
       var baseUsername = email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase();
-      
-      // Find available username
+      if (!baseUsername) baseUsername = 'user';
+
+      // Find an available username
       var username = baseUsername;
       var attempts = 0;
-      while (await db.collection('usernames').doc(username).get().then(function(d) { return d.exists; })) {
-        attempts++;
-        username = baseUsername + attempts;
-        if (attempts > 100) {
-          username = 'user' + Date.now();
-          break;
+      var available = false;
+      while (!available && attempts < 200) {
+        var snap = await db.collection('usernames').doc(username).get();
+        if (!snap.exists) {
+          available = true;
+        } else {
+          attempts++;
+          username = baseUsername + attempts;
         }
       }
-      
+      if (!available) username = 'u' + Date.now();
+
       var uid = await getNextUid();
       var displayName = result.user.displayName || username;
-      
+
       var userData = {
         uid: uid,
         username: username,
@@ -695,21 +347,31 @@ async function socialAuth(provider) {
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       };
-      
+
       await db.collection('users').doc(result.user.uid).set(userData);
       await db.collection('usernames').doc(username).set({ uid: result.user.uid });
-      
+
+      appState.currentUserData = userData;
+      isRegistering = false;
+
+      closeAuth();
       showToast('Account created with ' + provider + '!', 'success');
+      updateNav();
+      navigate('/u/' + username);
     } else {
+      // Returning social user — observer handles it
+      closeAuth();
       showToast('Welcome back!', 'success');
     }
-    
-    closeAuth();
   } catch (error) {
+    isRegistering = false;
     if (error.code === 'auth/popup-closed-by-user') return;
+    if (error.code === 'auth/cancelled-popup-request') return;
     var msg = provider.charAt(0).toUpperCase() + provider.slice(1) + ' sign-in failed';
     if (error.code === 'auth/account-exists-with-different-credential') {
       msg = 'An account already exists with this email using a different sign-in method';
+    } else if (error.code === 'auth/network-request-failed') {
+      msg = 'Network error — check your connection';
     } else if (error.message) {
       msg = error.message;
     }
@@ -722,6 +384,7 @@ async function signOut() {
     await auth.signOut();
     appState.currentUser = null;
     appState.currentUserData = null;
+    fxStop();
     navigate('/');
     showToast('Signed out', 'info');
   } catch (error) {
@@ -732,33 +395,45 @@ async function signOut() {
 /* ============================
    Auth State Observer
    ============================ */
-auth.onAuthStateChanged(async function(user) {
+auth.onAuthStateChanged(function(user) {
   appState.currentUser = user;
-  
-  if (user) {
-    try {
-      var doc = await db.collection('users').doc(user.uid).get();
-      if (doc.exists) {
-        appState.currentUserData = doc.data();
-        updateNav();
-        
-        // If on landing page, redirect to profile
-        if (appState.currentPage === 'landing') {
-          navigate('/u/' + appState.currentUserData.username);
-        }
-      } else {
-        // User exists in Auth but not Firestore (shouldn't happen)
-        console.error('User document not found');
-        await auth.signOut();
+
+  if (!user) {
+    appState.currentUserData = null;
+    updateNav();
+    return;
+  }
+
+  // If we're in the middle of registration, handleAuth will set
+  // currentUserData manually — do NOT interfere here.
+  if (isRegistering) return;
+
+  // Otherwise (login / page reload / returning social user), load from Firestore
+  loadCurrentUserData();
+});
+
+async function loadCurrentUserData() {
+  if (!appState.currentUser) return;
+  try {
+    var doc = await db.collection('users').doc(appState.currentUser.uid).get();
+    if (doc.exists) {
+      appState.currentUserData = doc.data();
+      updateNav();
+      // Redirect from landing to own profile
+      if (appState.currentPage === 'landing') {
+        navigate('/u/' + appState.currentUserData.username);
       }
-    } catch (error) {
-      console.error('Error loading user data:', error);
+    } else {
+      // No Firestore doc and not registering — edge case, just clear state
+      appState.currentUserData = null;
+      updateNav();
     }
-  } else {
+  } catch (error) {
+    console.error('Error loading user data:', error);
     appState.currentUserData = null;
     updateNav();
   }
-});
+}
 
 /* ============================
    Navigation
@@ -766,20 +441,19 @@ auth.onAuthStateChanged(async function(user) {
 function updateNav() {
   var navLinks = document.getElementById('nav-links');
   var navActions = document.getElementById('nav-actions');
-  
+
   if (appState.currentUserData) {
     var u = appState.currentUserData;
     navLinks.innerHTML = '<a href="#/u/' + u.username + '" class="text-ss-muted hover:text-ss-text transition-colors text-sm no-underline">Profile</a>' +
       '<a href="#/customize" class="text-ss-muted hover:text-ss-text transition-colors text-sm no-underline">Customize</a>' +
       (ROLE_LEVELS[u.role] >= ROLE_LEVELS.mod ? '<a href="#/admin" class="text-ss-muted hover:text-ss-text transition-colors text-sm no-underline">Admin</a>' : '');
-    
+
     navActions.innerHTML = '<div class="flex items-center gap-2 cursor-pointer" onclick="navigate(\'/u/' + u.username + '\')">' +
       (u.avatar ? '<img src="' + u.avatar + '" class="w-8 h-8 rounded-lg object-cover" alt="Avatar">' : '<div class="w-8 h-8 rounded-lg bg-ss-pink/20 flex items-center justify-center"><i class="fa-solid fa-user text-ss-pink text-xs"></i></div>') +
       '<span class="text-sm font-medium hidden sm:inline">' + u.displayName + '</span></div>' +
       '<button class="btn-ghost text-xs" onclick="signOut()">Sign Out</button>';
   } else {
-    navLinks.innerHTML = '<a href="#/" class="text-ss-muted hover:text-ss-text transition-colors text-sm no-underline">Home</a>' +
-      '<a href="#/pricing" class="text-ss-muted hover:text-ss-text transition-colors text-sm no-underline">Pricing</a>';
+    navLinks.innerHTML = '<a href="#/" class="text-ss-muted hover:text-ss-text transition-colors text-sm no-underline">Home</a>';
     navActions.innerHTML = '<button class="btn-ghost text-sm" onclick="openAuth(\'login\')">Sign In</button>' +
       '<button class="btn-pink !py-2 !px-4 text-sm" onclick="openAuth(\'register\')">Sign Up</button>';
   }
@@ -792,57 +466,47 @@ function navigate(path) {
 function handleRoute() {
   var hash = window.location.hash.slice(1) || '/';
   var parts = hash.split('/').filter(Boolean);
-  
-  // Hide all pages
+
   document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
-  
+
   if (parts.length === 0 || hash === '/') {
-    // Landing page
     if (appState.currentUserData) {
       navigate('/u/' + appState.currentUserData.username);
       return;
     }
     showPage('landing');
+    fxStop();
   } else if (parts[0] === 'u' && parts[1]) {
-    // Profile page
     loadProfile(parts[1]);
   } else if (parts[0] === 'customize') {
-    // Customize page - requires auth
     if (!appState.currentUserData) {
       showPage('unauthorized');
       document.getElementById('unauth-msg').textContent = 'You need to sign in to customize your profile.';
       return;
     }
     showPage('customize');
+    fxStop();
     loadCustomizePage();
   } else if (parts[0] === 'admin') {
-    // Admin page - requires mod+ role
     if (!appState.currentUserData || ROLE_LEVELS[appState.currentUserData.role] < ROLE_LEVELS.mod) {
       showPage('unauthorized');
       document.getElementById('unauth-msg').textContent = 'You do not have permission to access the admin panel.';
       return;
     }
     showPage('admin');
+    fxStop();
     loadAdminPage();
-  } else if (parts[0] === 'pricing') {
-    showPage('landing');
-    setTimeout(function() {
-      var pricing = document.querySelector('.pricing-highlight');
-      if (pricing) pricing.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 100);
   } else {
     showPage('landing');
+    fxStop();
   }
-  
-  // Update nav active states
+
   updateNav();
 }
 
 function showPage(pageId) {
   appState.currentPage = pageId;
   document.getElementById('page-' + pageId).classList.add('active');
-  
-  // Initialize fade-up animations
   if (pageId === 'landing') {
     setTimeout(initFadeUp, 100);
   }
@@ -858,45 +522,44 @@ async function loadProfile(username) {
   var wrapper = document.getElementById('profile-wrapper');
   wrapper.innerHTML = '<div class="text-center"><div class="loading-spinner mx-auto mb-4"></div><p class="text-ss-muted">Loading profile...</p></div>';
   showPage('profile');
-  
+
   try {
-    // Get username document to find user ID
     var usernameDoc = await db.collection('usernames').doc(username).get();
-    
+
     if (!usernameDoc.exists) {
-      wrapper.innerHTML = '<div class="text-center glass rounded-2xl p-12 max-w-md"><i class="fa-solid fa-user-slash text-ss-muted text-4xl mb-4"></i><h2 class="font-display text-2xl font-bold mb-2">User Not Found</h2><p class="text-ss-muted">This profile doesn\'t exist or the username is incorrect.</p><button class="btn-pink mt-6" onclick="navigate(\'/\')">Go Home</button></div>';
+      wrapper.innerHTML = '<div class="text-center glass rounded-2xl p-12 max-w-md"><i class="fa-solid fa-user-slash text-ss-muted text-4xl mb-4 block"></i><h2 class="font-display text-2xl font-bold mb-2">User Not Found</h2><p class="text-ss-muted">This profile doesn\'t exist.</p><button class="btn-pink mt-6" onclick="navigate(\'/\')">Go Home</button></div>';
+      fxStop();
       return;
     }
-    
+
     var userId = usernameDoc.data().uid;
     var userDoc = await db.collection('users').doc(userId).get();
-    
+
     if (!userDoc.exists || userDoc.data().status === 'banned') {
-      wrapper.innerHTML = '<div class="text-center glass rounded-2xl p-12 max-w-md"><i class="fa-solid fa-ban text-red-400 text-4xl mb-4"></i><h2 class="font-display text-2xl font-bold mb-2">Profile Unavailable</h2><p class="text-ss-muted">This profile is not available.</p><button class="btn-pink mt-6" onclick="navigate(\'/\')">Go Home</button></div>';
+      wrapper.innerHTML = '<div class="text-center glass rounded-2xl p-12 max-w-md"><i class="fa-solid fa-ban text-red-400 text-4xl mb-4 block"></i><h2 class="font-display text-2xl font-bold mb-2">Profile Unavailable</h2><p class="text-ss-muted">This profile is not available.</p><button class="btn-pink mt-6" onclick="navigate(\'/\')">Go Home</button></div>';
+      fxStop();
       return;
     }
-    
+
     var userData = userDoc.data();
     appState.currentProfileUser = userData;
-    
-    // Increment views
+
+    // Increment views (fire and forget)
     db.collection('users').doc(userId).update({
       views: firebase.firestore.FieldValue.increment(1)
     }).catch(function() {});
-    
-    // Set effects
+
+    // Apply user's effects
     if (userData.bgEffect) {
       fxSetEffect(userData.bgEffect);
       appState.currentBgEffect = userData.bgEffect;
+    } else {
+      fxStop();
     }
-    if (userData.nameEffect) {
-      appState.currentNameEffect = userData.nameEffect;
-    }
-    if (userData.cardStyle) {
-      appState.currentCardStyle = userData.cardStyle;
-    }
-    
-    // Show FX switcher if viewing own profile
+    appState.currentNameEffect = userData.nameEffect || 'neon';
+    appState.currentCardStyle = userData.cardStyle || 'glass';
+
+    // FX switcher only on own profile
     var fxSwitcher = document.getElementById('fx-switcher');
     if (appState.currentUserData && appState.currentUserData.username === username) {
       fxSwitcher.style.display = 'block';
@@ -904,12 +567,11 @@ async function loadProfile(username) {
     } else {
       fxSwitcher.style.display = 'none';
     }
-    
+
     renderProfile(userData);
-    
   } catch (error) {
     console.error('Error loading profile:', error);
-    wrapper.innerHTML = '<div class="text-center glass rounded-2xl p-12 max-w-md"><i class="fa-solid fa-exclamation-triangle text-yellow-400 text-4xl mb-4"></i><h2 class="font-display text-2xl font-bold mb-2">Error Loading Profile</h2><p class="text-ss-muted">Something went wrong. Please try again.</p><button class="btn-pink mt-6" onclick="loadProfile(\'' + username + '\')">Retry</button></div>';
+    wrapper.innerHTML = '<div class="text-center glass rounded-2xl p-12 max-w-md"><i class="fa-solid fa-exclamation-triangle text-yellow-400 text-4xl mb-4 block"></i><h2 class="font-display text-2xl font-bold mb-2">Error Loading Profile</h2><p class="text-ss-muted">' + error.message + '</p><button class="btn-pink mt-6" onclick="loadProfile(\'' + username + '\')">Retry</button></div>';
   }
 }
 
@@ -918,77 +580,66 @@ function renderProfile(user) {
   var isOwn = appState.currentUserData && appState.currentUserData.username === user.username;
   var cardClass = 'profile-card-' + (user.cardStyle || 'glass');
   var nameClass = 'name-' + (user.nameEffect || 'neon');
-  
+
   var badgesHtml = '';
   if (user.badges && user.badges.length > 0) {
     user.badges.forEach(function(b) {
-      var badgeClass = 'badge-' + b.id;
-      badgesHtml += '<span class="badge ' + badgeClass + '">' +
-        (b.icon ? '<i class="' + b.icon + ' text-[9px]"></i>' : '') +
-        (b.name ? b.name : '') +
+      var bc = 'badge-' + (b.id || 'pearl');
+      badgesHtml += '<span class="badge ' + bc + '">' +
+        (b.icon ? '<i class="' + b.icon + ' text-[9px]"></i> ' : '') +
+        (b.name || '') +
         '<span class="badge-tip">' + (b.tooltip || b.name || '') + '</span></span>';
     });
   }
-  
+
   var linksHtml = '';
   if (user.links && user.links.length > 0) {
     user.links.forEach(function(link) {
+      if (!link.url) return;
       linksHtml += '<a href="' + link.url + '" target="_blank" rel="noopener" class="link-btn">' +
         '<i class="' + (link.icon || 'fa-solid fa-link') + '"></i>' +
-        '<span>' + link.title + '</span>' +
+        '<span>' + (link.title || 'Link') + '</span>' +
         '<i class="fa-solid fa-arrow-up-right-from-square text-ss-dim text-xs ml-auto"></i></a>';
     });
   }
-  
+
   var musicHtml = '';
   if (user.music && user.music.url) {
     musicHtml = '<div class="mt-5 p-3 rounded-xl" style="background:rgba(255,20,147,0.06);border:1px solid rgba(255,20,147,0.1)">' +
       '<div class="flex items-center gap-3">' +
       (user.music.cover ? '<img src="' + user.music.cover + '" class="w-10 h-10 rounded-lg object-cover" alt="Cover">' : '<div class="w-10 h-10 rounded-lg bg-ss-pink/20 flex items-center justify-center"><i class="fa-solid fa-music text-ss-pink text-sm"></i></div>') +
-      '<div class="flex-1 min-w-0">' +
-      '<p class="text-sm font-medium truncate">' + (user.music.title || 'Unknown') + '</p>' +
-      '<p class="text-xs text-ss-muted truncate">' + (user.music.artist || 'Unknown Artist') + '</p>' +
-      '</div>' +
+      '<div class="flex-1 min-w-0"><p class="text-sm font-medium truncate">' + (user.music.title || 'Unknown') + '</p><p class="text-xs text-ss-muted truncate">' + (user.music.artist || '') + '</p></div>' +
       '<audio controls class="h-8 opacity-70 hover:opacity-100 transition-opacity" style="max-width:100px"><source src="' + user.music.url + '" type="audio/mpeg"></audio>' +
       '</div></div>';
   }
-  
-  var bannerHtml = '';
-  if (user.banner) {
-    bannerHtml = '<div class="h-32 sm:h-40 rounded-t-[23px] bg-cover bg-center relative" style="background-image:url(\'' + user.banner + '\')"><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-t-[23px]"></div></div>';
-  }
-  
-  var avatarHtml = '';
-  if (user.avatar) {
-    avatarHtml = '<img src="' + user.avatar + '" class="w-20 h-20 rounded-2xl object-cover" style="border:3px solid #0A0A0F" alt="' + user.displayName + '">';
-  } else {
-    avatarHtml = '<div class="w-20 h-20 rounded-2xl flex items-center justify-center text-2xl font-bold" style="border:3px solid #0A0A0F;background:linear-gradient(135deg,#FF1493,#DB2777)"><span class="text-white">' + user.displayName.charAt(0).toUpperCase() + '</span></div>';
-  }
-  
-  var nameDataAttr = user.nameEffect === 'glitch' ? ' data-text="' + user.displayName + '"' : '';
-  
-  wrapper.innerHTML = '<div class="w-full max-w-md mx-auto">' +
-    '<div class="' + cardClass + ' overflow-hidden">' +
+
+  var bannerHtml = user.banner ? '<div class="h-32 sm:h-40 rounded-t-[23px] bg-cover bg-center relative" style="background-image:url(\'' + user.banner + '\')"><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-t-[23px]"></div></div>' : '';
+
+  var avatarHtml = user.avatar
+    ? '<img src="' + user.avatar + '" class="w-20 h-20 rounded-2xl object-cover" style="border:3px solid #0A0A0F" alt="">'
+    : '<div class="w-20 h-20 rounded-2xl flex items-center justify-center text-2xl font-bold" style="border:3px solid #0A0A0F;background:linear-gradient(135deg,#FF1493,#DB2777)"><span class="text-white">' + (user.displayName || '?').charAt(0).toUpperCase() + '</span></div>';
+
+  var ndAttr = user.nameEffect === 'glitch' ? ' data-text="' + (user.displayName || '') + '"' : '';
+
+  wrapper.innerHTML = '<div class="w-full max-w-md mx-auto"><div class="' + cardClass + ' overflow-hidden">' +
     bannerHtml +
     '<div class="px-6 pb-6' + (user.banner ? ' -mt-10 relative' : ' pt-6') + '">' +
     avatarHtml +
-    '<div class="mt-3 flex items-start justify-between">' +
-    '<div class="uid-trigger relative">' +
-    '<h2 class="font-display text-2xl font-bold ' + nameClass + '"' + nameDataAttr + '>' + user.displayName + '</h2>' +
-    '<span class="uid-hover">#' + String(user.uid).padStart(7, '0') + '</span>' +
-    '</div>' +
+    '<div class="mt-3 flex items-start justify-between"><div class="uid-trigger relative">' +
+    '<h2 class="font-display text-2xl font-bold ' + nameClass + '"' + ndAttr + '>' + (user.displayName || 'User') + '</h2>' +
+    '<span class="uid-hover">#' + String(user.uid || 0).padStart(7, '0') + '</span></div>' +
     (isOwn ? '<button class="btn-ghost text-xs" onclick="navigate(\'/customize\')"><i class="fa-solid fa-pen mr-1"></i>Edit</button>' : '') +
     '</div>' +
-    '<p class="text-ss-muted text-sm" style="font-family:\'JetBrains Mono\',monospace">@' + user.username + '</p>' +
+    '<p class="text-ss-muted text-sm" style="font-family:\'JetBrains Mono\',monospace">@' + (user.username || '') + '</p>' +
     (user.description ? '<p class="text-ss-text/80 text-sm mt-3 leading-relaxed">' + user.description + '</p>' : '') +
     (user.location ? '<p class="text-ss-muted text-xs mt-2"><i class="fa-solid fa-location-dot mr-1"></i>' + user.location + '</p>' : '') +
     (badgesHtml ? '<div class="flex flex-wrap gap-1.5 mt-3">' + badgesHtml + '</div>' : '') +
     (linksHtml ? '<div class="mt-5 space-y-2">' + linksHtml + '</div>' : '') +
     musicHtml +
     '<div class="mt-5 pt-4 flex items-center justify-between text-xs text-ss-dim" style="border-top:1px solid rgba(255,20,147,0.08)">' +
-    '<span><i class="fa-solid fa-eye mr-1"></i>' + formatNumber(user.views || 0) + ' views</span>' +
-    '<span>' + (user.links ? user.links.length : 0) + ' links</span>' +
-    '</div></div></div></div>';
+    '<span><i class="fa-solid fa-eye mr-1"></i>' + formatNumber(user.views) + ' views</span>' +
+    '<span>' + (user.links ? user.links.length : 0) + ' links</span></div>' +
+    '</div></div></div>';
 }
 
 /* ============================
@@ -1021,6 +672,8 @@ function fxSetEffect(name) {
 
 function fxStop() {
   fxRunning = false;
+  fxParticles = [];
+  fxTime = 0;
   fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
 }
 
@@ -1059,19 +712,11 @@ function fxAnimate() {
     }
     for (var i = 0; i < fxParticles.length; i++) {
       var p = fxParticles[i];
-      p.y += p.speedY;
-      p.x += p.speedX + Math.sin(fxTime * 1.5 + p.wobble) * 0.3;
-      p.rotation += p.rotSpeed;
+      p.y += p.speedY; p.x += p.speedX + Math.sin(fxTime * 1.5 + p.wobble) * 0.3; p.rotation += p.rotSpeed;
       if (p.y > h + 20) { p.y = -20; p.x = Math.random() * w; }
-      fxCtx.save();
-      fxCtx.translate(p.x, p.y);
-      fxCtx.rotate(p.rotation);
-      fxCtx.globalAlpha = p.alpha;
-      fxCtx.beginPath();
-      fxCtx.ellipse(0, 0, p.size * 0.4, p.size, 0, 0, Math.PI * 2);
-      fxCtx.fillStyle = 'hsla(' + p.hue + ', 80%, 70%, 1)';
-      fxCtx.fill();
-      fxCtx.restore();
+      fxCtx.save(); fxCtx.translate(p.x, p.y); fxCtx.rotate(p.rotation); fxCtx.globalAlpha = p.alpha;
+      fxCtx.beginPath(); fxCtx.ellipse(0, 0, p.size * 0.4, p.size, 0, 0, Math.PI * 2);
+      fxCtx.fillStyle = 'hsla(' + p.hue + ', 80%, 70%, 1)'; fxCtx.fill(); fxCtx.restore();
     }
     fxCtx.globalAlpha = 1;
   } else if (fxEffect === 'sparkles') {
@@ -1079,27 +724,11 @@ function fxAnimate() {
       fxParticles.push({ x: Math.random() * w, y: Math.random() * h, size: 1 + Math.random() * 3, ts: 1 + Math.random() * 3, to: Math.random() * Math.PI * 2, alpha: 0, color: Math.random() > 0.7 ? '#FCD34D' : (Math.random() > 0.5 ? '#FF69B4' : '#FFFFFF'), drift: (Math.random() - 0.5) * 0.1 });
     }
     for (var i = 0; i < fxParticles.length; i++) {
-      var p = fxParticles[i];
-      p.x += p.drift;
-      p.alpha = Math.max(0, Math.sin(fxTime * p.ts + p.to));
+      var p = fxParticles[i]; p.x += p.drift; p.alpha = Math.max(0, Math.sin(fxTime * p.ts + p.to));
       if (p.x < -10 || p.x > w + 10) { p.x = Math.random() * w; p.y = Math.random() * h; }
       if (p.alpha > 0.1) {
-        fxCtx.save();
-        fxCtx.globalAlpha = p.alpha;
-        fxCtx.fillStyle = p.color;
-        var s = p.size;
-        fxCtx.beginPath();
-        fxCtx.moveTo(p.x, p.y - s * 2);
-        fxCtx.lineTo(p.x + s * 0.4, p.y - s * 0.4);
-        fxCtx.lineTo(p.x + s * 2, p.y);
-        fxCtx.lineTo(p.x + s * 0.4, p.y + s * 0.4);
-        fxCtx.lineTo(p.x, p.y + s * 2);
-        fxCtx.lineTo(p.x - s * 0.4, p.y + s * 0.4);
-        fxCtx.lineTo(p.x - s * 2, p.y);
-        fxCtx.lineTo(p.x - s * 0.4, p.y - s * 0.4);
-        fxCtx.closePath();
-        fxCtx.fill();
-        fxCtx.restore();
+        fxCtx.save(); fxCtx.globalAlpha = p.alpha; fxCtx.fillStyle = p.color; var s = p.size;
+        fxCtx.beginPath(); fxCtx.moveTo(p.x, p.y - s * 2); fxCtx.lineTo(p.x + s * 0.4, p.y - s * 0.4); fxCtx.lineTo(p.x + s * 2, p.y); fxCtx.lineTo(p.x + s * 0.4, p.y + s * 0.4); fxCtx.lineTo(p.x, p.y + s * 2); fxCtx.lineTo(p.x - s * 0.4, p.y + s * 0.4); fxCtx.lineTo(p.x - s * 2, p.y); fxCtx.lineTo(p.x - s * 0.4, p.y - s * 0.4); fxCtx.closePath(); fxCtx.fill(); fxCtx.restore();
       }
     }
     fxCtx.globalAlpha = 1;
@@ -1109,15 +738,10 @@ function fxAnimate() {
     }
     fxCtx.strokeStyle = 'rgba(255, 105, 180, 0.25)';
     for (var i = 0; i < fxParticles.length; i++) {
-      var p = fxParticles[i];
-      p.y += p.speed; p.x -= 1.5;
+      var p = fxParticles[i]; p.y += p.speed; p.x -= 1.5;
       if (p.y > h + 30) { p.y = -30; p.x = Math.random() * (w + 200) - 100; }
-      fxCtx.globalAlpha = p.alpha;
-      fxCtx.lineWidth = p.width;
-      fxCtx.beginPath();
-      fxCtx.moveTo(p.x, p.y);
-      fxCtx.lineTo(p.x + 1.5, p.y - p.length);
-      fxCtx.stroke();
+      fxCtx.globalAlpha = p.alpha; fxCtx.lineWidth = p.width;
+      fxCtx.beginPath(); fxCtx.moveTo(p.x, p.y); fxCtx.lineTo(p.x + 1.5, p.y - p.length); fxCtx.stroke();
     }
     fxCtx.globalAlpha = 1;
   } else if (fxEffect === 'snow') {
@@ -1125,15 +749,10 @@ function fxAnimate() {
       fxParticles.push({ x: Math.random() * w, y: -10 - Math.random() * h, size: 1 + Math.random() * 3, speed: 0.5 + Math.random() * 1.5, wobble: Math.random() * Math.PI * 2, ws: 0.5 + Math.random() * 1, alpha: 0.3 + Math.random() * 0.5 });
     }
     for (var i = 0; i < fxParticles.length; i++) {
-      var p = fxParticles[i];
-      p.y += p.speed;
-      p.x += Math.sin(fxTime * p.ws + p.wobble) * 0.5;
+      var p = fxParticles[i]; p.y += p.speed; p.x += Math.sin(fxTime * p.ws + p.wobble) * 0.5;
       if (p.y > h + 10) { p.y = -10; p.x = Math.random() * w; }
-      fxCtx.globalAlpha = p.alpha;
-      fxCtx.fillStyle = '#FDE2F3';
-      fxCtx.beginPath();
-      fxCtx.arc(p.x, p.y, Math.max(0.5, p.size), 0, Math.PI * 2);
-      fxCtx.fill();
+      fxCtx.globalAlpha = p.alpha; fxCtx.fillStyle = '#FDE2F3';
+      fxCtx.beginPath(); fxCtx.arc(p.x, p.y, Math.max(0.5, p.size), 0, Math.PI * 2); fxCtx.fill();
     }
     fxCtx.globalAlpha = 1;
   } else if (fxEffect === 'orbs') {
@@ -1146,10 +765,8 @@ function fxAnimate() {
       var p = fxParticles[i];
       p.x += p.speedX + Math.sin(fxTime * 0.2 + p.phaseX) * 0.3;
       p.y += p.speedY + Math.cos(fxTime * 0.15 + p.phaseY) * 0.3;
-      if (p.x < -p.radius) p.x = w + p.radius;
-      if (p.x > w + p.radius) p.x = -p.radius;
-      if (p.y < -p.radius) p.y = h + p.radius;
-      if (p.y > h + p.radius) p.y = -p.radius;
+      if (p.x < -p.radius) p.x = w + p.radius; if (p.x > w + p.radius) p.x = -p.radius;
+      if (p.y < -p.radius) p.y = h + p.radius; if (p.y > h + p.radius) p.y = -p.radius;
       var grad = fxCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, Math.max(1, p.radius));
       grad.addColorStop(0, 'hsla(' + p.hue + ', 80%, 60%, ' + p.alpha + ')');
       grad.addColorStop(0.5, 'hsla(' + (p.hue + 20) + ', 60%, 40%, ' + (p.alpha * 0.5) + ')');
@@ -1177,62 +794,42 @@ function switchNameFx(effect) {
   appState.currentNameEffect = effect;
   updateFxPanel();
   saveProfileSetting('nameEffect', effect);
-  if (appState.currentProfileUser) {
-    renderProfile(appState.currentProfileUser);
-  }
+  if (appState.currentProfileUser) { appState.currentProfileUser.nameEffect = effect; renderProfile(appState.currentProfileUser); }
 }
 
 function switchCardStyle(style) {
   appState.currentCardStyle = style;
   updateFxPanel();
   saveProfileSetting('cardStyle', style);
-  if (appState.currentProfileUser) {
-    renderProfile(appState.currentProfileUser);
-  }
+  if (appState.currentProfileUser) { appState.currentProfileUser.cardStyle = style; renderProfile(appState.currentProfileUser); }
 }
 
 function updateFxPanel() {
-  document.querySelectorAll('.fx-option[data-fx]').forEach(function(btn) {
-    btn.classList.toggle('active', btn.dataset.fx === appState.currentBgEffect);
-  });
-  document.querySelectorAll('.fx-option[data-nfx]').forEach(function(btn) {
-    btn.classList.toggle('active', btn.dataset.nfx === appState.currentNameEffect);
-  });
-  document.querySelectorAll('.fx-option[data-cs]').forEach(function(btn) {
-    btn.classList.toggle('active', btn.dataset.cs === appState.currentCardStyle);
-  });
+  document.querySelectorAll('.fx-option[data-fx]').forEach(function(b) { b.classList.toggle('active', b.dataset.fx === appState.currentBgEffect); });
+  document.querySelectorAll('.fx-option[data-nfx]').forEach(function(b) { b.classList.toggle('active', b.dataset.nfx === appState.currentNameEffect); });
+  document.querySelectorAll('.fx-option[data-cs]').forEach(function(b) { b.classList.toggle('active', b.dataset.cs === appState.currentCardStyle); });
 }
 
 async function saveProfileSetting(key, value) {
   if (!appState.currentUserData) return;
   try {
-    await db.collection('users').doc(appState.currentUser.uid).update({
-      [key]: value,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
+    await db.collection('users').doc(appState.currentUser.uid).update({ [key]: value, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
     appState.currentUserData[key] = value;
-  } catch (error) {
-    console.error('Error saving setting:', error);
-  }
+  } catch (e) { console.error('Error saving:', e); }
 }
 
 /* ============================
    Customize Page
    ============================ */
-function loadCustomizePage() {
-  switchCustomTab(appState.currentCustomTab);
-}
+function loadCustomizePage() { switchCustomTab(appState.currentCustomTab); }
 
 function switchCustomTab(tab) {
   appState.currentCustomTab = tab;
-  
-  document.querySelectorAll('.custom-tab').forEach(function(t) {
-    t.classList.toggle('active', t.dataset.ctab === tab);
-  });
-  
+  document.querySelectorAll('.custom-tab').forEach(function(t) { t.classList.toggle('active', t.dataset.ctab === tab); });
   var content = document.getElementById('custom-tab-content');
   var user = appState.currentUserData;
-  
+  if (!user) return;
+
   if (tab === 'info') {
     content.innerHTML = '<div class="space-y-5">' +
       '<div><label class="block text-xs font-medium text-ss-muted mb-1.5">Display Name</label><input type="text" class="input-field" id="cust-displayName" value="' + (user.displayName || '') + '"></div>' +
@@ -1243,104 +840,67 @@ function switchCustomTab(tab) {
       '<div><label class="block text-xs font-medium text-ss-muted mb-1.5">Banner URL</label><input type="url" class="input-field" id="cust-banner" value="' + (user.banner || '') + '" placeholder="https://example.com/banner.jpg"><p class="text-xs text-ss-dim mt-1">Recommended: 1200x400px</p></div>' +
       '<button class="btn-pink" onclick="saveInfo()">Save Changes</button></div>';
   } else if (tab === 'bg') {
-    var effects = ['aurora', 'petals', 'sparkles', 'rain', 'snow', 'orbs'];
-    var effectNames = { aurora: 'Aurora', petals: 'Petals', sparkles: 'Sparkles', rain: 'Rain', snow: 'Snow', orbs: 'Orbs' };
-    var effectIcons = { aurora: 'fa-sun', petals: 'fa-leaf', sparkles: 'fa-star', rain: 'fa-cloud-rain', snow: 'fa-snowflake', orbs: 'fa-circle' };
-    
-    var html = '<div class="grid grid-cols-2 sm:grid-cols-3 gap-3">';
-    effects.forEach(function(fx) {
-      var active = user.bgEffect === fx ? 'border-ss-pink bg-ss-pink/10' : 'border-transparent hover:border-ss-pink/30';
-      html += '<button class="p-4 rounded-xl border transition-all text-center ' + active + '" onclick="selectBgEffect(\'' + fx + '\')">' +
-        '<i class="fa-solid ' + effectIcons[fx] + ' text-2xl mb-2 ' + (user.bgEffect === fx ? 'text-ss-pink' : 'text-ss-muted') + '"></i>' +
-        '<p class="text-sm font-medium">' + effectNames[fx] + '</p></button>';
+    var fxs = ['aurora','petals','sparkles','rain','snow','orbs'];
+    var fn = {aurora:'Aurora',petals:'Petals',sparkles:'Sparkles',rain:'Rain',snow:'Snow',orbs:'Orbs'};
+    var fi = {aurora:'fa-sun',petals:'fa-leaf',sparkles:'fa-star',rain:'fa-cloud-rain',snow:'fa-snowflake',orbs:'fa-circle'};
+    var h = '<div class="grid grid-cols-2 sm:grid-cols-3 gap-3">';
+    fxs.forEach(function(f) {
+      var a = user.bgEffect === f ? 'border-ss-pink bg-ss-pink/10' : 'border-transparent hover:border-ss-pink/30';
+      h += '<button class="p-4 rounded-xl border transition-all text-center ' + a + '" onclick="selectBgEffect(\'' + f + '\')"><i class="fa-solid ' + fi[f] + ' text-2xl mb-2 ' + (user.bgEffect === f ? 'text-ss-pink' : 'text-ss-muted') + '"></i><p class="text-sm font-medium">' + fn[f] + '</p></button>';
     });
-    html += '</div>';
-    content.innerHTML = html;
+    content.innerHTML = h + '</div>';
   } else if (tab === 'effects') {
-    var nameEffects = [
-      { id: 'neon', name: 'Neon Glow' },
-      { id: 'glitch', name: 'Glitch' },
-      { id: 'gradient', name: 'Gradient' },
-      { id: 'holographic', name: 'Holographic' },
-      { id: 'sparkle', name: 'Sparkle' }
-    ];
-    
-    var html = '<h3 class="font-semibold mb-3">Name Effect</h3><div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">';
-    nameEffects.forEach(function(nfx) {
-      var active = user.nameEffect === nfx.id ? 'border-ss-pink bg-ss-pink/10' : 'border-transparent hover:border-ss-pink/30';
-      html += '<button class="p-3 rounded-xl border transition-all text-center ' + active + '" onclick="selectNameEffect(\'' + nfx.id + '\')">' +
-        '<span class="name-' + nfx.id + ' text-lg font-bold">' + user.displayName + '</span>' +
-        '<p class="text-xs text-ss-muted mt-1">' + nfx.name + '</p></button>';
+    var nfxs = [{id:'neon',name:'Neon Glow'},{id:'glitch',name:'Glitch'},{id:'gradient',name:'Gradient'},{id:'holographic',name:'Holographic'},{id:'sparkle',name:'Sparkle'}];
+    var h = '<h3 class="font-semibold mb-3">Name Effect</h3><div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">';
+    nfxs.forEach(function(n) {
+      var a = user.nameEffect === n.id ? 'border-ss-pink bg-ss-pink/10' : 'border-transparent hover:border-ss-pink/30';
+      h += '<button class="p-3 rounded-xl border transition-all text-center ' + a + '" onclick="selectNameEffect(\'' + n.id + '\')"><span class="name-' + n.id + ' text-lg font-bold">' + (user.displayName || 'Name') + '</span><p class="text-xs text-ss-muted mt-1">' + n.name + '</p></button>';
     });
-    html += '</div>';
-    
-    html += '<h3 class="font-semibold mb-3">Card Style</h3><div class="grid grid-cols-2 sm:grid-cols-4 gap-3">';
-    var cardStyles = [
-      { id: 'glass', name: 'Glass' },
-      { id: 'default', name: 'Default' },
-      { id: 'minimal', name: 'Minimal' },
-      { id: 'portfolio', name: 'Portfolio' }
-    ];
-    cardStyles.forEach(function(cs) {
-      var active = user.cardStyle === cs.id ? 'border-ss-pink bg-ss-pink/10' : 'border-transparent hover:border-ss-pink/30';
-      html += '<button class="p-3 rounded-xl border transition-all text-center ' + active + '" onclick="selectCardStyle(\'' + cs.id + '\')">' +
-        '<div class="profile-card-' + cs.id + ' w-full h-16 mb-2"></div>' +
-        '<p class="text-xs text-ss-muted">' + cs.name + '</p></button>';
+    h += '</div><h3 class="font-semibold mb-3">Card Style</h3><div class="grid grid-cols-2 sm:grid-cols-4 gap-3">';
+    [{id:'glass',name:'Glass'},{id:'default',name:'Default'},{id:'minimal',name:'Minimal'},{id:'portfolio',name:'Portfolio'}].forEach(function(c) {
+      var a = user.cardStyle === c.id ? 'border-ss-pink bg-ss-pink/10' : 'border-transparent hover:border-ss-pink/30';
+      h += '<button class="p-3 rounded-xl border transition-all text-center ' + a + '" onclick="selectCardStyle(\'' + c.id + '\')"><div class="profile-card-' + c.id + ' w-full h-16 mb-2"></div><p class="text-xs text-ss-muted">' + c.name + '</p></button>';
     });
-    html += '</div>';
-    content.innerHTML = html;
+    content.innerHTML = h + '</div>';
   } else if (tab === 'card') {
-    content.innerHTML = '<div class="space-y-5">' +
-      '<div><label class="block text-xs font-medium text-ss-muted mb-1.5">Accent Color</label>' +
-      '<div class="flex items-center gap-3"><input type="color" id="cust-accentColor" value="' + (user.accentColor || '#FF1493') + '" class="w-10 h-10 rounded-lg cursor-pointer border-0 bg-transparent"><input type="text" class="input-field flex-1" id="cust-accentColorText" value="' + (user.accentColor || '#FF1493') + '" placeholder="#FF1493"></div></div>' +
-      '<button class="btn-pink" onclick="saveCardSettings()">Save Changes</button></div>';
-    
-    document.getElementById('cust-accentColor').addEventListener('input', function(e) {
-      document.getElementById('cust-accentColorText').value = e.target.value;
-    });
-    document.getElementById('cust-accentColorText').addEventListener('input', function(e) {
-      if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) {
-        document.getElementById('cust-accentColor').value = e.target.value;
-      }
-    });
+    content.innerHTML = '<div class="space-y-5"><div><label class="block text-xs font-medium text-ss-muted mb-1.5">Accent Color</label><div class="flex items-center gap-3"><input type="color" id="cust-accentColor" value="' + (user.accentColor || '#FF1493') + '" class="w-10 h-10 rounded-lg cursor-pointer border-0 bg-transparent"><input type="text" class="input-field flex-1" id="cust-accentColorText" value="' + (user.accentColor || '#FF1493') + '"></div></div><button class="btn-pink" onclick="saveCardSettings()">Save Changes</button></div>';
+    document.getElementById('cust-accentColor').addEventListener('input', function(e) { document.getElementById('cust-accentColorText').value = e.target.value; });
+    document.getElementById('cust-accentColorText').addEventListener('input', function(e) { if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) document.getElementById('cust-accentColor').value = e.target.value; });
   } else if (tab === 'links') {
     var links = user.links || [];
-    var html = '<div class="space-y-3" id="links-list">';
-    links.forEach(function(link, i) {
-      html += renderLinkItem(link, i);
+    var h = '<div class="space-y-3" id="links-list">';
+    links.forEach(function(l, i) {
+      h += '<div class="flex items-start gap-3 p-3 rounded-xl" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,20,147,0.08)"><div class="flex-1 space-y-2">' +
+        '<input type="text" class="input-field !py-2 text-sm" value="' + (l.title || '') + '" placeholder="Link title" data-link-idx="' + i + '" data-link-field="title">' +
+        '<input type="url" class="input-field !py-2 text-sm" value="' + (l.url || '') + '" placeholder="https://..." data-link-idx="' + i + '" data-link-field="url">' +
+        '<input type="text" class="input-field !py-2 text-sm" value="' + (l.icon || 'fa-solid fa-link') + '" placeholder="fa-brands fa-twitter" data-link-idx="' + i + '" data-link-field="icon">' +
+        '</div><div class="flex flex-col gap-1">' +
+        (i > 0 ? '<button class="btn-ghost !px-2 text-xs" onclick="moveLink(' + i + ',-1)"><i class="fa-solid fa-arrow-up"></i></button>' : '') +
+        (i < links.length - 1 ? '<button class="btn-ghost !px-2 text-xs" onclick="moveLink(' + i + ',1)"><i class="fa-solid fa-arrow-down"></i></button>' : '') +
+        '<button class="btn-ghost !px-2 text-xs text-red-400" onclick="removeLink(' + i + ')"><i class="fa-solid fa-trash"></i></button></div></div>';
     });
-    html += '</div><button class="btn-outline mt-4" onclick="addLink()"><i class="fa-solid fa-plus mr-2"></i>Add Link</button>';
-    content.innerHTML = html;
+    h += '</div><button class="btn-outline mt-4" onclick="addLink()"><i class="fa-solid fa-plus mr-2"></i>Add Link</button>';
+    content.innerHTML = h;
+    // Attach live update listeners
+    content.querySelectorAll('[data-link-idx]').forEach(function(inp) {
+      inp.addEventListener('input', function() {
+        var idx = parseInt(this.dataset.linkIdx);
+        var field = this.dataset.linkField;
+        if (appState.currentUserData.links[idx]) {
+          appState.currentUserData.links[idx][field] = this.value;
+          updatePreview();
+        }
+      });
+    });
   } else if (tab === 'music') {
-    var music = user.music || {};
+    var m = user.music || {};
     content.innerHTML = '<div class="space-y-5">' +
-      '<div><label class="block text-xs font-medium text-ss-muted mb-1.5">Song Title</label><input type="text" class="input-field" id="cust-music-title" value="' + (music.title || '') + '" placeholder="Song title"></div>' +
-      '<div><label class="block text-xs font-medium text-ss-muted mb-1.5">Artist</label><input type="text" class="input-field" id="cust-music-artist" value="' + (music.artist || '') + '" placeholder="Artist name"></div>' +
-      '<div><label class="block text-xs font-medium text-ss-muted mb-1.5">Audio URL</label><input type="url" class="input-field" id="cust-music-url" value="' + (music.url || '') + '" placeholder="https://example.com/song.mp3"><p class="text-xs text-ss-dim mt-1">Direct link to MP3 file</p></div>' +
-      '<div><label class="block text-xs font-medium text-ss-muted mb-1.5">Cover Art URL</label><input type="url" class="input-field" id="cust-music-cover" value="' + (music.cover || '') + '" placeholder="https://example.com/cover.jpg"></div>' +
+      '<div><label class="block text-xs font-medium text-ss-muted mb-1.5">Song Title</label><input type="text" class="input-field" id="cust-music-title" value="' + (m.title || '') + '"></div>' +
+      '<div><label class="block text-xs font-medium text-ss-muted mb-1.5">Artist</label><input type="text" class="input-field" id="cust-music-artist" value="' + (m.artist || '') + '"></div>' +
+      '<div><label class="block text-xs font-medium text-ss-muted mb-1.5">Audio URL</label><input type="url" class="input-field" id="cust-music-url" value="' + (m.url || '') + '" placeholder="https://example.com/song.mp3"><p class="text-xs text-ss-dim mt-1">Direct link to MP3</p></div>' +
+      '<div><label class="block text-xs font-medium text-ss-muted mb-1.5">Cover Art URL</label><input type="url" class="input-field" id="cust-music-cover" value="' + (m.cover || '') + '"></div>' +
       '<div class="flex gap-3"><button class="btn-pink" onclick="saveMusic()">Save</button><button class="btn-ghost text-red-400" onclick="removeMusic()">Remove Music</button></div></div>';
   }
-  
-  updatePreview();
-}
-
-function renderLinkItem(link, index) {
-  return '<div class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,20,147,0.08)">' +
-    '<div class="flex-1 space-y-2">' +
-    '<input type="text" class="input-field !py-2 text-sm" value="' + (link.title || '') + '" placeholder="Link title" onchange="updateLink(' + index + ', \'title\', this.value)">' +
-    '<input type="url" class="input-field !py-2 text-sm" value="' + (link.url || '') + '" placeholder="https://..." onchange="updateLink(' + index + ', \'url\', this.value)">' +
-    '<input type="text" class="input-field !py-2 text-sm" value="' + (link.icon || 'fa-solid fa-link') + '" placeholder="fa-brands fa-twitter" onchange="updateLink(' + index + ', \'icon\', this.value)">' +
-    '</div>' +
-    '<div class="flex flex-col gap-1">' +
-    (index > 0 ? '<button class="btn-ghost !px-2 text-xs" onclick="moveLink(' + index + ', -1)"><i class="fa-solid fa-arrow-up"></i></button>' : '') +
-    (index < (appState.currentUserData.links || []).length - 1 ? '<button class="btn-ghost !px-2 text-xs" onclick="moveLink(' + index + ', 1)"><i class="fa-solid fa-arrow-down"></i></button>' : '') +
-    '<button class="btn-ghost !px-2 text-xs text-red-400" onclick="removeLink(' + index + ')"><i class="fa-solid fa-trash"></i></button>' +
-    '</div></div>';
-}
-
-function updateLink(index, field, value) {
-  if (!appState.currentUserData.links) appState.currentUserData.links = [];
-  appState.currentUserData.links[index][field] = value;
   updatePreview();
 }
 
@@ -1350,538 +910,274 @@ function addLink() {
   switchCustomTab('links');
 }
 
-function removeLink(index) {
-  appState.currentUserData.links.splice(index, 1);
-  switchCustomTab('links');
+function removeLink(idx) {
+  appState.currentUserData.links.splice(idx, 1);
   saveLinks();
+  switchCustomTab('links');
 }
 
-function moveLink(index, direction) {
+function moveLink(idx, dir) {
   var links = appState.currentUserData.links;
-  var newIndex = index + direction;
-  if (newIndex < 0 || newIndex >= links.length) return;
-  var temp = links[index];
-  links[index] = links[newIndex];
-  links[newIndex] = temp;
-  switchCustomTab('links');
+  var ni = idx + dir;
+  if (ni < 0 || ni >= links.length) return;
+  var tmp = links[idx]; links[idx] = links[ni]; links[ni] = tmp;
   saveLinks();
+  switchCustomTab('links');
 }
 
 async function saveLinks() {
   if (!appState.currentUserData) return;
   try {
-    await db.collection('users').doc(appState.currentUser.uid).update({
-      links: appState.currentUserData.links || [],
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
+    await db.collection('users').doc(appState.currentUser.uid).update({ links: appState.currentUserData.links || [], updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
     showToast('Links updated', 'success');
-  } catch (error) {
-    showToast('Failed to save links', 'error');
-  }
+  } catch (e) { showToast('Failed to save links', 'error'); }
   updatePreview();
 }
 
 async function saveInfo() {
-  var displayName = document.getElementById('cust-displayName').value.trim();
-  var description = document.getElementById('cust-description').value.trim();
-  var location = document.getElementById('cust-location').value.trim();
-  var avatar = document.getElementById('cust-avatar').value.trim();
-  var banner = document.getElementById('cust-banner').value.trim();
-  
-  if (!displayName) {
-    showToast('Display name is required', 'error');
-    return;
-  }
-  
+  var dn = document.getElementById('cust-displayName').value.trim();
+  if (!dn) { showToast('Display name is required', 'error'); return; }
   try {
-    await db.collection('users').doc(appState.currentUser.uid).update({
-      displayName: displayName,
-      description: description,
-      location: location,
-      avatar: avatar,
-      banner: banner,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    appState.currentUserData = Object.assign(appState.currentUserData, { displayName, description, location, avatar, banner });
-    updateNav();
-    updatePreview();
+    var updates = { displayName: dn, description: document.getElementById('cust-description').value.trim(), location: document.getElementById('cust-location').value.trim(), avatar: document.getElementById('cust-avatar').value.trim(), banner: document.getElementById('cust-banner').value.trim(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
+    await db.collection('users').doc(appState.currentUser.uid).update(updates);
+    Object.assign(appState.currentUserData, updates);
+    updateNav(); updatePreview();
     showToast('Profile updated', 'success');
-  } catch (error) {
-    showToast('Failed to save', 'error');
-  }
+  } catch (e) { showToast('Failed to save', 'error'); }
 }
 
 async function selectBgEffect(fx) {
   appState.currentUserData.bgEffect = fx;
-  try {
-    await db.collection('users').doc(appState.currentUser.uid).update({
-      bgEffect: fx,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    switchCustomTab('bg');
-    updatePreview();
-  } catch (error) {
-    showToast('Failed to save', 'error');
-  }
+  try { await db.collection('users').doc(appState.currentUser.uid).update({ bgEffect: fx, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); } catch(e) {}
+  switchCustomTab('bg'); updatePreview();
 }
 
 async function selectNameEffect(fx) {
   appState.currentUserData.nameEffect = fx;
-  try {
-    await db.collection('users').doc(appState.currentUser.uid).update({
-      nameEffect: fx,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    switchCustomTab('effects');
-    updatePreview();
-  } catch (error) {
-    showToast('Failed to save', 'error');
-  }
+  try { await db.collection('users').doc(appState.currentUser.uid).update({ nameEffect: fx, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); } catch(e) {}
+  switchCustomTab('effects'); updatePreview();
 }
 
-async function selectCardStyle(style) {
-  appState.currentUserData.cardStyle = style;
-  try {
-    await db.collection('users').doc(appState.currentUser.uid).update({
-      cardStyle: style,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    switchCustomTab('effects');
-    updatePreview();
-  } catch (error) {
-    showToast('Failed to save', 'error');
-  }
+async function selectCardStyle(s) {
+  appState.currentUserData.cardStyle = s;
+  try { await db.collection('users').doc(appState.currentUser.uid).update({ cardStyle: s, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); } catch(e) {}
+  switchCustomTab('effects'); updatePreview();
 }
 
 async function saveCardSettings() {
-  var color = document.getElementById('cust-accentColor').value;
-  try {
-    await db.collection('users').doc(appState.currentUser.uid).update({
-      accentColor: color,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    appState.currentUserData.accentColor = color;
-    showToast('Card settings saved', 'success');
-    updatePreview();
-  } catch (error) {
-    showToast('Failed to save', 'error');
-  }
+  var c = document.getElementById('cust-accentColor').value;
+  try { await db.collection('users').doc(appState.currentUser.uid).update({ accentColor: c, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); appState.currentUserData.accentColor = c; showToast('Saved', 'success'); updatePreview(); } catch(e) { showToast('Failed', 'error'); }
 }
 
 async function saveMusic() {
-  var music = {
-    title: document.getElementById('cust-music-title').value.trim(),
-    artist: document.getElementById('cust-music-artist').value.trim(),
-    url: document.getElementById('cust-music-url').value.trim(),
-    cover: document.getElementById('cust-music-cover').value.trim()
-  };
-  
-  if (!music.url) {
-    showToast('Audio URL is required', 'error');
-    return;
-  }
-  
-  try {
-    await db.collection('users').doc(appState.currentUser.uid).update({
-      music: music,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    appState.currentUserData.music = music;
-    showToast('Music updated', 'success');
-    updatePreview();
-  } catch (error) {
-    showToast('Failed to save', 'error');
-  }
+  var m = { title: document.getElementById('cust-music-title').value.trim(), artist: document.getElementById('cust-music-artist').value.trim(), url: document.getElementById('cust-music-url').value.trim(), cover: document.getElementById('cust-music-cover').value.trim() };
+  if (!m.url) { showToast('Audio URL required', 'error'); return; }
+  try { await db.collection('users').doc(appState.currentUser.uid).update({ music: m, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); appState.currentUserData.music = m; showToast('Music updated', 'success'); updatePreview(); } catch(e) { showToast('Failed', 'error'); }
 }
 
 async function removeMusic() {
-  try {
-    await db.collection('users').doc(appState.currentUser.uid).update({
-      music: null,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    appState.currentUserData.music = null;
-    showToast('Music removed', 'success');
-    switchCustomTab('music');
-    updatePreview();
-  } catch (error) {
-    showToast('Failed to remove', 'error');
-  }
+  try { await db.collection('users').doc(appState.currentUser.uid).update({ music: null, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); appState.currentUserData.music = null; showToast('Music removed', 'success'); switchCustomTab('music'); updatePreview(); } catch(e) { showToast('Failed', 'error'); }
 }
 
 function updatePreview() {
-  var preview = document.getElementById('customize-preview');
-  if (!preview || !appState.currentUserData) return;
-  
-  var user = appState.currentUserData;
-  var cardClass = 'profile-card-' + (user.cardStyle || 'glass');
-  var nameClass = 'name-' + (user.nameEffect || 'neon');
-  
-  var linksHtml = '';
-  if (user.links && user.links.length > 0) {
-    user.links.slice(0, 3).forEach(function(link) {
-      linksHtml += '<div class="link-btn !py-2 !text-xs !rounded-lg"><i class="' + (link.icon || 'fa-solid fa-link') + '"></i><span>' + (link.title || 'Untitled') + '</span></div>';
-    });
-    if (user.links.length > 3) {
-      linksHtml += '<p class="text-xs text-ss-muted text-center">+' + (user.links.length - 3) + ' more</p>';
-    }
+  var el = document.getElementById('customize-preview');
+  if (!el || !appState.currentUserData) return;
+  var u = appState.currentUserData;
+  var cc = 'profile-card-' + (u.cardStyle || 'glass');
+  var nc = 'name-' + (u.nameEffect || 'neon');
+  var lh = '';
+  if (u.links && u.links.length > 0) {
+    u.links.slice(0, 3).forEach(function(l) { lh += '<div class="link-btn !py-2 !text-xs !rounded-lg"><i class="' + (l.icon || 'fa-solid fa-link') + '"></i><span>' + (l.title || 'Untitled') + '</span></div>'; });
+    if (u.links.length > 3) lh += '<p class="text-xs text-ss-muted text-center">+' + (u.links.length - 3) + ' more</p>';
   }
-  
-  var bannerHtml = user.banner ? '<div class="h-16 rounded-t-[11px] bg-cover bg-center" style="background-image:url(\'' + user.banner + '\')"></div>' : '';
-  
-  preview.innerHTML = '<div class="' + cardClass + ' overflow-hidden">' +
-    bannerHtml +
-    '<div class="px-4 pb-4 ' + (user.banner ? '-mt-6 relative' : 'pt-4') + '">' +
-    (user.avatar ? '<img src="' + user.avatar + '" class="w-12 h-12 rounded-xl object-cover" style="border:2px solid #0A0A0F" alt="">' : '<div class="w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold" style="border:2px solid #0A0A0F;background:linear-gradient(135deg,#FF1493,#DB2777)"><span class="text-white">' + (user.displayName || '?').charAt(0).toUpperCase() + '</span></div>') +
-    '<h3 class="font-display font-bold text-sm mt-2 ' + nameClass + '"' + (user.nameEffect === 'glitch' ? ' data-text="' + (user.displayName || '') + '"' : '') + '>' + (user.displayName || 'Username') + '</h3>' +
-    '<p class="text-ss-muted text-xs" style="font-family:\'JetBrains Mono\',monospace">@' + (user.username || 'username') + '</p>' +
-    (user.description ? '<p class="text-ss-text/70 text-xs mt-2 line-clamp-2">' + user.description + '</p>' : '') +
-    (linksHtml ? '<div class="mt-3 space-y-1.5">' + linksHtml + '</div>' : '') +
-    '</div></div>';
+  var bh = u.banner ? '<div class="h-16 rounded-t-[11px] bg-cover bg-center" style="background-image:url(\'' + u.banner + '\')"></div>' : '';
+  var ah = u.avatar ? '<img src="' + u.avatar + '" class="w-12 h-12 rounded-xl object-cover" style="border:2px solid #0A0A0F" alt="">' : '<div class="w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold" style="border:2px solid #0A0A0F;background:linear-gradient(135deg,#FF1493,#DB2777)"><span class="text-white">' + (u.displayName || '?').charAt(0).toUpperCase() + '</span></div>';
+  el.innerHTML = '<div class="' + cc + ' overflow-hidden">' + bh + '<div class="px-4 pb-4 ' + (u.banner ? '-mt-6 relative' : 'pt-4') + '">' + ah + '<h3 class="font-display font-bold text-sm mt-2 ' + nc + '"' + (u.nameEffect === 'glitch' ? ' data-text="' + (u.displayName || '') + '"' : '') + '>' + (u.displayName || 'User') + '</h3><p class="text-ss-muted text-xs" style="font-family:\'JetBrains Mono\',monospace">@' + (u.username || '') + '</p>' + (u.description ? '<p class="text-ss-text/70 text-xs mt-2 line-clamp-2">' + u.description + '</p>' : '') + (lh ? '<div class="mt-3 space-y-1.5">' + lh + '</div>' : '') + '</div></div>';
 }
 
 /* ============================
    Admin Panel
    ============================ */
-function loadAdminPage() {
-  switchAdminTab(appState.currentAdminTab);
-}
+function loadAdminPage() { switchAdminTab(appState.currentAdminTab); }
 
 async function switchAdminTab(tab) {
   appState.currentAdminTab = tab;
-  
-  document.querySelectorAll('.admin-nav-item').forEach(function(t) {
-    t.classList.toggle('active', t.dataset.atab === tab);
-  });
-  
-  var content = document.getElementById('admin-content');
-  
+  document.querySelectorAll('.admin-nav-item').forEach(function(t) { t.classList.toggle('active', t.dataset.atab === tab); });
+  var c = document.getElementById('admin-content');
+
   if (tab === 'dashboard') {
-    content.innerHTML = '<div class="loading-spinner mx-auto my-8"></div>';
-    
+    c.innerHTML = '<div class="loading-spinner mx-auto my-8"></div>';
     try {
-      var usersSnapshot = await db.collection('users').get();
-      var totalUsers = usersSnapshot.size;
-      var totalViews = 0;
-      usersSnapshot.forEach(function(doc) { totalViews += doc.data().views || 0; });
-      
-      var recentUsers = [];
-      usersSnapshot.docs.sort(function(a, b) {
-        var aTime = a.data().createdAt ? a.data().createdAt.toMillis() : 0;
-        var bTime = b.data().createdAt ? b.data().createdAt.toMillis() : 0;
-        return bTime - aTime;
-      });
-      recentUsers = usersSnapshot.docs.slice(0, 10).map(function(doc) {
-        var d = doc.data();
-        return { uid: d.uid, username: d.username, role: d.role, views: d.views, status: d.status, joined: d.createdAt ? d.createdAt.toDate().toLocaleDateString() : 'N/A' };
-      });
-      
-      content.innerHTML = '<h2 class="font-display text-2xl font-bold mb-6">Dashboard</h2>' +
+      var snap = await db.collection('users').get();
+      var total = snap.size, views = 0, prem = 0, staff = 0;
+      var recent = [];
+      snap.forEach(function(d) { var u = d.data(); views += u.views || 0; if (u.plan === 'premium') prem++; if (ROLE_LEVELS[u.role] >= ROLE_LEVELS.mod) staff++; recent.push(u); });
+      recent.sort(function(a, b) { return (b.createdAt ? b.createdAt.toMillis() : 0) - (a.createdAt ? a.createdAt.toMillis() : 0); });
+      recent = recent.slice(0, 10);
+      c.innerHTML = '<h2 class="font-display text-2xl font-bold mb-6">Dashboard</h2>' +
         '<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">' +
-        '<div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Total Users</p><p class="text-2xl font-bold mt-1">' + formatNumber(totalUsers) + '</p></div>' +
-        '<div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Total Views</p><p class="text-2xl font-bold mt-1">' + formatNumber(totalViews) + '</p></div>' +
-        '<div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Premium Users</p><p class="text-2xl font-bold mt-1">' + formatNumber(usersSnapshot.docs.filter(function(d) { return d.data().plan === 'premium'; }).length) + '</p></div>' +
-        '<div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Staff Members</p><p class="text-2xl font-bold mt-1">' + formatNumber(usersSnapshot.docs.filter(function(d) { return ROLE_LEVELS[d.data().role] >= ROLE_LEVELS.mod; }).length) + '</p></div>' +
-        '</div>' +
-        '<h3 class="font-semibold text-lg mb-4">Recent Users</h3>' +
-        '<div class="glass rounded-xl overflow-hidden"><table class="data-table"><thead><tr><th>UID</th><th>Username</th><th>Role</th><th>Views</th><th>Status</th><th>Joined</th></tr></thead><tbody>' +
-        recentUsers.map(function(u) {
-          return '<tr><td class="font-mono text-xs">#' + String(u.uid).padStart(7, '0') + '</td><td><a href="#/u/' + u.username + '" class="text-ss-pink hover:underline">' + u.username + '</a></td><td><span class="role-tag role-' + u.role + '">' + u.role + '</span></td><td>' + formatNumber(u.views) + '</td><td><span class="text-' + (u.status === 'active' ? 'green-400' : u.status === 'suspended' ? 'yellow-400' : 'red-400') + '">' + u.status + '</span></td><td class="text-ss-muted">' + u.joined + '</td></tr>';
-        }).join('') +
+        '<div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Total Users</p><p class="text-2xl font-bold mt-1">' + formatNumber(total) + '</p></div>' +
+        '<div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Total Views</p><p class="text-2xl font-bold mt-1">' + formatNumber(views) + '</p></div>' +
+        '<div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Premium</p><p class="text-2xl font-bold mt-1">' + prem + '</p></div>' +
+        '<div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Staff</p><p class="text-2xl font-bold mt-1">' + staff + '</p></div></div>' +
+        '<h3 class="font-semibold text-lg mb-4">Recent Users</h3><div class="glass rounded-xl overflow-x-auto"><table class="data-table"><thead><tr><th>UID</th><th>Username</th><th>Role</th><th>Views</th><th>Status</th><th>Joined</th></tr></thead><tbody>' +
+        recent.map(function(u) { return '<tr><td class="font-mono text-xs">#' + String(u.uid || 0).padStart(7, '0') + '</td><td><a href="#/u/' + u.username + '" class="text-ss-pink hover:underline">' + u.username + '</a></td><td><span class="role-tag role-' + u.role + '">' + u.role + '</span></td><td>' + formatNumber(u.views) + '</td><td class="text-' + ((u.status || 'active') === 'active' ? 'green-400' : (u.status || '') === 'suspended' ? 'yellow-400' : 'red-400') + '">' + (u.status || 'active') + '</td><td class="text-ss-muted">' + (u.createdAt ? u.createdAt.toDate().toLocaleDateString() : 'N/A') + '</td></tr>'; }).join('') +
         '</tbody></table></div>';
-    } catch (error) {
-      content.innerHTML = '<p class="text-red-400">Error loading dashboard: ' + error.message + '</p>';
-    }
+    } catch (e) { c.innerHTML = '<p class="text-red-400">Error: ' + e.message + '</p>'; }
   } else if (tab === 'users') {
-    content.innerHTML = '<div class="loading-spinner mx-auto my-8"></div>';
-    
+    c.innerHTML = '<div class="loading-spinner mx-auto my-8"></div>';
     try {
-      var snapshot = await db.collection('users').orderBy('uid').get();
-      var users = snapshot.docs.map(function(doc) { return Object.assign({ id: doc.id }, doc.data()); });
-      
-      content.innerHTML = '<div class="flex items-center justify-between mb-6"><h2 class="font-display text-2xl font-bold">Users</h2>' +
-        '<input type="text" class="input-field !w-64" placeholder="Search users..." id="user-search" oninput="filterUsers()"></div>' +
-        '<div class="glass rounded-xl overflow-x-auto"><table class="data-table" id="users-table"><thead><tr><th>UID</th><th>Username</th><th>Display Name</th><th>Role</th><th>Views</th><th>Status</th><th>Actions</th></tr></thead><tbody>' +
+      var snap = await db.collection('users').orderBy('uid').get();
+      var users = snap.docs.map(function(d) { return Object.assign({ id: d.id }, d.data()); });
+      c.innerHTML = '<div class="flex items-center justify-between mb-6"><h2 class="font-display text-2xl font-bold">Users</h2><input type="text" class="input-field !w-64" placeholder="Search..." id="user-search" oninput="filterUsers()"></div>' +
+        '<div class="glass rounded-xl overflow-x-auto"><table class="data-table" id="users-table"><thead><tr><th>UID</th><th>Username</th><th>Display</th><th>Role</th><th>Views</th><th>Status</th><th>Actions</th></tr></thead><tbody>' +
         users.map(function(u) {
-          return '<tr data-username="' + u.username.toLowerCase() + '" data-displayname="' + (u.displayName || '').toLowerCase() + '">' +
-            '<td class="font-mono text-xs">#' + String(u.uid).padStart(7, '0') + '</td>' +
-            '<td><a href="#/u/' + u.username + '" class="text-ss-pink hover:underline">' + u.username + '</a></td>' +
-            '<td>' + (u.displayName || '-') + '</td>' +
-            '<td><span class="role-tag role-' + u.role + '">' + u.role + '</span></td>' +
-            '<td>' + formatNumber(u.views || 0) + '</td>' +
-            '<td><span class="text-' + (u.status === 'active' ? 'green-400' : u.status === 'suspended' ? 'yellow-400' : 'red-400') + '">' + (u.status || 'active') + '</span></td>' +
-            '<td class="space-x-2">' +
-            '<button class="btn-ghost !px-2 !py-1 text-xs" onclick="openRoleModal(\'' + u.id + '\', \'' + u.role + '\')"><i class="fa-solid fa-user-shield"></i></button>' +
-            '<button class="btn-ghost !px-2 !py-1 text-xs text-yellow-400" onclick="toggleUserStatus(\'' + u.id + '\', \'' + (u.status || 'active') + '\')"><i class="fa-solid fa-' + (u.status === 'suspended' ? 'play' : 'pause') + '"></i></button>' +
-            (ROLE_LEVELS[appState.currentUserData.role] >= ROLE_LEVELS.admin ? '<button class="btn-ghost !px-2 !py-1 text-xs text-red-400" onclick="banUser(\'' + u.id + '\')"><i class="fa-solid fa-ban"></i></button>' : '') +
+          var st = u.status || 'active';
+          return '<tr data-search="' + (u.username + ' ' + (u.displayName || '')).toLowerCase() + '"><td class="font-mono text-xs">#' + String(u.uid || 0).padStart(7, '0') + '</td><td><a href="#/u/' + u.username + '" class="text-ss-pink hover:underline">' + u.username + '</a></td><td>' + (u.displayName || '-') + '</td><td><span class="role-tag role-' + u.role + '">' + u.role + '</span></td><td>' + formatNumber(u.views) + '</td><td class="text-' + (st === 'active' ? 'green-400' : st === 'suspended' ? 'yellow-400' : 'red-400') + '">' + st + '</td>' +
+            '<td class="space-x-1"><button class="btn-ghost !px-2 !py-1 text-xs" onclick="openRoleModal(\'' + u.id + '\',\'' + u.role + '\')" title="Change role"><i class="fa-solid fa-user-shield"></i></button>' +
+            '<button class="btn-ghost !px-2 !py-1 text-xs text-yellow-400" onclick="toggleUserStatus(\'' + u.id + '\',\'' + st + '\')" title="Suspend/unsuspend"><i class="fa-solid fa-' + (st === 'suspended' ? 'play' : 'pause') + '"></i></button>' +
+            (ROLE_LEVELS[appState.currentUserData.role] >= ROLE_LEVELS.admin ? '<button class="btn-ghost !px-2 !py-1 text-xs text-red-400" onclick="banUser(\'' + u.id + '\')" title="Ban"><i class="fa-solid fa-ban"></i></button>' : '') +
             '</td></tr>';
-        }).join('') +
-        '</tbody></table></div>';
-    } catch (error) {
-      content.innerHTML = '<p class="text-red-400">Error loading users: ' + error.message + '</p>';
-    }
+        }).join('') + '</tbody></table></div>';
+    } catch (e) { c.innerHTML = '<p class="text-red-400">Error: ' + e.message + '</p>'; }
   } else if (tab === 'badges') {
-    content.innerHTML = '<h2 class="font-display text-2xl font-bold mb-6">Badge Management</h2>' +
-      '<div class="glass rounded-xl p-6 mb-6"><h3 class="font-semibold mb-4">Official Badges</h3>' +
-      '<div class="grid grid-cols-2 md:grid-cols-4 gap-3">' +
-      ['verified', 'premium', 'staff', 'early', 'pearl'].map(function(b) {
-        return '<div class="p-3 rounded-xl" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,20,147,0.08)">' +
-          '<span class="badge badge-' + b + ' mb-2"><i class="fa-solid fa-' + (b === 'verified' ? 'check' : b === 'premium' ? 'crown' : b === 'staff' ? 'shield' : b === 'early' ? 'heart' : 'gem') + ' text-[9px]"></i> ' + b.charAt(0).toUpperCase() + b.slice(1) + '</span>' +
-          '<p class="text-xs text-ss-muted mt-1">Official badge</p></div>';
-      }).join('') +
-      '</div></div>' +
-      '<div class="glass rounded-xl p-6"><h3 class="font-semibold mb-4">Grant Badge to User</h3>' +
-      '<div class="flex gap-3">' +
-      '<input type="text" class="input-field flex-1" id="badge-username" placeholder="Username">' +
+    c.innerHTML = '<h2 class="font-display text-2xl font-bold mb-6">Badge Management</h2>' +
+      '<div class="glass rounded-xl p-6 mb-6"><h3 class="font-semibold mb-4">Official Badges</h3><div class="grid grid-cols-2 md:grid-cols-5 gap-3">' +
+      [{id:'verified',icon:'check'},{id:'premium',icon:'crown'},{id:'staff',icon:'shield'},{id:'early',icon:'heart'},{id:'pearl',icon:'gem'}].map(function(b) {
+        return '<div class="p-3 rounded-xl text-center" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,20,147,0.08)"><span class="badge badge-' + b.id + '"><i class="fa-solid fa-' + b.icon + ' text-[9px]"></i> ' + b.id.charAt(0).toUpperCase() + b.id.slice(1) + '</span></div>';
+      }).join('') + '</div></div>' +
+      '<div class="glass rounded-xl p-6"><h3 class="font-semibold mb-4">Grant Badge</h3><div class="flex flex-wrap gap-3"><input type="text" class="input-field flex-1 min-w-[200px]" id="badge-username" placeholder="Username">' +
       '<select class="input-field !w-40" id="badge-type"><option value="verified">Verified</option><option value="premium">Premium</option><option value="early">Early</option><option value="pearl">Pearl</option><option value="staff">Staff</option></select>' +
-      '<button class="btn-pink" onclick="grantBadge()">Grant</button>' +
-      '</div></div>';
+      '<button class="btn-pink" onclick="grantBadge()">Grant</button></div></div>';
   } else if (tab === 'roles') {
-    content.innerHTML = '<h2 class="font-display text-2xl font-bold mb-6">Role Management</h2>' +
-      '<div class="glass rounded-xl p-6 mb-6"><h3 class="font-semibold mb-4">Role Hierarchy</h3>' +
-      '<div class="space-y-3">' +
-      ['owner', 'manager', 'admin', 'mod', 'user'].map(function(role, i) {
-        return '<div class="flex items-center gap-4 p-3 rounded-xl" style="background:rgba(255,255,255,0.03)">' +
-          '<span class="role-tag role-' + role + ' w-24 text-center">' + role.toUpperCase() + '</span>' +
-          '<div class="flex-1"><div class="h-2 rounded-full overflow-hidden" style="background:rgba(255,255,255,0.1)"><div class="h-full rounded-full bg-ss-pink" style="width:' + ((i + 1) * 20) + '%"></div></div></div>' +
-          '<span class="text-xs text-ss-muted">Level ' + (i + 1) + '</span></div>';
-      }).join('') +
-      '</div></div>' +
-      '<div class="glass rounded-xl p-6"><h3 class="font-semibold mb-4">Change User Role</h3>' +
-      '<div class="flex gap-3">' +
-      '<input type="text" class="input-field flex-1" id="role-username" placeholder="Username">' +
+    c.innerHTML = '<h2 class="font-display text-2xl font-bold mb-6">Role Management</h2>' +
+      '<div class="glass rounded-xl p-6 mb-6"><h3 class="font-semibold mb-4">Hierarchy</h3><div class="space-y-3">' +
+      ['owner','manager','admin','mod','user'].map(function(r, i) {
+        return '<div class="flex items-center gap-4 p-3 rounded-xl" style="background:rgba(255,255,255,0.03)"><span class="role-tag role-' + r + ' w-24 text-center">' + r.toUpperCase() + '</span><div class="flex-1"><div class="h-2 rounded-full overflow-hidden" style="background:rgba(255,255,255,0.1)"><div class="h-full rounded-full bg-ss-pink" style="width:' + ((i + 1) * 20) + '%"></div></div></div><span class="text-xs text-ss-muted">Level ' + (i + 1) + '</span></div>';
+      }).join('') + '</div></div>' +
+      '<div class="glass rounded-xl p-6"><h3 class="font-semibold mb-4">Change User Role</h3><div class="flex flex-wrap gap-3"><input type="text" class="input-field flex-1 min-w-[200px]" id="role-username" placeholder="Username">' +
       '<select class="input-field !w-40" id="new-role"><option value="user">User</option><option value="mod">Mod</option><option value="admin">Admin</option><option value="manager">Manager</option></select>' +
-      '<button class="btn-pink" onclick="changeUserRole()">Update Role</button>' +
-      '</div><p class="text-xs text-ss-muted mt-2">You cannot promote users above your own role level.</p></div>';
+      '<button class="btn-pink" onclick="changeUserRole()">Update</button></div><p class="text-xs text-ss-muted mt-2">Cannot promote above your own level.</p></div>';
   } else if (tab === 'audit') {
-    content.innerHTML = '<div class="loading-spinner mx-auto my-8"></div>';
-    
+    c.innerHTML = '<div class="loading-spinner mx-auto my-8"></div>';
     try {
-      var auditSnapshot = await db.collection('audit').orderBy('timestamp', 'desc').limit(50).get();
-      var logs = auditSnapshot.docs.map(function(doc) {
-        var d = doc.data();
-        return { action: d.action, username: d.username || d.userId || '-', time: d.timestamp ? d.timestamp.toDate().toLocaleString() : 'N/A' };
-      });
-      
-      content.innerHTML = '<h2 class="font-display text-2xl font-bold mb-6">Audit Log</h2>' +
-        '<div class="glass rounded-xl overflow-hidden"><table class="data-table"><thead><tr><th>Time</th><th>Action</th><th>User</th></tr></thead><tbody>' +
-        (logs.length > 0 ? logs.map(function(l) {
-          return '<tr><td class="text-ss-muted text-xs">' + l.time + '</td><td>' + l.action + '</td><td class="text-ss-pink">' + l.username + '</td></tr>';
-        }).join('') : '<tr><td colspan="3" class="text-center text-ss-muted py-8">No audit logs yet</td></tr>') +
+      var snap = await db.collection('audit').orderBy('timestamp', 'desc').limit(50).get();
+      var logs = snap.docs.map(function(d) { var e = d.data(); return { action: e.action, user: e.username || e.userId || '-', time: e.timestamp ? e.timestamp.toDate().toLocaleString() : 'N/A' }; });
+      c.innerHTML = '<h2 class="font-display text-2xl font-bold mb-6">Audit Log</h2><div class="glass rounded-xl overflow-hidden"><table class="data-table"><thead><tr><th>Time</th><th>Action</th><th>User</th></tr></thead><tbody>' +
+        (logs.length ? logs.map(function(l) { return '<tr><td class="text-ss-muted text-xs whitespace-nowrap">' + l.time + '</td><td>' + l.action + '</td><td class="text-ss-pink">' + l.user + '</td></tr>'; }).join('') : '<tr><td colspan="3" class="text-center text-ss-muted py-8">No logs yet</td></tr>') +
         '</tbody></table></div>';
-    } catch (error) {
-      content.innerHTML = '<p class="text-red-400">Error loading audit log: ' + error.message + '</p>';
-    }
+    } catch (e) { c.innerHTML = '<p class="text-red-400">Error: ' + e.message + '</p>'; }
   }
 }
 
 function filterUsers() {
-  var search = document.getElementById('user-search').value.toLowerCase();
-  document.querySelectorAll('#users-table tbody tr').forEach(function(row) {
-    var username = row.dataset.username || '';
-    var displayName = row.dataset.displayname || '';
-    row.style.display = (username.includes(search) || displayName.includes(search)) ? '' : 'none';
+  var q = (document.getElementById('user-search').value || '').toLowerCase();
+  document.querySelectorAll('#users-table tbody tr').forEach(function(r) {
+    r.style.display = (r.dataset.search || '').includes(q) ? '' : 'none';
   });
 }
 
 async function openRoleModal(userId, currentRole) {
-  var newRole = prompt('Enter new role for this user (user, mod, admin, manager):', currentRole);
-  if (!newRole || !ROLE_LEVELS[newRole]) {
-    if (newRole !== null) showToast('Invalid role', 'error');
-    return;
-  }
-  
-  if (ROLE_LEVELS[newRole] >= ROLE_LEVELS[appState.currentUserData.role]) {
-    showToast('Cannot assign role at or above your level', 'error');
-    return;
-  }
-  
+  var nr = prompt('New role (user, mod, admin, manager):', currentRole);
+  if (!nr || !ROLE_LEVELS[nr]) { if (nr !== null) showToast('Invalid role', 'error'); return; }
+  if (ROLE_LEVELS[nr] >= ROLE_LEVELS[appState.currentUserData.role]) { showToast('Cannot assign at or above your level', 'error'); return; }
   try {
-    await db.collection('users').doc(userId).update({ role: newRole, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
-    await db.collection('audit').add({
-      action: 'Role changed to ' + newRole,
-      userId: userId,
-      adminId: appState.currentUser.uid,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    showToast('Role updated', 'success');
-    switchAdminTab('users');
-  } catch (error) {
-    showToast('Failed to update role', 'error');
-  }
+    await db.collection('users').doc(userId).update({ role: nr, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    await db.collection('audit').add({ action: 'Role changed to ' + nr, userId: userId, adminId: appState.currentUser.uid, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+    showToast('Role updated', 'success'); switchAdminTab('users');
+  } catch (e) { showToast('Failed', 'error'); }
 }
 
-async function toggleUserStatus(userId, currentStatus) {
-  var newStatus = currentStatus === 'suspended' ? 'active' : 'suspended';
-  
+async function toggleUserStatus(userId, cur) {
+  var ns = cur === 'suspended' ? 'active' : 'suspended';
   try {
-    await db.collection('users').doc(userId).update({ status: newStatus, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
-    await db.collection('audit').add({
-      action: 'User ' + newStatus,
-      userId: userId,
-      adminId: appState.currentUser.uid,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    showToast('User ' + newStatus, 'success');
-    switchAdminTab('users');
-  } catch (error) {
-    showToast('Failed to update status', 'error');
-  }
+    await db.collection('users').doc(userId).update({ status: ns, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    await db.collection('audit').add({ action: 'User ' + ns, userId: userId, adminId: appState.currentUser.uid, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+    showToast('User ' + ns, 'success'); switchAdminTab('users');
+  } catch (e) { showToast('Failed', 'error'); }
 }
 
 async function banUser(userId) {
-  if (!confirm('Are you sure you want to ban this user? This action can be reversed.')) return;
-  
+  if (!confirm('Ban this user?')) return;
   try {
     await db.collection('users').doc(userId).update({ status: 'banned', updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
-    await db.collection('audit').add({
-      action: 'User banned',
-      userId: userId,
-      adminId: appState.currentUser.uid,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    showToast('User banned', 'success');
-    switchAdminTab('users');
-  } catch (error) {
-    showToast('Failed to ban user', 'error');
-  }
+    await db.collection('audit').add({ action: 'User banned', userId: userId, adminId: appState.currentUser.uid, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+    showToast('User banned', 'success'); switchAdminTab('users');
+  } catch (e) { showToast('Failed', 'error'); }
 }
 
 async function grantBadge() {
-  var username = document.getElementById('badge-username').value.trim().toLowerCase();
-  var badgeType = document.getElementById('badge-type').value;
-  
-  if (!username) {
-    showToast('Username is required', 'error');
-    return;
-  }
-  
+  var un = (document.getElementById('badge-username').value || '').trim().toLowerCase();
+  var bt = document.getElementById('badge-type').value;
+  if (!un) { showToast('Username required', 'error'); return; }
   try {
-    var usernameDoc = await db.collection('usernames').doc(username).get();
-    if (!usernameDoc.exists) {
-      showToast('User not found', 'error');
-      return;
-    }
-    
-    var userId = usernameDoc.data().uid;
-    var userDoc = await db.collection('users').doc(userId).get();
-    var badges = userDoc.data().badges || [];
-    
-    if (badges.find(function(b) { return b.id === badgeType; })) {
-      showToast('User already has this badge', 'error');
-      return;
-    }
-    
-    var badgeNames = { verified: 'Verified', premium: 'Premium', staff: 'Staff', early: 'Early Supporter', pearl: 'Pink Pearl' };
-    var badgeIcons = { verified: 'fa-solid fa-check', premium: 'fa-solid fa-crown', staff: 'fa-solid fa-shield', early: 'fa-solid fa-heart', pearl: 'fa-solid fa-gem' };
-    
-    badges.push({ id: badgeType, name: badgeNames[badgeType], icon: badgeIcons[badgeType], tooltip: badgeNames[badgeType] });
-    
-    await db.collection('users').doc(userId).update({
-      badges: badges,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    
-    await db.collection('audit').add({
-      action: 'Badge granted: ' + badgeType,
-      username: username,
-      userId: userId,
-      adminId: appState.currentUser.uid,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    
-    showToast('Badge granted to ' + username, 'success');
+    var ud = await db.collection('usernames').doc(un).get();
+    if (!ud.exists) { showToast('User not found', 'error'); return; }
+    var uid = ud.data().uid;
+    var doc = await db.collection('users').doc(uid).get();
+    var badges = doc.data().badges || [];
+    if (badges.find(function(b) { return b.id === bt; })) { showToast('Already has this badge', 'error'); return; }
+    var names = { verified: 'Verified', premium: 'Premium', staff: 'Staff', early: 'Early Supporter', pearl: 'Pink Pearl' };
+    var icons = { verified: 'fa-solid fa-check', premium: 'fa-solid fa-crown', staff: 'fa-solid fa-shield', early: 'fa-solid fa-heart', pearl: 'fa-solid fa-gem' };
+    badges.push({ id: bt, name: names[bt], icon: icons[bt], tooltip: names[bt] });
+    await db.collection('users').doc(uid).update({ badges: badges, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    await db.collection('audit').add({ action: 'Badge granted: ' + bt, username: un, userId: uid, adminId: appState.currentUser.uid, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+    showToast('Badge granted to ' + un, 'success');
     document.getElementById('badge-username').value = '';
-  } catch (error) {
-    showToast('Failed to grant badge', 'error');
-  }
+  } catch (e) { showToast('Failed: ' + e.message, 'error'); }
 }
 
 async function changeUserRole() {
-  var username = document.getElementById('role-username').value.trim().toLowerCase();
-  var newRole = document.getElementById('new-role').value;
-  
-  if (!username) {
-    showToast('Username is required', 'error');
-    return;
-  }
-  
-  if (ROLE_LEVELS[newRole] >= ROLE_LEVELS[appState.currentUserData.role]) {
-    showToast('Cannot assign role at or above your level', 'error');
-    return;
-  }
-  
+  var un = (document.getElementById('role-username').value || '').trim().toLowerCase();
+  var nr = document.getElementById('new-role').value;
+  if (!un) { showToast('Username required', 'error'); return; }
+  if (ROLE_LEVELS[nr] >= ROLE_LEVELS[appState.currentUserData.role]) { showToast('Cannot assign at or above your level', 'error'); return; }
   try {
-    var usernameDoc = await db.collection('usernames').doc(username).get();
-    if (!usernameDoc.exists) {
-      showToast('User not found', 'error');
-      return;
-    }
-    
-    var userId = usernameDoc.data().uid;
-    
-    await db.collection('users').doc(userId).update({
-      role: newRole,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    
-    await db.collection('audit').add({
-      action: 'Role changed to ' + newRole,
-      username: username,
-      userId: userId,
-      adminId: appState.currentUser.uid,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    
-    showToast(username + ' is now ' + newRole, 'success');
+    var ud = await db.collection('usernames').doc(un).get();
+    if (!ud.exists) { showToast('User not found', 'error'); return; }
+    var uid = ud.data().uid;
+    await db.collection('users').doc(uid).update({ role: nr, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    await db.collection('audit').add({ action: 'Role changed to ' + nr, username: un, userId: uid, adminId: appState.currentUser.uid, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+    showToast(un + ' is now ' + nr, 'success');
     document.getElementById('role-username').value = '';
-  } catch (error) {
-    showToast('Failed to change role', 'error');
-  }
+  } catch (e) { showToast('Failed: ' + e.message, 'error'); }
 }
 
 /* ============================
    Fade-up Animations
    ============================ */
 function initFadeUp() {
-  var elements = document.querySelectorAll('.fade-up');
-  var observer = new IntersectionObserver(function(entries) {
+  var els = document.querySelectorAll('.fade-up');
+  var obs = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
       if (entry.isIntersecting) {
-        var delay = parseInt(entry.target.dataset.delay) || 0;
-        setTimeout(function() {
-          entry.target.classList.add('visible');
-        }, delay);
-        observer.unobserve(entry.target);
+        setTimeout(function() { entry.target.classList.add('visible'); }, parseInt(entry.target.dataset.delay) || 0);
+        obs.unobserve(entry.target);
       }
     });
   }, { threshold: 0.1 });
-  
-  elements.forEach(function(el) { observer.observe(el); });
+  els.forEach(function(el) { obs.observe(el); });
 }
 
 /* ============================
-   Initialize
+   Global Listeners
    ============================ */
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     closeAuth();
-    var fxPanel = document.getElementById('fx-panel');
-    if (fxPanel) fxPanel.classList.remove('open');
+    var fp = document.getElementById('fx-panel');
+    if (fp) fp.classList.remove('open');
   }
 });
 
-// Close auth modal on backdrop click
 document.getElementById('auth-modal').addEventListener('click', function(e) {
   if (e.target === this) closeAuth();
 });
 
-// Handle enter key in auth form
 document.getElementById('auth-password').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') handleAuth();
 });
 
-// Initialize
 updateNav();
 initFadeUp();
 </script>
