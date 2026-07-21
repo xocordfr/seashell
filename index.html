@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>seashell.lol — Beautiful Link-in-Bio</title>
+<title>seashell.lol — Cutest bio-link ever!!!</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -45,7 +45,7 @@ body{font-family:'Outfit',sans-serif;background:#0A0A0F;color:#F5F0F2;overflow-x
 @keyframes sparkle-sweep{0%{left:-100%}50%,100%{left:200%}}
 .btn-pink{background:linear-gradient(135deg,#FF1493,#DB2777);color:#fff;border:none;padding:12px 28px;border-radius:12px;font-weight:600;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(255,20,147,0.3);font-family:'Outfit',sans-serif;font-size:15px}
 .btn-pink:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,20,147,0.45)}
-.btn-pink:disabled{opacity:0.6;cursor:not-allowed;transform:none !important}
+.btn-pink:disabled{opacity:0.6;cursor:not-allowed;transform:none!important}
 .btn-outline{background:transparent;color:#FF69B4;border:1px solid rgba(255,20,147,0.3);padding:12px 28px;border-radius:12px;font-weight:500;cursor:pointer;transition:all .3s;font-family:'Outfit',sans-serif;font-size:15px}
 .btn-outline:hover{background:rgba(255,20,147,0.08);border-color:rgba(255,20,147,0.5);transform:translateY(-2px)}
 .btn-ghost{background:rgba(255,20,147,0.08);color:#FF69B4;border:none;padding:8px 16px;border-radius:8px;font-weight:500;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;font-size:14px}
@@ -79,7 +79,13 @@ body{font-family:'Outfit',sans-serif;background:#0A0A0F;color:#F5F0F2;overflow-x
 .fx-option{display:block;width:100%;padding:8px 12px;background:transparent;border:1px solid transparent;border-radius:8px;color:#F5F0F2;font-size:13px;cursor:pointer;transition:all .2s;text-align:left;font-family:'Outfit',sans-serif}
 .fx-option:hover{background:rgba(255,20,147,0.08)}
 .fx-option.active{background:rgba(255,20,147,0.12);border-color:rgba(255,20,147,0.3);color:#FF69B4}
-.admin-sidebar{width:240px;background:rgba(16,16,24,0.95);border-right:1px solid rgba(255,20,147,0.08);height:calc(100vh - 65px);position:sticky;top:65px;flex-shrink:0}
+.customize-sidebar{width:280px;background:rgba(16,16,24,0.98);border-right:1px solid rgba(255,20,147,0.08);height:calc(100vh - 0px);position:fixed;left:0;top:0;flex-shrink:0;z-index:40;overflow-y:auto;display:flex;flex-direction:column}
+.cust-nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:#8B7A8E;font-size:14px;cursor:pointer;transition:all .2s;border-left:2px solid transparent;font-family:'Outfit',sans-serif;background:none;border-right:none;border-top:none;border-bottom:none;width:100%;text-align:left}
+.cust-nav-item:hover{color:#F5F0F2;background:rgba(255,20,147,0.04)}
+.cust-nav-item.active{color:#FF69B4;background:rgba(255,20,147,0.08);border-left-color:#FF1493}
+.cust-nav-item i{width:18px;text-align:center}
+.cust-nav-section{padding:8px 20px;font-size:11px;font-weight:600;color:#4A3F4E;text-transform:uppercase;letter-spacing:.08em;margin-top:8px}
+.admin-sidebar{width:240px;background:rgba(16,16,24,0.95);border-right:1px solid rgba(255,20,147,0.08);height:calc(100vh - 0px);position:fixed;left:0;top:0;flex-shrink:0;z-index:40}
 .admin-nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:#8B7A8E;font-size:14px;cursor:pointer;transition:all .2s;border-left:2px solid transparent;font-family:'Outfit',sans-serif;background:none;border-right:none;border-top:none;border-bottom:none;width:100%;text-align:left}
 .admin-nav-item:hover{color:#F5F0F2;background:rgba(255,20,147,0.04)}
 .admin-nav-item.active{color:#FF69B4;background:rgba(255,20,147,0.08);border-left-color:#FF1493}
@@ -93,9 +99,8 @@ body{font-family:'Outfit',sans-serif;background:#0A0A0F;color:#F5F0F2;overflow-x
 .input-field{width:100%;padding:10px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,20,147,0.12);border-radius:10px;color:#F5F0F2;font-size:14px;font-family:'Outfit',sans-serif;transition:all .2s;outline:none}
 .input-field:focus{border-color:rgba(255,20,147,0.4);box-shadow:0 0 0 3px rgba(255,20,147,0.08)}
 .input-field::placeholder{color:#4A3F4E}
-.custom-tab{padding:8px 16px;font-size:13px;font-weight:500;color:#8B7A8E;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:'Outfit',sans-serif}
-.custom-tab:hover{color:#F5F0F2}
-.custom-tab.active{color:#FF69B4;border-bottom-color:#FF1493}
+.slider-field{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:rgba(255,255,255,0.1);outline:none}
+.slider-field::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:#FF1493;cursor:pointer;box-shadow:0 0 8px rgba(255,20,147,0.4)}
 .deco-orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.15;pointer-events:none;animation:orb-float 20s ease-in-out infinite}
 @keyframes orb-float{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(30px,-40px) scale(1.1)}50%{transform:translate(-20px,20px) scale(.9)}75%{transform:translate(40px,30px) scale(1.05)}}
 .fade-up{opacity:0;transform:translateY(30px);transition:all .8s cubic-bezier(0.16,1,0.3,1)}
@@ -116,17 +121,26 @@ body{font-family:'Outfit',sans-serif;background:#0A0A0F;color:#F5F0F2;overflow-x
 .uid-trigger:hover .uid-hover{display:block}
 .loading-spinner{width:20px;height:20px;border:2px solid rgba(255,20,147,0.2);border-top-color:#FF1493;border-radius:50%;animation:spin 0.6s linear infinite;display:inline-block}
 @keyframes spin{to{transform:rotate(360deg)}}
+.auth-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:#0A0A0F;z-index:9999;display:flex;align-items:center;justify-content:center;transition:opacity .3s}
+.auth-loader.hidden{opacity:0;pointer-events:none}
+.static-page{max-width:800px;margin:0 auto;padding:40px 20px}
+.static-page h1{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:700;margin-bottom:1.5rem}
+.static-page h2{font-size:1.5rem;font-weight:600;margin:2rem 0 1rem;color:#FF69B4}
+.static-page p{color:#8B7A8E;line-height:1.8;margin-bottom:1rem}
+.static-page ul{color:#8B7A8E;list-style:disc;padding-left:1.5rem;margin-bottom:1rem}
+.static-page li{margin-bottom:0.5rem}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-@media(max-width:768px){.admin-sidebar{display:none}.fx-switcher{bottom:16px;right:16px}}
+@media(max-width:768px){.customize-sidebar,.admin-sidebar{display:none}.fx-switcher{bottom:16px;right:16px}}
 </style>
 </head>
 <body>
+<div id="auth-loader" class="auth-loader"><div class="text-center"><i class="fa-solid fa-shrimp text-ss-pink text-4xl mb-4 block" style="animation:spin 2s linear infinite"></i><p class="text-ss-muted text-sm">Loading...</p></div></div>
 <canvas id="fx-canvas" aria-hidden="true"></canvas>
 
-<!-- Navigation -->
-<nav class="nav-glass fixed top-0 left-0 w-full z-50" role="navigation" aria-label="Main navigation">
+<!-- Navigation (hidden on profile pages) -->
+<nav id="main-nav" class="nav-glass fixed top-0 left-0 w-full z-50" role="navigation" aria-label="Main navigation">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-    <a href="#/" class="flex items-center gap-2 no-underline" aria-label="Home">
+    <a href="/" class="flex items-center gap-2 no-underline" aria-label="Home" onclick="event.preventDefault();navigate('/')">
       <i class="fa-solid fa-shrimp text-ss-pink text-xl"></i>
       <span class="font-display font-bold text-lg text-pearl">seashell.lol</span>
     </a>
@@ -205,15 +219,15 @@ body{font-family:'Outfit',sans-serif;background:#0A0A0F;color:#F5F0F2;overflow-x
           <span>Join thousands creating beautiful profiles</span>
         </div>
       </div>
-      <h1 class="fade-up font-display text-5xl sm:text-7xl lg:text-8xl font-black leading-[0.95] mb-6" data-delay="100">
-        Your beautiful<br><span class="text-pearl">corner of the</span><br>internet
+      <h1 class="fade-up font-display text-6xl sm:text-8xl lg:text-9xl font-black leading-[0.95] mb-6" data-delay="100">
+        <span class="text-pearl">seashell.lol</span>
       </h1>
-      <p class="fade-up text-ss-muted text-lg sm:text-xl max-w-xl mx-auto mb-10 leading-relaxed" data-delay="200">
-        Claim your username, customize every pixel, and create a stunning bio page that truly represents you.
+      <p class="fade-up text-ss-muted text-xl sm:text-2xl max-w-xl mx-auto mb-10 leading-relaxed" data-delay="200">
+        Cutest bio-link ever!!!
       </p>
       <div class="fade-up flex flex-col sm:flex-row items-center justify-center gap-4" data-delay="300">
         <button class="btn-pink text-base !px-8 !py-4" onclick="openAuth('register')">Claim Your Name</button>
-        <button class="btn-outline text-base !px-8 !py-4" onclick="openAuth('register')">View Examples</button>
+        <button class="btn-outline text-base !px-8 !py-4" onclick="navigate('/pricing')">View Pricing</button>
       </div>
     </div>
   </div>
@@ -223,72 +237,136 @@ body{font-family:'Outfit',sans-serif;background:#0A0A0F;color:#F5F0F2;overflow-x
       <p class="text-ss-muted text-lg max-w-lg mx-auto">Powerful customization, stunning effects, and seamless integrations.</p>
     </div>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      <div class="glass rounded-2xl p-6 fade-up" data-delay="0"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-wand-magic-sparkles text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Stunning Effects</h3><p class="text-ss-muted text-sm leading-relaxed">Aurora, petals, sparkles, rain, snow, and more — transform your profile into a living canvas.</p></div>
-      <div class="glass rounded-2xl p-6 fade-up" data-delay="50"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-palette text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Full Customization</h3><p class="text-ss-muted text-sm leading-relaxed">Colors, fonts, card styles, name effects, badges, cursor, audio — every detail is yours.</p></div>
-      <div class="glass rounded-2xl p-6 fade-up" data-delay="100"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-music text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Music Player</h3><p class="text-ss-muted text-sm leading-relaxed">Embed a sleek music player with cover art, progress bar, and track info.</p></div>
-      <div class="glass rounded-2xl p-6 fade-up" data-delay="150"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-brands fa-discord text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Discord Integration</h3><p class="text-ss-muted text-sm leading-relaxed">Sync your avatar, show Discord status, and display current activity.</p></div>
-      <div class="glass rounded-2xl p-6 fade-up" data-delay="200"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-shield-halved text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Badges System</h3><p class="text-ss-muted text-sm leading-relaxed">Earn official badges or upload custom ones with beautiful hover effects.</p></div>
-      <div class="glass rounded-2xl p-6 fade-up" data-delay="250"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-chart-line text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Analytics</h3><p class="text-ss-muted text-sm leading-relaxed">Track profile views, link clicks, and visitor data with a built-in dashboard.</p></div>
-    </div>
-  </div>
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-24">
-    <div class="text-center mb-14 fade-up">
-      <h2 class="font-display text-3xl sm:text-5xl font-bold mb-4">Choose your <span class="text-pearl">plan</span></h2>
-      <p class="text-ss-muted text-lg">Start free, upgrade when you're ready.</p>
-    </div>
-    <div class="grid sm:grid-cols-3 gap-5 fade-up" data-delay="100">
-      <div class="glass rounded-2xl p-7">
-        <h3 class="font-semibold text-lg mb-1">Free</h3><p class="text-ss-muted text-sm mb-5">Perfect to get started</p>
-        <div class="font-display text-4xl font-bold mb-6">$0<span class="text-ss-muted text-base font-body font-normal">/mo</span></div>
-        <ul class="space-y-3 text-sm text-ss-muted mb-8">
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Basic profile page</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 5 link slots</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 2 background effects</li>
-          <li class="flex items-center gap-2 text-ss-dim"><i class="fa-solid fa-xmark text-xs"></i> Custom badges</li>
-          <li class="flex items-center gap-2 text-ss-dim"><i class="fa-solid fa-xmark text-xs"></i> Custom domain</li>
-        </ul>
-        <button class="btn-outline w-full" onclick="openAuth('register')">Get Started</button>
-      </div>
-      <div class="glass rounded-2xl p-7 pricing-highlight">
-        <h3 class="font-semibold text-lg mb-1">Premium</h3><p class="text-ss-muted text-sm mb-5">For creators who stand out</p>
-        <div class="font-display text-4xl font-bold mb-6">$4.99<span class="text-ss-muted text-base font-body font-normal">/mo</span></div>
-        <ul class="space-y-3 text-sm text-ss-muted mb-8">
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Everything in Free</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 20 link slots</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> All background effects</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Music player widget</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 3 custom badges</li>
-        </ul>
-        <button class="btn-pink w-full" onclick="openAuth('register')">Get Started</button>
-      </div>
-      <div class="glass rounded-2xl p-7">
-        <h3 class="font-semibold text-lg mb-1">Ultimate</h3><p class="text-ss-muted text-sm mb-5">Unlimited everything</p>
-        <div class="font-display text-4xl font-bold mb-6">$9.99<span class="text-ss-muted text-base font-body font-normal">/mo</span></div>
-        <ul class="space-y-3 text-sm text-ss-muted mb-8">
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Everything in Premium</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Unlimited links</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Custom domain</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 10 custom badges</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Priority support</li>
-        </ul>
-        <button class="btn-outline w-full" onclick="openAuth('register')">Get Started</button>
-      </div>
+      <div class="glass rounded-2xl p-6 fade-up" data-delay="0"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-wand-magic-sparkles text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Stunning Effects</h3><p class="text-ss-muted text-sm leading-relaxed">Aurora, petals, sparkles, rain, snow, and more.</p></div>
+      <div class="glass rounded-2xl p-6 fade-up" data-delay="50"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-palette text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Full Customization</h3><p class="text-ss-muted text-sm leading-relaxed">Colors, fonts, card styles, name effects, badges.</p></div>
+      <div class="glass rounded-2xl p-6 fade-up" data-delay="100"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-music text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Music Player</h3><p class="text-ss-muted text-sm leading-relaxed">Embed a sleek music player with cover art.</p></div>
+      <div class="glass rounded-2xl p-6 fade-up" data-delay="150"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-brands fa-discord text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Discord Integration</h3><p class="text-ss-muted text-sm leading-relaxed">Sync your avatar and show Discord status.</p></div>
+      <div class="glass rounded-2xl p-6 fade-up" data-delay="200"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-shield-halved text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Badges System</h3><p class="text-ss-muted text-sm leading-relaxed">Earn official badges or upload custom ones.</p></div>
+      <div class="glass rounded-2xl p-6 fade-up" data-delay="250"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-chart-line text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Analytics</h3><p class="text-ss-muted text-sm leading-relaxed">Track profile views and link clicks.</p></div>
     </div>
   </div>
   <footer class="border-t py-10" style="border-color:rgba(255,20,147,0.08)">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-2"><i class="fa-solid fa-shrimp text-ss-pink"></i><span class="font-display font-bold text-pearl">seashell.lol</span></div>
       <div class="flex items-center gap-5">
-        <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors text-sm no-underline">Terms</a>
-        <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors text-sm no-underline">Privacy</a>
-        <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors text-sm no-underline">Support</a>
+        <a href="/terms" class="text-ss-muted hover:text-ss-pink transition-colors text-sm no-underline">Terms</a>
+        <a href="/privacy" class="text-ss-muted hover:text-ss-pink transition-colors text-sm no-underline">Privacy</a>
+        <a href="/pricing" class="text-ss-muted hover:text-ss-pink transition-colors text-sm no-underline">Pricing</a>
       </div>
       <div class="flex items-center gap-4">
         <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors no-underline" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
-        <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors no-underline" aria-label="Discord"><i class="fa-brands fa-discord"></i></a>
+        <a href="https://discord.gg/wvTcFqa9Ej" target="_blank" class="text-ss-muted hover:text-ss-pink transition-colors no-underline" aria-label="Discord"><i class="fa-brands fa-discord"></i></a>
       </div>
     </div>
   </footer>
+</section>
+
+<!-- Pricing Page -->
+<section id="page-pricing" class="page">
+  <div class="min-h-screen pt-20 pb-12">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-14 fade-up">
+        <h2 class="font-display text-3xl sm:text-5xl font-bold mb-4">Choose your <span class="text-pearl">plan</span></h2>
+        <p class="text-ss-muted text-lg">Start free, upgrade when you're ready.</p>
+      </div>
+      <div class="grid sm:grid-cols-3 gap-5 fade-up" data-delay="100">
+        <div class="glass rounded-2xl p-7">
+          <h3 class="font-semibold text-lg mb-1">Free</h3><p class="text-ss-muted text-sm mb-5">Perfect to get started</p>
+          <div class="font-display text-4xl font-bold mb-6">$0<span class="text-ss-muted text-base font-body font-normal">/mo</span></div>
+          <ul class="space-y-3 text-sm text-ss-muted mb-8">
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Basic profile page</li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 5 link slots</li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 2 background effects</li>
+            <li class="flex items-center gap-2 text-ss-dim"><i class="fa-solid fa-xmark text-xs"></i> Custom badges</li>
+            <li class="flex items-center gap-2 text-ss-dim"><i class="fa-solid fa-xmark text-xs"></i> Custom domain</li>
+          </ul>
+          <button class="btn-outline w-full" onclick="openAuth('register')">Get Started</button>
+        </div>
+        <div class="glass rounded-2xl p-7 pricing-highlight">
+          <h3 class="font-semibold text-lg mb-1">Premium</h3><p class="text-ss-muted text-sm mb-5">For creators who stand out</p>
+          <div class="font-display text-4xl font-bold mb-6">$4.99<span class="text-ss-muted text-base font-body font-normal">/mo</span></div>
+          <ul class="space-y-3 text-sm text-ss-muted mb-8">
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Everything in Free</li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 20 link slots</li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> All background effects</li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Music player widget</li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 3 custom badges</li>
+          </ul>
+          <button class="btn-pink w-full" onclick="openAuth('register')">Get Started</button>
+        </div>
+        <div class="glass rounded-2xl p-7">
+          <h3 class="font-semibold text-lg mb-1">Ultimate</h3><p class="text-ss-muted text-sm mb-5">Unlimited everything</p>
+          <div class="font-display text-4xl font-bold mb-6">$9.99<span class="text-ss-muted text-base font-body font-normal">/mo</span></div>
+          <ul class="space-y-3 text-sm text-ss-muted mb-8">
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Everything in Premium</li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Unlimited links</li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Custom domain</li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 10 custom badges</li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Priority support</li>
+          </ul>
+          <button class="btn-outline w-full" onclick="openAuth('register')">Get Started</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Terms Page -->
+<section id="page-terms" class="page">
+  <div class="pt-20 pb-12">
+    <div class="static-page">
+      <a href="/" class="text-ss-muted hover:text-ss-pink text-sm no-underline mb-8 inline-block"><i class="fa-solid fa-arrow-left mr-2"></i>Back to Home</a>
+      <h1>Terms of Service</h1>
+      <p><strong>Last updated:</strong> January 2025</p>
+      <h2>1. Acceptance of Terms</h2>
+      <p>By accessing and using seashell.lol ("the Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by these terms, please do not use this service.</p>
+      <h2>2. Description of Service</h2>
+      <p>seashell.lol provides a link-in-bio platform that allows users to create customizable profile pages with various effects, links, and integrations.</p>
+      <h2>3. User Accounts</h2>
+      <p>You are responsible for maintaining the confidentiality of your account and password. You agree to accept responsibility for all activities that occur under your account.</p>
+      <h2>4. Acceptable Use</h2>
+      <ul>
+        <li>You must not use the service for any illegal purposes</li>
+        <li>You must not transmit any harmful or offensive content</li>
+        <li>You must not attempt to gain unauthorized access to other user accounts</li>
+        <li>You must not interfere with or disrupt the service</li>
+      </ul>
+      <h2>5. Content</h2>
+      <p>You retain ownership of any content you submit to the service. By submitting content, you grant us a license to use, store, and display that content as part of the service.</p>
+      <h2>6. Termination</h2>
+      <p>We may terminate or suspend your account at any time for any reason, including violation of these terms.</p>
+      <h2>7. Contact</h2>
+      <p>For questions about these terms, please contact us through our Discord server.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Privacy Page -->
+<section id="page-privacy" class="page">
+  <div class="pt-20 pb-12">
+    <div class="static-page">
+      <a href="/" class="text-ss-muted hover:text-ss-pink text-sm no-underline mb-8 inline-block"><i class="fa-solid fa-arrow-left mr-2"></i>Back to Home</a>
+      <h1>Privacy Policy</h1>
+      <p><strong>Last updated:</strong> January 2025</p>
+      <h2>1. Information We Collect</h2>
+      <p>We collect information you provide directly, including your email address, display name, and profile content. We also collect usage data such as profile views and link clicks.</p>
+      <h2>2. How We Use Information</h2>
+      <ul>
+        <li>To provide and maintain our service</li>
+        <li>To notify you about changes to our service</li>
+        <li>To provide customer support</li>
+        <li>To detect and prevent fraud</li>
+      </ul>
+      <h2>3. Information Sharing</h2>
+      <p>We do not sell your personal information. We may share anonymized, aggregated data for analytics purposes.</p>
+      <h2>4. Data Storage</h2>
+      <p>Your data is stored securely using Google Firebase services. We implement appropriate security measures to protect your information.</p>
+      <h2>5. Your Rights</h2>
+      <p>You have the right to access, update, or delete your personal information at any time through your account settings.</p>
+      <h2>6. Contact</h2>
+      <p>For privacy-related questions, please contact us through our Discord server.</p>
+    </div>
+  </div>
 </section>
 
 <!-- Profile Page -->
@@ -323,52 +401,50 @@ body{font-family:'Outfit',sans-serif;background:#0A0A0F;color:#F5F0F2;overflow-x
 
 <!-- Customize Page -->
 <section id="page-customize" class="page">
-  <div class="pt-20 min-h-screen">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <h1 class="font-display text-3xl font-bold mb-2">Customize Your Profile</h1>
-      <p class="text-ss-muted mb-8">Changes preview in real-time on the right.</p>
-      <div class="flex flex-col lg:flex-row gap-8">
-        <div class="flex-1 min-w-0">
-          <div class="glass rounded-2xl overflow-hidden">
-            <div class="flex border-b overflow-x-auto" style="border-color:rgba(255,20,147,0.08)">
-              <button class="custom-tab active" data-ctab="info" onclick="switchCustomTab('info')">Info</button>
-              <button class="custom-tab" data-ctab="bg" onclick="switchCustomTab('bg')">Background</button>
-              <button class="custom-tab" data-ctab="effects" onclick="switchCustomTab('effects')">Effects</button>
-              <button class="custom-tab" data-ctab="card" onclick="switchCustomTab('card')">Card</button>
-              <button class="custom-tab" data-ctab="links" onclick="switchCustomTab('links')">Links</button>
-              <button class="custom-tab" data-ctab="music" onclick="switchCustomTab('music')">Music</button>
-            </div>
-            <div class="p-6" id="custom-tab-content"></div>
-          </div>
-        </div>
-        <div class="w-full lg:w-[380px] flex-shrink-0">
-          <div class="sticky top-20">
-            <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-3">Live Preview</p>
-            <div class="glass rounded-2xl p-4" style="transform:scale(0.85);transform-origin:top center"><div id="customize-preview"></div></div>
-          </div>
-        </div>
+  <div class="customize-sidebar" id="cust-sidebar">
+    <div class="p-5 border-b" style="border-color:rgba(255,20,147,0.08)">
+      <div class="flex items-center gap-2 mb-1">
+        <i class="fa-solid fa-shrimp text-ss-pink"></i>
+        <span class="font-display font-bold text-pearl">seashell.lol</span>
+      </div>
+      <p class="text-xs text-ss-muted">Account</p>
+    </div>
+    <div class="flex-1 overflow-y-auto py-2">
+      <div class="cust-nav-section">Account</div>
+      <button class="cust-nav-item active" data-cust="overview" onclick="switchCustTab('overview')"><i class="fa-solid fa-home"></i> Overview</button>
+      <button class="cust-nav-item" data-cust="badges" onclick="switchCustTab('badges')"><i class="fa-solid fa-award"></i> Badges</button>
+      <button class="cust-nav-item" data-cust="settings" onclick="switchCustTab('settings')"><i class="fa-solid fa-gear"></i> Settings</button>
+      <div class="cust-nav-section">Appearance</div>
+      <button class="cust-nav-item" data-cust="customise" onclick="switchCustTab('customise')"><i class="fa-solid fa-palette"></i> Customise</button>
+      <button class="cust-nav-item" data-cust="links" onclick="switchCustTab('links')"><i class="fa-solid fa-link"></i> Links</button>
+    </div>
+    <div class="p-4 border-t" style="border-color:rgba(255,20,147,0.08)">
+      <button class="btn-pink w-full text-sm" onclick="navigate('/'+S.data.username)">Share Your Profile</button>
+      <div class="flex items-center justify-between mt-3 text-xs text-ss-muted">
+        <span id="cust-username"></span>
+        <span id="cust-uid"></span>
       </div>
     </div>
   </div>
+  <div class="ml-[280px] p-8 min-h-screen" id="cust-content"></div>
 </section>
 
 <!-- Admin Page -->
 <section id="page-admin" class="page">
-  <div class="pt-16 flex min-h-screen">
-    <aside class="admin-sidebar">
-      <div class="p-4">
-        <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-3 px-3">Admin Panel</p>
-        <nav class="space-y-1" aria-label="Admin navigation">
-          <button class="admin-nav-item active" data-atab="dashboard" onclick="switchAdminTab('dashboard')"><i class="fa-solid fa-chart-pie"></i> Dashboard</button>
-          <button class="admin-nav-item" data-atab="users" onclick="switchAdminTab('users')"><i class="fa-solid fa-users"></i> Users</button>
-          <button class="admin-nav-item" data-atab="badges" onclick="switchAdminTab('badges')"><i class="fa-solid fa-award"></i> Badges</button>
-          <button class="admin-nav-item" data-atab="roles" onclick="switchAdminTab('roles')"><i class="fa-solid fa-user-shield"></i> Roles</button>
-          <button class="admin-nav-item" data-atab="audit" onclick="switchAdminTab('audit')"><i class="fa-solid fa-clock-rotate-left"></i> Audit Log</button>
-        </nav>
-      </div>
-    </aside>
-    <div class="flex-1 min-w-0 p-6 lg:p-8 overflow-y-auto" id="admin-content"></div>
+  <div class="admin-sidebar">
+    <div class="p-4">
+      <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-3 px-3">Admin Panel</p>
+      <nav class="space-y-1" aria-label="Admin navigation">
+        <button class="admin-nav-item active" data-atab="dashboard" onclick="switchAdminTab('dashboard')"><i class="fa-solid fa-chart-pie"></i> Dashboard</button>
+        <button class="admin-nav-item" data-atab="users" onclick="switchAdminTab('users')"><i class="fa-solid fa-users"></i> Users</button>
+        <button class="admin-nav-item" data-atab="premium" onclick="switchAdminTab('premium')"><i class="fa-solid fa-crown"></i> Premium</button>
+        <button class="admin-nav-item" data-atab="badges" onclick="switchAdminTab('badges')"><i class="fa-solid fa-award"></i> Badges</button>
+        <button class="admin-nav-item" data-atab="roles" onclick="switchAdminTab('roles')"><i class="fa-solid fa-user-shield"></i> Roles</button>
+        <button class="admin-nav-item" data-atab="audit" onclick="switchAdminTab('audit')"><i class="fa-solid fa-clock-rotate-left"></i> Audit Log</button>
+      </nav>
+    </div>
   </div>
+  <div class="ml-[240px] p-6 lg:p-8 min-h-screen overflow-y-auto" id="admin-content"></div>
 </section>
 
 <div id="toast-container"></div>
@@ -405,11 +481,10 @@ var S = {
   nfx: 'neon',
   cs: 'glass',
   atab: 'dashboard',
-  ctab: 'info'
+  ctab: 'overview',
+  authReady: false
 };
 
-/* CRITICAL FLAG: Prevents onAuthStateChanged from destroying
-   a registration in progress by signing the user out prematurely. */
 var isRegistering = false;
 var ROLES = { owner: 5, manager: 4, admin: 3, mod: 2, user: 1 };
 
@@ -425,10 +500,7 @@ function toast(msg, type) {
   setTimeout(function() { el.classList.remove('show'); setTimeout(function() { el.remove(); }, 400); }, 3500);
 }
 
-function authErr(msg) {
-  var el = document.getElementById('auth-error');
-  el.textContent = msg; el.classList.remove('hidden');
-}
+function authErr(msg) { var el = document.getElementById('auth-error'); el.textContent = msg; el.classList.remove('hidden'); }
 function authErrClear() { document.getElementById('auth-error').classList.add('hidden'); }
 
 function btnLoad(btn, on) {
@@ -460,6 +532,49 @@ async function getNextUid() {
     return c;
   });
 }
+
+/* ============================================
+   ROUTING (History API)
+   ============================================ */
+function navigate(path) {
+  window.history.pushState({}, '', path);
+  handleRoute();
+}
+
+window.addEventListener('popstate', handleRoute);
+
+function handleRoute() {
+  var path = window.location.pathname.replace(/^\/|\/$/g, '');
+  var parts = path.split('/').filter(Boolean);
+  
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+
+  // Hide/show navbar based on page type
+  var isProfilePage = parts.length === 1 && parts[0] && !['customize','admin','pricing','terms','privacy','unauthorized'].includes(parts[0]);
+  document.getElementById('main-nav').style.display = isProfilePage ? 'none' : '';
+  
+  if (!parts.length || path === '') {
+    showPage('landing'); fxStop();
+  } else if (parts[0] === 'customize') {
+    if (!S.data) { showPage('unauthorized'); document.getElementById('unauth-msg').textContent = 'Sign in to customize your profile.'; return; }
+    showPage('customize'); fxStop(); loadCustomizePage();
+  } else if (parts[0] === 'admin') {
+    if (!S.data || ROLES[S.data.role] < ROLES.mod) { showPage('unauthorized'); document.getElementById('unauth-msg').textContent = 'No permission.'; return; }
+    showPage('admin'); fxStop(); loadAdminPage();
+  } else if (parts[0] === 'pricing') {
+    showPage('pricing'); fxStop(); setTimeout(initFadeUp, 50);
+  } else if (parts[0] === 'terms') {
+    showPage('terms'); fxStop();
+  } else if (parts[0] === 'privacy') {
+    showPage('privacy'); fxStop();
+  } else {
+    // Profile page: /username
+    loadProfile(parts[0]);
+  }
+  updateNav();
+}
+
+function showPage(id) { S.page = id; document.getElementById('page-' + id).classList.add('active'); if (id === 'landing') setTimeout(initFadeUp, 50); }
 
 /* ============================================
    AUTHENTICATION
@@ -510,16 +625,14 @@ async function handleAuth() {
       var uDoc = await db.collection('usernames').doc(username).get();
       if (uDoc.exists) { authErr('Username is already taken'); btnLoad(btn, false); return; }
 
-      /* SET FLAG: Prevent observer from running */
       isRegistering = true;
-
       var cred = await auth.createUserWithEmailAndPassword(email, password);
       var uid = await getNextUid();
 
       var userData = {
         uid: uid, username: username, displayName: displayName, email: email,
         role: 'user', avatar: '', banner: '', description: '', location: '',
-        bgEffect: 'aurora', cardStyle: 'glass', nameEffect: 'neon', accentColor: '#FF1493',
+        bgEffect: 'aurora', cardStyle: 'glass', nameEffect: 'neon', accentColor: '#FF1493', cardOpacity: 85,
         badges: [], links: [], music: null, discord: null,
         views: 0, clicks: 0, plan: 'free', status: 'active',
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -530,14 +643,13 @@ async function handleAuth() {
       await db.collection('usernames').doc(username).set({ uid: cred.user.uid });
       await db.collection('audit').add({ action: 'User registered', userId: cred.user.uid, username: username, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
 
-      /* MANUALLY SET STATE */
       S.data = userData;
       isRegistering = false;
       
       closeAuth();
       toast('Account created successfully!', 'success');
       updateNav();
-      navigate('/u/' + username);
+      navigate('/customize');
     } else {
       await auth.signInWithEmailAndPassword(email, password);
       closeAuth();
@@ -553,7 +665,7 @@ async function handleAuth() {
     else if (c === 'auth/weak-password') msg = 'Password is too weak';
     else if (c === 'auth/invalid-email') msg = 'Invalid email address';
     else if (c === 'auth/too-many-requests') msg = 'Too many attempts, try again later';
-    else if (c === 'auth/network-request-failed') msg = 'Network error — check your connection';
+    else if (c === 'auth/network-request-failed') msg = 'Network error';
     else if (error.message) msg = error.message;
     authErr(msg);
   }
@@ -578,7 +690,7 @@ async function socialAuth(provider) {
       var userData = {
         uid: uid, username: username, displayName: result.user.displayName || username, email: email,
         role: 'user', avatar: result.user.photoURL || '', banner: '', description: '', location: '',
-        bgEffect: 'aurora', cardStyle: 'glass', nameEffect: 'neon', accentColor: '#FF1493',
+        bgEffect: 'aurora', cardStyle: 'glass', nameEffect: 'neon', accentColor: '#FF1493', cardOpacity: 85,
         badges: [], links: [], music: null, discord: null,
         views: 0, clicks: 0, plan: 'free', status: 'active',
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -588,7 +700,7 @@ async function socialAuth(provider) {
       await db.collection('usernames').doc(username).set({ uid: result.user.uid });
       S.data = userData;
       isRegistering = false;
-      closeAuth(); toast('Account created with ' + provider + '!', 'success'); updateNav(); navigate('/u/' + username);
+      closeAuth(); toast('Account created with ' + provider + '!', 'success'); updateNav(); navigate('/customize');
     } else {
       closeAuth(); toast('Welcome back!', 'success');
     }
@@ -608,26 +720,24 @@ async function signOut() {
 }
 
 /* ============================================
-   AUTH STATE OBSERVER
+   AUTH STATE OBSERVER (with smooth loading)
    ============================================ */
-auth.onAuthStateChanged(function(user) {
+auth.onAuthStateChanged(async function(user) {
   S.user = user;
-  if (!user) { S.data = null; updateNav(); return; }
-  /* SKIP IF REGISTERING (handleAuth sets S.data manually) */
+  if (!user) { S.data = null; S.authReady = true; document.getElementById('auth-loader').classList.add('hidden'); updateNav(); handleRoute(); return; }
   if (isRegistering) return;
-  loadUserData();
-});
-
-async function loadUserData() {
-  if (!S.user) return;
+  
   try {
-    var doc = await db.collection('users').doc(S.user.uid).get();
-    if (doc.exists) {
-      S.data = doc.data(); updateNav();
-      if (S.page === 'landing') navigate('/u/' + S.data.username);
-    } else { S.data = null; updateNav(); }
-  } catch(e) { console.error(e); S.data = null; updateNav(); }
-}
+    var doc = await db.collection('users').doc(user.uid).get();
+    if (doc.exists) { S.data = doc.data(); }
+    else { S.data = null; }
+  } catch(e) { S.data = null; }
+  
+  S.authReady = true;
+  document.getElementById('auth-loader').classList.add('hidden');
+  updateNav();
+  handleRoute();
+});
 
 /* ============================================
    NAVIGATION
@@ -636,46 +746,21 @@ function updateNav() {
   var nl = document.getElementById('nav-links'), na = document.getElementById('nav-actions');
   if (S.data) {
     var u = S.data;
-    nl.innerHTML = '<a href="#/u/'+u.username+'" class="text-ss-muted hover:text-ss-text transition-colors text-sm no-underline">Profile</a><a href="#/customize" class="text-ss-muted hover:text-ss-text transition-colors text-sm no-underline">Customize</a>' + (ROLES[u.role]>=ROLES.mod ? '<a href="#/admin" class="text-ss-muted hover:text-ss-text transition-colors text-sm no-underline">Admin</a>' : '');
-    na.innerHTML = '<div class="flex items-center gap-2 cursor-pointer" onclick="navigate(\'/u/'+u.username+'\')">' + (u.avatar ? '<img src="'+u.avatar+'" class="w-8 h-8 rounded-lg object-cover" alt="">' : '<div class="w-8 h-8 rounded-lg bg-ss-pink/20 flex items-center justify-center"><i class="fa-solid fa-user text-ss-pink text-xs"></i></div>') + '<span class="text-sm font-medium hidden sm:inline">'+u.displayName+'</span></div><button class="btn-ghost text-xs" onclick="signOut()">Sign Out</button>';
+    nl.innerHTML = '<a href="/" class="text-ss-muted hover:text-ss-text transition-colors text-sm no-underline">Home</a><a href="/pricing" class="text-ss-muted hover:text-ss-text transition-colors text-sm no-underline">Pricing</a><a href="/customize" class="text-ss-muted hover:text-ss-text transition-colors text-sm no-underline">Customize</a>' + (ROLES[u.role]>=ROLES.mod ? '<a href="/admin" class="text-ss-muted hover:text-ss-text transition-colors text-sm no-underline">Admin</a>' : '');
+    na.innerHTML = '<div class="flex items-center gap-2 cursor-pointer" onclick="navigate(\'/'+u.username+'\')">' + (u.avatar ? '<img src="'+u.avatar+'" class="w-8 h-8 rounded-lg object-cover" alt="">' : '<div class="w-8 h-8 rounded-lg bg-ss-pink/20 flex items-center justify-center"><i class="fa-solid fa-user text-ss-pink text-xs"></i></div>') + '<span class="text-sm font-medium hidden sm:inline">'+u.displayName+'</span></div><button class="btn-ghost text-xs" onclick="signOut()">Sign Out</button>';
   } else {
-    nl.innerHTML = '<a href="#/" class="text-ss-muted hover:text-ss-text transition-colors text-sm no-underline">Home</a>';
+    nl.innerHTML = '<a href="/" class="text-ss-muted hover:text-ss-text transition-colors text-sm no-underline">Home</a><a href="/pricing" class="text-ss-muted hover:text-ss-text transition-colors text-sm no-underline">Pricing</a>';
     na.innerHTML = '<button class="btn-ghost text-sm" onclick="openAuth(\'login\')">Sign In</button><button class="btn-pink !py-2 !px-4 text-sm" onclick="openAuth(\'register\')">Sign Up</button>';
   }
 }
-
-function navigate(path) { window.location.hash = path; }
-
-function handleRoute() {
-  var hash = window.location.hash.slice(1) || '/', parts = hash.split('/').filter(Boolean);
-  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
-
-  if (!parts.length || hash === '/') {
-    if (S.data) { navigate('/u/' + S.data.username); return; }
-    showPage('landing'); fxStop();
-  } else if (parts[0] === 'u' && parts[1]) {
-    loadProfile(parts[1]);
-  } else if (parts[0] === 'customize') {
-    if (!S.data) { showPage('unauthorized'); document.getElementById('unauth-msg').textContent = 'Sign in to customize your profile.'; return; }
-    showPage('customize'); fxStop(); loadCustomizePage();
-  } else if (parts[0] === 'admin') {
-    if (!S.data || ROLES[S.data.role] < ROLES.mod) { showPage('unauthorized'); document.getElementById('unauth-msg').textContent = 'No permission.'; return; }
-    showPage('admin'); fxStop(); loadAdminPage();
-  } else { showPage('landing'); fxStop(); }
-  updateNav();
-}
-
-function showPage(id) { S.page = id; document.getElementById('page-' + id).classList.add('active'); if (id === 'landing') setTimeout(initFadeUp, 50); }
-window.addEventListener('hashchange', handleRoute);
-window.addEventListener('load', handleRoute);
 
 /* ============================================
    PROFILE PAGE
    ============================================ */
 async function loadProfile(username) {
   var w = document.getElementById('profile-wrapper');
-  w.innerHTML = '<div class="text-center"><div class="loading-spinner mx-auto mb-4"></div><p class="text-ss-muted">Loading profile...</p></div>';
   showPage('profile');
+  
   try {
     var uDoc = await db.collection('usernames').doc(username).get();
     if (!uDoc.exists) { w.innerHTML = '<div class="text-center glass rounded-2xl p-12 max-w-md"><i class="fa-solid fa-user-slash text-ss-muted text-4xl mb-4 block"></i><h2 class="font-display text-2xl font-bold mb-2">User Not Found</h2><p class="text-ss-muted">This profile doesn\'t exist.</p><button class="btn-pink mt-6" onclick="navigate(\'/\')">Go Home</button></div>'; fxStop(); return; }
@@ -694,6 +779,7 @@ async function loadProfile(username) {
 function renderProfile(u) {
   var w = document.getElementById('profile-wrapper'), isOwn = S.data && S.data.username === u.username;
   var cc = 'profile-card-' + (u.cardStyle || 'glass'), nc = 'name-' + (u.nameEffect || 'neon');
+  var opacity = (u.cardOpacity !== undefined ? u.cardOpacity : 85) / 100;
   var bh = u.banner ? '<div class="h-32 sm:h-40 rounded-t-[23px] bg-cover bg-center relative" style="background-image:url(\''+u.banner+'\')"><div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-t-[23px]"></div></div>' : '';
   var ah = u.avatar ? '<img src="'+u.avatar+'" class="w-20 h-20 rounded-2xl object-cover" style="border:3px solid #0A0A0F" alt="">' : '<div class="w-20 h-20 rounded-2xl flex items-center justify-center text-2xl font-bold" style="border:3px solid #0A0A0F;background:linear-gradient(135deg,#FF1493,#DB2777)"><span class="text-white">'+(u.displayName||'?').charAt(0).toUpperCase()+'</span></div>';
   var badg = '';
@@ -703,7 +789,7 @@ function renderProfile(u) {
   var mus = '';
   if (u.music && u.music.url) mus = '<div class="mt-5 p-3 rounded-xl" style="background:rgba(255,20,147,0.06);border:1px solid rgba(255,20,147,0.1)"><div class="flex items-center gap-3">'+(u.music.cover?'<img src="'+u.music.cover+'" class="w-10 h-10 rounded-lg object-cover" alt="">':'<div class="w-10 h-10 rounded-lg bg-ss-pink/20 flex items-center justify-center"><i class="fa-solid fa-music text-ss-pink text-sm"></i></div>')+'<div class="flex-1 min-w-0"><p class="text-sm font-medium truncate">'+(u.music.title||'Unknown')+'</p><p class="text-xs text-ss-muted truncate">'+(u.music.artist||'')+'</p></div><audio controls class="h-8 opacity-70 hover:opacity-100 transition-opacity" style="max-width:100px"><source src="'+u.music.url+'" type="audio/mpeg"></audio></div></div>';
   
-  w.innerHTML = '<div class="w-full max-w-md mx-auto"><div class="'+cc+' overflow-hidden">'+bh+'<div class="px-6 pb-6'+(u.banner?' -mt-10 relative':' pt-6')+'">'+ah+'<div class="mt-3 flex items-start justify-between"><div class="uid-trigger relative"><h2 class="font-display text-2xl font-bold '+nc+'"'+(u.nameEffect==='glitch'?' data-text="'+(u.displayName||'')+'"':'')+'>'+(u.displayName||'User')+'</h2><span class="uid-hover">#'+String(u.uid||0).padStart(7,'0')+'</span></div>'+(isOwn?'<button class="btn-ghost text-xs" onclick="navigate(\'/customize\')"><i class="fa-solid fa-pen mr-1"></i>Edit</button>':'')+'</div><p class="text-ss-muted text-sm" style="font-family:\'JetBrains Mono\',monospace">@'+(u.username||'')+'</p>'+(u.description?'<p class="text-ss-text/80 text-sm mt-3 leading-relaxed">'+u.description+'</p>':'')+(u.location?'<p class="text-ss-muted text-xs mt-2"><i class="fa-solid fa-location-dot mr-1"></i>'+u.location+'</p>':'')+(badg?'<div class="flex flex-wrap gap-1.5 mt-3">'+badg+'</div>':'')+(links?'<div class="mt-5 space-y-2">'+links+'</div>':'')+mus+'<div class="mt-5 pt-4 flex items-center justify-between text-xs text-ss-dim" style="border-top:1px solid rgba(255,20,147,0.08)"><span><i class="fa-solid fa-eye mr-1"></i>'+fmt(u.views)+' views</span><span>'+(u.links?u.links.length:0)+' links</span></div></div></div></div>';
+  w.innerHTML = '<div class="w-full max-w-md mx-auto"><div class="'+cc+'" style="opacity:'+opacity+';overflow:hidden">'+bh+'<div class="px-6 pb-6'+(u.banner?' -mt-10 relative':' pt-6')+'">'+ah+'<div class="mt-3 flex items-start justify-between"><div class="uid-trigger relative"><h2 class="font-display text-2xl font-bold '+nc+'"'+(u.nameEffect==='glitch'?' data-text="'+(u.displayName||'')+'"':'')+'>'+(u.displayName||'User')+'</h2><span class="uid-hover">UID '+u.uid+'</span></div>'+(isOwn?'<button class="btn-ghost text-xs" onclick="navigate(\'/customize\')"><i class="fa-solid fa-pen mr-1"></i>Edit</button>':'')+'</div><p class="text-ss-muted text-sm" style="font-family:\'JetBrains Mono\',monospace">@'+(u.username||'')+'</p>'+(u.description?'<p class="text-ss-text/80 text-sm mt-3 leading-relaxed">'+u.description+'</p>':'')+(u.location?'<p class="text-ss-muted text-xs mt-2"><i class="fa-solid fa-location-dot mr-1"></i>'+u.location+'</p>':'')+(badg?'<div class="flex flex-wrap gap-1.5 mt-3">'+badg+'</div>':'')+(links?'<div class="mt-5 space-y-2">'+links+'</div>':'')+mus+'<div class="mt-5 pt-4 flex items-center justify-between text-xs text-ss-dim" style="border-top:1px solid rgba(255,20,147,0.08)"><span><i class="fa-solid fa-eye mr-1"></i>'+fmt(u.views)+' views</span><span>'+(u.links?u.links.length:0)+' links</span></div></div></div></div>';
 }
 
 /* ============================================
@@ -757,63 +843,51 @@ function updateFxPanel() {
 async function saveSetting(k,v) { if(!S.data)return; try{await db.collection('users').doc(S.user.uid).update({[k]:v,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});S.data[k]=v;}catch(e){} }
 
 /* ============================================
-   CUSTOMIZE PAGE
+   CUSTOMIZE PAGE (Screenshot Style)
    ============================================ */
-function loadCustomizePage() { switchCustomTab(S.ctab); }
+function loadCustomizePage() {
+  document.getElementById('cust-username').textContent = '@' + S.data.username;
+  document.getElementById('cust-uid').textContent = 'UID ' + S.data.uid;
+  switchCustTab(S.ctab);
+}
 
-function switchCustomTab(tab) {
+function switchCustTab(tab) {
   S.ctab = tab;
-  document.querySelectorAll('.custom-tab').forEach(function(t){t.classList.toggle('active',t.dataset.ctab===tab);});
-  var c = document.getElementById('custom-tab-content'), u = S.data; if(!u) return;
+  document.querySelectorAll('.cust-nav-item').forEach(function(t){t.classList.toggle('active',t.dataset.cust===tab);});
+  var c = document.getElementById('cust-content'), u = S.data; if(!u) return;
 
-  if (tab === 'info') {
-    c.innerHTML = '<div class="space-y-5"><div><label class="block text-xs font-medium text-ss-muted mb-1.5">Display Name</label><input type="text" class="input-field" id="cust-dn" value="'+(u.displayName||'')+'"></div><div><label class="block text-xs font-medium text-ss-muted mb-1.5">Username</label><input type="text" class="input-field" value="'+(u.username||'')+'" disabled style="opacity:0.6"><p class="text-xs text-ss-dim mt-1">Cannot be changed</p></div><div><label class="block text-xs font-medium text-ss-muted mb-1.5">Bio</label><textarea class="input-field" rows="3" id="cust-desc" placeholder="Tell people about yourself...">'+(u.description||'')+'</textarea></div><div><label class="block text-xs font-medium text-ss-muted mb-1.5">Location</label><input type="text" class="input-field" id="cust-loc" value="'+(u.location||'')+'"></div><div><label class="block text-xs font-medium text-ss-muted mb-1.5">Avatar URL</label><input type="url" class="input-field" id="cust-av" value="'+(u.avatar||'')+'" placeholder="https://..."></div><div><label class="block text-xs font-medium text-ss-muted mb-1.5">Banner URL</label><input type="url" class="input-field" id="cust-ban" value="'+(u.banner||'')+'" placeholder="https://..."></div><button class="btn-pink" onclick="saveInfo()">Save Changes</button></div>';
-  } else if (tab === 'bg') {
-    var fxs=['aurora','petals','sparkles','rain','snow','orbs'],fn={aurora:'Aurora',petals:'Petals',sparkles:'Sparkles',rain:'Rain',snow:'Snow',orbs:'Orbs'},fi={aurora:'fa-sun',petals:'fa-leaf',sparkles:'fa-star',rain:'fa-cloud-rain',snow:'fa-snowflake',orbs:'fa-circle'},h='<div class="grid grid-cols-2 sm:grid-cols-3 gap-3">';
-    fxs.forEach(function(f){var a=u.bgEffect===f?'border-ss-pink bg-ss-pink/10':'border-transparent hover:border-ss-pink/30';h+='<button class="p-4 rounded-xl border transition-all text-center '+a+'" onclick="selBg(\''+f+'\')"><i class="fa-solid '+fi[f]+' text-2xl mb-2 '+(u.bgEffect===f?'text-ss-pink':'text-ss-muted')+'"></i><p class="text-sm font-medium">'+fn[f]+'</p></button>';});
-    c.innerHTML=h+'</div>';
-  } else if (tab === 'effects') {
-    var nfxs=[{id:'neon',n:'Neon Glow'},{id:'glitch',n:'Glitch'},{id:'gradient',n:'Gradient'},{id:'holographic',n:'Holographic'},{id:'sparkle',n:'Sparkle'}],h='<h3 class="font-semibold mb-3">Name Effect</h3><div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">';
-    nfxs.forEach(function(n){var a=u.nameEffect===n.id?'border-ss-pink bg-ss-pink/10':'border-transparent hover:border-ss-pink/30';h+='<button class="p-3 rounded-xl border transition-all text-center '+a+'" onclick="selNfx(\''+n.id+'\')"><span class="name-'+n.id+' text-lg font-bold">'+(u.displayName||'Name')+'</span><p class="text-xs text-ss-muted mt-1">'+n.n+'</p></button>';});
-    h+='</div><h3 class="font-semibold mb-3">Card Style</h3><div class="grid grid-cols-2 sm:grid-cols-4 gap-3">';
-    [{id:'glass',n:'Glass'},{id:'default',n:'Default'},{id:'minimal',n:'Minimal'},{id:'portfolio',n:'Portfolio'}].forEach(function(cs){var a=u.cardStyle===cs.id?'border-ss-pink bg-ss-pink/10':'border-transparent hover:border-ss-pink/30';h+='<button class="p-3 rounded-xl border transition-all text-center '+a+'" onclick="selCs(\''+cs.id+'\')"><div class="profile-card-'+cs.id+' w-full h-16 mb-2"></div><p class="text-xs text-ss-muted">'+cs.n+'</p></button>';});
-    c.innerHTML=h+'</div>';
-  } else if (tab === 'card') {
-    c.innerHTML = '<div class="space-y-5"><div><label class="block text-xs font-medium text-ss-muted mb-1.5">Accent Color</label><div class="flex items-center gap-3"><input type="color" id="cust-ac" value="'+(u.accentColor||'#FF1493')+'" class="w-10 h-10 rounded-lg cursor-pointer border-0 bg-transparent"><input type="text" class="input-field flex-1" id="cust-act" value="'+(u.accentColor||'#FF1493')+'"></div></div><button class="btn-pink" onclick="saveCard()">Save</button></div>';
-    document.getElementById('cust-ac').oninput=function(e){document.getElementById('cust-act').value=e.target.value;};
-    document.getElementById('cust-act').oninput=function(e){if(/^#[0-9A-Fa-f]{6}$/.test(e.target.value))document.getElementById('cust-ac').value=e.target.value;};
+  if (tab === 'overview') {
+    c.innerHTML = '<h1 class="font-display text-3xl font-bold mb-6">Overview</h1><div class="grid grid-cols-3 gap-4 mb-8"><div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Views</p><p class="text-2xl font-bold mt-1">'+fmt(u.views)+'</p></div><div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Links</p><p class="text-2xl font-bold mt-1">'+(u.links?u.links.length:0)+'</p></div><div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Plan</p><p class="text-2xl font-bold mt-1 capitalize">'+(u.plan||'free')+'</p></div></div><div class="glass rounded-2xl p-6"><h3 class="font-semibold mb-4">Quick Actions</h3><div class="flex gap-3"><button class="btn-pink" onclick="navigate(\'/'+u.username+'\')"><i class="fa-solid fa-external-link mr-2"></i>View Profile</button><button class="btn-outline" onclick="switchCustTab(\'customise\')"><i class="fa-solid fa-palette mr-2"></i>Customise</button></div></div>';
+  } else if (tab === 'customise') {
+    c.innerHTML = '<h1 class="font-display text-3xl font-bold mb-6">Customise</h1><div class="space-y-6"><div class="glass rounded-2xl p-6"><h3 class="font-semibold mb-4">Profile Picture</h3><input type="url" class="input-field" value="'+(u.avatar||'')+'" placeholder="https://example.com/avatar.jpg" onchange="saveField(\'avatar\',this.value)"><p class="text-xs text-ss-dim mt-1">Direct link to an image</p></div><div class="glass rounded-2xl p-6"><h3 class="font-semibold mb-4">Banner</h3><input type="url" class="input-field" value="'+(u.banner||'')+'" placeholder="https://example.com/banner.jpg" onchange="saveField(\'banner\',this.value)"><p class="text-xs text-ss-dim mt-1">Recommended: 1200x400px</p></div><div class="glass rounded-2xl p-6"><h3 class="font-semibold mb-4">Accent Color</h3><div class="flex items-center gap-3"><input type="color" value="'+(u.accentColor||'#FF1493')+'" class="w-12 h-12 rounded-lg cursor-pointer border-0 bg-transparent" onchange="saveField(\'accentColor\',this.value)"><input type="text" class="input-field flex-1" value="'+(u.accentColor||'#FF1493')+'" onchange="saveField(\'accentColor\',this.value)"></div></div><div class="glass rounded-2xl p-6"><h3 class="font-semibold mb-4">Card Style</h3><div class="grid grid-cols-4 gap-3">'+[{id:'glass',n:'Glass'},{id:'default',n:'Default'},{id:'minimal',n:'Minimal'},{id:'portfolio',n:'Portfolio'}].map(function(cs){return '<button class="p-3 rounded-xl border transition-all text-center '+(u.cardStyle===cs.id?'border-ss-pink bg-ss-pink/10':'border-transparent hover:border-ss-pink/30')+'" onclick="selCs(\''+cs.id+'\')"><div class="profile-card-'+cs.id+' w-full h-16 mb-2"></div><p class="text-xs text-ss-muted">'+cs.n+'</p></button>';}).join('')+'</div></div><div class="glass rounded-2xl p-6"><h3 class="font-semibold mb-4">Card Opacity <span class="text-ss-pink ml-2" id="opacity-val">'+(u.cardOpacity!==undefined?u.cardOpacity:85)+'%</span></h3><input type="range" class="slider-field" min="0" max="100" value="'+(u.cardOpacity!==undefined?u.cardOpacity:85)+'" oninput="document.getElementById(\'opacity-val\').textContent=this.value+\'%\';saveField(\'cardOpacity\',parseInt(this.value))"></div><div class="glass rounded-2xl p-6"><h3 class="font-semibold mb-4">Name Effect</h3><div class="grid grid-cols-5 gap-3">'+[{id:'neon',n:'Neon'},{id:'glitch',n:'Glitch'},{id:'gradient',n:'Gradient'},{id:'holographic',n:'Holo'},{id:'sparkle',n:'Sparkle'}].map(function(n){return '<button class="p-3 rounded-xl border transition-all text-center '+(u.nameEffect===n.id?'border-ss-pink bg-ss-pink/10':'border-transparent hover:border-ss-pink/30')+'" onclick="selNfx(\''+n.id+'\')"><span class="name-'+n.id+' text-sm font-bold">'+(u.displayName||'Name')+'</span><p class="text-xs text-ss-muted mt-1">'+n.n+'</p></button>';}).join('')+'</div></div><div class="glass rounded-2xl p-6"><h3 class="font-semibold mb-4">Background Effect</h3><div class="grid grid-cols-3 sm:grid-cols-6 gap-3">'+['aurora','petals','sparkles','rain','snow','orbs'].map(function(f){var fn={aurora:'Aurora',petals:'Petals',sparkles:'Sparkles',rain:'Rain',snow:'Snow',orbs:'Orbs'},fi={aurora:'fa-sun',petals:'fa-leaf',sparkles:'fa-star',rain:'fa-cloud-rain',snow:'fa-snowflake',orbs:'fa-circle'};return '<button class="p-3 rounded-xl border transition-all text-center '+(u.bgEffect===f?'border-ss-pink bg-ss-pink/10':'border-transparent hover:border-ss-pink/30')+'" onclick="selBg(\''+f+'\')"><i class="fa-solid '+fi[f]+' text-xl mb-1 '+(u.bgEffect===f?'text-ss-pink':'text-ss-muted')+'"></i><p class="text-xs text-ss-muted">'+fn[f]+'</p></button>';}).join('')+'</div></div><div class="glass rounded-2xl p-6"><h3 class="font-semibold mb-4">Music</h3><div class="space-y-3"><input type="text" class="input-field" value="'+(u.music?u.music.title:'')+'" placeholder="Song Title" onchange="saveMusicField(\'title\',this.value)"><input type="text" class="input-field" value="'+(u.music?u.music.artist:'')+'" placeholder="Artist" onchange="saveMusicField(\'artist\',this.value)"><input type="url" class="input-field" value="'+(u.music?u.music.url:'')+'" placeholder="Audio URL (mp3)" onchange="saveMusicField(\'url\',this.value)"><input type="url" class="input-field" value="'+(u.music?u.music.cover:'')+'" placeholder="Cover Art URL" onchange="saveMusicField(\'cover\',this.value)"><button class="btn-ghost text-red-400" onclick="rmMusic()"><i class="fa-solid fa-trash mr-1"></i>Remove Music</button></div></div></div>';
   } else if (tab === 'links') {
-    var links=u.links||[],h='<div class="space-y-3" id="links-list">';
-    links.forEach(function(l,i){h+='<div class="flex items-start gap-3 p-3 rounded-xl" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,20,147,0.08)"><div class="flex-1 space-y-2"><input type="text" class="input-field !py-2 text-sm" value="'+(l.title||'')+'" placeholder="Title" data-li="'+i+'" data-lf="title"><input type="url" class="input-field !py-2 text-sm" value="'+(l.url||'')+'" placeholder="https://..." data-li="'+i+'" data-lf="url"><input type="text" class="input-field !py-2 text-sm" value="'+(l.icon||'fa-solid fa-link')+'" placeholder="fa-brands fa-twitter" data-li="'+i+'" data-lf="icon"></div><div class="flex flex-col gap-1">'+(i>0?'<button class="btn-ghost !px-2 text-xs" onclick="moveLink('+i+',-1)"><i class="fa-solid fa-arrow-up"></i></button>':'')+(i<links.length-1?'<button class="btn-ghost !px-2 text-xs" onclick="moveLink('+i+',1)"><i class="fa-solid fa-arrow-down"></i></button>':'')+'<button class="btn-ghost !px-2 text-xs text-red-400" onclick="rmLink('+i+')"><i class="fa-solid fa-trash"></i></button></div></div>';});
+    var links=u.links||[],h='<h1 class="font-display text-3xl font-bold mb-6">Links</h1><div class="space-y-3" id="links-list">';
+    links.forEach(function(l,i){h+='<div class="glass rounded-xl p-4"><div class="flex items-start gap-3"><div class="flex-1 space-y-2"><input type="text" class="input-field !py-2 text-sm" value="'+(l.title||'')+'" placeholder="Title" data-li="'+i+'" data-lf="title"><input type="url" class="input-field !py-2 text-sm" value="'+(l.url||'')+'" placeholder="https://..." data-li="'+i+'" data-lf="url"><input type="text" class="input-field !py-2 text-sm" value="'+(l.icon||'fa-solid fa-link')+'" placeholder="fa-brands fa-twitter" data-li="'+i+'" data-lf="icon"></div><div class="flex flex-col gap-1">'+(i>0?'<button class="btn-ghost !px-2 text-xs" onclick="moveLink('+i+',-1)"><i class="fa-solid fa-arrow-up"></i></button>':'')+(i<links.length-1?'<button class="btn-ghost !px-2 text-xs" onclick="moveLink('+i+',1)"><i class="fa-solid fa-arrow-down"></i></button>':'')+'<button class="btn-ghost !px-2 text-xs text-red-400" onclick="rmLink('+i+')"><i class="fa-solid fa-trash"></i></button></div></div></div>';});
     h+='</div><button class="btn-outline mt-4" onclick="addLink()"><i class="fa-solid fa-plus mr-2"></i>Add Link</button>';
     c.innerHTML=h;
-    c.querySelectorAll('[data-li]').forEach(function(inp){inp.oninput=function(){var idx=parseInt(this.dataset.li),f=this.dataset.lf;if(S.data.links[idx]){S.data.links[idx][f]=this.value;updatePreview();}};});
-  } else if (tab === 'music') {
-    var m=u.music||{};
-    c.innerHTML='<div class="space-y-5"><div><label class="block text-xs font-medium text-ss-muted mb-1.5">Song Title</label><input type="text" class="input-field" id="cust-mt" value="'+(m.title||'')+'"></div><div><label class="block text-xs font-medium text-ss-muted mb-1.5">Artist</label><input type="text" class="input-field" id="cust-ma" value="'+(m.artist||'')+'"></div><div><label class="block text-xs font-medium text-ss-muted mb-1.5">Audio URL</label><input type="url" class="input-field" id="cust-mu" value="'+(m.url||'')+'" placeholder="https://...mp3"></div><div><label class="block text-xs font-medium text-ss-muted mb-1.5">Cover Art URL</label><input type="url" class="input-field" id="cust-mc" value="'+(m.cover||'')+'"></div><div class="flex gap-3"><button class="btn-pink" onclick="saveMusic()">Save</button><button class="btn-ghost text-red-400" onclick="rmMusic()">Remove</button></div></div>';
+    c.querySelectorAll('[data-li]').forEach(function(inp){inp.onchange=function(){var idx=parseInt(this.dataset.li),f=this.dataset.lf;if(S.data.links[idx]){S.data.links[idx][f]=this.value;saveLinks();}};});
+  } else if (tab === 'badges') {
+    c.innerHTML = '<h1 class="font-display text-3xl font-bold mb-6">Badges</h1><div class="glass rounded-2xl p-6"><h3 class="font-semibold mb-4">Your Badges</h3><div class="flex flex-wrap gap-2 mb-6">'+(u.badges&&u.badges.length?u.badges.map(function(b){return '<span class="badge badge-'+(b.id||'pearl')+'">'+(b.icon?'<i class="'+b.icon+' text-[9px]"></i> ':'')+(b.name||'')+'</span>';}).join(''):'<p class="text-ss-muted text-sm">No badges yet</p>')+'</div><p class="text-xs text-ss-muted">Badges can be granted by staff members.</p></div>';
+  } else if (tab === 'settings') {
+    c.innerHTML = '<h1 class="font-display text-3xl font-bold mb-6">Settings</h1><div class="space-y-6"><div class="glass rounded-2xl p-6"><h3 class="font-semibold mb-4">Display Name</h3><input type="text" class="input-field" value="'+(u.displayName||'')+'" placeholder="Your display name" id="set-dn"><button class="btn-pink mt-3" onclick="saveDisplayName()">Save</button></div><div class="glass rounded-2xl p-6"><h3 class="font-semibold mb-4">Bio / Description</h3><textarea class="input-field" rows="3" id="set-desc" placeholder="Tell people about yourself...">'+(u.description||'')+'</textarea><button class="btn-pink mt-3" onclick="saveDescription()">Save</button></div><div class="glass rounded-2xl p-6"><h3 class="font-semibold mb-4">Location</h3><input type="text" class="input-field" value="'+(u.location||'')+'" placeholder="City, Country" id="set-loc"><button class="btn-pink mt-3" onclick="saveLocation()">Save</button></div><div class="glass rounded-2xl p-6"><h3 class="font-semibold mb-4">Change Password</h3><div class="space-y-3"><input type="password" class="input-field" placeholder="Current password" id="set-oldpass"><input type="password" class="input-field" placeholder="New password" id="set-newpass"><input type="password" class="input-field" placeholder="Confirm new password" id="set-confirmpass"><button class="btn-pink" onclick="changePassword()">Change Password</button></div></div><div class="glass rounded-2xl p-6 border-red-500/20"><h3 class="font-semibold mb-4 text-red-400">Danger Zone</h3><p class="text-ss-muted text-sm mb-4">Permanently delete your account and all associated data.</p><button class="btn-ghost text-red-400 border border-red-500/30" onclick="deleteAccount()"><i class="fa-solid fa-trash mr-2"></i>Delete Account</button></div></div>';
   }
-  updatePreview();
 }
 
-function addLink(){if(!S.data.links)S.data.links=[];S.data.links.push({title:'',url:'',icon:'fa-solid fa-link'});switchCustomTab('links');}
-function rmLink(i){S.data.links.splice(i,1);saveLinks();switchCustomTab('links');}
-function moveLink(i,d){var l=S.data.links,n=i+d;if(n<0||n>=l.length)return;var t=l[i];l[i]=l[n];l[n]=t;saveLinks();switchCustomTab('links');}
-async function saveLinks(){try{await db.collection('users').doc(S.user.uid).update({links:S.data.links||[],updatedAt:firebase.firestore.FieldValue.serverTimestamp()});toast('Links updated','success');}catch(e){toast('Failed','error');}updatePreview();}
-async function saveInfo(){var dn=document.getElementById('cust-dn').value.trim();if(!dn){toast('Name required','error');return;}try{var u={displayName:dn,description:document.getElementById('cust-desc').value.trim(),location:document.getElementById('cust-loc').value.trim(),avatar:document.getElementById('cust-av').value.trim(),banner:document.getElementById('cust-ban').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};await db.collection('users').doc(S.user.uid).update(u);Object.assign(S.data,u);updateNav();updatePreview();toast('Saved','success');}catch(e){toast('Failed','error');}}
-async function selBg(f){S.data.bgEffect=f;try{await db.collection('users').doc(S.user.uid).update({bgEffect:f,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});}catch(e){}switchCustomTab('bg');updatePreview();}
-async function selNfx(f){S.data.nameEffect=f;try{await db.collection('users').doc(S.user.uid).update({nameEffect:f,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});}catch(e){}switchCustomTab('effects');updatePreview();}
-async function selCs(f){S.data.cardStyle=f;try{await db.collection('users').doc(S.user.uid).update({cardStyle:f,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});}catch(e){}switchCustomTab('effects');updatePreview();}
-async function saveCard(){var c=document.getElementById('cust-ac').value;try{await db.collection('users').doc(S.user.uid).update({accentColor:c,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});S.data.accentColor=c;toast('Saved','success');updatePreview();}catch(e){toast('Failed','error');}}
-async function saveMusic(){var m={title:document.getElementById('cust-mt').value.trim(),artist:document.getElementById('cust-ma').value.trim(),url:document.getElementById('cust-mu').value.trim(),cover:document.getElementById('cust-mc').value.trim()};if(!m.url){toast('Audio URL required','error');return;}try{await db.collection('users').doc(S.user.uid).update({music:m,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});S.data.music=m;toast('Saved','success');updatePreview();}catch(e){toast('Failed','error');}}
-async function rmMusic(){try{await db.collection('users').doc(S.user.uid).update({music:null,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});S.data.music=null;toast('Removed','success');switchCustomTab('music');updatePreview();}catch(e){toast('Failed','error');}}
-
-function updatePreview() {
-  var el=document.getElementById('customize-preview');if(!el||!S.data)return;var u=S.data,cc='profile-card-'+(u.cardStyle||'glass'),nc='name-'+(u.nameEffect||'neon'),lh='';
-  if(u.links&&u.links.length){u.links.slice(0,3).forEach(function(l){lh+='<div class="link-btn !py-2 !text-xs !rounded-lg"><i class="'+(l.icon||'fa-solid fa-link')+'"></i><span>'+(l.title||'Untitled')+'</span></div>';});if(u.links.length>3)lh+='<p class="text-xs text-ss-muted text-center">+'+(u.links.length-3)+' more</p>';}
-  var bh=u.banner?'<div class="h-16 rounded-t-[11px] bg-cover bg-center" style="background-image:url(\''+u.banner+'\')"></div>':'';
-  var ah=u.avatar?'<img src="'+u.avatar+'" class="w-12 h-12 rounded-xl object-cover" style="border:2px solid #0A0A0F" alt="">':'<div class="w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold" style="border:2px solid #0A0A0F;background:linear-gradient(135deg,#FF1493,#DB2777)"><span class="text-white">'+(u.displayName||'?').charAt(0).toUpperCase()+'</span></div>';
-  el.innerHTML='<div class="'+cc+' overflow-hidden">'+bh+'<div class="px-4 pb-4 '+(u.banner?'-mt-6 relative':'pt-4')+'">'+ah+'<h3 class="font-display font-bold text-sm mt-2 '+nc+'"'+(u.nameEffect==='glitch'?' data-text="'+(u.displayName||'')+'"':'')+'>'+(u.displayName||'User')+'</h3><p class="text-ss-muted text-xs" style="font-family:\'JetBrains Mono\',monospace">@'+(u.username||'')+'</p>'+(u.description?'<p class="text-ss-text/70 text-xs mt-2 line-clamp-2">'+u.description+'</p>':'')+(lh?'<div class="mt-3 space-y-1.5">'+lh+'</div>':'')+'</div></div>';
-}
+async function saveField(k,v){try{await db.collection('users').doc(S.user.uid).update({[k]:v,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});S.data[k]=v;toast('Saved','success');}catch(e){toast('Failed','error');}}
+async function selBg(f){S.data.bgEffect=f;try{await db.collection('users').doc(S.user.uid).update({bgEffect:f});}catch(e){}switchCustTab('customise');}
+async function selNfx(f){S.data.nameEffect=f;try{await db.collection('users').doc(S.user.uid).update({nameEffect:f});}catch(e){}switchCustTab('customise');}
+async function selCs(f){S.data.cardStyle=f;try{await db.collection('users').doc(S.user.uid).update({cardStyle:f});}catch(e){}switchCustTab('customise');}
+async function saveMusicField(f,v){var m=S.data.music||{};m[f]=v;try{await db.collection('users').doc(S.user.uid).update({music:m});S.data.music=m;toast('Saved','success');}catch(e){toast('Failed','error');}}
+async function rmMusic(){try{await db.collection('users').doc(S.user.uid).update({music:null});S.data.music=null;toast('Removed','success');switchCustTab('customise');}catch(e){toast('Failed','error');}}
+function addLink(){if(!S.data.links)S.data.links=[];S.data.links.push({title:'',url:'',icon:'fa-solid fa-link'});switchCustTab('links');}
+function rmLink(i){S.data.links.splice(i,1);saveLinks();switchCustTab('links');}
+function moveLink(i,d){var l=S.data.links,n=i+d;if(n<0||n>=l.length)return;var t=l[i];l[i]=l[n];l[n]=t;saveLinks();switchCustTab('links');}
+async function saveLinks(){try{await db.collection('users').doc(S.user.uid).update({links:S.data.links||[]});toast('Saved','success');}catch(e){toast('Failed','error');}}
+async function saveDisplayName(){var v=document.getElementById('set-dn').value.trim();if(!v){toast('Required','error');return;}try{await db.collection('users').doc(S.user.uid).update({displayName:v});S.data.displayName=v;updateNav();toast('Saved','success');}catch(e){toast('Failed','error');}}
+async function saveDescription(){var v=document.getElementById('set-desc').value.trim();try{await db.collection('users').doc(S.user.uid).update({description:v});S.data.description=v;toast('Saved','success');}catch(e){toast('Failed','error');}}
+async function saveLocation(){var v=document.getElementById('set-loc').value.trim();try{await db.collection('users').doc(S.user.uid).update({location:v});S.data.location=v;toast('Saved','success');}catch(e){toast('Failed','error');}}
+async function changePassword(){var o=document.getElementById('set-oldpass').value,n=document.getElementById('set-newpass').value,c=document.getElementById('set-confirmpass').value;if(!o||!n||!c){toast('All fields required','error');return;}if(n!==c){toast('Passwords do not match','error');return;}if(n.length<6){toast('Min 6 characters','error');return;}try{var cred=firebase.auth.EmailAuthProvider.credential(S.user.email,o);await S.user.reauthenticateWithCredential(cred);await S.user.updatePassword(n);toast('Password changed','success');document.getElementById('set-oldpass').value='';document.getElementById('set-newpass').value='';document.getElementById('set-confirmpass').value='';}catch(e){if(e.code==='auth/wrong-password')toast('Wrong current password','error');else if(e.code==='auth/requires-recent-login')toast('Please sign out and sign in again','error');else toast('Failed: '+e.message,'error');}}
+async function deleteAccount(){if(!confirm('Are you sure? This cannot be undone!'))return;try{var u=S.data;await db.collection('usernames').doc(u.username).delete();await db.collection('users').doc(S.user.uid).delete();await S.user.delete();S.user=null;S.data=null;navigate('/');toast('Account deleted','info');}catch(e){toast('Failed: '+e.message,'error');}}
 
 /* ============================================
    ADMIN PANEL
@@ -828,13 +902,15 @@ async function switchAdminTab(tab){
     try{var snap=await db.collection('users').get(),tot=snap.size,v=0,prem=0,st=0,rec=[];
     snap.forEach(function(d){var u=d.data();v+=u.views||0;if(u.plan==='premium')prem++;if(ROLES[u.role]>=ROLES.mod)st++;rec.push(u);});
     rec.sort(function(a,b){return(b.createdAt?b.createdAt.toMillis():0)-(a.createdAt?a.createdAt.toMillis():0);});rec=rec.slice(0,10);
-    c.innerHTML='<h2 class="font-display text-2xl font-bold mb-6">Dashboard</h2><div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8"><div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Total Users</p><p class="text-2xl font-bold mt-1">'+fmt(tot)+'</p></div><div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Total Views</p><p class="text-2xl font-bold mt-1">'+fmt(v)+'</p></div><div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Premium</p><p class="text-2xl font-bold mt-1">'+prem+'</p></div><div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Staff</p><p class="text-2xl font-bold mt-1">'+st+'</p></div></div><h3 class="font-semibold text-lg mb-4">Recent Users</h3><div class="glass rounded-xl overflow-x-auto"><table class="data-table"><thead><tr><th>UID</th><th>Username</th><th>Role</th><th>Views</th><th>Status</th><th>Joined</th></tr></thead><tbody>'+rec.map(function(u){return '<tr><td class="font-mono text-xs">#'+String(u.uid||0).padStart(7,'0')+'</td><td><a href="#/u/'+u.username+'" class="text-ss-pink hover:underline">'+u.username+'</a></td><td><span class="role-tag role-'+u.role+'">'+u.role+'</span></td><td>'+fmt(u.views)+'</td><td class="text-'+((u.status||'active')==='active'?'green-400':(u.status||'')==='suspended'?'yellow-400':'red-400')+'">'+(u.status||'active')+'</td><td class="text-ss-muted">'+(u.createdAt?u.createdAt.toDate().toLocaleDateString():'N/A')+'</td></tr>';}).join('')+'</tbody></table></div>';
+    c.innerHTML='<h2 class="font-display text-2xl font-bold mb-6">Dashboard</h2><div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8"><div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Total Users</p><p class="text-2xl font-bold mt-1">'+fmt(tot)+'</p></div><div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Total Views</p><p class="text-2xl font-bold mt-1">'+fmt(v)+'</p></div><div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Premium</p><p class="text-2xl font-bold mt-1">'+prem+'</p></div><div class="stat-card"><p class="text-ss-muted text-xs font-medium uppercase">Staff</p><p class="text-2xl font-bold mt-1">'+st+'</p></div></div><h3 class="font-semibold text-lg mb-4">Recent Users</h3><div class="glass rounded-xl overflow-x-auto"><table class="data-table"><thead><tr><th>UID</th><th>Username</th><th>Role</th><th>Plan</th><th>Views</th><th>Status</th></tr></thead><tbody>'+rec.map(function(u){return '<tr><td class="font-mono text-xs">UID '+u.uid+'</td><td><a href="/'+u.username+'" class="text-ss-pink hover:underline">'+u.username+'</a></td><td><span class="role-tag role-'+u.role+'">'+u.role+'</span></td><td class="capitalize">'+(u.plan||'free')+'</td><td>'+fmt(u.views)+'</td><td class="text-'+((u.status||'active')==='active'?'green-400':(u.status||'')==='suspended'?'yellow-400':'red-400')+'">'+(u.status||'active')+'</td></tr>';}).join('')+'</tbody></table></div>';
     }catch(e){c.innerHTML='<p class="text-red-400">Error: '+e.message+'</p>';}
   } else if(tab==='users'){
     c.innerHTML='<div class="loading-spinner mx-auto my-8"></div>';
     try{var snap=await db.collection('users').orderBy('uid').get(),users=snap.docs.map(function(d){return Object.assign({id:d.id},d.data());});
-    c.innerHTML='<div class="flex items-center justify-between mb-6"><h2 class="font-display text-2xl font-bold">Users</h2><input type="text" class="input-field !w-64" placeholder="Search..." id="user-search" oninput="filterUsers()"></div><div class="glass rounded-xl overflow-x-auto"><table class="data-table" id="users-table"><thead><tr><th>UID</th><th>Username</th><th>Display</th><th>Role</th><th>Views</th><th>Status</th><th>Actions</th></tr></thead><tbody>'+users.map(function(u){var s=u.status||'active';return '<tr data-search="'+(u.username+' '+(u.displayName||'')).toLowerCase()+'"><td class="font-mono text-xs">#'+String(u.uid||0).padStart(7,'0')+'</td><td><a href="#/u/'+u.username+'" class="text-ss-pink hover:underline">'+u.username+'</a></td><td>'+(u.displayName||'-')+'</td><td><span class="role-tag role-'+u.role+'">'+u.role+'</span></td><td>'+fmt(u.views)+'</td><td class="text-'+(s==='active'?'green-400':s==='suspended'?'yellow-400':'red-400')+'">'+s+'</td><td class="space-x-1"><button class="btn-ghost !px-2 !py-1 text-xs" onclick="openRoleModal(\''+u.id+'\',\''+u.role+'\')" title="Role"><i class="fa-solid fa-user-shield"></i></button><button class="btn-ghost !px-2 !py-1 text-xs text-yellow-400" onclick="toggleStatus(\''+u.id+'\',\''+s+'\')" title="Suspend"><i class="fa-solid fa-' + (s==='suspended'?'play':'pause') + '"></i></button>'+(ROLES[S.data.role]>=ROLES.admin?'<button class="btn-ghost !px-2 !py-1 text-xs text-red-400" onclick="banUser(\''+u.id+'\')" title="Ban"><i class="fa-solid fa-ban"></i></button>':'')+'</td></tr>';}).join('')+'</tbody></table></div>';
+    c.innerHTML='<div class="flex items-center justify-between mb-6"><h2 class="font-display text-2xl font-bold">Users</h2><input type="text" class="input-field !w-64" placeholder="Search..." id="user-search" oninput="filterUsers()"></div><div class="glass rounded-xl overflow-x-auto"><table class="data-table" id="users-table"><thead><tr><th>UID</th><th>Username</th><th>Display</th><th>Role</th><th>Plan</th><th>Status</th><th>Actions</th></tr></thead><tbody>'+users.map(function(u){var s=u.status||'active';return '<tr data-search="'+(u.username+' '+(u.displayName||'')).toLowerCase()+'"><td class="font-mono text-xs">UID '+u.uid+'</td><td><a href="/'+u.username+'" class="text-ss-pink hover:underline">'+u.username+'</a></td><td>'+(u.displayName||'-')+'</td><td><span class="role-tag role-'+u.role+'">'+u.role+'</span></td><td class="capitalize">'+(u.plan||'free')+'</td><td class="text-'+(s==='active'?'green-400':s==='suspended'?'yellow-400':'red-400')+'">'+s+'</td><td class="space-x-1"><button class="btn-ghost !px-2 !py-1 text-xs" onclick="openRoleModal(\''+u.id+'\',\''+u.role+'\')" title="Role"><i class="fa-solid fa-user-shield"></i></button><button class="btn-ghost !px-2 !py-1 text-xs text-yellow-400" onclick="toggleStatus(\''+u.id+'\',\''+s+'\')" title="Suspend"><i class="fa-solid fa-' + (s==='suspended'?'play':'pause') + '"></i></button>'+(ROLES[S.data.role]>=ROLES.admin?'<button class="btn-ghost !px-2 !py-1 text-xs text-red-400" onclick="banUser(\''+u.id+'\')" title="Ban"><i class="fa-solid fa-ban"></i></button>':'')+'</td></tr>';}).join('')+'</tbody></table></div>';
     }catch(e){c.innerHTML='<p class="text-red-400">Error: '+e.message+'</p>';}
+  } else if(tab==='premium'){
+    c.innerHTML='<h2 class="font-display text-2xl font-bold mb-6">Premium Management</h2><div class="glass rounded-xl p-6"><h3 class="font-semibold mb-4">Grant/Revoke Premium</h3><div class="flex flex-wrap gap-3"><input type="text" class="input-field flex-1 min-w-[200px]" id="premium-un" placeholder="Username"><select class="input-field !w-40" id="premium-action"><option value="grant">Grant Premium</option><option value="revoke">Revoke Premium</option></select><button class="btn-pink" onclick="togglePremium()">Apply</button></div></div>';
   } else if(tab==='badges'){
     c.innerHTML='<h2 class="font-display text-2xl font-bold mb-6">Badge Management</h2><div class="glass rounded-xl p-6 mb-6"><h3 class="font-semibold mb-4">Official Badges</h3><div class="grid grid-cols-2 md:grid-cols-5 gap-3">'+[{id:'verified',i:'check'},{id:'premium',i:'crown'},{id:'staff',i:'shield'},{id:'early',i:'heart'},{id:'pearl',i:'gem'}].map(function(b){return '<div class="p-3 rounded-xl text-center" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,20,147,0.08)"><span class="badge badge-'+b.id+'"><i class="fa-solid fa-'+b.i+' text-[9px]"></i> '+b.id.charAt(0).toUpperCase()+b.id.slice(1)+'</span></div>';}).join('')+'</div></div><div class="glass rounded-xl p-6"><h3 class="font-semibold mb-4">Grant Badge</h3><div class="flex flex-wrap gap-3"><input type="text" class="input-field flex-1 min-w-[200px]" id="badge-un" placeholder="Username"><select class="input-field !w-40" id="badge-t"><option value="verified">Verified</option><option value="premium">Premium</option><option value="early">Early</option><option value="pearl">Pearl</option><option value="staff">Staff</option></select><button class="btn-pink" onclick="grantBadge()">Grant</button></div></div>';
   } else if(tab==='roles'){
@@ -852,9 +928,8 @@ function filterUsers(){var q=(document.getElementById('user-search').value||'').
 async function openRoleModal(id,cur){var nr=prompt('New role (user, mod, admin, manager):',cur);if(!nr||!ROLES[nr]){if(nr!==null)toast('Invalid role','error');return;}if(ROLES[nr]>=ROLES[S.data.role]){toast('Cannot assign at/above your level','error');return;}try{await db.collection('users').doc(id).update({role:nr,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});await db.collection('audit').add({action:'Role changed to '+nr,userId:id,adminId:S.user.uid,timestamp:firebase.firestore.FieldValue.serverTimestamp()});toast('Role updated','success');switchAdminTab('users');}catch(e){toast('Failed','error');}}
 async function toggleStatus(id,cur){var ns=cur==='suspended'?'active':'suspended';try{await db.collection('users').doc(id).update({status:ns,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});await db.collection('audit').add({action:'User '+ns,userId:id,adminId:S.user.uid,timestamp:firebase.firestore.FieldValue.serverTimestamp()});toast('User '+ns,'success');switchAdminTab('users');}catch(e){toast('Failed','error');}}
 async function banUser(id){if(!confirm('Ban this user?'))return;try{await db.collection('users').doc(id).update({status:'banned',updatedAt:firebase.firestore.FieldValue.serverTimestamp()});await db.collection('audit').add({action:'User banned',userId:id,adminId:S.user.uid,timestamp:firebase.firestore.FieldValue.serverTimestamp()});toast('Banned','success');switchAdminTab('users');}catch(e){toast('Failed','error');}}
-
+async function togglePremium(){var un=(document.getElementById('premium-un').value||'').trim().toLowerCase(),action=document.getElementById('premium-action').value;if(!un){toast('Username required','error');return;}try{var ud=await db.collection('usernames').doc(un).get();if(!ud.exists){toast('Not found','error');return;}var uid=ud.data().uid,plan=action==='grant'?'premium':'free';await db.collection('users').doc(uid).update({plan:plan,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});await db.collection('audit').add({action:'Premium '+(action==='grant'?'granted':'revoked'),username:un,userId:uid,adminId:S.user.uid,timestamp:firebase.firestore.FieldValue.serverTimestamp()});toast('Premium '+(action==='grant'?'granted to':'revoked from')+' '+un,'success');document.getElementById('premium-un').value='';}catch(e){toast('Failed: '+e.message,'error');}}
 async function grantBadge(){var un=(document.getElementById('badge-un').value||'').trim().toLowerCase(),bt=document.getElementById('badge-t').value;if(!un){toast('Username required','error');return;}try{var ud=await db.collection('usernames').doc(un).get();if(!ud.exists){toast('Not found','error');return;}var uid=ud.data().uid,doc=await db.collection('users').doc(uid).get(),badges=doc.data().badges||[];if(badges.find(function(b){return b.id===bt;})){toast('Has badge','error');return;}var names={verified:'Verified',premium:'Premium',staff:'Staff',early:'Early Supporter',pearl:'Pink Pearl'},icons={verified:'fa-solid fa-check',premium:'fa-solid fa-crown',staff:'fa-solid fa-shield',early:'fa-solid fa-heart',pearl:'fa-solid fa-gem'};badges.push({id:bt,name:names[bt],icon:icons[bt],tooltip:names[bt]});await db.collection('users').doc(uid).update({badges:badges,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});await db.collection('audit').add({action:'Badge granted: '+bt,username:un,userId:uid,adminId:S.user.uid,timestamp:firebase.firestore.FieldValue.serverTimestamp()});toast('Granted to '+un,'success');document.getElementById('badge-un').value='';}catch(e){toast('Failed: '+e.message,'error');}}
-
 async function changeRole(){var un=(document.getElementById('role-un').value||'').trim().toLowerCase(),nr=document.getElementById('new-role').value;if(!un){toast('Username required','error');return;}if(ROLES[nr]>=ROLES[S.data.role]){toast('Cannot assign at/above your level','error');return;}try{var ud=await db.collection('usernames').doc(un).get();if(!ud.exists){toast('Not found','error');return;}var uid=ud.data().uid;await db.collection('users').doc(uid).update({role:nr,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});await db.collection('audit').add({action:'Role changed to '+nr,username:un,userId:uid,adminId:S.user.uid,timestamp:firebase.firestore.FieldValue.serverTimestamp()});toast(un+' is now '+nr,'success');document.getElementById('role-un').value='';}catch(e){toast('Failed: '+e.message,'error');}}
 
 /* ============================================
@@ -866,8 +941,16 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeAuth()
 document.getElementById('auth-modal').addEventListener('click',function(e){if(e.target===this)closeAuth();});
 document.getElementById('auth-password').addEventListener('keydown',function(e){if(e.key==='Enter')handleAuth();});
 
+// Handle all link clicks to use navigate()
+document.addEventListener('click',function(e){
+  var link = e.target.closest('a');
+  if(link && link.getAttribute('href') && link.getAttribute('href').startsWith('/') && !link.getAttribute('target')){
+    e.preventDefault();
+    navigate(link.getAttribute('href'));
+  }
+});
+
 updateNav();
-initFadeUp();
 </script>
 </body>
 </html>
