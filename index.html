@@ -5,660 +5,141 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>seashell.lol — Beautiful Link-in-Bio</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script>
-tailwind.config = {
-  theme: {
-    extend: {
-      colors: {
-        ss: {
-          bg: '#0A0A0F',
-          surface: '#12121A',
-          card: '#16161F',
-          pink: '#FF1493',
-          rose: '#FF69B4',
-          deep: '#DB2777',
-          pastel: '#FDE2F3',
-          muted: '#8B7A8E',
-          text: '#F5F0F2',
-          dim: '#4A3F4E',
-          border: 'rgba(255,20,147,0.18)',
-        }
-      },
-      fontFamily: {
-        display: ['Playfair Display','serif'],
-        body: ['Outfit','sans-serif'],
-        mono: ['JetBrains Mono','monospace'],
-      }
-    }
-  }
-}
+tailwind.config={theme:{extend:{colors:{ss:{bg:'#0A0A0F',surface:'#12121A',card:'#16161F',pink:'#FF1493',rose:'#FF69B4',deep:'#DB2777',pastel:'#FDE2F3',muted:'#8B7A8E',text:'#F5F0F2',dim:'#4A3F4E',border:'rgba(255,20,147,0.18)'}},fontFamily:{display:['Playfair Display','serif'],body:['Outfit','sans-serif'],mono:['JetBrains Mono','monospace']}}}}
 </script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: 'Outfit', sans-serif;
-    background: #0A0A0F;
-    color: #F5F0F2;
-    overflow-x: hidden;
-    min-height: 100vh;
-  }
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: #0A0A0F; }
-  ::-webkit-scrollbar-thumb { background: rgba(255,20,147,0.3); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(255,20,147,0.5); }
-
-  /* 全局画布 */
-  #fx-canvas {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 0; pointer-events: none;
-  }
-
-  /* 页面容器 */
-  .page { display: none; position: relative; z-index: 1; min-height: 100vh; }
-  .page.active { display: block; }
-
-  /* 导航栏 */
-  .nav-glass {
-    background: rgba(10,10,15,0.8);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-bottom: 1px solid rgba(255,20,147,0.1);
-  }
-
-  /* 玻璃态卡片 */
-  .glass {
-    background: rgba(22,22,31,0.75);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,20,147,0.12);
-    box-shadow: 0 0 40px rgba(255,20,147,0.06), 0 25px 60px rgba(0,0,0,0.4),
-                inset 0 1px 0 rgba(255,255,255,0.04);
-  }
-  .glass-strong {
-    background: rgba(22,22,31,0.88);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border: 1px solid rgba(255,20,147,0.18);
-    box-shadow: 0 0 60px rgba(255,20,147,0.08), 0 30px 80px rgba(0,0,0,0.5),
-                inset 0 1px 0 rgba(255,255,255,0.06);
-  }
-
-  /* 珍珠渐变文字 */
-  .text-pearl {
-    background: linear-gradient(135deg, #FF1493, #FF69B4, #FDE2F3, #FF69B4, #DB2777, #FF1493);
-    background-size: 300% 300%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: pearl-shift 6s ease infinite;
-  }
-  @keyframes pearl-shift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-
-  /* 霓虹名字效果 */
-  .name-neon {
-    color: #FF1493;
-    text-shadow: 0 0 7px #FF1493, 0 0 12px #FF1493, 0 0 24px rgba(255,20,147,0.6),
-                 0 0 48px rgba(219,39,119,0.4), 0 0 80px rgba(219,39,119,0.2);
-  }
-
-  /* 故障效果 */
-  .name-glitch {
-    position: relative;
-    color: #F5F0F2;
-    animation: glitch-skew 4s infinite linear alternate-reverse;
-  }
-  .name-glitch::before, .name-glitch::after {
-    content: attr(data-text);
-    position: absolute; top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-  }
-  .name-glitch::before {
-    color: #FF69B4;
-    animation: glitch-clip-1 3s infinite linear alternate-reverse;
-    clip-path: polygon(0 0, 100% 0, 100% 40%, 0 40%);
-    transform: translate(-3px, -1px);
-  }
-  .name-glitch::after {
-    color: #DB2777;
-    animation: glitch-clip-2 2s infinite linear alternate-reverse;
-    clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
-    transform: translate(3px, 1px);
-  }
-  @keyframes glitch-skew {
-    0% { transform: skew(0deg); }
-    20% { transform: skew(-0.5deg); }
-    40% { transform: skew(0.3deg); }
-    60% { transform: skew(0deg); }
-    80% { transform: skew(-0.2deg); }
-    100% { transform: skew(0deg); }
-  }
-  @keyframes glitch-clip-1 {
-    0% { clip-path: polygon(0 0, 100% 0, 100% 40%, 0 40%); transform: translate(-3px,-1px); }
-    25% { clip-path: polygon(0 15%, 100% 15%, 100% 50%, 0 50%); transform: translate(2px, 0px); }
-    50% { clip-path: polygon(0 5%, 100% 5%, 100% 35%, 0 35%); transform: translate(-1px, 1px); }
-    75% { clip-path: polygon(0 25%, 100% 25%, 100% 55%, 0 55%); transform: translate(3px, -1px); }
-    100% { clip-path: polygon(0 0, 100% 0, 100% 40%, 0 40%); transform: translate(-3px,-1px); }
-  }
-  @keyframes glitch-clip-2 {
-    0% { clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%); transform: translate(3px,1px); }
-    25% { clip-path: polygon(0 50%, 100% 50%, 100% 85%, 0 85%); transform: translate(-2px, 0px); }
-    50% { clip-path: polygon(0 65%, 100% 65%, 100% 95%, 0 95%); transform: translate(1px, -1px); }
-    75% { clip-path: polygon(0 55%, 100% 55%, 100% 90%, 0 90%); transform: translate(-3px, 1px); }
-    100% { clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%); transform: translate(3px,1px); }
-  }
-
-  /* 渐变名字效果 */
-  .name-gradient {
-    background: linear-gradient(90deg, #FF1493, #FF69B4, #FDE2F3, #FF69B4, #FF1493);
-    background-size: 200% 100%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: gradient-slide 3s linear infinite;
-  }
-  @keyframes gradient-slide {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 200% 50%; }
-  }
-
-  /* 全息效果 */
-  .name-holographic {
-    background: linear-gradient(90deg, #FF1493, #FF69B4, #FDE2F3, #C084FC, #FF69B4, #FF1493);
-    background-size: 300% 100%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: holo-shift 4s ease infinite;
-    filter: drop-shadow(0 0 8px rgba(255,20,147,0.4));
-  }
-  @keyframes holo-shift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 150% 50%; }
-    100% { background-position: 300% 50%; }
-  }
-
-  /* 闪光扫过效果 */
-  .name-sparkle {
-    position: relative;
-    color: #F5F0F2;
-    overflow: hidden;
-  }
-  .name-sparkle::after {
-    content: '';
-    position: absolute; top: 0; left: -100%;
-    width: 60%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    animation: sparkle-sweep 3s ease-in-out infinite;
-    transform: skewX(-15deg);
-  }
-  @keyframes sparkle-sweep {
-    0% { left: -100%; }
-    50%, 100% { left: 200%; }
-  }
-
-  /* 按钮样式 */
-  .btn-pink {
-    background: linear-gradient(135deg, #FF1493, #DB2777);
-    color: white;
-    border: none;
-    padding: 12px 28px;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 20px rgba(255,20,147,0.3);
-    font-family: 'Outfit', sans-serif;
-    font-size: 15px;
-  }
-  .btn-pink:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(255,20,147,0.45);
-  }
-  .btn-outline {
-    background: transparent;
-    color: #FF69B4;
-    border: 1px solid rgba(255,20,147,0.3);
-    padding: 12px 28px;
-    border-radius: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: 'Outfit', sans-serif;
-    font-size: 15px;
-  }
-  .btn-outline:hover {
-    background: rgba(255,20,147,0.08);
-    border-color: rgba(255,20,147,0.5);
-    transform: translateY(-2px);
-  }
-  .btn-ghost {
-    background: rgba(255,20,147,0.08);
-    color: #FF69B4;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: 'Outfit', sans-serif;
-    font-size: 14px;
-  }
-  .btn-ghost:hover { background: rgba(255,20,147,0.15); }
-
-  /* 链接按钮 */
-  .link-btn {
-    display: flex; align-items: center; gap: 12px;
-    width: 100%;
-    padding: 14px 18px;
-    background: rgba(255,20,147,0.06);
-    border: 1px solid rgba(255,20,147,0.1);
-    border-radius: 14px;
-    color: #F5F0F2;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    font-family: 'Outfit', sans-serif;
-    font-size: 14px;
-  }
-  .link-btn:hover {
-    background: rgba(255,20,147,0.12);
-    border-color: rgba(255,20,147,0.25);
-    transform: translateX(4px);
-    box-shadow: 0 4px 20px rgba(255,20,147,0.1);
-  }
-  .link-btn i {
-    width: 20px; text-align: center;
-    color: #FF69B4;
-    font-size: 16px;
-  }
-
-  /* 徽章 */
-  .badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: default;
-    transition: all 0.3s ease;
-    position: relative;
-    white-space: nowrap;
-  }
-  .badge:hover { transform: scale(1.1); }
-  .badge-verified { background: rgba(59,130,246,0.15); color: #60A5FA; border: 1px solid rgba(59,130,246,0.2); }
-  .badge-premium { background: rgba(255,20,147,0.15); color: #FF69B4; border: 1px solid rgba(255,20,147,0.25); }
-  .badge-staff { background: rgba(168,85,247,0.15); color: #C084FC; border: 1px solid rgba(168,85,247,0.2); }
-  .badge-early { background: rgba(251,191,36,0.12); color: #FCD34D; border: 1px solid rgba(251,191,36,0.2); }
-  .badge-pearl { background: rgba(253,226,243,0.12); color: #FDE2F3; border: 1px solid rgba(253,226,243,0.2); }
-  .badge-custom { background: rgba(52,211,153,0.12); color: #6EE7B7; border: 1px solid rgba(52,211,153,0.2); }
-
-  /* 徽章工具提示 */
-  .badge .badge-tip {
-    position: absolute; bottom: calc(100% + 8px); left: 50%;
-    transform: translateX(-50%) scale(0.9);
-    background: #1A1A24;
-    border: 1px solid rgba(255,20,147,0.2);
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 11px;
-    color: #F5F0F2;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.2s ease;
-    z-index: 50;
-  }
-  .badge:hover .badge-tip { opacity: 1; transform: translateX(-50%) scale(1); }
-
-  /* Discord 在线状态 */
-  .status-dot {
-    width: 10px; height: 10px; border-radius: 50%;
-    display: inline-block; flex-shrink: 0;
-  }
-  .status-online { background: #22C55E; box-shadow: 0 0 6px rgba(34,197,94,0.5); }
-  .status-idle { background: #FCD34D; box-shadow: 0 0 6px rgba(252,211,77,0.5); }
-  .status-dnd { background: #EF4444; box-shadow: 0 0 6px rgba(239,68,68,0.5); }
-  .status-offline { background: #6B7280; }
-
-  /* 音乐播放器 */
-  .music-bar {
-    width: 100%; height: 3px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .music-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #FF1493, #FF69B4);
-    border-radius: 2px;
-    transition: width 0.3s linear;
-  }
-
-  /* 模态框 */
-  .modal-overlay {
-    position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(8px);
-    z-index: 1000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  .modal-overlay.open { display: flex; }
-
-  /* Toast 通知 */
-  .toast {
-    position: fixed; bottom: 24px; right: 24px;
-    padding: 14px 24px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 500;
-    z-index: 2000;
-    transform: translateY(100px);
-    opacity: 0;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    max-width: 360px;
-  }
-  .toast.show { transform: translateY(0); opacity: 1; }
-  .toast-success { background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); color: #86EFAC; }
-  .toast-error { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #FCA5A5; }
-  .toast-info { background: rgba(255,20,147,0.15); border: 1px solid rgba(255,20,147,0.3); color: #FF69B4; }
-
-  /* 效果切换器 */
-  .fx-switcher {
-    position: fixed; bottom: 24px; right: 24px;
-    z-index: 100;
-  }
-  .fx-toggle-btn {
-    width: 48px; height: 48px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #FF1493, #DB2777);
-    border: none;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-    box-shadow: 0 4px 20px rgba(255,20,147,0.4);
-    transition: all 0.3s;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .fx-toggle-btn:hover { transform: scale(1.1); }
-  .fx-panel {
-    position: absolute; bottom: 60px; right: 0;
-    background: rgba(22,22,31,0.95);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,20,147,0.2);
-    border-radius: 16px;
-    padding: 16px;
-    min-width: 200px;
-    display: none;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-  }
-  .fx-panel.open { display: block; }
-  .fx-option {
-    display: block; width: 100%;
-    padding: 8px 12px;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    color: #F5F0F2;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: left;
-    font-family: 'Outfit', sans-serif;
-  }
-  .fx-option:hover { background: rgba(255,20,147,0.08); }
-  .fx-option.active { background: rgba(255,20,147,0.12); border-color: rgba(255,20,147,0.3); color: #FF69B4; }
-
-  /* 管理面板侧边栏 */
-  .admin-sidebar {
-    width: 240px;
-    background: rgba(16,16,24,0.95);
-    border-right: 1px solid rgba(255,20,147,0.08);
-    height: calc(100vh - 65px);
-    position: sticky;
-    top: 65px;
-    flex-shrink: 0;
-  }
-  .admin-nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 16px;
-    color: #8B7A8E;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-    border-left: 2px solid transparent;
-    font-family: 'Outfit', sans-serif;
-    background: none; border-right: none; border-top: none; border-bottom: none;
-    width: 100%; text-align: left;
-  }
-  .admin-nav-item:hover { color: #F5F0F2; background: rgba(255,20,147,0.04); }
-  .admin-nav-item.active {
-    color: #FF69B4;
-    background: rgba(255,20,147,0.08);
-    border-left-color: #FF1493;
-  }
-  .admin-nav-item i { width: 18px; text-align: center; }
-
-  /* 统计卡片 */
-  .stat-card {
-    background: rgba(22,22,31,0.6);
-    border: 1px solid rgba(255,20,147,0.1);
-    border-radius: 16px;
-    padding: 20px;
-    transition: all 0.3s;
-  }
-  .stat-card:hover {
-    border-color: rgba(255,20,147,0.2);
-    box-shadow: 0 4px 20px rgba(255,20,147,0.06);
-  }
-
-  /* 表格 */
-  .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
-  .data-table th {
-    padding: 12px 16px;
-    text-align: left;
-    font-size: 12px;
-    font-weight: 600;
-    color: #8B7A8E;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-bottom: 1px solid rgba(255,20,147,0.08);
-  }
-  .data-table td {
-    padding: 12px 16px;
-    font-size: 13px;
-    border-bottom: 1px solid rgba(255,20,147,0.05);
-    vertical-align: middle;
-  }
-  .data-table tr:hover td { background: rgba(255,20,147,0.03); }
-
-  /* 输入框 */
-  .input-field {
-    width: 100%;
-    padding: 10px 14px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,20,147,0.12);
-    border-radius: 10px;
-    color: #F5F0F2;
-    font-size: 14px;
-    font-family: 'Outfit', sans-serif;
-    transition: all 0.2s;
-    outline: none;
-  }
-  .input-field:focus {
-    border-color: rgba(255,20,147,0.4);
-    box-shadow: 0 0 0 3px rgba(255,20,147,0.08);
-  }
-  .input-field::placeholder { color: #4A3F4E; }
-
-  /* 定制面板标签 */
-  .custom-tab {
-    padding: 8px 16px;
-    font-size: 13px;
-    font-weight: 500;
-    color: #8B7A8E;
-    border: none;
-    background: none;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    font-family: 'Outfit', sans-serif;
-  }
-  .custom-tab:hover { color: #F5F0F2; }
-  .custom-tab.active { color: #FF69B4; border-bottom-color: #FF1493; }
-
-  /* 浮动装饰球 */
-  .deco-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.15;
-    pointer-events: none;
-    animation: orb-float 20s ease-in-out infinite;
-  }
-  @keyframes orb-float {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    25% { transform: translate(30px, -40px) scale(1.1); }
-    50% { transform: translate(-20px, 20px) scale(0.9); }
-    75% { transform: translate(40px, 30px) scale(1.05); }
-  }
-
-  /* 淡入动画 */
-  .fade-up {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .fade-up.visible { opacity: 1; transform: translateY(0); }
-
-  /* 个人资料卡片变体 */
-  .profile-card-default { border-radius: 24px; }
-  .profile-card-glass {
-    border-radius: 24px;
-    background: rgba(15,10,18,0.7);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255,20,147,0.15);
-    box-shadow: 0 0 40px rgba(255,20,147,0.08), 0 25px 60px rgba(0,0,0,0.5),
-                inset 0 1px 0 rgba(255,255,255,0.04);
-  }
-  .profile-card-minimal {
-    border-radius: 12px;
-    background: rgba(22,22,31,0.9);
-    border: 1px solid rgba(255,255,255,0.06);
-  }
-  .profile-card-portfolio {
-    border-radius: 8px;
-    background: rgba(22,22,31,0.85);
-    border-left: 3px solid #FF1493;
-  }
-
-  /* 脉冲动画 */
-  @keyframes pulse-pink {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(255,20,147,0.4); }
-    50% { box-shadow: 0 0 0 8px rgba(255,20,147,0); }
-  }
-
-  /* 角色标签 */
-  .role-tag {
-    padding: 2px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 600;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .role-owner { background: rgba(255,20,147,0.15); color: #FF69B4; }
-  .role-manager { background: rgba(168,85,247,0.15); color: #C084FC; }
-  .role-admin { background: rgba(59,130,246,0.15); color: #60A5FA; }
-  .role-mod { background: rgba(52,211,153,0.12); color: #6EE7B7; }
-  .role-user { background: rgba(255,255,255,0.06); color: #8B7A8E; }
-
-  /* 价格卡片高亮 */
-  .pricing-highlight {
-    border: 1px solid rgba(255,20,147,0.4) !important;
-    box-shadow: 0 0 60px rgba(255,20,147,0.12), 0 25px 60px rgba(0,0,0,0.4) !important;
-    position: relative;
-  }
-  .pricing-highlight::before {
-    content: 'Most Popular';
-    position: absolute;
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(135deg, #FF1493, #DB2777);
-    color: white;
-    padding: 4px 16px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-  }
-
-  /* 减少动效偏好 */
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
-  }
-
-  /* 响应式 */
-  @media (max-width: 768px) {
-    .admin-sidebar { display: none; }
-    .fx-switcher { bottom: 16px; right: 16px; }
-  }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:#0A0A0F;color:#F5F0F2;overflow-x:hidden;min-height:100vh}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#0A0A0F}
+::-webkit-scrollbar-thumb{background:rgba(255,20,147,0.3);border-radius:3px}
+#fx-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.page{display:none;position:relative;z-index:1;min-height:100vh}
+.page.active{display:block}
+.nav-glass{background:rgba(10,10,15,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,20,147,0.1)}
+.glass{background:rgba(22,22,31,0.75);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,20,147,0.12);box-shadow:0 0 40px rgba(255,20,147,0.06),0 25px 60px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.04)}
+.glass-strong{background:rgba(22,22,31,0.9);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:1px solid rgba(255,20,147,0.18);box-shadow:0 0 60px rgba(255,20,147,0.08),0 30px 80px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06)}
+.text-pearl{background:linear-gradient(135deg,#FF1493,#FF69B4,#FDE2F3,#FF69B4,#DB2777,#FF1493);background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:pearl-shift 6s ease infinite}
+@keyframes pearl-shift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.name-neon{color:#FF1493;text-shadow:0 0 7px #FF1493,0 0 12px #FF1493,0 0 24px rgba(255,20,147,0.6),0 0 48px rgba(219,39,119,0.4)}
+.name-glitch{position:relative;color:#F5F0F2;animation:glitch-skew 4s infinite linear alternate-reverse}
+.name-glitch::before,.name-glitch::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
+.name-glitch::before{color:#FF69B4;animation:glitch-c1 3s infinite linear alternate-reverse;clip-path:polygon(0 0,100% 0,100% 40%,0 40%);transform:translate(-3px,-1px)}
+.name-glitch::after{color:#DB2777;animation:glitch-c2 2s infinite linear alternate-reverse;clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%);transform:translate(3px,1px)}
+@keyframes glitch-skew{0%{transform:skew(0deg)}20%{transform:skew(-0.5deg)}40%{transform:skew(0.3deg)}60%{transform:skew(0deg)}80%{transform:skew(-0.2deg)}100%{transform:skew(0deg)}}
+@keyframes glitch-c1{0%{clip-path:polygon(0 0,100% 0,100% 40%,0 40%);transform:translate(-3px,-1px)}50%{clip-path:polygon(0 15%,100% 15%,100% 50%,0 50%);transform:translate(2px,0)}100%{clip-path:polygon(0 0,100% 0,100% 40%,0 40%);transform:translate(-3px,-1px)}}
+@keyframes glitch-c2{0%{clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%);transform:translate(3px,1px)}50%{clip-path:polygon(0 50%,100% 50%,100% 85%,0 85%);transform:translate(-2px,0)}100%{clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%);transform:translate(3px,1px)}}
+.name-gradient{background:linear-gradient(90deg,#FF1493,#FF69B4,#FDE2F3,#FF69B4,#FF1493);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:grad-slide 3s linear infinite}
+@keyframes grad-slide{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+.name-holographic{background:linear-gradient(90deg,#FF1493,#FF69B4,#FDE2F3,#C084FC,#FF69B4,#FF1493);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:holo-shift 4s ease infinite;filter:drop-shadow(0 0 8px rgba(255,20,147,0.4))}
+@keyframes holo-shift{0%{background-position:0% 50%}50%{background-position:150% 50%}100%{background-position:300% 50%}}
+.name-sparkle{position:relative;color:#F5F0F2;overflow:hidden}
+.name-sparkle::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.35),transparent);animation:sparkle-sweep 3s ease-in-out infinite;transform:skewX(-15deg)}
+@keyframes sparkle-sweep{0%{left:-100%}50%,100%{left:200%}}
+.btn-pink{background:linear-gradient(135deg,#FF1493,#DB2777);color:#fff;border:none;padding:12px 28px;border-radius:12px;font-weight:600;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(255,20,147,0.3);font-family:'Outfit',sans-serif;font-size:15px}
+.btn-pink:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,20,147,0.45)}
+.btn-outline{background:transparent;color:#FF69B4;border:1px solid rgba(255,20,147,0.3);padding:12px 28px;border-radius:12px;font-weight:500;cursor:pointer;transition:all .3s;font-family:'Outfit',sans-serif;font-size:15px}
+.btn-outline:hover{background:rgba(255,20,147,0.08);border-color:rgba(255,20,147,0.5);transform:translateY(-2px)}
+.btn-ghost{background:rgba(255,20,147,0.08);color:#FF69B4;border:none;padding:8px 16px;border-radius:8px;font-weight:500;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;font-size:14px}
+.btn-ghost:hover{background:rgba(255,20,147,0.15)}
+.link-btn{display:flex;align-items:center;gap:12px;width:100%;padding:14px 18px;background:rgba(255,20,147,0.06);border:1px solid rgba(255,20,147,0.1);border-radius:14px;color:#F5F0F2;text-decoration:none;font-weight:500;transition:all .3s;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px}
+.link-btn:hover{background:rgba(255,20,147,0.12);border-color:rgba(255,20,147,0.25);transform:translateX(4px);box-shadow:0 4px 20px rgba(255,20,147,0.1)}
+.link-btn i{width:20px;text-align:center;color:#FF69B4;font-size:16px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;cursor:default;transition:all .3s;position:relative;white-space:nowrap}
+.badge:hover{transform:scale(1.1)}
+.badge-verified{background:rgba(59,130,246,0.15);color:#60A5FA;border:1px solid rgba(59,130,246,0.2)}
+.badge-premium{background:rgba(255,20,147,0.15);color:#FF69B4;border:1px solid rgba(255,20,147,0.25)}
+.badge-staff{background:rgba(168,85,247,0.15);color:#C084FC;border:1px solid rgba(168,85,247,0.2)}
+.badge-early{background:rgba(251,191,36,0.12);color:#FCD34D;border:1px solid rgba(251,191,36,0.2)}
+.badge-pearl{background:rgba(253,226,243,0.12);color:#FDE2F3;border:1px solid rgba(253,226,243,0.2)}
+.badge .badge-tip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) scale(0.9);background:#1A1A24;border:1px solid rgba(255,20,147,0.2);padding:6px 12px;border-radius:8px;font-size:11px;color:#F5F0F2;white-space:nowrap;opacity:0;pointer-events:none;transition:all .2s;z-index:50}
+.badge:hover .badge-tip{opacity:1;transform:translateX(-50%) scale(1)}
+.status-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
+.status-online{background:#22C55E;box-shadow:0 0 6px rgba(34,197,94,0.5)}
+.status-idle{background:#FCD34D;box-shadow:0 0 6px rgba(252,211,77,0.5)}
+.status-dnd{background:#EF4444;box-shadow:0 0 6px rgba(239,68,68,0.5)}
+.music-bar{width:100%;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden}
+.music-fill{height:100%;background:linear-gradient(90deg,#FF1493,#FF69B4);border-radius:2px;transition:width .3s linear}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.toast{position:fixed;bottom:24px;right:24px;padding:14px 24px;border-radius:12px;font-size:14px;font-weight:500;z-index:2000;transform:translateY(100px);opacity:0;transition:all .4s cubic-bezier(0.16,1,0.3,1);max-width:360px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-success{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#86EFAC}
+.toast-error{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#FCA5A5}
+.toast-info{background:rgba(255,20,147,0.15);border:1px solid rgba(255,20,147,0.3);color:#FF69B4}
+.fx-switcher{position:fixed;bottom:24px;right:24px;z-index:100}
+.fx-toggle-btn{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#FF1493,#DB2777);border:none;color:#fff;font-size:18px;cursor:pointer;box-shadow:0 4px 20px rgba(255,20,147,0.4);transition:all .3s;display:flex;align-items:center;justify-content:center}
+.fx-toggle-btn:hover{transform:scale(1.1)}
+.fx-panel{position:absolute;bottom:60px;right:0;background:rgba(22,22,31,0.95);backdrop-filter:blur(20px);border:1px solid rgba(255,20,147,0.2);border-radius:16px;padding:16px;min-width:200px;display:none;box-shadow:0 10px 40px rgba(0,0,0,0.5)}
+.fx-panel.open{display:block}
+.fx-option{display:block;width:100%;padding:8px 12px;background:transparent;border:1px solid transparent;border-radius:8px;color:#F5F0F2;font-size:13px;cursor:pointer;transition:all .2s;text-align:left;font-family:'Outfit',sans-serif}
+.fx-option:hover{background:rgba(255,20,147,0.08)}
+.fx-option.active{background:rgba(255,20,147,0.12);border-color:rgba(255,20,147,0.3);color:#FF69B4}
+.admin-sidebar{width:240px;background:rgba(16,16,24,0.95);border-right:1px solid rgba(255,20,147,0.08);height:calc(100vh - 65px);position:sticky;top:65px;flex-shrink:0}
+.admin-nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:#8B7A8E;font-size:14px;cursor:pointer;transition:all .2s;border-left:2px solid transparent;font-family:'Outfit',sans-serif;background:none;border-right:none;border-top:none;border-bottom:none;width:100%;text-align:left}
+.admin-nav-item:hover{color:#F5F0F2;background:rgba(255,20,147,0.04)}
+.admin-nav-item.active{color:#FF69B4;background:rgba(255,20,147,0.08);border-left-color:#FF1493}
+.admin-nav-item i{width:18px;text-align:center}
+.stat-card{background:rgba(22,22,31,0.6);border:1px solid rgba(255,20,147,0.1);border-radius:16px;padding:20px;transition:all .3s}
+.stat-card:hover{border-color:rgba(255,20,147,0.2);box-shadow:0 4px 20px rgba(255,20,147,0.06)}
+.data-table{width:100%;border-collapse:separate;border-spacing:0}
+.data-table th{padding:12px 16px;text-align:left;font-size:12px;font-weight:600;color:#8B7A8E;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid rgba(255,20,147,0.08)}
+.data-table td{padding:12px 16px;font-size:13px;border-bottom:1px solid rgba(255,20,147,0.05);vertical-align:middle}
+.data-table tr:hover td{background:rgba(255,20,147,0.03)}
+.input-field{width:100%;padding:10px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,20,147,0.12);border-radius:10px;color:#F5F0F2;font-size:14px;font-family:'Outfit',sans-serif;transition:all .2s;outline:none}
+.input-field:focus{border-color:rgba(255,20,147,0.4);box-shadow:0 0 0 3px rgba(255,20,147,0.08)}
+.input-field::placeholder{color:#4A3F4E}
+.custom-tab{padding:8px 16px;font-size:13px;font-weight:500;color:#8B7A8E;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:'Outfit',sans-serif}
+.custom-tab:hover{color:#F5F0F2}
+.custom-tab.active{color:#FF69B4;border-bottom-color:#FF1493}
+.deco-orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.15;pointer-events:none;animation:orb-float 20s ease-in-out infinite}
+@keyframes orb-float{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(30px,-40px) scale(1.1)}50%{transform:translate(-20px,20px) scale(.9)}75%{transform:translate(40px,30px) scale(1.05)}}
+.fade-up{opacity:0;transform:translateY(30px);transition:all .8s cubic-bezier(0.16,1,0.3,1)}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+.profile-card-default{border-radius:24px;background:rgba(22,22,31,0.85);border:1px solid rgba(255,20,147,0.12)}
+.profile-card-glass{border-radius:24px;background:rgba(15,10,18,0.7);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,20,147,0.15);box-shadow:0 0 40px rgba(255,20,147,0.08),0 25px 60px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.04)}
+.profile-card-minimal{border-radius:12px;background:rgba(22,22,31,0.92);border:1px solid rgba(255,255,255,0.06)}
+.profile-card-portfolio{border-radius:8px;background:rgba(22,22,31,0.88);border-left:3px solid #FF1493}
+.role-tag{padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace}
+.role-owner{background:rgba(255,20,147,0.15);color:#FF69B4}
+.role-manager{background:rgba(168,85,247,0.15);color:#C084FC}
+.role-admin{background:rgba(59,130,246,0.15);color:#60A5FA}
+.role-mod{background:rgba(52,211,153,0.12);color:#6EE7B7}
+.role-user{background:rgba(255,255,255,0.06);color:#8B7A8E}
+.pricing-highlight{border:1px solid rgba(255,20,147,0.4)!important;box-shadow:0 0 60px rgba(255,20,147,0.12),0 25px 60px rgba(0,0,0,0.4)!important;position:relative}
+.pricing-highlight::before{content:'Most Popular';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#FF1493,#DB2777);color:#fff;padding:4px 16px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.03em}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+@media(max-width:768px){.admin-sidebar{display:none}.fx-switcher{bottom:16px;right:16px}}
 </style>
 </head>
 <body>
-
-<!-- 全局特效画布 -->
 <canvas id="fx-canvas" aria-hidden="true"></canvas>
 
 <!-- 导航栏 -->
 <nav class="nav-glass fixed top-0 left-0 w-full z-50" role="navigation" aria-label="Main navigation">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-    <a href="#/" class="flex items-center gap-2 no-underline" aria-label="seashell.lol home">
+    <a href="#/" class="flex items-center gap-2 no-underline" aria-label="Home">
       <i class="fa-solid fa-shrimp text-ss-pink text-xl"></i>
       <span class="font-display font-bold text-lg text-pearl">seashell.lol</span>
     </a>
-    <div class="hidden sm:flex items-center gap-6">
-      <a href="#/" class="text-ss-muted hover:text-ss-text text-sm font-medium no-underline transition-colors">Home</a>
-      <a href="#/u/sakura" class="text-ss-muted hover:text-ss-text text-sm font-medium no-underline transition-colors">Example</a>
-      <a href="#/admin" class="text-ss-muted hover:text-ss-text text-sm font-medium no-underline transition-colors">Admin</a>
-      <a href="#/customize" class="text-ss-muted hover:text-ss-text text-sm font-medium no-underline transition-colors">Customize</a>
-    </div>
-    <div class="flex items-center gap-3">
-      <button class="btn-ghost hidden sm:block" onclick="openAuth('login')">Log In</button>
-      <button class="btn-pink text-sm !py-2 !px-5" onclick="openAuth('register')">Get Started</button>
-    </div>
+    <div id="nav-links" class="hidden sm:flex items-center gap-6"></div>
+    <div id="nav-actions" class="flex items-center gap-3"></div>
   </div>
 </nav>
 
 <!-- 认证模态框 -->
 <div id="auth-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Authentication">
-  <div class="glass-strong rounded-2xl p-8 w-full max-w-md relative" id="auth-box">
-    <button onclick="closeAuth()" class="absolute top-4 right-4 text-ss-muted hover:text-ss-text transition-colors text-lg" aria-label="Close">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
+  <div class="glass-strong rounded-2xl p-8 w-full max-w-md relative">
+    <button onclick="closeAuth()" class="absolute top-4 right-4 text-ss-muted hover:text-ss-text transition-colors text-lg bg-transparent border-none cursor-pointer" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
     <div class="text-center mb-6">
       <i class="fa-solid fa-shrimp text-ss-pink text-3xl mb-3"></i>
       <h2 class="font-display text-2xl font-bold" id="auth-title">Welcome Back</h2>
       <p class="text-ss-muted text-sm mt-1" id="auth-subtitle">Sign in to your seashell account</p>
     </div>
-    <!-- 登录/注册表单 -->
     <div id="auth-form" class="space-y-4">
       <div id="auth-name-field" style="display:none">
         <label class="block text-xs font-medium text-ss-muted mb-1.5">Display Name</label>
@@ -674,391 +155,245 @@ tailwind.config = {
       </div>
       <button class="btn-pink w-full !mt-6" id="auth-submit" onclick="handleAuth()">Sign In</button>
     </div>
-    <!-- 社交登录 -->
     <div class="flex items-center gap-3 my-5">
-      <div class="flex-1 h-px bg-ss-border"></div>
+      <div class="flex-1 h-px" style="background:rgba(255,20,147,0.18)"></div>
       <span class="text-ss-muted text-xs">or continue with</span>
-      <div class="flex-1 h-px bg-ss-border"></div>
+      <div class="flex-1 h-px" style="background:rgba(255,20,147,0.18)"></div>
     </div>
     <div class="grid grid-cols-2 gap-3">
-      <button class="btn-outline !py-3 flex items-center justify-center gap-2 text-sm" onclick="socialAuth('google')">
-        <i class="fa-brands fa-google"></i> Google
-      </button>
-      <button class="btn-outline !py-3 flex items-center justify-center gap-2 text-sm" onclick="socialAuth('discord')">
-        <i class="fa-brands fa-discord"></i> Discord
-      </button>
+      <button class="btn-outline !py-3 flex items-center justify-center gap-2 text-sm" onclick="socialAuth('google')"><i class="fa-brands fa-google"></i> Google</button>
+      <button class="btn-outline !py-3 flex items-center justify-center gap-2 text-sm" onclick="socialAuth('discord')"><i class="fa-brands fa-discord"></i> Discord</button>
     </div>
     <p class="text-center text-sm text-ss-muted mt-5">
       <span id="auth-toggle-text">Don't have an account?</span>
-      <button class="text-ss-pink hover:underline font-medium ml-1 bg-transparent border-none cursor-pointer font-[Outfit]" id="auth-toggle-btn" onclick="toggleAuthMode()">Sign Up</button>
+      <button class="text-ss-pink hover:underline font-medium ml-1 bg-transparent border-none cursor-pointer" style="font-family:'Outfit',sans-serif" id="auth-toggle-btn" onclick="toggleAuthMode()">Sign Up</button>
     </p>
   </div>
 </div>
 
-<!-- 主内容区域 -->
-<main id="app">
+<!-- 未授权提示页 -->
+<section id="page-unauthorized" class="page">
+  <div class="min-h-screen flex items-center justify-center px-4 pt-16">
+    <div class="text-center">
+      <div class="w-20 h-20 rounded-full bg-ss-pink/10 flex items-center justify-center mx-auto mb-6">
+        <i class="fa-solid fa-lock text-ss-pink text-2xl"></i>
+      </div>
+      <h1 class="font-display text-3xl font-bold mb-3">Access Denied</h1>
+      <p class="text-ss-muted text-lg mb-8 max-w-md" id="unauth-msg">You need to sign in to access this page.</p>
+      <button class="btn-pink" onclick="openAuth('login')">Sign In</button>
+    </div>
+  </div>
+</section>
 
-  <!-- ==================== 着陆页 ==================== -->
-  <section id="page-landing" class="page active">
-    <!-- Hero -->
-    <div class="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-      <!-- 装饰球 -->
-      <div class="deco-orb w-96 h-96 bg-ss-pink top-1/4 -left-48" style="animation-delay: -5s;"></div>
-      <div class="deco-orb w-80 h-80 bg-purple-500 bottom-1/4 -right-40" style="animation-delay: -10s;"></div>
-      <div class="deco-orb w-64 h-64 bg-rose-400 top-10 right-1/3" style="animation-delay: -15s; opacity: 0.08;"></div>
-
-      <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
-        <div class="fade-up" data-delay="0">
-          <div class="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-8 text-sm text-ss-muted">
-            <span class="status-dot status-online"></span>
-            <span>Over 12,000 beautiful profiles created</span>
-          </div>
+<!-- 着陆页 -->
+<section id="page-landing" class="page">
+  <div class="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
+    <div class="deco-orb w-96 h-96 bg-ss-pink top-1/4 -left-48" style="animation-delay:-5s"></div>
+    <div class="deco-orb w-80 h-80 bg-purple-500 bottom-1/4 -right-40" style="animation-delay:-10s"></div>
+    <div class="deco-orb w-64 h-64 bg-rose-400 top-10 right-1/3" style="animation-delay:-15s;opacity:.08"></div>
+    <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
+      <div class="fade-up" data-delay="0">
+        <div class="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-8 text-sm text-ss-muted">
+          <span class="status-dot status-online"></span>
+          <span>Over 12,000 beautiful profiles created</span>
         </div>
-        <h1 class="fade-up font-display text-5xl sm:text-7xl lg:text-8xl font-black leading-[0.95] mb-6" data-delay="100">
-          Your beautiful<br>
-          <span class="text-pearl">corner of the</span><br>
-          internet
-        </h1>
-        <p class="fade-up text-ss-muted text-lg sm:text-xl max-w-xl mx-auto mb-10 leading-relaxed" data-delay="200">
-          Claim your username, customize every pixel, and create a stunning bio page that truly represents you.
-        </p>
-        <div class="fade-up flex flex-col sm:flex-row items-center justify-center gap-4" data-delay="300">
-          <button class="btn-pink text-base !px-8 !py-4" onclick="openAuth('register')">
-            Claim Your Name
-          </button>
-          <button class="btn-outline text-base !px-8 !py-4" onclick="navigate('/u/sakura')">
-            View Examples
-          </button>
-        </div>
-        <!-- 预览卡片 -->
-        <div class="fade-up mt-16" data-delay="400">
-          <div class="glass rounded-2xl p-1.5 max-w-sm mx-auto" style="transform: perspective(1200px) rotateX(5deg);">
-            <div class="rounded-xl overflow-hidden" style="background: rgba(10,10,15,0.9);">
-              <div class="h-24 bg-gradient-to-r from-ss-pink/30 via-rose-500/20 to-purple-500/30 relative">
-                <div class="absolute inset-0 bg-[url('https://picsum.photos/seed/hero-banner/400/150.jpg')] bg-cover bg-center opacity-40"></div>
+      </div>
+      <h1 class="fade-up font-display text-5xl sm:text-7xl lg:text-8xl font-black leading-[0.95] mb-6" data-delay="100">
+        Your beautiful<br><span class="text-pearl">corner of the</span><br>internet
+      </h1>
+      <p class="fade-up text-ss-muted text-lg sm:text-xl max-w-xl mx-auto mb-10 leading-relaxed" data-delay="200">
+        Claim your username, customize every pixel, and create a stunning bio page that truly represents you.
+      </p>
+      <div class="fade-up flex flex-col sm:flex-row items-center justify-center gap-4" data-delay="300">
+        <button class="btn-pink text-base !px-8 !py-4" onclick="openAuth('register')">Claim Your Name</button>
+        <button class="btn-outline text-base !px-8 !py-4" onclick="navigate('/u/sakura')">View Examples</button>
+      </div>
+      <div class="fade-up mt-16" data-delay="400">
+        <div class="glass rounded-2xl p-1.5 max-w-sm mx-auto" style="transform:perspective(1200px) rotateX(5deg)">
+          <div class="rounded-xl overflow-hidden" style="background:rgba(10,10,15,0.9)">
+            <div class="h-24 bg-gradient-to-r from-ss-pink/30 via-rose-500/20 to-purple-500/30 relative">
+              <div class="absolute inset-0 bg-cover bg-center opacity-40" style="background-image:url('https://picsum.photos/seed/hero-banner/400/150.jpg')"></div>
+            </div>
+            <div class="px-5 pb-5 -mt-8 relative">
+              <img src="https://picsum.photos/seed/hero-avatar/100/100.jpg" class="w-16 h-16 rounded-2xl object-cover" style="border:3px solid #0A0A0F" alt="Avatar">
+              <h3 class="font-display font-bold text-lg mt-2 name-neon">yourname</h3>
+              <p class="text-ss-muted text-xs" style="font-family:'JetBrains Mono',monospace">#0000001</p>
+              <p class="text-ss-muted text-sm mt-2">Digital creator & dreamer</p>
+              <div class="flex gap-1.5 mt-3">
+                <span class="badge badge-verified"><i class="fa-solid fa-check text-[9px]"></i></span>
+                <span class="badge badge-premium"><i class="fa-solid fa-crown text-[9px]"></i></span>
               </div>
-              <div class="px-5 pb-5 -mt-8 relative">
-                <img src="https://picsum.photos/seed/hero-avatar/100/100.jpg" class="w-16 h-16 rounded-2xl border-3 border-ss-bg object-cover" style="border: 3px solid #0A0A0F;" alt="Avatar">
-                <h3 class="font-display font-bold text-lg mt-2 name-neon">yourname</h3>
-                <p class="text-ss-muted text-xs font-mono">#0000001</p>
-                <p class="text-ss-muted text-sm mt-2">Digital creator & dreamer</p>
-                <div class="flex gap-1.5 mt-3">
-                  <span class="badge badge-verified"><i class="fa-solid fa-check text-[9px]"></i></span>
-                  <span class="badge badge-premium"><i class="fa-solid fa-crown text-[9px]"></i></span>
-                </div>
-                <div class="mt-4 space-y-2">
-                  <div class="link-btn !py-2.5 !text-sm !rounded-lg"><i class="fa-brands fa-x-twitter"></i> Twitter</div>
-                  <div class="link-btn !py-2.5 !text-sm !rounded-lg"><i class="fa-brands fa-instagram"></i> Instagram</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 功能特性 -->
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-24">
-      <div class="text-center mb-16 fade-up">
-        <h2 class="font-display text-3xl sm:text-5xl font-bold mb-4">Everything you need to <span class="text-pearl">shine</span></h2>
-        <p class="text-ss-muted text-lg max-w-lg mx-auto">Powerful customization, stunning effects, and seamless integrations — all in one place.</p>
-      </div>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        <div class="glass rounded-2xl p-6 fade-up" data-delay="0">
-          <div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4">
-            <i class="fa-solid fa-wand-magic-sparkles text-ss-pink"></i>
-          </div>
-          <h3 class="font-semibold text-lg mb-2">Stunning Effects</h3>
-          <p class="text-ss-muted text-sm leading-relaxed">Aurora, petals, sparkles, rain, snow, and more — transform your profile background into a living canvas.</p>
-        </div>
-        <div class="glass rounded-2xl p-6 fade-up" data-delay="50">
-          <div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4">
-            <i class="fa-solid fa-palette text-ss-pink"></i>
-          </div>
-          <h3 class="font-semibold text-lg mb-2">Full Customization</h3>
-          <p class="text-ss-muted text-sm leading-relaxed">Colors, fonts, card styles, name effects, badges, cursor, audio — every detail is yours to control.</p>
-        </div>
-        <div class="glass rounded-2xl p-6 fade-up" data-delay="100">
-          <div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4">
-            <i class="fa-solid fa-music text-ss-pink"></i>
-          </div>
-          <h3 class="font-semibold text-lg mb-2">Music Player</h3>
-          <p class="text-ss-muted text-sm leading-relaxed">Embed a sleek music player with cover art, progress bar, and track info — just like haunt.gg.</p>
-        </div>
-        <div class="glass rounded-2xl p-6 fade-up" data-delay="150">
-          <div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4">
-            <i class="fa-brands fa-discord text-ss-pink"></i>
-          </div>
-          <h3 class="font-semibold text-lg mb-2">Discord Integration</h3>
-          <p class="text-ss-muted text-sm leading-relaxed">Sync your avatar, show your Discord status, and display current activity on your profile.</p>
-        </div>
-        <div class="glass rounded-2xl p-6 fade-up" data-delay="200">
-          <div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4">
-            <i class="fa-solid fa-shield-halved text-ss-pink"></i>
-          </div>
-          <h3 class="font-semibold text-lg mb-2">Badges System</h3>
-          <p class="text-ss-muted text-sm leading-relaxed">Earn official badges or upload custom ones. Show off your status with beautiful hover effects.</p>
-        </div>
-        <div class="glass rounded-2xl p-6 fade-up" data-delay="250">
-          <div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4">
-            <i class="fa-solid fa-chart-line text-ss-pink"></i>
-          </div>
-          <h3 class="font-semibold text-lg mb-2">Analytics</h3>
-          <p class="text-ss-muted text-sm leading-relaxed">Track profile views, link clicks, and visitor data with a built-in analytics dashboard.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- 示例档案预览 -->
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16">
-      <div class="text-center mb-12 fade-up">
-        <h2 class="font-display text-3xl sm:text-4xl font-bold mb-3">See what others have built</h2>
-        <p class="text-ss-muted">Click any profile to see it in full</p>
-      </div>
-      <div class="grid sm:grid-cols-3 gap-6">
-        <div class="glass rounded-2xl p-5 cursor-pointer hover:border-ss-pink/30 transition-all hover:-translate-y-1 fade-up" onclick="navigate('/u/sakura')" data-delay="0">
-          <div class="flex items-center gap-3 mb-3">
-            <img src="https://picsum.photos/seed/ex-sakura/60/60.jpg" class="w-10 h-10 rounded-xl object-cover" alt="Sakura">
-            <div>
-              <div class="font-semibold text-sm">sakura</div>
-              <div class="text-ss-muted text-xs font-mono">#1337420</div>
-            </div>
-          </div>
-          <p class="text-ss-muted text-xs mb-3">Digital artist & dreamer. Creating beautiful things on the internet.</p>
-          <div class="flex gap-1.5">
-            <span class="badge badge-verified !text-[9px] !py-0.5"><i class="fa-solid fa-check text-[7px]"></i></span>
-            <span class="badge badge-premium !text-[9px] !py-0.5"><i class="fa-solid fa-crown text-[7px]"></i></span>
-            <span class="badge badge-pearl !text-[9px] !py-0.5"><i class="fa-solid fa-gem text-[7px]"></i></span>
-          </div>
-          <div class="text-ss-dim text-xs mt-3">12.4k views</div>
-        </div>
-        <div class="glass rounded-2xl p-5 cursor-pointer hover:border-ss-pink/30 transition-all hover:-translate-y-1 fade-up" onclick="navigate('/u/rose')" data-delay="50">
-          <div class="flex items-center gap-3 mb-3">
-            <img src="https://picsum.photos/seed/ex-rose/60/60.jpg" class="w-10 h-10 rounded-xl object-cover" alt="Rose">
-            <div>
-              <div class="font-semibold text-sm">rose</div>
-              <div class="text-ss-muted text-xs font-mono">#0089217</div>
-            </div>
-          </div>
-          <p class="text-ss-muted text-xs mb-3">Full-stack developer by day, pixel artist by night.</p>
-          <div class="flex gap-1.5">
-            <span class="badge badge-verified !text-[9px] !py-0.5"><i class="fa-solid fa-check text-[7px]"></i></span>
-            <span class="badge badge-staff !text-[9px] !py-0.5"><i class="fa-solid fa-shield text-[7px]"></i></span>
-          </div>
-          <div class="text-ss-dim text-xs mt-3">8.7k views</div>
-        </div>
-        <div class="glass rounded-2xl p-5 cursor-pointer hover:border-ss-pink/30 transition-all hover:-translate-y-1 fade-up" onclick="navigate('/u/luna')" data-delay="100">
-          <div class="flex items-center gap-3 mb-3">
-            <img src="https://picsum.photos/seed/ex-luna/60/60.jpg" class="w-10 h-10 rounded-xl object-cover" alt="Luna">
-            <div>
-              <div class="font-semibold text-sm">luna</div>
-              <div class="text-ss-muted text-xs font-mono">#2048156</div>
-            </div>
-          </div>
-          <p class="text-ss-muted text-xs mb-3">Streamer, musician, and all-around creative soul.</p>
-          <div class="flex gap-1.5">
-            <span class="badge badge-premium !text-[9px] !py-0.5"><i class="fa-solid fa-crown text-[7px]"></i></span>
-            <span class="badge badge-early !text-[9px] !py-0.5"><i class="fa-solid fa-heart text-[7px]"></i></span>
-          </div>
-          <div class="text-ss-dim text-xs mt-3">5.2k views</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 定价 -->
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-24">
-      <div class="text-center mb-14 fade-up">
-        <h2 class="font-display text-3xl sm:text-5xl font-bold mb-4">Choose your <span class="text-pearl">plan</span></h2>
-        <p class="text-ss-muted text-lg">Start free, upgrade when you're ready.</p>
-      </div>
-      <div class="grid sm:grid-cols-3 gap-5 fade-up" data-delay="100">
-        <!-- Free -->
-        <div class="glass rounded-2xl p-7">
-          <h3 class="font-semibold text-lg mb-1">Free</h3>
-          <p class="text-ss-muted text-sm mb-5">Perfect to get started</p>
-          <div class="font-display text-4xl font-bold mb-6">$0<span class="text-ss-muted text-base font-body font-normal">/mo</span></div>
-          <ul class="space-y-3 text-sm text-ss-muted mb-8">
-            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Basic profile page</li>
-            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 5 link slots</li>
-            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 2 background effects</li>
-            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Basic analytics</li>
-            <li class="flex items-center gap-2 text-ss-dim"><i class="fa-solid fa-xmark text-xs"></i> Custom badges</li>
-            <li class="flex items-center gap-2 text-ss-dim"><i class="fa-solid fa-xmark text-xs"></i> Custom domain</li>
-          </ul>
-          <button class="btn-outline w-full" onclick="openAuth('register')">Get Started</button>
-        </div>
-        <!-- Premium -->
-        <div class="glass rounded-2xl p-7 pricing-highlight">
-          <h3 class="font-semibold text-lg mb-1">Premium</h3>
-          <p class="text-ss-muted text-sm mb-5">For creators who stand out</p>
-          <div class="font-display text-4xl font-bold mb-6">$4.99<span class="text-ss-muted text-base font-body font-normal">/mo</span></div>
-          <ul class="space-y-3 text-sm text-ss-muted mb-8">
-            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Everything in Free</li>
-            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 20 link slots</li>
-            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> All background effects</li>
-            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Music player widget</li>
-            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 3 custom badges</li>
-            <li class="flex items-center gap-2 text-ss-dim"><i class="fa-solid fa-xmark text-xs"></i> Custom domain</li>
-          </ul>
-          <button class="btn-pink w-full" onclick="showToast('Premium selected! Complete signup to continue.', 'info')">Upgrade</button>
-        </div>
-        <!-- Ultimate -->
-        <div class="glass rounded-2xl p-7">
-          <h3 class="font-semibold text-lg mb-1">Ultimate</h3>
-          <p class="text-ss-muted text-sm mb-5">Unlimited everything</p>
-          <div class="font-display text-4xl font-bold mb-6">$9.99<span class="text-ss-muted text-base font-body font-normal">/mo</span></div>
-          <ul class="space-y-3 text-sm text-ss-muted mb-8">
-            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Everything in Premium</li>
-            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Unlimited links</li>
-            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Custom domain</li>
-            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 10 custom badges</li>
-            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Priority support</li>
-            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 2GB file hosting</li>
-          </ul>
-          <button class="btn-outline w-full" onclick="showToast('Ultimate selected! Complete signup to continue.', 'info')">Upgrade</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 页脚 -->
-    <footer class="border-t border-ss-border/30 py-10">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-shrimp text-ss-pink"></i>
-          <span class="font-display font-bold text-pearl">seashell.lol</span>
-        </div>
-        <div class="flex items-center gap-5">
-          <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors text-sm">Terms</a>
-          <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors text-sm">Privacy</a>
-          <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors text-sm">Support</a>
-        </div>
-        <div class="flex items-center gap-4">
-          <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
-          <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors" aria-label="Discord"><i class="fa-brands fa-discord"></i></a>
-          <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
-        </div>
-      </div>
-    </footer>
-  </section>
-
-  <!-- ==================== 个人资料页 ==================== -->
-  <section id="page-profile" class="page">
-    <div class="min-h-screen flex items-center justify-center px-4 py-20" id="profile-wrapper">
-      <!-- 个人资料卡片由 JS 渲染 -->
-    </div>
-    <!-- 效果切换器 -->
-    <div class="fx-switcher" id="fx-switcher">
-      <button class="fx-toggle-btn" onclick="toggleFxPanel()" aria-label="Toggle effects panel">
-        <i class="fa-solid fa-sparkles"></i>
-      </button>
-      <div class="fx-panel" id="fx-panel">
-        <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-2 px-2">Background</p>
-        <button class="fx-option active" data-fx="aurora" onclick="switchFx('aurora')"><i class="fa-solid fa-sun w-4 text-center mr-1"></i> Aurora</button>
-        <button class="fx-option" data-fx="petals" onclick="switchFx('petals')"><i class="fa-solid fa-leaf w-4 text-center mr-1"></i> Petals</button>
-        <button class="fx-option" data-fx="sparkles" onclick="switchFx('sparkles')"><i class="fa-solid fa-star w-4 text-center mr-1"></i> Sparkles</button>
-        <button class="fx-option" data-fx="rain" onclick="switchFx('rain')"><i class="fa-solid fa-cloud-rain w-4 text-center mr-1"></i> Rain</button>
-        <button class="fx-option" data-fx="snow" onclick="switchFx('snow')"><i class="fa-solid fa-snowflake w-4 text-center mr-1"></i> Snow</button>
-        <button class="fx-option" data-fx="orbs" onclick="switchFx('orbs')"><i class="fa-solid fa-circle w-4 text-center mr-1"></i> Orbs</button>
-        <div class="border-t border-ss-border/30 my-2"></div>
-        <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-2 px-2">Name Effect</p>
-        <button class="fx-option active" data-nfx="neon" onclick="switchNameFx('neon')">Neon Glow</button>
-        <button class="fx-option" data-nfx="glitch" onclick="switchNameFx('glitch')">Glitch</button>
-        <button class="fx-option" data-nfx="gradient" onclick="switchNameFx('gradient')">Gradient</button>
-        <button class="fx-option" data-nfx="holographic" onclick="switchNameFx('holographic')">Holographic</button>
-        <button class="fx-option" data-nfx="sparkle" onclick="switchNameFx('sparkle')">Sparkle</button>
-        <div class="border-t border-ss-border/30 my-2"></div>
-        <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-2 px-2">Card Style</p>
-        <button class="fx-option active" data-cs="glass" onclick="switchCardStyle('glass')">Glass</button>
-        <button class="fx-option" data-cs="default" onclick="switchCardStyle('default')">Default</button>
-        <button class="fx-option" data-cs="minimal" onclick="switchCardStyle('minimal')">Minimal</button>
-        <button class="fx-option" data-cs="portfolio" onclick="switchCardStyle('portfolio')">Portfolio</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==================== 定制页 ==================== -->
-  <section id="page-customize" class="page">
-    <div class="pt-20 min-h-screen">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        <h1 class="font-display text-3xl font-bold mb-2">Customize Your Profile</h1>
-        <p class="text-ss-muted mb-8">Changes are previewed in real-time on the right.</p>
-        <div class="flex flex-col lg:flex-row gap-8">
-          <!-- 控制面板 -->
-          <div class="flex-1 min-w-0">
-            <div class="glass rounded-2xl overflow-hidden">
-              <div class="flex border-b border-ss-border/20 overflow-x-auto">
-                <button class="custom-tab active" data-ctab="bg" onclick="switchCustomTab('bg')">Background</button>
-                <button class="custom-tab" data-ctab="effects" onclick="switchCustomTab('effects')">Effects</button>
-                <button class="custom-tab" data-ctab="card" onclick="switchCustomTab('card')">Card</button>
-                <button class="custom-tab" data-ctab="colors" onclick="switchCustomTab('colors')">Colors</button>
-                <button class="custom-tab" data-ctab="name" onclick="switchCustomTab('name')">Name</button>
-              </div>
-              <div class="p-6" id="custom-tab-content">
-                <!-- 由 JS 渲染 -->
-              </div>
-            </div>
-          </div>
-          <!-- 实时预览 -->
-          <div class="w-full lg:w-[380px] flex-shrink-0">
-            <div class="sticky top-20">
-              <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-3">Live Preview</p>
-              <div class="glass rounded-2xl p-4" style="transform: scale(0.85); transform-origin: top center;">
-                <div id="customize-preview">
-                  <!-- 由 JS 渲染缩略版 -->
-                </div>
+              <div class="mt-4 space-y-2">
+                <div class="link-btn !py-2.5 !text-sm !rounded-lg"><i class="fa-brands fa-x-twitter"></i> Twitter</div>
+                <div class="link-btn !py-2.5 !text-sm !rounded-lg"><i class="fa-brands fa-instagram"></i> Instagram</div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
-
-  <!-- ==================== 管理面板 ==================== -->
-  <section id="page-admin" class="page">
-    <div class="pt-16 flex min-h-screen">
-      <!-- 侧边栏 -->
-      <aside class="admin-sidebar">
-        <div class="p-4">
-          <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-3 px-3">Admin Panel</p>
-          <nav class="space-y-1" aria-label="Admin navigation">
-            <button class="admin-nav-item active" data-atab="dashboard" onclick="switchAdminTab('dashboard')">
-              <i class="fa-solid fa-chart-pie"></i> Dashboard
-            </button>
-            <button class="admin-nav-item" data-atab="users" onclick="switchAdminTab('users')">
-              <i class="fa-solid fa-users"></i> Users
-            </button>
-            <button class="admin-nav-item" data-atab="badges" onclick="switchAdminTab('badges')">
-              <i class="fa-solid fa-award"></i> Badges
-            </button>
-            <button class="admin-nav-item" data-atab="moderation" onclick="switchAdminTab('moderation')">
-              <i class="fa-solid fa-flag"></i> Moderation
-            </button>
-            <button class="admin-nav-item" data-atab="audit" onclick="switchAdminTab('audit')">
-              <i class="fa-solid fa-clock-rotate-left"></i> Audit Log
-            </button>
-            <button class="admin-nav-item" data-atab="featured" onclick="switchAdminTab('featured')">
-              <i class="fa-solid fa-star"></i> Featured
-            </button>
-          </nav>
-        </div>
-      </aside>
-      <!-- 主内容 -->
-      <div class="flex-1 min-w-0 p-6 lg:p-8 overflow-y-auto" id="admin-content">
-        <!-- 由 JS 渲染 -->
+  </div>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-24">
+    <div class="text-center mb-16 fade-up">
+      <h2 class="font-display text-3xl sm:text-5xl font-bold mb-4">Everything you need to <span class="text-pearl">shine</span></h2>
+      <p class="text-ss-muted text-lg max-w-lg mx-auto">Powerful customization, stunning effects, and seamless integrations.</p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="glass rounded-2xl p-6 fade-up" data-delay="0"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-wand-magic-sparkles text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Stunning Effects</h3><p class="text-ss-muted text-sm leading-relaxed">Aurora, petals, sparkles, rain, snow, and more — transform your profile into a living canvas.</p></div>
+      <div class="glass rounded-2xl p-6 fade-up" data-delay="50"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-palette text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Full Customization</h3><p class="text-ss-muted text-sm leading-relaxed">Colors, fonts, card styles, name effects, badges, cursor, audio — every detail is yours.</p></div>
+      <div class="glass rounded-2xl p-6 fade-up" data-delay="100"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-music text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Music Player</h3><p class="text-ss-muted text-sm leading-relaxed">Embed a sleek music player with cover art, progress bar, and track info.</p></div>
+      <div class="glass rounded-2xl p-6 fade-up" data-delay="150"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-brands fa-discord text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Discord Integration</h3><p class="text-ss-muted text-sm leading-relaxed">Sync your avatar, show Discord status, and display current activity.</p></div>
+      <div class="glass rounded-2xl p-6 fade-up" data-delay="200"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-shield-halved text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Badges System</h3><p class="text-ss-muted text-sm leading-relaxed">Earn official badges or upload custom ones with beautiful hover effects.</p></div>
+      <div class="glass rounded-2xl p-6 fade-up" data-delay="250"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-chart-line text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Analytics</h3><p class="text-ss-muted text-sm leading-relaxed">Track profile views, link clicks, and visitor data with a built-in dashboard.</p></div>
+    </div>
+  </div>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-24">
+    <div class="text-center mb-14 fade-up">
+      <h2 class="font-display text-3xl sm:text-5xl font-bold mb-4">Choose your <span class="text-pearl">plan</span></h2>
+      <p class="text-ss-muted text-lg">Start free, upgrade when you're ready.</p>
+    </div>
+    <div class="grid sm:grid-cols-3 gap-5 fade-up" data-delay="100">
+      <div class="glass rounded-2xl p-7">
+        <h3 class="font-semibold text-lg mb-1">Free</h3><p class="text-ss-muted text-sm mb-5">Perfect to get started</p>
+        <div class="font-display text-4xl font-bold mb-6">$0<span class="text-ss-muted text-base font-body font-normal">/mo</span></div>
+        <ul class="space-y-3 text-sm text-ss-muted mb-8">
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Basic profile page</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 5 link slots</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 2 background effects</li>
+          <li class="flex items-center gap-2 text-ss-dim"><i class="fa-solid fa-xmark text-xs"></i> Custom badges</li>
+          <li class="flex items-center gap-2 text-ss-dim"><i class="fa-solid fa-xmark text-xs"></i> Custom domain</li>
+        </ul>
+        <button class="btn-outline w-full" onclick="openAuth('register')">Get Started</button>
+      </div>
+      <div class="glass rounded-2xl p-7 pricing-highlight">
+        <h3 class="font-semibold text-lg mb-1">Premium</h3><p class="text-ss-muted text-sm mb-5">For creators who stand out</p>
+        <div class="font-display text-4xl font-bold mb-6">$4.99<span class="text-ss-muted text-base font-body font-normal">/mo</span></div>
+        <ul class="space-y-3 text-sm text-ss-muted mb-8">
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Everything in Free</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 20 link slots</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> All background effects</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Music player widget</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 3 custom badges</li>
+        </ul>
+        <button class="btn-pink w-full" onclick="showToast('Premium selected! Complete signup to continue.','info')">Upgrade</button>
+      </div>
+      <div class="glass rounded-2xl p-7">
+        <h3 class="font-semibold text-lg mb-1">Ultimate</h3><p class="text-ss-muted text-sm mb-5">Unlimited everything</p>
+        <div class="font-display text-4xl font-bold mb-6">$9.99<span class="text-ss-muted text-base font-body font-normal">/mo</span></div>
+        <ul class="space-y-3 text-sm text-ss-muted mb-8">
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Everything in Premium</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Unlimited links</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Custom domain</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 10 custom badges</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 2GB file hosting</li>
+        </ul>
+        <button class="btn-outline w-full" onclick="showToast('Ultimate selected! Complete signup to continue.','info')">Upgrade</button>
       </div>
     </div>
-  </section>
+  </div>
+  <footer class="border-t py-10" style="border-color:rgba(255,20,147,0.08)">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2"><i class="fa-solid fa-shrimp text-ss-pink"></i><span class="font-display font-bold text-pearl">seashell.lol</span></div>
+      <div class="flex items-center gap-5">
+        <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors text-sm no-underline">Terms</a>
+        <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors text-sm no-underline">Privacy</a>
+        <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors text-sm no-underline">Support</a>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors no-underline" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="#" class="text-ss-muted hover:text-ss-pink transition-colors no-underline" aria-label="Discord"><i class="fa-brands fa-discord"></i></a>
+      </div>
+    </div>
+  </footer>
+</section>
 
-</main>
+<!-- 个人资料页 -->
+<section id="page-profile" class="page">
+  <div class="min-h-screen flex items-center justify-center px-4 py-20" id="profile-wrapper"></div>
+  <div class="fx-switcher" id="fx-switcher" style="display:none">
+    <button class="fx-toggle-btn" onclick="toggleFxPanel()" aria-label="Toggle effects"><i class="fa-solid fa-sparkles"></i></button>
+    <div class="fx-panel" id="fx-panel">
+      <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-2 px-2">Background</p>
+      <button class="fx-option" data-fx="aurora" onclick="switchFx('aurora')"><i class="fa-solid fa-sun w-4 text-center mr-1"></i> Aurora</button>
+      <button class="fx-option" data-fx="petals" onclick="switchFx('petals')"><i class="fa-solid fa-leaf w-4 text-center mr-1"></i> Petals</button>
+      <button class="fx-option" data-fx="sparkles" onclick="switchFx('sparkles')"><i class="fa-solid fa-star w-4 text-center mr-1"></i> Sparkles</button>
+      <button class="fx-option" data-fx="rain" onclick="switchFx('rain')"><i class="fa-solid fa-cloud-rain w-4 text-center mr-1"></i> Rain</button>
+      <button class="fx-option" data-fx="snow" onclick="switchFx('snow')"><i class="fa-solid fa-snowflake w-4 text-center mr-1"></i> Snow</button>
+      <button class="fx-option" data-fx="orbs" onclick="switchFx('orbs')"><i class="fa-solid fa-circle w-4 text-center mr-1"></i> Orbs</button>
+      <div class="border-t my-2" style="border-color:rgba(255,20,147,0.08)"></div>
+      <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-2 px-2">Name Effect</p>
+      <button class="fx-option" data-nfx="neon" onclick="switchNameFx('neon')">Neon Glow</button>
+      <button class="fx-option" data-nfx="glitch" onclick="switchNameFx('glitch')">Glitch</button>
+      <button class="fx-option" data-nfx="gradient" onclick="switchNameFx('gradient')">Gradient</button>
+      <button class="fx-option" data-nfx="holographic" onclick="switchNameFx('holographic')">Holographic</button>
+      <button class="fx-option" data-nfx="sparkle" onclick="switchNameFx('sparkle')">Sparkle</button>
+      <div class="border-t my-2" style="border-color:rgba(255,20,147,0.08)"></div>
+      <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-2 px-2">Card Style</p>
+      <button class="fx-option" data-cs="glass" onclick="switchCardStyle('glass')">Glass</button>
+      <button class="fx-option" data-cs="default" onclick="switchCardStyle('default')">Default</button>
+      <button class="fx-option" data-cs="minimal" onclick="switchCardStyle('minimal')">Minimal</button>
+      <button class="fx-option" data-cs="portfolio" onclick="switchCardStyle('portfolio')">Portfolio</button>
+    </div>
+  </div>
+</section>
 
-<!-- Toast 容器 -->
+<!-- 定制页 -->
+<section id="page-customize" class="page">
+  <div class="pt-20 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+      <h1 class="font-display text-3xl font-bold mb-2">Customize Your Profile</h1>
+      <p class="text-ss-muted mb-8">Changes preview in real-time on the right.</p>
+      <div class="flex flex-col lg:flex-row gap-8">
+        <div class="flex-1 min-w-0">
+          <div class="glass rounded-2xl overflow-hidden">
+            <div class="flex border-b overflow-x-auto" style="border-color:rgba(255,20,147,0.08)">
+              <button class="custom-tab active" data-ctab="bg" onclick="switchCustomTab('bg')">Background</button>
+              <button class="custom-tab" data-ctab="effects" onclick="switchCustomTab('effects')">Effects</button>
+              <button class="custom-tab" data-ctab="card" onclick="switchCustomTab('card')">Card</button>
+              <button class="custom-tab" data-ctab="colors" onclick="switchCustomTab('colors')">Colors</button>
+              <button class="custom-tab" data-ctab="name" onclick="switchCustomTab('name')">Name</button>
+            </div>
+            <div class="p-6" id="custom-tab-content"></div>
+          </div>
+        </div>
+        <div class="w-full lg:w-[380px] flex-shrink-0">
+          <div class="sticky top-20">
+            <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-3">Live Preview</p>
+            <div class="glass rounded-2xl p-4" style="transform:scale(0.85);transform-origin:top center"><div id="customize-preview"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 管理面板 -->
+<section id="page-admin" class="page">
+  <div class="pt-16 flex min-h-screen">
+    <aside class="admin-sidebar">
+      <div class="p-4">
+        <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-3 px-3">Admin Panel</p>
+        <nav class="space-y-1" aria-label="Admin navigation">
+          <button class="admin-nav-item active" data-atab="dashboard" onclick="switchAdminTab('dashboard')"><i class="fa-solid fa-chart-pie"></i> Dashboard</button>
+          <button class="admin-nav-item" data-atab="users" onclick="switchAdminTab('users')"><i class="fa-solid fa-users"></i> Users</button>
+          <button class="admin-nav-item" data-atab="badges" onclick="switchAdminTab('badges')"><i class="fa-solid fa-award"></i> Badges</button>
+          <button class="admin-nav-item" data-atab="moderation" onclick="switchAdminTab('moderation')"><i class="fa-solid fa-flag"></i> Moderation</button>
+          <button class="admin-nav-item" data-atab="audit" onclick="switchAdminTab('audit')"><i class="fa-solid fa-clock-rotate-left"></i> Audit Log</button>
+          <button class="admin-nav-item" data-atab="featured" onclick="switchAdminTab('featured')"><i class="fa-solid fa-star"></i> Featured</button>
+        </nav>
+      </div>
+    </aside>
+    <div class="flex-1 min-w-0 p-6 lg:p-8 overflow-y-auto" id="admin-content"></div>
+  </div>
+</section>
+
 <div id="toast-container"></div>
 
 <script>
-// ==================== 数据层 ====================
-// Firebase 配置（实际集成时使用）
-const firebaseConfig = {
+/* ============================
+   数据 & 状态
+   ============================ */
+var firebaseConfig = {
   apiKey: "AIzaSyDbvpzYvPDxzYBXr7-WLFWabmeIRkJlTnw",
   authDomain: "seashell-27f34.firebaseapp.com",
   projectId: "seashell-27f34",
@@ -1067,17 +402,20 @@ const firebaseConfig = {
   appId: "1:225540891149:web:a2dd3060fe7ab6d975ab44"
 };
 
-// 示例用户数据
-const demoUsers = {
+// 认证状态
+var authState = { isLoggedIn: false, user: null };
+
+// 角色层级：owner > manager > admin > mod > user
+var ROLE_LEVELS = { owner: 5, manager: 4, admin: 3, mod: 2, user: 1 };
+
+// 示例用户
+var demoUsers = {
   sakura: {
-    uid: 1337420, username: 'sakura', displayName: 'Sakura',
-    email: 'sakura@example.com', role: 'user',
+    uid: 1337420, username: 'sakura', displayName: 'Sakura', email: 'sakura@example.com', role: 'user',
     avatar: 'https://picsum.photos/seed/sakura-av/300/300.jpg',
     banner: 'https://picsum.photos/seed/sakura-ban/1200/400.jpg',
     description: 'Digital artist & dreamer. Creating beautiful things on the internet. Commissions open.',
-    location: 'Tokyo, Japan',
-    bgEffect: 'aurora', cardStyle: 'glass', nameEffect: 'neon',
-    accentColor: '#FF1493',
+    location: 'Tokyo, Japan', bgEffect: 'aurora', cardStyle: 'glass', nameEffect: 'neon', accentColor: '#FF1493',
     badges: ['verified', 'premium', 'pearl', 'early'],
     links: [
       { title: 'Twitter / X', url: '#', icon: 'fa-brands fa-x-twitter' },
@@ -1089,36 +427,30 @@ const demoUsers = {
     views: 12453, clicks: 3892,
     music: { title: 'Clair de Lune', artist: 'Debussy', cover: 'https://picsum.photos/seed/music-1/100/100.jpg', duration: '5:12', progress: 0.35 },
     discord: { status: 'online', activity: 'Playing Final Fantasy XIV', username: 'sakura' },
-    joined: '2024-08-15',
+    joined: '2024-08-15'
   },
   rose: {
-    uid: 89217, username: 'rose', displayName: 'Rose',
-    email: 'rose@example.com', role: 'admin',
+    uid: 89217, username: 'rose', displayName: 'Rose', email: 'rose@example.com', role: 'admin',
     avatar: 'https://picsum.photos/seed/rose-av/300/300.jpg',
     banner: 'https://picsum.photos/seed/rose-ban/1200/400.jpg',
     description: 'Full-stack developer by day, pixel artist by night. Building things that matter.',
-    location: 'Seoul, South Korea',
-    bgEffect: 'petals', cardStyle: 'minimal', nameEffect: 'gradient',
-    accentColor: '#DB2777',
+    location: 'Seoul, South Korea', bgEffect: 'petals', cardStyle: 'minimal', nameEffect: 'gradient', accentColor: '#DB2777',
     badges: ['verified', 'staff'],
     links: [
       { title: 'GitHub', url: '#', icon: 'fa-brands fa-github' },
       { title: 'Twitter / X', url: '#', icon: 'fa-brands fa-x-twitter' },
       { title: 'Blog', url: '#', icon: 'fa-solid fa-blog' },
     ],
-    views: 8712, clicks: 2104,
-    music: null, discord: { status: 'idle', activity: 'Working on seashell.lol', username: 'rose' },
-    joined: '2024-06-01',
+    views: 8712, clicks: 2104, music: null,
+    discord: { status: 'idle', activity: 'Working on seashell.lol', username: 'rose' },
+    joined: '2024-06-01'
   },
   luna: {
-    uid: 2048156, username: 'luna', displayName: 'Luna',
-    email: 'luna@example.com', role: 'user',
+    uid: 2048156, username: 'luna', displayName: 'Luna', email: 'luna@example.com', role: 'user',
     avatar: 'https://picsum.photos/seed/luna-av/300/300.jpg',
     banner: 'https://picsum.photos/seed/luna-ban/1200/400.jpg',
     description: 'Streamer, musician, and all-around creative soul. Live every Friday at 8PM JST.',
-    location: 'Osaka, Japan',
-    bgEffect: 'sparkles', cardStyle: 'default', nameEffect: 'glitch',
-    accentColor: '#FF69B4',
+    location: 'Osaka, Japan', bgEffect: 'sparkles', cardStyle: 'default', nameEffect: 'glitch', accentColor: '#FF69B4',
     badges: ['premium', 'early'],
     links: [
       { title: 'Twitch', url: '#', icon: 'fa-brands fa-twitch' },
@@ -1126,27 +458,17 @@ const demoUsers = {
       { title: 'Twitter / X', url: '#', icon: 'fa-brands fa-x-twitter' },
       { title: 'Spotify', url: '#', icon: 'fa-brands fa-spotify' },
       { title: 'Merch Store', url: '#', icon: 'fa-solid fa-store' },
-      { title: 'Tip Jar', url: '#', icon: 'fa-solid fa-heart' },
     ],
     views: 5219, clicks: 1876,
     music: { title: 'Moonlight Sonata', artist: 'Beethoven', cover: 'https://picsum.photos/seed/music-3/100/100.jpg', duration: '6:28', progress: 0.72 },
     discord: { status: 'dnd', activity: 'Streaming on Twitch', username: 'luna' },
-    joined: '2024-10-20',
+    joined: '2024-10-20'
   }
 };
 
-// 管理面板模拟数据
-const adminData = {
-  stats: {
-    totalUsers: 12483,
-    activeToday: 1847,
-    totalViews: 2847291,
-    revenue: 18420,
-    viewsChange: 12.4,
-    usersChange: 8.2,
-    revenueChange: 15.7,
-    activeChange: -2.1,
-  },
+// 管理数据
+var adminData = {
+  stats: { totalUsers: 12483, activeToday: 1847, totalViews: 2847291, revenue: 18420, viewsChange: 12.4, usersChange: 8.2, revenueChange: 15.7, activeChange: -2.1 },
   recentUsers: [
     { uid: 2048156, username: 'luna', role: 'user', views: 5219, status: 'active', joined: '2024-10-20' },
     { uid: 1337420, username: 'sakura', role: 'user', views: 12453, status: 'active', joined: '2024-08-15' },
@@ -1176,576 +498,302 @@ const adminData = {
   auditLog: [
     { action: 'User banned', admin: 'rose', target: 'azalea', time: '1 hour ago', icon: 'fa-ban', color: '#EF4444' },
     { action: 'Badge approved', admin: 'rose', target: 'VTuber badge', time: '3 hours ago', icon: 'fa-check', color: '#22C55E' },
-    { action: 'Role changed', admin: 'Owner', target: 'peach → Mod', time: '6 hours ago', icon: 'fa-user-shield', color: '#C084FC' },
+    { action: 'Role changed', admin: 'Owner', target: 'peach \u2192 Mod', time: '6 hours ago', icon: 'fa-user-shield', color: '#C084FC' },
     { action: 'Featured profile set', admin: 'rose', target: 'sakura', time: '12 hours ago', icon: 'fa-star', color: '#FCD34D' },
     { action: 'User suspended', admin: 'peach', target: 'cherry', time: '1 day ago', icon: 'fa-pause', color: '#F59E0B' },
-    { action: 'Site setting updated', admin: 'Owner', target: 'Max upload size → 5MB', time: '2 days ago', icon: 'fa-gear', color: '#8B7A8E' },
+    { action: 'Site setting updated', admin: 'Owner', target: 'Max upload size \u2192 5MB', time: '2 days ago', icon: 'fa-gear', color: '#8B7A8E' },
   ],
-  featured: ['sakura', 'luna', 'violette'],
+  featured: ['sakura', 'luna', 'violette']
 };
 
-// ==================== 路由系统 ====================
-let currentPage = 'landing';
-let currentProfileUser = null;
-let currentBgEffect = 'aurora';
-let currentNameEffect = 'neon';
-let currentCardStyle = 'glass';
+var currentBgEffect = 'aurora';
+var currentNameEffect = 'neon';
+var currentCardStyle = 'glass';
+var currentProfileUser = null;
+var musicInterval = null;
+var musicProgress = 0;
 
-function navigate(path) {
-  window.location.hash = path;
+/* ============================
+   特效引擎
+   ============================ */
+var fxCanvas = document.getElementById('fx-canvas');
+var fxCtx = fxCanvas.getContext('2d');
+var fxParticles = [];
+var fxEffect = 'aurora';
+var fxTime = 0;
+var fxRunning = false;
+var fxReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function fxResize() {
+  fxCanvas.width = window.innerWidth;
+  fxCanvas.height = window.innerHeight;
+}
+fxResize();
+window.addEventListener('resize', fxResize);
+
+function fxSetEffect(name) {
+  fxEffect = name;
+  fxParticles = [];
+  fxTime = 0;
+  if (!fxRunning && !fxReducedMotion) { fxRunning = true; fxAnimate(); }
 }
 
-function handleRoute() {
-  const hash = window.location.hash || '#/';
-  const fxSwitcher = document.getElementById('fx-switcher');
+function fxAnimate() {
+  if (!fxRunning) return;
+  fxTime += 0.016;
+  fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+  var w = fxCanvas.width, h = fxCanvas.height;
 
-  // 隐藏所有页面
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  fxSwitcher.style.display = 'none';
-
-  if (hash === '#/' || hash === '' || hash === '#') {
-    currentPage = 'landing';
-    document.getElementById('page-landing').classList.add('active');
-    fxEngine.setEffect('aurora');
-  } else if (hash.startsWith('#/u/')) {
-    const username = hash.replace('#/u/', '').split('/')[0];
-    currentPage = 'profile';
-    currentProfileUser = demoUsers[username] || demoUsers.sakura;
-    currentBgEffect = currentProfileUser.bgEffect;
-    currentNameEffect = currentProfileUser.nameEffect;
-    currentCardStyle = currentProfileUser.cardStyle;
-    document.getElementById('page-profile').classList.add('active');
-    fxSwitcher.style.display = 'block';
-    renderProfile(currentProfileUser);
-    fxEngine.setEffect(currentBgEffect);
-    updateFxPanelState();
-  } else if (hash === '#/customize') {
-    currentPage = 'customize';
-    document.getElementById('page-customize').classList.add('active');
-    fxEngine.setEffect('aurora');
-    renderCustomizeTab('bg');
-    renderCustomizePreview();
-  } else if (hash === '#/admin') {
-    currentPage = 'admin';
-    document.getElementById('page-admin').classList.add('active');
-    fxEngine.setEffect('orbs');
-    renderAdminTab('dashboard');
-  } else {
-    currentPage = 'landing';
-    document.getElementById('page-landing').classList.add('active');
-    fxEngine.setEffect('aurora');
-  }
-
-  // 触发淡入动画
-  requestAnimationFrame(() => {
-    document.querySelectorAll('.fade-up').forEach(el => {
-      const delay = parseInt(el.dataset.delay || '0');
-      setTimeout(() => el.classList.add('visible'), delay);
-    });
-  });
-
-  window.scrollTo(0, 0);
-}
-
-window.addEventListener('hashchange', handleRoute);
-
-// ==================== 特效引擎 ====================
-class EffectsEngine {
-  constructor(canvas) {
-    this.canvas = canvas;
-    this.ctx = canvas.getContext('2d');
-    this.particles = [];
-    this.effect = 'aurora';
-    this.running = false;
-    this.time = 0;
-    this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    this.resize();
-    window.addEventListener('resize', () => this.resize());
-  }
-
-  resize() {
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
-  }
-
-  setEffect(name) {
-    this.effect = name;
-    this.particles = [];
-    this.time = 0;
-    if (!this.running) this.start();
-  }
-
-  start() {
-    if (this.running || this.reducedMotion) return;
-    this.running = true;
-    this.animate();
-  }
-
-  stop() { this.running = false; }
-
-  animate() {
-    if (!this.running) return;
-    this.time += 0.016;
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    switch (this.effect) {
-      case 'aurora': this.renderAurora(); break;
-      case 'petals': this.renderPetals(); break;
-      case 'sparkles': this.renderSparkles(); break;
-      case 'rain': this.renderRain(); break;
-      case 'snow': this.renderSnow(); break;
-      case 'orbs': this.renderOrbs(); break;
-    }
-
-    requestAnimationFrame(() => this.animate());
-  }
-
-  // 极光效果
-  renderAurora() {
-    const { ctx, canvas, time } = this;
-    const w = canvas.width, h = canvas.height;
-
-    // 多层波浪
-    for (let layer = 0; layer < 4; layer++) {
-      ctx.beginPath();
-      const baseY = h * 0.3 + layer * 60;
-      const amp = 80 + layer * 20;
-      const freq = 0.002 - layer * 0.0003;
-      const speed = 0.3 + layer * 0.15;
-      const alpha = 0.06 - layer * 0.01;
-
-      ctx.moveTo(0, h);
-      for (let x = 0; x <= w; x += 3) {
-        const y = baseY
-          + Math.sin(x * freq + time * speed) * amp
-          + Math.sin(x * freq * 2.3 + time * speed * 0.7) * amp * 0.4
-          + Math.cos(x * freq * 0.5 + time * speed * 0.3) * amp * 0.3;
-        ctx.lineTo(x, y);
+  if (fxEffect === 'aurora') {
+    for (var layer = 0; layer < 4; layer++) {
+      fxCtx.beginPath();
+      var baseY = h * 0.3 + layer * 60;
+      var amp = 80 + layer * 20;
+      var freq = 0.002 - layer * 0.0003;
+      var spd = 0.3 + layer * 0.15;
+      var alpha = 0.06 - layer * 0.01;
+      fxCtx.moveTo(0, h);
+      for (var x = 0; x <= w; x += 3) {
+        var y = baseY + Math.sin(x * freq + fxTime * spd) * amp + Math.sin(x * freq * 2.3 + fxTime * spd * 0.7) * amp * 0.4 + Math.cos(x * freq * 0.5 + fxTime * spd * 0.3) * amp * 0.3;
+        fxCtx.lineTo(x, y);
       }
-      ctx.lineTo(w, h);
-      ctx.closePath();
-
-      const grad = ctx.createLinearGradient(0, baseY - amp, 0, h);
-      const hue = 330 + layer * 15;
-      grad.addColorStop(0, `hsla(${hue}, 100%, 60%, ${alpha})`);
-      grad.addColorStop(0.5, `hsla(${hue + 20}, 80%, 40%, ${alpha * 0.6})`);
-      grad.addColorStop(1, `hsla(${hue + 40}, 60%, 20%, 0)`);
-      ctx.fillStyle = grad;
-      ctx.fill();
+      fxCtx.lineTo(w, h);
+      fxCtx.closePath();
+      var grad = fxCtx.createLinearGradient(0, baseY - amp, 0, h);
+      var hue = 330 + layer * 15;
+      grad.addColorStop(0, 'hsla(' + hue + ', 100%, 60%, ' + alpha + ')');
+      grad.addColorStop(0.5, 'hsla(' + (hue + 20) + ', 80%, 40%, ' + (alpha * 0.6) + ')');
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      fxCtx.fillStyle = grad;
+      fxCtx.fill();
     }
-
-    // 顶部光晕
-    const glow = ctx.createRadialGradient(w * 0.5, h * 0.15, 0, w * 0.5, h * 0.15, w * 0.6);
-    glow.addColorStop(0, 'rgba(255, 20, 147, 0.06)');
-    glow.addColorStop(0.5, 'rgba(219, 39, 119, 0.03)');
-    glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-    ctx.fillStyle = glow;
-    ctx.fillRect(0, 0, w, h);
-  }
-
-  // 花瓣效果
-  renderPetals() {
-    const { ctx, canvas, time, particles } = this;
-    const w = canvas.width, h = canvas.height;
-
-    // 生成新花瓣
-    while (particles.length < 50) {
-      particles.push({
-        x: Math.random() * w,
-        y: -20 - Math.random() * 100,
-        size: 4 + Math.random() * 8,
-        speedY: 0.5 + Math.random() * 1.5,
-        speedX: -0.3 + Math.random() * 0.6,
-        rotation: Math.random() * Math.PI * 2,
-        rotSpeed: (Math.random() - 0.5) * 0.03,
-        alpha: 0.3 + Math.random() * 0.5,
-        hue: 330 + Math.random() * 30,
-        wobble: Math.random() * Math.PI * 2,
-      });
+  } else if (fxEffect === 'petals') {
+    while (fxParticles.length < 50) {
+      fxParticles.push({ x: Math.random() * w, y: -20 - Math.random() * 100, size: 4 + Math.random() * 8, speedY: 0.5 + Math.random() * 1.5, speedX: -0.3 + Math.random() * 0.6, rotation: Math.random() * Math.PI * 2, rotSpeed: (Math.random() - 0.5) * 0.03, alpha: 0.3 + Math.random() * 0.5, hue: 330 + Math.random() * 30, wobble: Math.random() * Math.PI * 2 });
     }
-
-    particles.forEach((p, i) => {
+    for (var i = 0; i < fxParticles.length; i++) {
+      var p = fxParticles[i];
       p.y += p.speedY;
-      p.x += p.speedX + Math.sin(time * 1.5 + p.wobble) * 0.3;
+      p.x += p.speedX + Math.sin(fxTime * 1.5 + p.wobble) * 0.3;
       p.rotation += p.rotSpeed;
-
-      if (p.y > h + 20) {
-        p.y = -20;
-        p.x = Math.random() * w;
-      }
-
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rotation);
-      ctx.globalAlpha = p.alpha;
-
-      // 花瓣形状
-      ctx.beginPath();
-      ctx.ellipse(0, 0, p.size * 0.4, p.size, 0, 0, Math.PI * 2);
-      ctx.fillStyle = `hsla(${p.hue}, 80%, 70%, 1)`;
-      ctx.fill();
-
-      ctx.restore();
-    });
-    ctx.globalAlpha = 1;
-  }
-
-  // 闪烁效果
-  renderSparkles() {
-    const { ctx, canvas, time, particles } = this;
-    const w = canvas.width, h = canvas.height;
-
-    while (particles.length < 60) {
-      particles.push({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        size: 1 + Math.random() * 3,
-        twinkleSpeed: 1 + Math.random() * 3,
-        twinkleOffset: Math.random() * Math.PI * 2,
-        alpha: 0,
-        color: Math.random() > 0.7 ? '#FCD34D' : (Math.random() > 0.5 ? '#FF69B4' : '#FFFFFF'),
-        drift: (Math.random() - 0.5) * 0.1,
-      });
+      if (p.y > h + 20) { p.y = -20; p.x = Math.random() * w; }
+      fxCtx.save();
+      fxCtx.translate(p.x, p.y);
+      fxCtx.rotate(p.rotation);
+      fxCtx.globalAlpha = p.alpha;
+      fxCtx.beginPath();
+      fxCtx.ellipse(0, 0, p.size * 0.4, p.size, 0, 0, Math.PI * 2);
+      fxCtx.fillStyle = 'hsla(' + p.hue + ', 80%, 70%, 1)';
+      fxCtx.fill();
+      fxCtx.restore();
     }
-
-    particles.forEach(p => {
+    fxCtx.globalAlpha = 1;
+  } else if (fxEffect === 'sparkles') {
+    while (fxParticles.length < 60) {
+      fxParticles.push({ x: Math.random() * w, y: Math.random() * h, size: 1 + Math.random() * 3, ts: 1 + Math.random() * 3, to: Math.random() * Math.PI * 2, alpha: 0, color: Math.random() > 0.7 ? '#FCD34D' : (Math.random() > 0.5 ? '#FF69B4' : '#FFFFFF'), drift: (Math.random() - 0.5) * 0.1 });
+    }
+    for (var i = 0; i < fxParticles.length; i++) {
+      var p = fxParticles[i];
       p.x += p.drift;
-      p.alpha = Math.max(0, Math.sin(time * p.twinkleSpeed + p.twinkleOffset));
-
-      if (p.x < -10 || p.x > w + 10) {
-        p.x = Math.random() * w;
-        p.y = Math.random() * h;
-      }
-
+      p.alpha = Math.max(0, Math.sin(fxTime * p.ts + p.to));
+      if (p.x < -10 || p.x > w + 10) { p.x = Math.random() * w; p.y = Math.random() * h; }
       if (p.alpha > 0.1) {
-        ctx.save();
-        ctx.globalAlpha = p.alpha;
-        ctx.fillStyle = p.color;
-
-        // 十字星形
-        const s = p.size;
-        ctx.beginPath();
-        ctx.moveTo(p.x, p.y - s * 2);
-        ctx.lineTo(p.x + s * 0.4, p.y - s * 0.4);
-        ctx.lineTo(p.x + s * 2, p.y);
-        ctx.lineTo(p.x + s * 0.4, p.y + s * 0.4);
-        ctx.lineTo(p.x, p.y + s * 2);
-        ctx.lineTo(p.x - s * 0.4, p.y + s * 0.4);
-        ctx.lineTo(p.x - s * 2, p.y);
-        ctx.lineTo(p.x - s * 0.4, p.y - s * 0.4);
-        ctx.closePath();
-        ctx.fill();
-
-        // 中心光晕
-        const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, s * 4);
-        glow.addColorStop(0, p.color.replace(')', ',0.3)').replace('rgb', 'rgba').replace('#FFFFFF', 'rgba(255,255,255,0.3)').replace('#FF69B4', 'rgba(255,105,180,0.3)').replace('#FCD34D', 'rgba(252,211,77,0.3)'));
-        glow.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = glow;
-        ctx.fillRect(p.x - s * 4, p.y - s * 4, s * 8, s * 8);
-
-        ctx.restore();
+        fxCtx.save();
+        fxCtx.globalAlpha = p.alpha;
+        fxCtx.fillStyle = p.color;
+        var s = p.size;
+        fxCtx.beginPath();
+        fxCtx.moveTo(p.x, p.y - s * 2);
+        fxCtx.lineTo(p.x + s * 0.4, p.y - s * 0.4);
+        fxCtx.lineTo(p.x + s * 2, p.y);
+        fxCtx.lineTo(p.x + s * 0.4, p.y + s * 0.4);
+        fxCtx.lineTo(p.x, p.y + s * 2);
+        fxCtx.lineTo(p.x - s * 0.4, p.y + s * 0.4);
+        fxCtx.lineTo(p.x - s * 2, p.y);
+        fxCtx.lineTo(p.x - s * 0.4, p.y - s * 0.4);
+        fxCtx.closePath();
+        fxCtx.fill();
+        fxCtx.restore();
       }
-    });
-    ctx.globalAlpha = 1;
-  }
-
-  // 雨效果
-  renderRain() {
-    const { ctx, canvas, time, particles } = this;
-    const w = canvas.width, h = canvas.height;
-
-    while (particles.length < 150) {
-      particles.push({
-        x: Math.random() * (w + 200) - 100,
-        y: Math.random() * h - h,
-        length: 15 + Math.random() * 25,
-        speed: 12 + Math.random() * 8,
-        alpha: 0.1 + Math.random() * 0.2,
-        width: 0.5 + Math.random() * 1,
-      });
     }
-
-    ctx.strokeStyle = 'rgba(255, 105, 180, 0.25)';
-    particles.forEach(p => {
+    fxCtx.globalAlpha = 1;
+  } else if (fxEffect === 'rain') {
+    while (fxParticles.length < 150) {
+      fxParticles.push({ x: Math.random() * (w + 200) - 100, y: Math.random() * h - h, length: 15 + Math.random() * 25, speed: 12 + Math.random() * 8, alpha: 0.1 + Math.random() * 0.2, width: 0.5 + Math.random() * 1 });
+    }
+    fxCtx.strokeStyle = 'rgba(255, 105, 180, 0.25)';
+    for (var i = 0; i < fxParticles.length; i++) {
+      var p = fxParticles[i];
+      p.y += p.speed; p.x -= 1.5;
+      if (p.y > h + 30) { p.y = -30; p.x = Math.random() * (w + 200) - 100; }
+      fxCtx.globalAlpha = p.alpha;
+      fxCtx.lineWidth = p.width;
+      fxCtx.beginPath();
+      fxCtx.moveTo(p.x, p.y);
+      fxCtx.lineTo(p.x + 1.5, p.y - p.length);
+      fxCtx.stroke();
+    }
+    fxCtx.globalAlpha = 1;
+  } else if (fxEffect === 'snow') {
+    while (fxParticles.length < 80) {
+      fxParticles.push({ x: Math.random() * w, y: -10 - Math.random() * h, size: 1 + Math.random() * 3, speed: 0.5 + Math.random() * 1.5, wobble: Math.random() * Math.PI * 2, ws: 0.5 + Math.random() * 1, alpha: 0.3 + Math.random() * 0.5 });
+    }
+    for (var i = 0; i < fxParticles.length; i++) {
+      var p = fxParticles[i];
       p.y += p.speed;
-      p.x -= 1.5;
-
-      if (p.y > h + 30) {
-        p.y = -30;
-        p.x = Math.random() * (w + 200) - 100;
-      }
-
-      ctx.globalAlpha = p.alpha;
-      ctx.lineWidth = p.width;
-      ctx.beginPath();
-      ctx.moveTo(p.x, p.y);
-      ctx.lineTo(p.x + 1.5, p.y - p.length);
-      ctx.stroke();
-    });
-    ctx.globalAlpha = 1;
-  }
-
-  // 雪效果
-  renderSnow() {
-    const { ctx, canvas, time, particles } = this;
-    const w = canvas.width, h = canvas.height;
-
-    while (particles.length < 80) {
-      particles.push({
-        x: Math.random() * w,
-        y: -10 - Math.random() * h,
-        size: 1 + Math.random() * 3,
-        speed: 0.5 + Math.random() * 1.5,
-        wobble: Math.random() * Math.PI * 2,
-        wobbleSpeed: 0.5 + Math.random() * 1,
-        alpha: 0.3 + Math.random() * 0.5,
-      });
+      p.x += Math.sin(fxTime * p.ws + p.wobble) * 0.5;
+      if (p.y > h + 10) { p.y = -10; p.x = Math.random() * w; }
+      fxCtx.globalAlpha = p.alpha;
+      fxCtx.fillStyle = '#FDE2F3';
+      fxCtx.beginPath();
+      fxCtx.arc(p.x, p.y, Math.max(0.5, p.size), 0, Math.PI * 2);
+      fxCtx.fill();
     }
-
-    particles.forEach(p => {
-      p.y += p.speed;
-      p.x += Math.sin(time * p.wobbleSpeed + p.wobble) * 0.5;
-
-      if (p.y > h + 10) {
-        p.y = -10;
-        p.x = Math.random() * w;
-      }
-
-      ctx.globalAlpha = p.alpha;
-      ctx.fillStyle = '#FDE2F3';
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, Math.max(0.5, p.size), 0, Math.PI * 2);
-      ctx.fill();
-    });
-    ctx.globalAlpha = 1;
-  }
-
-  // 光球效果
-  renderOrbs() {
-    const { ctx, canvas, time, particles } = this;
-    const w = canvas.width, h = canvas.height;
-
-    if (particles.length === 0) {
-      for (let i = 0; i < 8; i++) {
-        particles.push({
-          x: Math.random() * w,
-          y: Math.random() * h,
-          radius: 80 + Math.random() * 180,
-          speedX: (Math.random() - 0.5) * 0.3,
-          speedY: (Math.random() - 0.5) * 0.3,
-          hue: 320 + Math.random() * 40,
-          alpha: 0.04 + Math.random() * 0.04,
-          phaseX: Math.random() * Math.PI * 2,
-          phaseY: Math.random() * Math.PI * 2,
-        });
+    fxCtx.globalAlpha = 1;
+  } else if (fxEffect === 'orbs') {
+    if (fxParticles.length === 0) {
+      for (var i = 0; i < 8; i++) {
+        fxParticles.push({ x: Math.random() * w, y: Math.random() * h, radius: 80 + Math.random() * 180, speedX: (Math.random() - 0.5) * 0.3, speedY: (Math.random() - 0.5) * 0.3, hue: 320 + Math.random() * 40, alpha: 0.04 + Math.random() * 0.04, phaseX: Math.random() * Math.PI * 2, phaseY: Math.random() * Math.PI * 2 });
       }
     }
-
-    particles.forEach(p => {
-      p.x += p.speedX + Math.sin(time * 0.2 + p.phaseX) * 0.3;
-      p.y += p.speedY + Math.cos(time * 0.15 + p.phaseY) * 0.3;
-
+    for (var i = 0; i < fxParticles.length; i++) {
+      var p = fxParticles[i];
+      p.x += p.speedX + Math.sin(fxTime * 0.2 + p.phaseX) * 0.3;
+      p.y += p.speedY + Math.cos(fxTime * 0.15 + p.phaseY) * 0.3;
       if (p.x < -p.radius) p.x = w + p.radius;
       if (p.x > w + p.radius) p.x = -p.radius;
       if (p.y < -p.radius) p.y = h + p.radius;
       if (p.y > h + p.radius) p.y = -p.radius;
-
-      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, Math.max(1, p.radius));
-      grad.addColorStop(0, `hsla(${p.hue}, 80%, 60%, ${p.alpha})`);
-      grad.addColorStop(0.5, `hsla(${p.hue + 20}, 60%, 40%, ${p.alpha * 0.4})`);
-      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = grad;
-      ctx.fillRect(p.x - p.radius, p.y - p.radius, p.radius * 2, p.radius * 2);
-    });
+      var grad = fxCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, Math.max(1, p.radius));
+      grad.addColorStop(0, 'hsla(' + p.hue + ', 80%, 60%, ' + p.alpha + ')');
+      grad.addColorStop(0.5, 'hsla(' + (p.hue + 20) + ', 60%, 40%, ' + (p.alpha * 0.4) + ')');
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      fxCtx.fillStyle = grad;
+      fxCtx.fillRect(p.x - p.radius, p.y - p.radius, p.radius * 2, p.radius * 2);
+    }
   }
+
+  requestAnimationFrame(fxAnimate);
 }
+fxSetEffect('aurora');
 
-// 初始化特效引擎
-const fxCanvas = document.getElementById('fx-canvas');
-const fxEngine = new EffectsEngine(fxCanvas);
-fxEngine.start();
+/* ============================
+   导航栏渲染（根据认证状态）
+   ============================ */
+function renderNav() {
+  var linksEl = document.getElementById('nav-links');
+  var actionsEl = document.getElementById('nav-actions');
+  var links = '<a href="#/" class="text-ss-muted hover:text-ss-text text-sm font-medium no-underline transition-colors">Home</a>';
 
-// ==================== 个人资料渲染 ====================
-function renderProfile(user) {
-  const wrapper = document.getElementById('profile-wrapper');
-  const nameClass = `name-${currentNameEffect}`;
-  const cardClass = `profile-card-${currentCardStyle}`;
-
-  wrapper.innerHTML = `
-    <div class="${cardClass} w-full max-w-[420px] p-0 overflow-hidden">
-      ${user.banner ? `
-      <div class="h-32 sm:h-40 relative overflow-hidden">
-        <img src="${user.banner}" class="w-full h-full object-cover" alt="Banner">
-        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-      </div>` : ''}
-      <div class="px-6 pb-6 ${user.banner ? '-mt-12' : 'pt-6'} relative">
-        <div class="flex items-end gap-4 mb-4">
-          <img src="${user.avatar}" class="w-20 h-20 rounded-2xl object-cover border-4 border-ss-bg flex-shrink-0" style="border-color: ${user.accentColor}22;" alt="${user.displayName}">
-          <div class="pb-1 min-w-0">
-            <h1 class="font-display text-2xl font-bold truncate ${nameClass}" ${currentNameEffect === 'glitch' ? `data-text="${user.username}"` : ''}>
-              ${user.username}
-            </h1>
-            <p class="text-ss-muted text-xs font-mono">#${String(user.uid).padStart(7, '0')}</p>
-          </div>
-        </div>
-
-        ${user.description ? `<p class="text-ss-text/80 text-sm leading-relaxed mb-3">${user.description}</p>` : ''}
-
-        ${user.location ? `
-        <div class="flex items-center gap-2 text-ss-muted text-xs mb-4">
-          <i class="fa-solid fa-location-dot text-ss-pink/60"></i>
-          <span>${user.location}</span>
-        </div>` : ''}
-
-        ${user.badges.length ? `
-        <div class="flex flex-wrap gap-1.5 mb-4">
-          ${user.badges.map(b => renderBadge(b)).join('')}
-        </div>` : ''}
-
-        ${user.discord ? `
-        <div class="flex items-center gap-3 p-3 rounded-xl mb-4" style="background: rgba(88,101,242,0.08); border: 1px solid rgba(88,101,242,0.12);">
-          <div class="relative">
-            <img src="${user.avatar}" class="w-8 h-8 rounded-lg object-cover" alt="">
-            <span class="status-dot status-${user.discord.status} absolute -bottom-0.5 -right-0.5 border-2 border-ss-bg" style="border-color: #0A0A0F;"></span>
-          </div>
-          <div class="min-w-0">
-            <div class="text-xs font-medium text-[#DEDFE3] truncate">${user.discord.username}</div>
-            <div class="text-[11px] text-ss-muted truncate">${user.discord.activity}</div>
-          </div>
-        </div>` : ''}
-
-        <div class="space-y-2.5 mb-4">
-          ${user.links.map(l => `
-            <a href="${l.url}" class="link-btn" target="_blank" rel="noopener">
-              <i class="${l.icon}"></i>
-              <span>${l.title}</span>
-              <i class="fa-solid fa-arrow-right ml-auto text-ss-dim text-xs"></i>
-            </a>
-          `).join('')}
-        </div>
-
-        ${user.music ? `
-        <div class="flex items-center gap-3 p-3 rounded-xl" style="background: rgba(255,20,147,0.05); border: 1px solid rgba(255,20,147,0.1);">
-          <img src="${user.music.cover}" class="w-10 h-10 rounded-lg object-cover flex-shrink-0" alt="Album art">
-          <div class="flex-1 min-w-0">
-            <div class="text-xs font-medium truncate">${user.music.title}</div>
-            <div class="text-[11px] text-ss-muted truncate">${user.music.artist}</div>
-            <div class="music-bar mt-1.5">
-              <div class="music-fill" style="width: ${user.music.progress * 100}%;"></div>
-            </div>
-          </div>
-          <div class="text-[11px] text-ss-muted font-mono flex-shrink-0">${user.music.duration}</div>
-          <button class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background: rgba(255,20,147,0.15); border: none; color: #FF69B4; cursor: pointer;" onclick="toggleMusic(this)" aria-label="Play/Pause">
-            <i class="fa-solid fa-play text-xs"></i>
-          </button>
-        </div>` : ''}
-
-        <div class="text-center mt-5 text-ss-dim text-xs font-mono">
-          <i class="fa-solid fa-eye mr-1"></i> ${user.views.toLocaleString()} views
-        </div>
-      </div>
-    </div>
-  `;
-
-  // 模拟音乐进度
-  if (user.music) {
-    startMusicProgress(user.music.progress);
-  }
-}
-
-let musicInterval = null;
-let musicProgress = 0;
-
-function startMusicProgress(initial) {
-  if (musicInterval) clearInterval(musicInterval);
-  musicProgress = initial;
-  musicInterval = setInterval(() => {
-    musicProgress += 0.002;
-    if (musicProgress > 1) musicProgress = 0;
-    const fill = document.querySelector('.music-fill');
-    if (fill) fill.style.width = `${musicProgress * 100}%`;
-  }, 100);
-}
-
-function toggleMusic(btn) {
-  const icon = btn.querySelector('i');
-  if (icon.classList.contains('fa-play')) {
-    icon.classList.remove('fa-play');
-    icon.classList.add('fa-pause');
+  if (authState.isLoggedIn) {
+    links += '<a href="#/customize" class="text-ss-muted hover:text-ss-text text-sm font-medium no-underline transition-colors">Customize</a>';
+    // 只有 admin 及以上角色才显示 Admin 链接
+    if (ROLE_LEVELS[authState.user.role] >= ROLE_LEVELS.admin) {
+      links += '<a href="#/admin" class="text-ss-muted hover:text-ss-text text-sm font-medium no-underline transition-colors">Admin</a>';
+    }
+    actionsEl.innerHTML = '<div class="flex items-center gap-3"><img src="' + authState.user.avatar + '" class="w-8 h-8 rounded-lg object-cover" alt=""><span class="text-sm font-medium hidden sm:block">' + authState.user.username + '</span><button class="btn-ghost text-sm" onclick="doLogout()">Sign Out</button></div>';
   } else {
-    icon.classList.remove('fa-pause');
-    icon.classList.add('fa-play');
+    actionsEl.innerHTML = '<button class="btn-ghost hidden sm:block" onclick="openAuth(\'login\')">Log In</button><button class="btn-pink text-sm !py-2 !px-5" onclick="openAuth(\'register\')">Get Started</button>';
   }
+  linksEl.innerHTML = links;
 }
 
-function renderBadge(badgeId) {
-  const badges = {
-    verified: { cls: 'badge-verified', icon: 'fa-solid fa-check', tip: 'Verified Account' },
-    premium: { cls: 'badge-premium', icon: 'fa-solid fa-crown', tip: 'Premium Member' },
-    staff: { cls: 'badge-staff', icon: 'fa-solid fa-shield', tip: 'Staff Member' },
-    early: { cls: 'badge-early', icon: 'fa-solid fa-heart', tip: 'Early Supporter' },
-    pearl: { cls: 'badge-pearl', icon: 'fa-solid fa-gem', tip: 'Pink Pearl Badge' },
-    custom: { cls: 'badge-custom', icon: 'fa-solid fa-image', tip: 'Custom Badge' },
-  };
-  const b = badges[badgeId] || badges.custom;
-  return `<span class="badge ${b.cls}"><i class="${b.icon} text-[9px]"></i><span class="badge-tip">${b.tip}</span></span>`;
-}
+/* ============================
+   路由系统（带权限守卫）
+   ============================ */
+function navigate(path) { window.location.hash = path; }
 
-// ==================== 效果切换 ====================
-function toggleFxPanel() {
-  document.getElementById('fx-panel').classList.toggle('open');
-}
+function handleRoute() {
+  var hash = window.location.hash || '#/';
+  var fxSwitcher = document.getElementById('fx-switcher');
 
-function switchFx(fx) {
-  currentBgEffect = fx;
-  fxEngine.setEffect(fx);
-  updateFxPanelState();
-}
+  // 隐藏所有页面
+  var pages = document.querySelectorAll('.page');
+  for (var i = 0; i < pages.length; i++) pages[i].classList.remove('active');
+  fxSwitcher.style.display = 'none';
 
-function switchNameFx(nfx) {
-  currentNameEffect = nfx;
-  if (currentProfileUser) renderProfile(currentProfileUser);
-  updateFxPanelState();
-}
-
-function switchCardStyle(cs) {
-  currentCardStyle = cs;
-  if (currentProfileUser) renderProfile(currentProfileUser);
-  updateFxPanelState();
-}
-
-function updateFxPanelState() {
-  document.querySelectorAll('.fx-option[data-fx]').forEach(b => {
-    b.classList.toggle('active', b.dataset.fx === currentBgEffect);
-  });
-  document.querySelectorAll('.fx-option[data-nfx]').forEach(b => {
-    b.classList.toggle('active', b.dataset.nfx === currentNameEffect);
-  });
-  document.querySelectorAll('.fx-option[data-cs]').forEach(b => {
-    b.classList.toggle('active', b.dataset.cs === currentCardStyle);
-  });
-}
-
-// 点击外部关闭效果面板
-document.addEventListener('click', (e) => {
-  const switcher = document.getElementById('fx-switcher');
-  if (!switcher.contains(e.target)) {
-    document.getElementById('fx-panel').classList.remove('open');
+  if (hash === '#/' || hash === '' || hash === '#') {
+    showPage('landing');
+    fxSetEffect('aurora');
+  } else if (hash.startsWith('#/u/')) {
+    // 个人资料页 — 任何人都可以查看
+    var username = hash.replace('#/u/', '').split('/')[0];
+    currentProfileUser = demoUsers[username] || demoUsers.sakura;
+    currentBgEffect = currentProfileUser.bgEffect;
+    currentNameEffect = currentProfileUser.nameEffect;
+    currentCardStyle = currentProfileUser.cardStyle;
+    showPage('profile');
+    fxSwitcher.style.display = 'block';
+    renderProfile(currentProfileUser);
+    fxSetEffect(currentBgEffect);
+    updateFxPanelState();
+  } else if (hash === '#/customize') {
+    // 定制页 — 必须登录
+    if (!authState.isLoggedIn) {
+      document.getElementById('unauth-msg').textContent = 'You need to sign in to customize your profile.';
+      showPage('unauthorized');
+      fxSetEffect('orbs');
+      return;
+    }
+    showPage('customize');
+    fxSetEffect('aurora');
+    renderCustomizeTab('bg');
+    renderCustomizePreview();
+  } else if (hash === '#/admin') {
+    // 管理面板 — 必须登录且角色 >= admin
+    if (!authState.isLoggedIn) {
+      document.getElementById('unauth-msg').textContent = 'You need to sign in with an admin account to access this panel.';
+      showPage('unauthorized');
+      fxSetEffect('orbs');
+      return;
+    }
+    if (ROLE_LEVELS[authState.user.role] < ROLE_LEVELS.admin) {
+      document.getElementById('unauth-msg').textContent = 'You do not have permission to access the admin panel. Required: Admin or higher.';
+      showPage('unauthorized');
+      fxSetEffect('orbs');
+      return;
+    }
+    showPage('admin');
+    fxSetEffect('orbs');
+    renderAdminTab('dashboard');
+  } else {
+    showPage('landing');
+    fxSetEffect('aurora');
   }
-});
 
-// ==================== 认证系统 ====================
-let authMode = 'login';
+  // 触发淡入动画
+  requestAnimationFrame(function() {
+    var els = document.querySelectorAll('.fade-up');
+    for (var i = 0; i < els.length; i++) {
+      (function(el) {
+        var delay = parseInt(el.dataset.delay || '0');
+        setTimeout(function() { el.classList.add('visible'); }, delay);
+      })(els[i]);
+    }
+  });
+  window.scrollTo(0, 0);
+}
+
+function showPage(name) {
+  var el = document.getElementById('page-' + name);
+  if (el) el.classList.add('active');
+}
+
+window.addEventListener('hashchange', handleRoute);
+
+/* ============================
+   认证系统
+   ============================ */
+var authMode = 'login';
 
 function openAuth(mode) {
   authMode = mode;
-  const modal = document.getElementById('auth-modal');
-  const title = document.getElementById('auth-title');
-  const subtitle = document.getElementById('auth-subtitle');
-  const submit = document.getElementById('auth-submit');
-  const nameField = document.getElementById('auth-name-field');
-  const toggleText = document.getElementById('auth-toggle-text');
-  const toggleBtn = document.getElementById('auth-toggle-btn');
+  var title = document.getElementById('auth-title');
+  var subtitle = document.getElementById('auth-subtitle');
+  var submit = document.getElementById('auth-submit');
+  var nameField = document.getElementById('auth-name-field');
+  var toggleText = document.getElementById('auth-toggle-text');
+  var toggleBtn = document.getElementById('auth-toggle-btn');
 
   if (mode === 'login') {
     title.textContent = 'Welcome Back';
@@ -1762,168 +810,333 @@ function openAuth(mode) {
     toggleText.textContent = 'Already have an account?';
     toggleBtn.textContent = 'Sign In';
   }
-
-  modal.classList.add('open');
+  document.getElementById('auth-modal').classList.add('open');
 }
 
-function closeAuth() {
-  document.getElementById('auth-modal').classList.remove('open');
-}
+function closeAuth() { document.getElementById('auth-modal').classList.remove('open'); }
 
-function toggleAuthMode() {
-  openAuth(authMode === 'login' ? 'register' : 'login');
-}
+function toggleAuthMode() { openAuth(authMode === 'login' ? 'register' : 'login'); }
 
 function handleAuth() {
-  const email = document.getElementById('auth-email').value.trim();
-  const password = document.getElementById('auth-password').value.trim();
+  var email = document.getElementById('auth-email').value.trim();
+  var password = document.getElementById('auth-password').value.trim();
+  if (!email || !password) { showToast('Please fill in all fields.', 'error'); return; }
+  if (!email.includes('@') || !email.includes('.')) { showToast('Please enter a valid email address.', 'error'); return; }
+  if (password.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
 
-  if (!email || !password) {
-    showToast('Please fill in all fields.', 'error');
-    return;
-  }
-  if (!email.includes('@') || !email.includes('.')) {
-    showToast('Please enter a valid email address.', 'error');
-    return;
-  }
-  if (password.length < 6) {
-    showToast('Password must be at least 6 characters.', 'error');
-    return;
-  }
+  var submit = document.getElementById('auth-submit');
+  submit.textContent = 'Please wait...';
+  submit.disabled = true;
 
-  // 模拟认证（实际项目中使用 Firebase Auth）
-  const submitBtn = document.getElementById('auth-submit');
-  submitBtn.textContent = 'Please wait...';
-  submitBtn.disabled = true;
+  setTimeout(function() {
+    // 模拟登录：用 "rose" 账号登录（角色是 admin，可测试 admin 面板）
+    // 用 "sakura" 或 "luna" 登录则角色是 user
+    var isLoginAsAdmin = email.toLowerCase().includes('admin') || email.toLowerCase().includes('rose');
+    var mockUser = isLoginAsAdmin ? demoUsers.rose : demoUsers.sakura;
 
-  setTimeout(() => {
+    authState.isLoggedIn = true;
+    authState.user = {
+      uid: mockUser.uid,
+      username: mockUser.username,
+      displayName: mockUser.displayName,
+      email: email,
+      role: mockUser.role,
+      avatar: mockUser.avatar
+    };
+
     closeAuth();
-    submitBtn.textContent = authMode === 'login' ? 'Sign In' : 'Create Account';
-    submitBtn.disabled = false;
-    showToast(authMode === 'login' ? 'Signed in successfully!' : 'Account created! Welcome to seashell.lol', 'success');
-    navigate('/u/sakura');
+    submit.textContent = authMode === 'login' ? 'Sign In' : 'Create Account';
+    submit.disabled = false;
+
+    renderNav();
+    showToast(authMode === 'login' ? 'Signed in as ' + authState.user.username + '!' : 'Account created! Welcome to seashell.lol', 'success');
+
+    if (isLoginAsAdmin) {
+      navigate('/admin');
+    } else {
+      navigate('/customize');
+    }
   }, 1200);
 }
 
 function socialAuth(provider) {
   closeAuth();
-  showToast(`Connecting to ${provider === 'google' ? 'Google' : 'Discord'}...`, 'info');
-  setTimeout(() => {
-    showToast(`Signed in with ${provider === 'google' ? 'Google' : 'Discord'}!`, 'success');
-    navigate('/u/sakura');
+  showToast('Connecting to ' + (provider === 'google' ? 'Google' : 'Discord') + '...', 'info');
+  setTimeout(function() {
+    authState.isLoggedIn = true;
+    authState.user = { uid: 9999999, username: 'socialuser', displayName: 'Social User', email: 'social@example.com', role: 'user', avatar: 'https://picsum.photos/seed/social-av/100/100.jpg' };
+    renderNav();
+    showToast('Signed in with ' + (provider === 'google' ? 'Google' : 'Discord') + '!', 'success');
+    navigate('/customize');
   }, 1500);
 }
 
-// ==================== Toast 通知 ====================
-function showToast(message, type = 'info') {
-  const container = document.getElementById('toast-container');
-  const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
+function doLogout() {
+  authState.isLoggedIn = false;
+  authState.user = null;
+  renderNav();
+  showToast('Signed out successfully.', 'info');
+  navigate('/');
+}
+
+/* ============================
+   Toast 通知
+   ============================ */
+function showToast(message, type) {
+  type = type || 'info';
+  var container = document.getElementById('toast-container');
+  var toast = document.createElement('div');
+  toast.className = 'toast toast-' + type;
   toast.textContent = message;
   container.appendChild(toast);
-
-  requestAnimationFrame(() => {
-    toast.classList.add('show');
-  });
-
-  setTimeout(() => {
+  requestAnimationFrame(function() { toast.classList.add('show'); });
+  setTimeout(function() {
     toast.classList.remove('show');
-    setTimeout(() => toast.remove(), 400);
+    setTimeout(function() { toast.remove(); }, 400);
   }, 3500);
 }
 
-// ==================== 定制页面 ====================
-let customTab = 'bg';
+/* ============================
+   个人资料渲染
+   ============================ */
+function renderProfile(user) {
+  var wrapper = document.getElementById('profile-wrapper');
+  var nameClass = 'name-' + currentNameEffect;
+  var cardClass = 'profile-card-' + currentCardStyle;
+  var glitchAttr = currentNameEffect === 'glitch' ? ' data-text="' + user.username + '"' : '';
 
+  var html = '<div class="' + cardClass + ' w-full max-w-[420px] p-0 overflow-hidden">';
+
+  if (user.banner) {
+    html += '<div class="h-32 sm:h-40 relative overflow-hidden"><img src="' + user.banner + '" class="w-full h-full object-cover" alt="Banner"><div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div></div>';
+  }
+
+  html += '<div class="px-6 pb-6 ' + (user.banner ? '-mt-12' : 'pt-6') + ' relative">';
+  html += '<div class="flex items-end gap-4 mb-4"><img src="' + user.avatar + '" class="w-20 h-20 rounded-2xl object-cover flex-shrink-0" style="border:4px solid #0A0A0F" alt="' + user.displayName + '"><div class="pb-1 min-w-0"><h1 class="font-display text-2xl font-bold truncate ' + nameClass + '"' + glitchAttr + '>' + user.username + '</h1><p class="text-ss-muted text-xs" style="font-family:\'JetBrains Mono\',monospace">#' + String(user.uid).padStart(7, '0') + '</p></div></div>';
+
+  if (user.description) html += '<p class="text-sm leading-relaxed mb-3" style="color:rgba(245,240,242,0.8)">' + user.description + '</p>';
+
+  if (user.location) html += '<div class="flex items-center gap-2 text-ss-muted text-xs mb-4"><i class="fa-solid fa-location-dot" style="color:rgba(255,20,147,0.6)"></i><span>' + user.location + '</span></div>';
+
+  if (user.badges && user.badges.length) {
+    html += '<div class="flex flex-wrap gap-1.5 mb-4">';
+    for (var i = 0; i < user.badges.length; i++) html += renderBadge(user.badges[i]);
+    html += '</div>';
+  }
+
+  if (user.discord) {
+    html += '<div class="flex items-center gap-3 p-3 rounded-xl mb-4" style="background:rgba(88,101,242,0.08);border:1px solid rgba(88,101,242,0.12)"><div class="relative"><img src="' + user.avatar + '" class="w-8 h-8 rounded-lg object-cover" alt=""><span class="status-dot status-' + user.discord.status + ' absolute -bottom-0.5 -right-0.5" style="border:2px solid #0A0A0F"></span></div><div class="min-w-0"><div class="text-xs font-medium truncate" style="color:#DEDFE3">' + user.discord.username + '</div><div class="text-xs text-ss-muted truncate">' + user.discord.activity + '</div></div></div>';
+  }
+
+  html += '<div class="space-y-2.5 mb-4">';
+  for (var i = 0; i < user.links.length; i++) {
+    var l = user.links[i];
+    html += '<a href="' + l.url + '" class="link-btn" target="_blank" rel="noopener"><i class="' + l.icon + '"></i><span>' + l.title + '</span><i class="fa-solid fa-arrow-right ml-auto text-ss-dim text-xs"></i></a>';
+  }
+  html += '</div>';
+
+  if (user.music) {
+    html += '<div class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(255,20,147,0.05);border:1px solid rgba(255,20,147,0.1)"><img src="' + user.music.cover + '" class="w-10 h-10 rounded-lg object-cover flex-shrink-0" alt="Album"><div class="flex-1 min-w-0"><div class="text-xs font-medium truncate">' + user.music.title + '</div><div class="text-xs text-ss-muted truncate">' + user.music.artist + '</div><div class="music-bar mt-1.5"><div class="music-fill" id="music-fill" style="width:' + (user.music.progress * 100) + '%"></div></div></div><div class="text-xs text-ss-muted flex-shrink-0" style="font-family:\'JetBrains Mono\',monospace">' + user.music.duration + '</div><button class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background:rgba(255,20,147,0.15);border:none;color:#FF69B4;cursor:pointer" onclick="toggleMusicBtn(this)" aria-label="Play/Pause"><i class="fa-solid fa-play text-xs"></i></button></div>';
+    startMusicProgress(user.music.progress);
+  }
+
+  html += '<div class="text-center mt-5 text-ss-dim text-xs" style="font-family:\'JetBrains Mono\',monospace"><i class="fa-solid fa-eye mr-1"></i> ' + user.views.toLocaleString() + ' views</div>';
+  html += '</div></div>';
+
+  wrapper.innerHTML = html;
+}
+
+function renderBadge(badgeId) {
+  var badges = {
+    verified: { cls: 'badge-verified', icon: 'fa-solid fa-check', tip: 'Verified Account' },
+    premium: { cls: 'badge-premium', icon: 'fa-solid fa-crown', tip: 'Premium Member' },
+    staff: { cls: 'badge-staff', icon: 'fa-solid fa-shield', tip: 'Staff Member' },
+    early: { cls: 'badge-early', icon: 'fa-solid fa-heart', tip: 'Early Supporter' },
+    pearl: { cls: 'badge-pearl', icon: 'fa-solid fa-gem', tip: 'Pink Pearl Badge' },
+  };
+  var b = badges[badgeId] || { cls: 'badge-premium', icon: 'fa-solid fa-star', tip: 'Custom Badge' };
+  return '<span class="badge ' + b.cls + '"><i class="' + b.icon + ' text-[9px]"></i><span class="badge-tip">' + b.tip + '</span></span>';
+}
+
+function startMusicProgress(initial) {
+  if (musicInterval) clearInterval(musicInterval);
+  musicProgress = initial;
+  musicInterval = setInterval(function() {
+    musicProgress += 0.002;
+    if (musicProgress > 1) musicProgress = 0;
+    var fill = document.getElementById('music-fill');
+    if (fill) fill.style.width = (musicProgress * 100) + '%';
+  }, 100);
+}
+
+function toggleMusicBtn(btn) {
+  var icon = btn.querySelector('i');
+  if (icon.classList.contains('fa-play')) { icon.classList.remove('fa-play'); icon.classList.add('fa-pause'); }
+  else { icon.classList.remove('fa-pause'); icon.classList.add('fa-play'); }
+}
+
+/* ============================
+   效果切换器
+   ============================ */
+function toggleFxPanel() { document.getElementById('fx-panel').classList.toggle('open'); }
+
+function switchFx(fx) { currentBgEffect = fx; fxSetEffect(fx); updateFxPanelState(); }
+function switchNameFx(nfx) { currentNameEffect = nfx; if (currentProfileUser) renderProfile(currentProfileUser); updateFxPanelState(); }
+function switchCardStyle(cs) { currentCardStyle = cs; if (currentProfileUser) renderProfile(currentProfileUser); updateFxPanelState(); }
+
+function updateFxPanelState() {
+  var btns = document.querySelectorAll('.fx-option[data-fx]');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.toggle('active', btns[i].dataset.fx === currentBgEffect);
+  btns = document.querySelectorAll('.fx-option[data-nfx]');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.toggle('active', btns[i].dataset.nfx === currentNameEffect);
+  btns = document.querySelectorAll('.fx-option[data-cs]');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.toggle('active', btns[i].dataset.cs === currentCardStyle);
+}
+
+document.addEventListener('click', function(e) {
+  var sw = document.getElementById('fx-switcher');
+  if (sw && !sw.contains(e.target)) document.getElementById('fx-panel').classList.remove('open');
+});
+
+/* ============================
+   定制页面
+   ============================ */
 function switchCustomTab(tab) {
-  customTab = tab;
-  document.querySelectorAll('.custom-tab').forEach(t => {
-    t.classList.toggle('active', t.dataset.ctab === tab);
-  });
+  var tabs = document.querySelectorAll('.custom-tab');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.toggle('active', tabs[i].dataset.ctab === tab);
   renderCustomizeTab(tab);
 }
 
 function renderCustomizeTab(tab) {
-  const container = document.getElementById('custom-tab-content');
+  var container = document.getElementById('custom-tab-content');
+  if (tab === 'bg') {
+    container.innerHTML = '<h3 class="font-semibold mb-4">Background Settings</h3><div class="space-y-5"><div><label class="block text-xs font-medium text-ss-muted mb-2">Background Image</label><div class="flex gap-3"><div class="w-24 h-16 rounded-xl overflow-hidden border cursor-pointer hover:border-ss-pink/40 transition-colors" style="border-color:rgba(255,20,147,0.18)"><img src="https://picsum.photos/seed/bg-opt-1/200/130.jpg" class="w-full h-full object-cover" alt="Option 1"></div><div class="w-24 h-16 rounded-xl overflow-hidden cursor-pointer" style="border:2px solid rgba(255,20,147,0.4)"><img src="https://picsum.photos/seed/bg-opt-2/200/130.jpg" class="w-full h-full object-cover" alt="Option 2"></div><div class="w-24 h-16 rounded-xl flex items-center justify-center cursor-pointer" style="border:1px solid rgba(255,20,147,0.18);background:rgba(22,22,31,1)"><i class="fa-solid fa-plus text-ss-muted"></i></div></div></div><div><label class="block text-xs font-medium text-ss-muted mb-2">Background Video / GIF</label><button class="btn-ghost text-sm"><i class="fa-solid fa-upload mr-2"></i>Upload Video or GIF</button><p class="text-ss-dim text-xs mt-1.5">MP4, WebM, or GIF. Max 10MB free, 50MB premium.</p></div><div><label class="block text-xs font-medium text-ss-muted mb-2">Background Audio</label><button class="btn-ghost text-sm"><i class="fa-solid fa-music mr-2"></i>Upload Audio</button><p class="text-ss-dim text-xs mt-1.5">MP3 or OGG. Auto-plays when profile loads. Premium only.</p></div><div><label class="block text-xs font-medium text-ss-muted mb-2">Custom Cursor</label><div class="flex gap-3"><button class="btn-ghost text-sm" style="background:rgba(255,20,147,0.15)">Default</button><button class="btn-ghost text-sm">Heart</button><button class="btn-ghost text-sm">Star</button><button class="btn-ghost text-sm">Custom</button></div></div></div>';
+  } else if (tab === 'effects') {
+    var fxs = ['aurora','petals','sparkles','rain','snow','orbs'];
+    var icons = ['sun','leaf','star','cloud-rain','snowflake','circle'];
+    var h = '<h3 class="font-semibold mb-4">Visual Effects</h3><div class="grid grid-cols-3 gap-3">';
+    for (var i = 0; i < fxs.length; i++) {
+      var isActive = fxs[i] === currentBgEffect;
+      h += '<button class="p-3 rounded-xl border transition-all text-center" style="border-color:' + (isActive ? 'rgba(255,20,147,0.4)' : 'rgba(255,20,147,0.12)') + ';background:' + (isActive ? 'rgba(255,20,147,0.08)' : 'transparent') + '" onclick="switchFx(\'' + fxs[i] + '\');renderCustomizePreview()"><i class="fa-solid fa-' + icons[i] + ' text-lg mb-1 ' + (isActive ? 'text-ss-pink' : 'text-ss-muted') + '"></i><div class="text-xs capitalize ' + (isActive ? 'text-ss-text' : 'text-ss-muted') + '">' + fxs[i] + '</div></button>';
+    }
+    h += '</div><div class="mt-6"><label class="block text-xs font-medium text-ss-muted mb-2">Effect Intensity</label><input type="range" min="0" max="100" value="70" class="w-full accent-[#FF1493]" oninput="this.nextElementSibling.textContent=this.value+\'%\'"><span class="text-xs text-ss-muted">70%</span></div>';
+    container.innerHTML = h;
+  } else if (tab === 'card') {
+    var styles = ['glass','default','minimal','portfolio'];
+    var descs = ['Frosted glass blur','Standard card','Clean and simple','Left accent border'];
+    var h = '<h3 class="font-semibold mb-4">Card Style</h3><div class="grid grid-cols-2 gap-3 mb-6">';
+    for (var i = 0; i < styles.length; i++) {
+      var isActive = styles[i] === currentCardStyle;
+      h += '<button class="p-4 rounded-xl border transition-all text-left" style="border-color:' + (isActive ? 'rgba(255,20,147,0.4)' : 'rgba(255,20,147,0.12)') + ';background:' + (isActive ? 'rgba(255,20,147,0.08)' : 'transparent') + '" onclick="switchCardStyle(\'' + styles[i] + '\');renderCustomizePreview()"><div class="text-sm font-medium capitalize mb-1 ' + (isActive ? 'text-ss-text' : 'text-ss-muted') + '">' + styles[i] + '</div><div class="text-xs text-ss-dim">' + descs[i] + '</div></button>';
+    }
+    h += '</div><h3 class="font-semibold mb-3">Card Options</h3><div class="space-y-4"><div><label class="block text-xs font-medium text-ss-muted mb-2">Border Radius</label><input type="range" min="0" max="32" value="24" class="w-full accent-[#FF1493]"></div><div><label class="block text-xs font-medium text-ss-muted mb-2">Card Opacity</label><input type="range" min="30" max="100" value="75" class="w-full accent-[#FF1493]"></div><div><label class="block text-xs font-medium text-ss-muted mb-2">Card Glow</label><input type="range" min="0" max="100" value="40" class="w-full accent-[#FF1493]"></div></div>';
+    container.innerHTML = h;
+  } else if (tab === 'colors') {
+    container.innerHTML = '<h3 class="font-semibold mb-4">Color Customization</h3><div class="space-y-5"><div><label class="block text-xs font-medium text-ss-muted mb-2">Accent Color</label><div class="flex items-center gap-3"><input type="color" value="#FF1493" class="w-10 h-10 rounded-lg border-none cursor-pointer bg-transparent"><input type="text" class="input-field !w-32" value="#FF1493" maxlength="7"><div class="flex gap-2"><div class="w-8 h-8 rounded-lg cursor-pointer border border-transparent hover:border-white/30" style="background:#FF1493" onclick="this.parentElement.previousElementSibling.previousElementSibling.value=\'#FF1493\';this.parentElement.previousElementSibling.value=\'#FF1493\'"></div><div class="w-8 h-8 rounded-lg cursor-pointer border border-transparent hover:border-white/30" style="background:#DB2777" onclick="this.parentElement.previousElementSibling.previousElementSibling.value=\'#DB2777\';this.parentElement.previousElementSibling.value=\'#DB2777\'"></div><div class="w-8 h-8 rounded-lg cursor-pointer border border-transparent hover:border-white/30" style="background:#C084FC" onclick="this.parentElement.previousElementSibling.previousElementSibling.value=\'#C084FC\';this.parentElement.previousElementSibling.value=\'#C084FC\'"></div><div class="w-8 h-8 rounded-lg cursor-pointer border border-transparent hover:border-white/30" style="background:#F59E0B" onclick="this.parentElement.previousElementSibling.previousElementSibling.value=\'#F59E0B\';this.parentElement.previousElementSibling.value=\'#F59E0B\'"></div></div></div></div><div><label class="block text-xs font-medium text-ss-muted mb-2">Background Color</label><div class="flex items-center gap-3"><input type="color" value="#0A0A0F" class="w-10 h-10 rounded-lg border-none cursor-pointer bg-transparent"><input type="text" class="input-field !w-32" value="#0A0A0F" maxlength="7"></div></div><div><label class="block text-xs font-medium text-ss-muted mb-2">Text Color</label><div class="flex items-center gap-3"><input type="color" value="#F5F0F2" class="w-10 h-10 rounded-lg border-none cursor-pointer bg-transparent"><input type="text" class="input-field !w-32" value="#F5F0F2" maxlength="7"></div></div><div class="flex items-center justify-between"><div><label class="block text-xs font-medium text-ss-muted mb-1">Gradient Toggle</label><p class="text-xs text-ss-dim">Enable gradient accent colors</p></div><button class="w-12 h-6 rounded-full relative cursor-pointer border-none" style="background:rgba(255,20,147,0.3)" onclick="this.style.background=this.style.background.includes(\'0.3\')?\'#FF1493\':\'rgba(255,20,147,0.3)\';this.querySelector(\'span\').style.transform=this.style.background.includes(\'0.3\')?\'translateX(0)\':\'translateX(24px)\'"><span class="block w-5 h-5 rounded-full bg-white absolute top-0.5 left-0.5 transition-transform" style="transform:translateX(24px)"></span></button></div></div>';
+  } else if (tab === 'name') {
+    var effects = ['neon','glitch','gradient','holographic','sparkle'];
+    var names = ['Neon Glow','Glitch','Gradient Slide','Holographic','Sparkle Sweep'];
+    var h = '<h3 class="font-semibold mb-4">Name Effect</h3><div class="grid grid-cols-2 gap-3 mb-6">';
+    for (var i = 0; i < effects.length; i++) {
+      var isActive = effects[i] === currentNameEffect;
+      var previewClass = 'name-' + effects[i];
+      var glitchAttr = effects[i] === 'glitch' ? ' data-text="username"' : '';
+      h += '<button class="p-4 rounded-xl border transition-all text-left" style="border-color:' + (isActive ? 'rgba(255,20,147,0.4)' : 'rgba(255,20,147,0.12)') + ';background:' + (isActive ? 'rgba(255,20,147,0.08)' : 'transparent') + '" onclick="switchNameFx(\'' + effects[i] + '\');renderCustomizePreview()"><div class="text-lg font-bold font-display mb-1 ' + previewClass + '"' + glitchAttr + '>username</div><div class="text-xs text-ss-dim">' + names[i] + '</div></button>';
+    }
+    h += '</div>';
+    container.innerHTML = h;
+  }
+}
 
-  const tabs = {
-    bg: `
-      <h3 class="font-semibold mb-4">Background Settings</h3>
-      <div class="space-y-5">
-        <div>
-          <label class="block text-xs font-medium text-ss-muted mb-2">Background Image</label>
-          <div class="flex gap-3">
-            <div class="w-24 h-16 rounded-xl overflow-hidden border border-ss-border/20 cursor-pointer hover:border-ss-pink/40 transition-colors">
-              <img src="https://picsum.photos/seed/bg-opt-1/200/130.jpg" class="w-full h-full object-cover" alt="Option 1">
-            </div>
-            <div class="w-24 h-16 rounded-xl overflow-hidden border border-ss-pink/40 cursor-pointer" style="box-shadow: 0 0 0 2px rgba(255,20,147,0.3);">
-              <img src="https://picsum.photos/seed/bg-opt-2/200/130.jpg" class="w-full h-full object-cover" alt="Option 2">
-            </div>
-            <div class="w-24 h-16 rounded-xl overflow-hidden border border-ss-border/20 cursor-pointer hover:border-ss-pink/40 transition-colors flex items-center justify-center bg-ss-surface">
-              <i class="fa-solid fa-plus text-ss-muted"></i>
-            </div>
-          </div>
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-ss-muted mb-2">Background Video / GIF</label>
-          <button class="btn-ghost text-sm"><i class="fa-solid fa-upload mr-2"></i>Upload Video or GIF</button>
-          <p class="text-ss-dim text-xs mt-1.5">MP4, WebM, or GIF. Max 10MB for free, 50MB for premium.</p>
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-ss-muted mb-2">Background Audio</label>
-          <button class="btn-ghost text-sm"><i class="fa-solid fa-music mr-2"></i>Upload Audio</button>
-          <p class="text-ss-dim text-xs mt-1.5">MP3 or OGG. Auto-plays when profile loads. Premium only.</p>
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-ss-muted mb-2">Custom Cursor</label>
-          <div class="flex gap-3 items-center">
-            <button class="btn-ghost text-sm active">Default</button>
-            <button class="btn-ghost text-sm">Heart</button>
-            <button class="btn-ghost text-sm">Star</button>
-            <button class="btn-ghost text-sm">Custom</button>
-          </div>
-        </div>
-      </div>
-    `,
-    effects: `
-      <h3 class="font-semibold mb-4">Visual Effects</h3>
-      <div class="grid grid-cols-3 gap-3">
-        ${['aurora', 'petals', 'sparkles', 'rain', 'snow', 'orbs'].map(fx => `
-          <button class="p-3 rounded-xl border transition-all text-center ${fx === currentBgEffect ? 'border-ss-pink/40 bg-ss-pink/8' : 'border-ss-border/15 hover:border-ss-pink/25'}" onclick="switchFx('${fx}'); renderCustomizePreview();">
-            <i class="fa-solid fa-${fx === 'aurora' ? 'sun' : fx === 'petals' ? 'leaf' : fx === 'sparkles' ? 'star' : fx === 'rain' ? 'cloud-rain' : fx === 'snow' ? 'snowflake' : 'circle'} text-lg mb-1 ${fx === currentBgEffect ? 'text-ss-pink' : 'text-ss-muted'}"></i>
-            <div class="text-xs capitalize ${fx === currentBgEffect ? 'text-ss-text' : 'text-ss-muted'}">${fx}</div>
-          </button>
-        `).join('')}
-      </div>
-      <div class="mt-6">
-        <label class="block text-xs font-medium text-ss-muted mb-2">Effect Intensity</label>
-        <input type="range" min="0" max="100" value="70" class="w-full accent-[#FF1493]" oninput="this.nextElementSibling.textContent = this.value + '%'">
-        <span class="text-xs text-ss-muted">70%</span>
-      </div>
-    `,
-    card: `
-      <h3 class="font-semibold mb-4">Card Style</h3>
-      <div class="grid grid-cols-2 gap-3 mb-6">
-        ${['glass', 'default', 'minimal', 'portfolio'].map(cs => `
-          <button class="p-4 rounded-xl border transition-all text-left ${cs === currentCardStyle ? 'border-ss-pink/40 bg-ss-pink/8' : 'border-ss-border/15 hover:border-ss-pink/25'}" onclick="switchCardStyle('${cs}'); renderCustomizePreview();">
-            <div class="text-sm font-medium capitalize mb-1 ${cs === currentCardStyle ? 'text-ss-text' : 'text-ss-muted'}">${cs}</div>
-            <div class="text-[11px] text-ss-dim">${cs === 'glass' ? 'Frosted glass blur' : cs === 'default' ? 'Standard card' : cs === 'minimal' ? 'Clean & simple' : 'Left accent border'}</div>
-          </button>
-        `).join('')}
-      </div>
-      <h3 class="font-semibold mb-3">Card Options</h3>
-      <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-medium text-ss-muted mb-2">Border Radius</label>
-          <input type="range" min="0" max="32" value="24" class="w-full accent-[#FF1493]">
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-ss-muted mb-2">Card Opacity</label>
-          <input type="range" min="30" max="100" value="75" class="w-full accent-[#FF1493]">
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-ss-muted mb-2">Card Glow</label>
-          <input type="range" min="0" max="100" value="40" class="w-full accent-[#FF1493]">
-        </div>
-        <div>
-          <label class
+function renderCustomizePreview() {
+  var preview = document.getElementById('customize-preview');
+  var nameClass = 'name-' + currentNameEffect;
+  var cardClass = 'profile-card-' + currentCardStyle;
+  var glitchAttr = currentNameEffect === 'glitch' ? ' data-text="' + (authState.user ? authState.user.username : 'username') + '"' : '';
+  var uname = authState.user ? authState.user.username : 'username';
+  var uavatar = authState.user ? authState.user.avatar : 'https://picsum.photos/seed/preview-av/100/100.jpg';
+
+  preview.innerHTML = '<div class="' + cardClass + ' p-0 overflow-hidden"><div class="h-20 bg-gradient-to-r from-ss-pink/30 via-rose-500/20 to-purple-500/30"></div><div class="px-4 pb-4 -mt-8"><img src="' + uavatar + '" class="w-14 h-14 rounded-xl object-cover" style="border:3px solid #0A0A0F" alt=""><h3 class="font-display font-bold text-lg mt-2 ' + nameClass + '"' + glitchAttr + '>' + uname + '</h3><p class="text-ss-muted text-xs" style="font-family:\'JetBrains Mono\',monospace">#0000001</p><p class="text-ss-muted text-xs mt-1">Your bio goes here</p><div class="flex gap-1 mt-2"><span class="badge badge-verified !text-[9px] !py-0.5"><i class="fa-solid fa-check text-[7px]"></i></span><span class="badge badge-premium !text-[9px] !py-0.5"><i class="fa-solid fa-crown text-[7px]"></i></span></div><div class="mt-3 space-y-1.5"><div class="link-btn !py-2 !text-xs !rounded-lg"><i class="fa-brands fa-x-twitter"></i> Twitter</div><div class="link-btn !py-2 !text-xs !rounded-lg"><i class="fa-brands fa-instagram"></i> Instagram</div></div></div></div>';
+}
+
+/* ============================
+   管理面板
+   ============================ */
+function switchAdminTab(tab) {
+  var tabs = document.querySelectorAll('.admin-nav-item');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.toggle('active', tabs[i].dataset.atab === tab);
+  renderAdminTab(tab);
+}
+
+function renderAdminTab(tab) {
+  var container = document.getElementById('admin-content');
+  var s = adminData.stats;
+
+  if (tab === 'dashboard') {
+    container.innerHTML = '<h1 class="font-display text-2xl font-bold mb-6">Dashboard</h1><div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"><div class="stat-card"><div class="flex items-center justify-between mb-3"><span class="text-ss-muted text-sm">Total Users</span><i class="fa-solid fa-users text-ss-pink"></i></div><div class="text-2xl font-bold">' + s.totalUsers.toLocaleString() + '</div><div class="text-xs mt-1" style="color:#86EFAC"><i class="fa-solid fa-arrow-up mr-1"></i>' + s.usersChange + '%</div></div><div class="stat-card"><div class="flex items-center justify-between mb-3"><span class="text-ss-muted text-sm">Active Today</span><i class="fa-solid fa-bolt text-ss-pink"></i></div><div class="text-2xl font-bold">' + s.activeToday.toLocaleString() + '</div><div class="text-xs mt-1" style="color:#FCA5A5"><i class="fa-solid fa-arrow-down mr-1"></i>' + Math.abs(s.activeChange) + '%</div></div><div class="stat-card"><div class="flex items-center justify-between mb-3"><span class="text-ss-muted text-sm">Total Views</span><i class="fa-solid fa-eye text-ss-pink"></i></div><div class="text-2xl font-bold">' + (s.totalViews / 1000000).toFixed(1) + 'M</div><div class="text-xs mt-1" style="color:#86EFAC"><i class="fa-solid fa-arrow-up mr-1"></i>' + s.viewsChange + '%</div></div><div class="stat-card"><div class="flex items-center justify-between mb-3"><span class="text-ss-muted text-sm">Revenue</span><i class="fa-solid fa-dollar-sign text-ss-pink"></i></div><div class="text-2xl font-bold">$' + s.revenue.toLocaleString() + '</div><div class="text-xs mt-1" style="color:#86EFAC"><i class="fa-solid fa-arrow-up mr-1"></i>' + s.revenueChange + '%</div></div></div><div class="glass rounded-2xl p-6"><h2 class="font-semibold text-lg mb-4">Recent Activity</h2><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>User</th><th>UID</th><th>Role</th><th>Views</th><th>Status</th><th>Actions</th></tr></thead><tbody>' + renderUserRows(adminData.recentUsers.slice(0, 5)) + '</tbody></table></div></div>';
+  } else if (tab === 'users') {
+    container.innerHTML = '<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6"><h1 class="font-display text-2xl font-bold">User Management</h1><div class="flex gap-3"><input type="text" class="input-field !w-64" placeholder="Search by username, UID, or email..." id="admin-search" oninput="filterAdminUsers()"><button class="btn-pink !py-2.5 !px-4 text-sm"><i class="fa-solid fa-search mr-2"></i>Search</button></div></div><div class="glass rounded-2xl overflow-hidden"><div class="overflow-x-auto"><table class="data-table"><thead><tr><th>User</th><th>UID</th><th>Email</th><th>Role</th><th>Views</th><th>Status</th><th>Actions</th></tr></thead><tbody id="admin-users-body">' + renderUserRows(adminData.recentUsers) + '</tbody></table></div></div>';
+  } else if (tab === 'badges') {
+    var h = '<div class="flex items-center justify-between mb-6"><h1 class="font-display text-2xl font-bold">Badge Management</h1><button class="btn-pink !py-2.5 !px-4 text-sm"><i class="fa-solid fa-plus mr-2"></i>Create Badge</button></div><div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">';
+    for (var i = 0; i < adminData.badges.length; i++) {
+      var b = adminData.badges[i];
+      h += '<div class="glass rounded-xl p-5"><div class="flex items-center gap-3 mb-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:' + b.color + '22"><i class="' + b.icon + '" style="color:' + b.color + '"></i></div><div><div class="font-medium text-sm">' + b.name + '</div><div class="text-xs text-ss-muted capitalize">' + b.type + (b.pending ? ' \u2022 Pending approval' : '') + '</div></div></div><div class="text-xs text-ss-dim mb-3">' + b.count + ' users</div><div class="flex gap-2"><button class="btn-ghost !text-xs !py-1.5">Edit</button>' + (b.pending ? '<button class="btn-ghost !text-xs !py-1.5" style="color:#86EFAC" onclick="showToast(\'Badge approved!\',\'success\')">Approve</button><button class="btn-ghost !text-xs !py-1.5" style="color:#FCA5A5" onclick="showToast(\'Badge rejected.\',\'error\')">Reject</button>' : '') + '</div></div>';
+    }
+    h += '</div>';
+    container.innerHTML = h;
+  } else if (tab === 'moderation') {
+    var sevColors = { critical: '#EF4444', high: '#F59E0B', medium: '#60A5FA', low: '#8B7A8E' };
+    var h = '<h1 class="font-display text-2xl font-bold mb-6">Moderation Queue</h1><div class="space-y-3">';
+    for (var i = 0; i < adminData.moderation.length; i++) {
+      var m = adminData.moderation[i];
+      h += '<div class="glass rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"><div class="flex items-start gap-4"><div class="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style="background:' + sevColors[m.severity] + ';box-shadow:0 0 6px ' + sevColors[m.severity] + '60"></div><div><div class="text-sm font-medium">' + m.content + '</div><div class="text-xs text-ss-muted mt-1">Type: <span class="capitalize">' + m.type + '</span> \u2022 User: <span class="text-ss-text">' + m.user + '</span> \u2022 ' + m.time + '</div></div></div><div class="flex gap-2 flex-shrink-0"><button class="btn-ghost !text-xs !py-1.5" style="color:#86EFAC" onclick="showToast(\'Content approved.\',\'success\')"><i class="fa-solid fa-check mr-1"></i>Approve</button><button class="btn-ghost !text-xs !py-1.5" style="color:#FCA5A5" onclick="showToast(\'Content removed.\',\'error\')"><i class="fa-solid fa-trash mr-1"></i>Remove</button><button class="btn-ghost !text-xs !py-1.5" onclick="showToast(\'Report dismissed.\',\'info\')"><i class="fa-solid fa-xmark mr-1"></i>Dismiss</button></div></div>';
+    }
+    h += '</div>';
+    container.innerHTML = h;
+  } else if (tab === 'audit') {
+    var h = '<h1 class="font-display text-2xl font-bold mb-6">Audit Log</h1><div class="glass rounded-2xl overflow-hidden"><div class="divide-y" style="border-color:rgba(255,20,147,0.05)">';
+    for (var i = 0; i < adminData.auditLog.length; i++) {
+      var a = adminData.auditLog[i];
+      h += '<div class="flex items-center gap-4 px-5 py-4" style="border-color:rgba(255,20,147,0.05)"><div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:' + a.color + '15"><i class="fa-solid ' + a.icon + ' text-sm" style="color:' + a.color + '"></i></div><div class="flex-1 min-w-0"><div class="text-sm font-medium">' + a.action + '</div><div class="text-xs text-ss-muted">by ' + a.admin + ' \u2022 Target: ' + a.target + '</div></div><div class="text-xs text-ss-dim flex-shrink-0">' + a.time + '</div></div>';
+    }
+    h += '</div></div>';
+    container.innerHTML = h;
+  } else if (tab === 'featured') {
+    var h = '<h1 class="font-display text-2xl font-bold mb-6">Featured Profiles</h1><p class="text-ss-muted text-sm mb-6">Featured profiles appear on the homepage and get priority placement in search.</p><div class="grid sm:grid-cols-3 gap-4 mb-6">';
+    for (var i = 0; i < adminData.featured.length; i++) {
+      var u = demoUsers[adminData.featured[i]];
+      if (!u) continue;
+      h += '<div class="glass rounded-xl p-5"><div class="flex items-center gap-3 mb-3"><img src="' + u.avatar + '" class="w-10 h-10 rounded-xl object-cover" alt=""><div><div class="font-medium text-sm">' + u.username + '</div><div class="text-xs text-ss-muted" style="font-family:\'JetBrains Mono\',monospace">#' + String(u.uid).padStart(7, '0') + '</div></div></div><div class="flex items-center justify-between"><span class="text-xs text-ss-dim">' + u.views.toLocaleString() + ' views</span><button class="btn-ghost !text-xs !py-1" style="color:#FCA5A5" onclick="showToast(\'Removed from featured.\',\'info\')"><i class="fa-solid fa-xmark mr-1"></i>Remove</button></div></div>';
+    }
+    h += '</div><div class="glass rounded-xl p-5"><h3 class="font-semibold text-sm mb-3">Add Featured Profile</h3><div class="flex gap-3"><input type="text" class="input-field" placeholder="Enter username..."><button class="btn-pink !py-2.5 !px-4 text-sm" onclick="showToast(\'Profile featured!\',\'success\')">Add</button></div></div>';
+    container.innerHTML = h;
+  }
+}
+
+function renderUserRows(users) {
+  var statusColors = { active: '#22C55E', suspended: '#F59E0B', banned: '#EF4444' };
+  var h = '';
+  for (var i = 0; i < users.length; i++) {
+    var u = users[i];
+    var avatar = demoUsers[u.username] ? demoUsers[u.username].avatar : 'https://picsum.photos/seed/' + u.username + '/60/60.jpg';
+    h += '<tr><td><div class="flex items-center gap-3"><img src="' + avatar + '" class="w-8 h-8 rounded-lg object-cover" alt=""><span class="font-medium">' + u.username + '</span></div></td><td class="text-ss-muted" style="font-family:\'JetBrains Mono\',monospace;font-size:12px">#' + String(u.uid).padStart(7, '0') + '</td><td><span class="role-tag role-' + u.role + '">' + u.role + '</span></td><td class="text-ss-muted">' + u.views.toLocaleString() + '</td><td><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:' + statusColors[u.status] + '"></span><span class="capitalize text-sm">' + u.status + '</span></span></td><td><div class="flex gap-1"><button class="btn-ghost !text-xs !py-1" onclick="showToast(\'Editing ' + u.username + '\',\'info\')">Edit</button>' + (u.status !== 'banned' ? '<button class="btn-ghost !text-xs !py-1" style="color:#FCA5A5" onclick="showToast(\'' + u.username + ' banned.\',\'error\')">Ban</button>' : '<button class="btn-ghost !text-xs !py-1" style="color:#86EFAC" onclick="showToast(\'' + u.username + ' unbanned.\',\'success\')">Unban</button>') + '</div></td></tr>';
+  }
+  return h;
+}
+
+function filterAdminUsers() {
+  var query = document.getElementById('admin-search').value.toLowerCase().trim();
+  var filtered = adminData.recentUsers.filter(function(u) {
+    return u.username.toLowerCase().includes(query) || String(u.uid).includes(query);
+  });
+  document.getElementById('admin-users-body').innerHTML = renderUserRows(filtered);
+}
+
+/* ============================
+   初始化
+   ============================ */
+renderNav();
+handleRoute();
+</script>
+</body>
+</html>
