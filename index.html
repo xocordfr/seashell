@@ -5,539 +5,670 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>seashell.lol</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-tailwind.config={theme:{extend:{colors:{ss:{bg:'#0A0A0F',surface:'#12121A',card:'#16161F',pink:'#FF1493',rose:'#FF69B4',deep:'#DB2777',pastel:'#FDE2F3',muted:'#8B7A8E',text:'#F5F0F2',dim:'#4A3F4E'}},fontFamily:{display:['Playfair Display','serif'],body:['Outfit','sans-serif'],mono:['JetBrains Mono','monospace']}}}}
-</script>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script>
+tailwind.config={theme:{extend:{colors:{pk:'#FF1493',ro:'#FF69B4',dp:'#DB2777',pa:'#FDE2F3',mu:'#8B7A8E',dm:'#4A3F4E',bg:'#0A0A0F',sf:'#12121A',cd:'#16161F',tx:'#F5F0F2'},fontFamily:{di:['Playfair Display','serif'],bo:['Outfit','sans-serif'],mo:['JetBrains Mono','monospace']}}}}
+</script>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'Outfit',sans-serif;background:#0A0A0F;color:#F5F0F2;overflow-x:hidden;min-height:100vh}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:#0A0A0F}::-webkit-scrollbar-thumb{background:rgba(255,20,147,0.25);border-radius:3px}
-#fx-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
-.page{display:none;position:relative;z-index:1;min-height:100vh}.page.active{display:block}
-.nav-glass{background:rgba(10,10,15,0.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(255,20,147,0.1)}
-.glass{background:rgba(22,22,31,0.75);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,20,147,0.12);box-shadow:0 0 40px rgba(255,20,147,0.06),0 25px 60px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.04)}
-.glass-strong{background:rgba(22,22,31,0.92);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:1px solid rgba(255,20,147,0.18);box-shadow:0 0 60px rgba(255,20,147,0.08),0 30px 80px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06)}
-.text-pearl{background:linear-gradient(135deg,#FF1493,#FF69B4,#FDE2F3,#FF69B4,#DB2777,#FF1493);background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:pearl-shift 6s ease infinite}
-@keyframes pearl-shift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-.name-neon{color:#FF1493;text-shadow:0 0 7px #FF1493,0 0 12px #FF1493,0 0 24px rgba(255,20,147,0.6),0 0 48px rgba(219,39,119,0.4)}
-.name-glitch{position:relative;color:#F5F0F2;animation:gskew 4s infinite linear alternate-reverse}
-.name-glitch::before,.name-glitch::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
-.name-glitch::before{color:#FF69B4;animation:gc1 3s infinite linear alternate-reverse;clip-path:polygon(0 0,100% 0,100% 40%,0 40%);transform:translate(-3px,-1px)}
-.name-glitch::after{color:#DB2777;animation:gc2 2s infinite linear alternate-reverse;clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%);transform:translate(3px,1px)}
-@keyframes gskew{0%{transform:skew(0)}20%{transform:skew(-0.5deg)}60%{transform:skew(0)}80%{transform:skew(-0.2deg)}100%{transform:skew(0)}}
-@keyframes gc1{0%{clip-path:polygon(0 0,100% 0,100% 40%,0 40%)}50%{clip-path:polygon(0 15%,100% 15%,100% 50%,0 50%)}100%{clip-path:polygon(0 0,100% 0,100% 40%,0 40%)}}
-@keyframes gc2{0%{clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%)}50%{clip-path:polygon(0 50%,100% 50%,100% 85%,0 85%)}100%{clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%)}}
-.name-gradient{background:linear-gradient(90deg,#FF1493,#FF69B4,#FDE2F3,#FF69B4,#FF1493);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gslide 3s linear infinite}
-@keyframes gslide{0%{background-position:0% 50%}100%{background-position:200% 50%}}
-.name-holographic{background:linear-gradient(90deg,#FF1493,#FF69B4,#FDE2F3,#C084FC,#FF69B4,#FF1493);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:hshift 4s ease infinite;filter:drop-shadow(0 0 8px rgba(255,20,147,0.4))}
-@keyframes hshift{0%{background-position:0% 50%}50%{background-position:150% 50%}100%{background-position:300% 50%}}
-.name-sparkle{position:relative;color:#F5F0F2;overflow:hidden}
-.name-sparkle::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.35),transparent);animation:ssweep 3s ease-in-out infinite;transform:skewX(-15deg)}
-@keyframes ssweep{0%{left:-100%}50%,100%{left:200%}}
-.btn-pink{background:linear-gradient(135deg,#FF1493,#DB2777);color:#fff;border:none;padding:12px 28px;border-radius:12px;font-weight:600;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(255,20,147,0.3);font-family:'Outfit',sans-serif;font-size:15px}
-.btn-pink:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,20,147,0.45)}.btn-pink:disabled{opacity:.6;cursor:not-allowed;transform:none}
-.btn-outline{background:transparent;color:#FF69B4;border:1px solid rgba(255,20,147,0.3);padding:12px 28px;border-radius:12px;font-weight:500;cursor:pointer;transition:all .3s;font-family:'Outfit',sans-serif;font-size:15px}
-.btn-outline:hover{background:rgba(255,20,147,0.08);border-color:rgba(255,20,147,0.5);transform:translateY(-2px)}
-.btn-ghost{background:rgba(255,20,147,0.08);color:#FF69B4;border:none;padding:8px 16px;border-radius:8px;font-weight:500;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;font-size:14px}
-.btn-ghost:hover{background:rgba(255,20,147,0.15)}
-.btn-sm{padding:6px 14px;font-size:13px;border-radius:8px}
-.link-btn{display:flex;align-items:center;gap:12px;width:100%;padding:14px 18px;background:rgba(255,20,147,0.06);border:1px solid rgba(255,20,147,0.1);border-radius:14px;color:#F5F0F2;text-decoration:none;font-weight:500;transition:all .3s;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px}
-.link-btn:hover{background:rgba(255,20,147,0.12);border-color:rgba(255,20,147,0.25);transform:translateX(4px);box-shadow:0 4px 20px rgba(255,20,147,0.1)}
-.link-btn i.lIcon{width:20px;text-align:center;color:#FF69B4;font-size:16px}
-.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;cursor:default;transition:all .3s;position:relative;white-space:nowrap}
-.badge:hover{transform:scale(1.1)}
-.badge-verified{background:rgba(59,130,246,0.15);color:#60A5FA;border:1px solid rgba(59,130,246,0.2)}
-.badge-premium{background:rgba(255,20,147,0.15);color:#FF69B4;border:1px solid rgba(255,20,147,0.25)}
-.badge-staff{background:rgba(168,85,247,0.15);color:#C084FC;border:1px solid rgba(168,85,247,0.2)}
-.badge-early{background:rgba(251,191,36,0.12);color:#FCD34D;border:1px solid rgba(251,191,36,0.2)}
-.badge-pearl{background:rgba(253,226,243,0.12);color:#FDE2F3;border:1px solid rgba(253,226,243,0.2)}
-.badge .btip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) scale(0.9);background:#1A1A24;border:1px solid rgba(255,20,147,0.2);padding:6px 12px;border-radius:8px;font-size:11px;color:#F5F0F2;white-space:nowrap;opacity:0;pointer-events:none;transition:all .2s;z-index:50}
-.badge:hover .btip{opacity:1;transform:translateX(-50%) scale(1)}
-.status-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
-.status-online{background:#22C55E;box-shadow:0 0 6px rgba(34,197,94,0.5)}
-.music-bar{width:100%;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden}
-.music-fill{height:100%;background:linear-gradient(90deg,#FF1493,#FF69B4);border-radius:2px;transition:width .3s linear}
-.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.open{display:flex}
-.toast{position:fixed;bottom:24px;right:24px;padding:14px 24px;border-radius:12px;font-size:14px;font-weight:500;z-index:2000;transform:translateY(100px);opacity:0;transition:all .4s cubic-bezier(0.16,1,0.3,1);max-width:380px}
-.toast.show{transform:translateY(0);opacity:1}
-.toast-success{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#86EFAC}
-.toast-error{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#FCA5A5}
-.toast-info{background:rgba(255,20,147,0.15);border:1px solid rgba(255,20,147,0.3);color:#FF69B4}
-.fx-switcher{position:fixed;bottom:24px;right:24px;z-index:100}
-.fx-toggle-btn{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#FF1493,#DB2777);border:none;color:#fff;font-size:18px;cursor:pointer;box-shadow:0 4px 20px rgba(255,20,147,0.4);transition:all .3s;display:flex;align-items:center;justify-content:center}
-.fx-toggle-btn:hover{transform:scale(1.1)}
-.fx-panel{position:absolute;bottom:60px;right:0;background:rgba(22,22,31,0.96);backdrop-filter:blur(20px);border:1px solid rgba(255,20,147,0.2);border-radius:16px;padding:16px;min-width:200px;display:none;box-shadow:0 10px 40px rgba(0,0,0,0.5);max-height:80vh;overflow-y:auto}
-.fx-panel.open{display:block}
-.fx-option{display:block;width:100%;padding:8px 12px;background:transparent;border:1px solid transparent;border-radius:8px;color:#F5F0F2;font-size:13px;cursor:pointer;transition:all .2s;text-align:left;font-family:'Outfit',sans-serif}
-.fx-option:hover{background:rgba(255,20,147,0.08)}.fx-option.active{background:rgba(255,20,147,0.12);border-color:rgba(255,20,147,0.3);color:#FF69B4}
-.input-field{width:100%;padding:10px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,20,147,0.12);border-radius:10px;color:#F5F0F2;font-size:14px;font-family:'Outfit',sans-serif;transition:all .2s;outline:none}
-.input-field:focus{border-color:rgba(255,20,147,0.4);box-shadow:0 0 0 3px rgba(255,20,147,0.08)}.input-field::placeholder{color:#4A3F4E}
-.sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:#8B7A8E;font-size:14px;cursor:pointer;transition:all .2s;border-left:2px solid transparent;font-family:'Outfit',sans-serif;background:none;border-right:none;border-top:none;border-bottom:none;width:100%;text-align:left}
-.sidebar-item:hover{color:#F5F0F2;background:rgba(255,20,147,0.04)}.sidebar-item.active{color:#FF69B4;background:rgba(255,20,147,0.08);border-left-color:#FF1493}
-.sidebar-item i{width:18px;text-align:center;font-size:13px}
-.deco-orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.15;pointer-events:none;animation:orbf 20s ease-in-out infinite}
-@keyframes orbf{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(30px,-40px) scale(1.1)}50%{transform:translate(-20px,20px) scale(.9)}75%{transform:translate(40px,30px) scale(1.05)}}
-.fade-up{opacity:0;transform:translateY(30px);transition:all .8s cubic-bezier(0.16,1,0.3,1)}.fade-up.visible{opacity:1;transform:translateY(0)}
-.profile-card-glass{border-radius:24px;background:rgba(15,10,18,0.7);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,20,147,0.15);box-shadow:0 0 40px rgba(255,20,147,0.08),0 25px 60px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.04)}
-.profile-card-default{border-radius:24px;background:rgba(22,22,31,0.88);border:1px solid rgba(255,20,147,0.12)}
-.profile-card-minimal{border-radius:12px;background:rgba(22,22,31,0.94);border:1px solid rgba(255,255,255,0.06)}
-.profile-card-portfolio{border-radius:8px;background:rgba(22,22,31,0.9);border-left:3px solid #FF1493}
-.role-tag{padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace}
-.role-owner{background:rgba(255,20,147,0.15);color:#FF69B4}.role-manager{background:rgba(168,85,247,0.15);color:#C084FC}
-.role-admin{background:rgba(59,130,246,0.15);color:#60A5FA}.role-mod{background:rgba(52,211,153,0.12);color:#6EE7B7}.role-user{background:rgba(255,255,255,0.06);color:#8B7A8E}
-.pricing-hl{border:1px solid rgba(255,20,147,0.4)!important;box-shadow:0 0 60px rgba(255,20,147,0.12),0 25px 60px rgba(0,0,0,0.4)!important;position:relative}
-.pricing-hl::before{content:'Most Popular';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#FF1493,#DB2777);color:#fff;padding:4px 16px;border-radius:20px;font-size:11px;font-weight:600}
-.stat-card{background:rgba(22,22,31,0.6);border:1px solid rgba(255,20,147,0.1);border-radius:16px;padding:20px;transition:all .3s}
-.stat-card:hover{border-color:rgba(255,20,147,0.2)}
-.data-table{width:100%;border-collapse:separate;border-spacing:0}
-.data-table th{padding:12px 16px;text-align:left;font-size:12px;font-weight:600;color:#8B7A8E;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid rgba(255,20,147,0.08)}
-.data-table td{padding:12px 16px;font-size:13px;border-bottom:1px solid rgba(255,20,147,0.05);vertical-align:middle}
-.data-table tr:hover td{background:rgba(255,20,147,0.03)}
-.uid-tip{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
-.uid-parent:hover .uid-tip{opacity:1}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-@media(max-width:1024px){.custom-preview-pane{display:none!important}}
-@media(max-width:768px){.custom-sidebar{display:none!important}.fx-switcher{bottom:16px;right:16px}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',sans-serif;background:#0A0A0F;color:#F5F0F2;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:#0A0A0F}::-webkit-scrollbar-thumb{background:rgba(255,20,147,.3);border-radius:3px}
+#fx{position:fixed;inset:0;z-index:0;pointer-events:none}
+.pg{display:none;position:relative;z-index:1;min-height:100vh}.pg.on{display:block}
+.gls{background:rgba(22,22,31,.75);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,20,147,.12);box-shadow:0 0 40px rgba(255,20,147,.06),0 20px 50px rgba(0,0,0,.4)}
+.gls2{background:rgba(22,22,31,.92);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:1px solid rgba(255,20,147,.18);box-shadow:0 0 60px rgba(255,20,147,.08),0 30px 80px rgba(0,0,0,.5)}
+.pearl{background:linear-gradient(135deg,#FF1493,#FF69B4,#FDE2F3,#FF69B4,#DB2777,#FF1493);background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:psh 6s ease infinite}
+@keyframes psh{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.n-neon{color:#FF1493;text-shadow:0 0 7px #FF1493,0 0 15px #FF1493,0 0 30px rgba(255,20,147,.5)}
+.n-glitch{position:relative;color:#F5F0F2;animation:gsk 4s infinite linear alternate-reverse}
+.n-glitch::before,.n-glitch::after{content:attr(data-t);position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
+.n-glitch::before{color:#FF69B4;animation:gc1 3s infinite linear alternate-reverse;clip-path:polygon(0 0,100% 0,100% 40%,0 40%);transform:translate(-3px,-1px)}
+.n-glitch::after{color:#DB2777;animation:gc2 2s infinite linear alternate-reverse;clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%);transform:translate(3px,1px)}
+@keyframes gsk{0%{transform:skew(0)}40%{transform:skew(-.5deg)}80%{transform:skew(.3deg)}100%{transform:skew(0)}}
+@keyframes gc1{0%{clip-path:polygon(0 0,100% 0,100% 40%,0 40%);transform:translate(-3px,-1px)}50%{clip-path:polygon(0 15%,100% 15%,100% 50%,0 50%);transform:translate(2px,0)}100%{clip-path:polygon(0 0,100% 0,100% 40%,0 40%);transform:translate(-3px,-1px)}}
+@keyframes gc2{0%{clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%);transform:translate(3px,1px)}50%{clip-path:polygon(0 50%,100% 50%,100% 85%,0 85%);transform:translate(-2px,0)}100%{clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%);transform:translate(3px,1px)}}
+.n-grad{background:linear-gradient(90deg,#FF1493,#FF69B4,#FDE2F3,#FF69B4,#FF1493);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gsl 3s linear infinite}
+@keyframes gsl{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+.n-holo{background:linear-gradient(90deg,#FF1493,#FF69B4,#FDE2F3,#C084FC,#FF69B4,#FF1493);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:hsh 4s ease infinite;filter:drop-shadow(0 0 8px rgba(255,20,147,.4))}
+@keyframes hsh{0%{background-position:0% 50%}50%{background-position:150% 50%}100%{background-position:300% 50%}}
+.n-spark{position:relative;color:#F5F0F2;overflow:hidden}
+.n-spark::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:ssw 3s ease-in-out infinite;transform:skewX(-15deg)}
+@keyframes ssw{0%{left:-100%}50%,100%{left:200%}}
+.bp{background:linear-gradient(135deg,#FF1493,#DB2777);color:#fff;border:none;padding:12px 28px;border-radius:12px;font-weight:600;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(255,20,147,.3);font-family:'Outfit',sans-serif;font-size:15px}
+.bp:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,20,147,.45)}
+.bo{background:transparent;color:#FF69B4;border:1px solid rgba(255,20,147,.3);padding:12px 28px;border-radius:12px;font-weight:500;cursor:pointer;transition:all .3s;font-family:'Outfit',sans-serif;font-size:15px}
+.bo:hover{background:rgba(255,20,147,.08);border-color:rgba(255,20,147,.5);transform:translateY(-2px)}
+.bg{background:rgba(255,20,147,.08);color:#FF69B4;border:none;padding:8px 16px;border-radius:8px;font-weight:500;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;font-size:14px}
+.bg:hover{background:rgba(255,20,147,.15)}
+.lb{display:flex;align-items:center;gap:12px;width:100%;padding:14px 18px;background:rgba(255,20,147,.06);border:1px solid rgba(255,20,147,.1);border-radius:14px;color:#F5F0F2;text-decoration:none;font-weight:500;transition:all .3s;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px}
+.lb:hover{background:rgba(255,20,147,.12);border-color:rgba(255,20,147,.25);transform:translateX(4px)}
+.lb i{width:20px;text-align:center;color:#FF69B4;font-size:16px}
+.bd{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;cursor:default;transition:all .3s;position:relative;white-space:nowrap}
+.bd:hover{transform:scale(1.1)}
+.bv{background:rgba(59,130,246,.15);color:#60A5FA;border:1px solid rgba(59,130,246,.2)}
+.bpr{background:rgba(255,20,147,.15);color:#FF69B4;border:1px solid rgba(255,20,147,.25)}
+.bst{background:rgba(168,85,247,.15);color:#C084FC;border:1px solid rgba(168,85,247,.2)}
+.be{background:rgba(251,191,36,.12);color:#FCD34D;border:1px solid rgba(251,191,36,.2)}
+.bpe{background:rgba(253,226,243,.12);color:#FDE2F3;border:1px solid rgba(253,226,243,.2)}
+.bd .bt{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) scale(.9);background:#1A1A24;border:1px solid rgba(255,20,147,.2);padding:5px 10px;border-radius:8px;font-size:11px;color:#F5F0F2;white-space:nowrap;opacity:0;pointer-events:none;transition:all .2s;z-index:50}
+.bd:hover .bt{opacity:1;transform:translateX(-50%) scale(1)}
+.sd{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
+.sdon{background:#22C55E;box-shadow:0 0 6px rgba(34,197,94,.5)}
+.sdid{background:#FCD34D;box-shadow:0 0 6px rgba(252,211,77,.5)}
+.sddn{background:#EF4444;box-shadow:0 0 6px rgba(239,68,68,.5)}
+.mb{width:100%;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+.mf{height:100%;background:linear-gradient(90deg,#FF1493,#FF69B4);border-radius:2px;transition:width .3s linear}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
+.mo.open{display:flex}
+.tst{position:fixed;bottom:24px;right:24px;padding:14px 24px;border-radius:12px;font-size:14px;font-weight:500;z-index:2000;transform:translateY(100px);opacity:0;transition:all .4s cubic-bezier(.16,1,.3,1);max-width:360px}
+.tst.show{transform:translateY(0);opacity:1}
+.tso{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);color:#86EFAC}
+.tse{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#FCA5A5}
+.tsi{background:rgba(255,20,147,.15);border:1px solid rgba(255,20,147,.3);color:#FF69B4}
+.ip{width:100%;padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,20,147,.12);border-radius:10px;color:#F5F0F2;font-size:14px;font-family:'Outfit',sans-serif;transition:all .2s;outline:none}
+.ip:focus{border-color:rgba(255,20,147,.4);box-shadow:0 0 0 3px rgba(255,20,147,.08)}
+.ip::placeholder{color:#4A3F4E}
+.fu{animation:fu .8s cubic-bezier(.16,1,.3,1) forwards;opacity:0;transform:translateY(30px)}
+@keyframes fu{to{opacity:1;transform:translateY(0)}}
+.d1{animation-delay:.1s}.d2{animation-delay:.2s}.d3{animation-delay:.3s}.d4{animation-delay:.4s}.d5{animation-delay:.5s}
+.orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.15;pointer-events:none;animation:ofl 20s ease-in-out infinite}
+@keyframes ofl{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(30px,-40px) scale(1.1)}50%{transform:translate(-20px,20px) scale(.9)}75%{transform:translate(40px,30px) scale(1.05)}}
+.pc-glass{border-radius:24px;background:rgba(15,10,18,.7);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,20,147,.15);box-shadow:0 0 40px rgba(255,20,147,.08),0 25px 60px rgba(0,0,0,.5)}
+.pc-default{border-radius:24px;background:rgba(22,22,31,.85);border:1px solid rgba(255,20,147,.12)}
+.pc-minimal{border-radius:12px;background:rgba(22,22,31,.92);border:1px solid rgba(255,255,255,.06)}
+.pc-portfolio{border-radius:8px;background:rgba(22,22,31,.88);border-left:3px solid #FF1493}
+.rt{padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace}
+.r-owner{background:rgba(255,20,147,.15);color:#FF69B4}.r-admin{background:rgba(59,130,246,.15);color:#60A5FA}.r-mod{background:rgba(52,211,153,.12);color:#6EE7B7}.r-user{background:rgba(255,255,255,.06);color:#8B7A8E}
+.ph{border:1px solid rgba(255,20,147,.4)!important;box-shadow:0 0 60px rgba(255,20,147,.12),0 25px 60px rgba(0,0,0,.4)!important;position:relative}
+.ph::before{content:'Most Popular';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#FF1493,#DB2777);color:#fff;padding:4px 16px;border-radius:20px;font-size:11px;font-weight:600}
+.sc{background:rgba(22,22,31,.6);border:1px solid rgba(255,20,147,.1);border-radius:16px;padding:20px;transition:all .3s}
+.sc:hover{border-color:rgba(255,20,147,.2);box-shadow:0 4px 20px rgba(255,20,147,.06)}
+.dt{width:100%;border-collapse:separate;border-spacing:0}
+.dt th{padding:12px 16px;text-align:left;font-size:12px;font-weight:600;color:#8B7A8E;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid rgba(255,20,147,.08)}
+.dt td{padding:12px 16px;font-size:13px;border-bottom:1px solid rgba(255,20,147,.05);vertical-align:middle}
+.dt tr:hover td{background:rgba(255,20,147,.03)}
+.asb{width:240px;background:rgba(16,16,24,.95);border-right:1px solid rgba(255,20,147,.08);height:calc(100vh - 65px);position:sticky;top:65px;flex-shrink:0;overflow-y:auto}
+.ani{display:flex;align-items:center;gap:10px;padding:10px 16px;color:#8B7A8E;font-size:14px;cursor:pointer;transition:all .2s;border-left:2px solid transparent;font-family:'Outfit',sans-serif;background:none;border-right:none;border-top:none;border-bottom:none;width:100%;text-align:left}
+.ani:hover{color:#F5F0F2;background:rgba(255,20,147,.04)}.ani.on{color:#FF69B4;background:rgba(255,20,147,.08);border-left-color:#FF1493}
+.ani i{width:18px;text-align:center}
+.csb{width:260px;background:rgba(14,14,20,.98);border-right:1px solid rgba(255,20,147,.08);height:calc(100vh - 65px);position:sticky;top:65px;flex-shrink:0;overflow-y:auto}
+.csi{display:flex;align-items:center;gap:10px;padding:11px 20px;color:#8B7A8E;font-size:13px;cursor:pointer;transition:all .15s;border-left:2px solid transparent;background:none;border-right:none;border-top:none;border-bottom:none;width:100%;text-align:left;font-family:'Outfit',sans-serif}
+.csi:hover{color:#F5F0F2;background:rgba(255,20,147,.03)}.csi.on{color:#FF69B4;background:rgba(255,20,147,.06);border-left-color:#FF1493}
+.csi i{width:16px;text-align:center;font-size:13px}
+.uid-tip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%) scale(.9);background:#1A1A24;border:1px solid rgba(255,20,147,.2);padding:4px 10px;border-radius:6px;font-size:11px;font-family:'JetBrains Mono',monospace;color:#FF69B4;white-space:nowrap;opacity:0;pointer-events:none;transition:all .2s;z-index:50}
+.uname-wrap:hover .uid-tip{opacity:1;transform:translateX(-50%) scale(1)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+@media(max-width:768px){.asb,.csb{display:none}}
 </style>
 </head>
 <body>
-<canvas id="fx-canvas" aria-hidden="true"></canvas>
+<canvas id="fx"></canvas>
 
-<nav class="nav-glass fixed top-0 left-0 w-full z-50" role="navigation" aria-label="Main navigation">
+<!-- NAV -->
+<nav class="fixed top-0 left-0 w-full z-50 bg-bg/85 backdrop-blur-xl border-b border-pk/10">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-    <a href="#/" class="flex items-center gap-2 no-underline" aria-label="Home"><i class="fa-solid fa-shrimp text-ss-pink text-xl"></i><span class="font-display font-bold text-lg text-pearl">seashell.lol</span></a>
-    <div id="nav-links" class="hidden sm:flex items-center gap-6"></div>
-    <div id="nav-actions" class="flex items-center gap-3"></div>
+    <a href="#/" class="flex items-center gap-2 no-underline"><i class="fa-solid fa-shrimp text-pk text-xl"></i><span class="font-di font-bold text-lg pearl">seashell.lol</span></a>
+    <div id="navL" class="hidden sm:flex items-center gap-6"></div>
+    <div id="navR" class="flex items-center gap-3"></div>
   </div>
 </nav>
 
-<div id="auth-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Authentication">
-  <div class="glass-strong rounded-2xl p-8 w-full max-w-md relative">
-    <button onclick="closeAuth()" class="absolute top-4 right-4 text-ss-muted hover:text-ss-text transition-colors text-lg bg-transparent border-none cursor-pointer" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-    <div class="text-center mb-6"><i class="fa-solid fa-shrimp text-ss-pink text-3xl mb-3"></i><h2 class="font-display text-2xl font-bold" id="auth-title">Welcome Back</h2><p class="text-ss-muted text-sm mt-1" id="auth-subtitle">Sign in to your seashell account</p></div>
-    <div id="auth-form-fields" class="space-y-4"></div>
-    <div class="flex items-center gap-3 my-5"><div class="flex-1 h-px" style="background:rgba(255,20,147,0.18)"></div><span class="text-ss-muted text-xs">or continue with</span><div class="flex-1 h-px" style="background:rgba(255,20,147,0.18)"></div></div>
-    <div class="grid grid-cols-2 gap-3">
-      <button class="btn-outline !py-3 flex items-center justify-center gap-2 text-sm" onclick="socialAuth('google')"><i class="fa-brands fa-google"></i> Google</button>
-      <button class="btn-outline !py-3 flex items-center justify-center gap-2 text-sm" onclick="socialAuth('discord')"><i class="fa-brands fa-discord"></i> Discord</button>
+<!-- AUTH MODAL -->
+<div id="authM" class="mo" role="dialog" aria-modal="true">
+  <div class="gls2 rounded-2xl p-8 w-full max-w-md relative">
+    <button onclick="closeAuth()" class="absolute top-4 right-4 text-mu hover:text-tx transition-colors text-lg bg-transparent border-none cursor-pointer" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    <div class="text-center mb-6">
+      <i class="fa-solid fa-shrimp text-pk text-3xl mb-3"></i>
+      <h2 class="font-di text-2xl font-bold" id="aT">Welcome Back</h2>
+      <p class="text-mu text-sm mt-1" id="aS">Sign in to your seashell account</p>
     </div>
-    <p class="text-center text-sm text-ss-muted mt-5"><span id="auth-toggle-text">Don't have an account?</span> <button class="text-ss-pink hover:underline font-medium bg-transparent border-none cursor-pointer" style="font-family:'Outfit',sans-serif" id="auth-toggle-btn" onclick="toggleAuthMode()">Sign Up</button></p>
+    <div class="space-y-4" id="aF">
+      <div id="aNF" style="display:none">
+        <label class="block text-xs font-medium text-mu mb-1.5">Username</label>
+        <input type="text" class="ip" placeholder="Choose a unique username" id="aUn">
+      </div>
+      <div id="aEF">
+        <label class="block text-xs font-medium text-mu mb-1.5">Email <span class="text-dm">(optional, for recovery)</span></label>
+        <input type="email" class="ip" placeholder="you@example.com" id="aEm">
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-mu mb-1.5">Password</label>
+        <input type="password" class="ip" placeholder="Min 6 characters" id="aPw">
+      </div>
+      <div id="aCF" style="display:none">
+        <label class="block text-xs font-medium text-mu mb-1.5">Confirm Password</label>
+        <input type="password" class="ip" placeholder="Re-enter password" id="aCp">
+      </div>
+      <div id="aErr" class="text-xs text-red-400 hidden"></div>
+      <button class="bp w-full !mt-4" id="aBtn" onclick="handleAuth()">Sign In</button>
+    </div>
+    <p class="text-center text-sm text-mu mt-5">
+      <span id="aTt">Don't have an account?</span>
+      <button class="text-pk hover:underline font-medium ml-1 bg-transparent border-none cursor-pointer" style="font-family:'Outfit'" id="aTb" onclick="togAuth()">Sign Up</button>
+    </p>
   </div>
 </div>
 
-<section id="page-landing" class="page">
+<!-- LANDING PAGE -->
+<section id="pgLand" class="pg on">
   <div class="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-    <div class="deco-orb w-96 h-96 bg-ss-pink top-1/4 -left-48" style="animation-delay:-5s"></div>
-    <div class="deco-orb w-80 h-80 bg-purple-500 bottom-1/4 -right-40" style="animation-delay:-10s"></div>
+    <div class="orb w-96 h-96 bg-pk top-1/4 -left-48"></div>
+    <div class="orb w-80 h-80 bg-purple-500 bottom-1/4 -right-40" style="animation-delay:-10s"></div>
     <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
-      <div class="fade-up" data-delay="0"><div class="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-8 text-sm text-ss-muted"><span class="status-dot status-online"></span><span>The prettiest link-in-bio platform</span></div></div>
-      <h1 class="fade-up font-display text-5xl sm:text-7xl lg:text-8xl font-black leading-[0.95] mb-6" data-delay="100">Your beautiful<br><span class="text-pearl">corner of the</span><br>internet</h1>
-      <p class="fade-up text-ss-muted text-lg sm:text-xl max-w-xl mx-auto mb-10 leading-relaxed" data-delay="200">Claim your username, customize every pixel, and create a stunning bio page that truly represents you.</p>
-      <div class="fade-up flex flex-col sm:flex-row items-center justify-center gap-4" data-delay="300">
-        <button class="btn-pink text-base !px-8 !py-4" onclick="openAuth('register')">Claim Your Name</button>
-        <button class="btn-outline text-base !px-8 !py-4" onclick="openAuth('login')">Sign In</button>
+      <div id="liBanner" class="hidden fu mb-6">
+        <div class="inline-flex items-center gap-3 gls rounded-full px-5 py-3">
+          <span class="text-sm text-ro font-medium">Welcome back, <strong id="liName"></strong>!</span>
+          <a id="liLink" href="#" class="bp !py-2 !px-4 !text-sm">Go to Your Profile <i class="fa-solid fa-arrow-right ml-1"></i></a>
+        </div>
       </div>
-      <div class="fade-up mt-16" data-delay="400">
-        <div class="glass rounded-2xl p-1.5 max-w-sm mx-auto" style="transform:perspective(1200px) rotateX(5deg)">
-          <div class="rounded-xl overflow-hidden" style="background:rgba(10,10,15,0.9)">
-            <div class="h-24 bg-gradient-to-r from-ss-pink/30 via-rose-500/20 to-purple-500/30"></div>
-            <div class="px-5 pb-5 -mt-8"><div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-ss-pink to-ss-deep mb-3" style="border:3px solid #0A0A0F"></div><h3 class="font-display font-bold text-lg name-neon text-left">yourname</h3><p class="text-ss-muted text-xs text-left" style="font-family:'JetBrains Mono',monospace">seashell.lol/yourname</p><div class="mt-3 space-y-2"><div class="link-btn !py-2.5 !text-sm !rounded-lg"><i class="fa-brands fa-x-twitter lIcon"></i> Twitter</div><div class="link-btn !py-2.5 !text-sm !rounded-lg"><i class="fa-brands fa-instagram lIcon"></i> Instagram</div></div></div>
+      <div class="fu d1"><div class="inline-flex items-center gap-2 gls rounded-full px-4 py-2 mb-8 text-sm text-mu"><span class="sd sdon"></span><span>Beautiful link-in-bio pages</span></div></div>
+      <h1 class="fu d2 font-di text-5xl sm:text-7xl lg:text-8xl font-black leading-[.95] mb-6">Your beautiful<br><span class="pearl">corner of the</span><br>internet</h1>
+      <p class="fu d3 text-mu text-lg sm:text-xl max-w-xl mx-auto mb-10 leading-relaxed">Claim your username, customize every pixel, and create a stunning bio page that truly represents you.</p>
+      <div class="fu d4 flex flex-col sm:flex-row items-center justify-center gap-4" id="heroCtas">
+        <button class="bp text-base !px-8 !py-4" onclick="openAuth('reg')">Claim Your Name</button>
+        <button class="bo text-base !px-8 !py-4" onclick="toast('Sign up first, then visit your profile!','i')">See How It Looks</button>
+      </div>
+      <div class="fu d5 mt-16">
+        <div class="gls rounded-2xl p-1.5 max-w-sm mx-auto" style="transform:perspective(1200px) rotateX(5deg)">
+          <div class="rounded-xl overflow-hidden bg-bg/90">
+            <div class="h-24 bg-gradient-to-r from-pk/30 via-ro/20 to-purple-500/30"></div>
+            <div class="px-5 pb-5 -mt-8 relative">
+              <div class="w-16 h-16 rounded-2xl bg-sf flex items-center justify-center" style="border:3px solid #0A0A0F"><i class="fa-solid fa-user text-mu text-xl"></i></div>
+              <h3 class="font-di font-bold text-lg mt-2 n-neon">yourname</h3>
+              <p class="text-mu text-xs font-mo">#0000001</p>
+              <p class="text-mu text-sm mt-2">Your bio goes here</p>
+              <div class="flex gap-1.5 mt-3"><span class="bd bv"><i class="fa-solid fa-check text-[9px]"></i></span><span class="bd bpr"><i class="fa-solid fa-crown text-[9px]"></i></span></div>
+              <div class="mt-4 space-y-2"><div class="lb !py-2.5 !text-sm !rounded-lg"><i class="fa-brands fa-x-twitter"></i> Twitter</div><div class="lb !py-2.5 !text-sm !rounded-lg"><i class="fa-brands fa-instagram"></i> Instagram</div></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
   <div class="max-w-6xl mx-auto px-4 sm:px-6 py-24">
-    <div class="text-center mb-16 fade-up"><h2 class="font-display text-3xl sm:text-5xl font-bold mb-4">Everything you need to <span class="text-pearl">shine</span></h2><p class="text-ss-muted text-lg max-w-lg mx-auto">Powerful customization, stunning effects, and seamless integrations.</p></div>
+    <div class="text-center mb-16"><h2 class="font-di text-3xl sm:text-5xl font-bold mb-4">Everything you need to <span class="pearl">shine</span></h2><p class="text-mu text-lg max-w-lg mx-auto">Powerful customization, stunning effects, and seamless integrations.</p></div>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      <div class="glass rounded-2xl p-6 fade-up" data-delay="0"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-wand-magic-sparkles text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Stunning Effects</h3><p class="text-ss-muted text-sm leading-relaxed">Aurora, petals, sparkles, rain, snow, orbs — transform your profile into a living canvas.</p></div>
-      <div class="glass rounded-2xl p-6 fade-up" data-delay="50"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-palette text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Full Customization</h3><p class="text-ss-muted text-sm leading-relaxed">Colors, fonts, card styles, name effects, badges, cursor, audio — every detail is yours.</p></div>
-      <div class="glass rounded-2xl p-6 fade-up" data-delay="100"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-music text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Music Player</h3><p class="text-ss-muted text-sm leading-relaxed">Embed a sleek music player with cover art, progress bar, and track info.</p></div>
-      <div class="glass rounded-2xl p-6 fade-up" data-delay="150"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-brands fa-discord text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Discord Integration</h3><p class="text-ss-muted text-sm leading-relaxed">Sync your avatar, show Discord status, and display current activity.</p></div>
-      <div class="glass rounded-2xl p-6 fade-up" data-delay="200"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-shield-halved text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Badges System</h3><p class="text-ss-muted text-sm leading-relaxed">Earn official badges or upload custom ones with beautiful hover effects.</p></div>
-      <div class="glass rounded-2xl p-6 fade-up" data-delay="250"><div class="w-11 h-11 rounded-xl bg-ss-pink/10 flex items-center justify-center mb-4"><i class="fa-solid fa-chart-line text-ss-pink"></i></div><h3 class="font-semibold text-lg mb-2">Analytics</h3><p class="text-ss-muted text-sm leading-relaxed">Track profile views, link clicks, and visitor data with a built-in dashboard.</p></div>
+      <div class="gls rounded-2xl p-6"><div class="w-11 h-11 rounded-xl bg-pk/10 flex items-center justify-center mb-4"><i class="fa-solid fa-wand-magic-sparkles text-pk"></i></div><h3 class="font-semibold text-lg mb-2">Stunning Effects</h3><p class="text-mu text-sm leading-relaxed">Aurora, petals, sparkles, rain, snow, orbs — transform your profile into a living canvas.</p></div>
+      <div class="gls rounded-2xl p-6"><div class="w-11 h-11 rounded-xl bg-pk/10 flex items-center justify-center mb-4"><i class="fa-solid fa-palette text-pk"></i></div><h3 class="font-semibold text-lg mb-2">Full Customization</h3><p class="text-mu text-sm leading-relaxed">Colors, fonts, card styles, name effects, badges — every detail is yours to control.</p></div>
+      <div class="gls rounded-2xl p-6"><div class="w-11 h-11 rounded-xl bg-pk/10 flex items-center justify-center mb-4"><i class="fa-solid fa-music text-pk"></i></div><h3 class="font-semibold text-lg mb-2">Music Player</h3><p class="text-mu text-sm leading-relaxed">Embed a sleek music player with cover art, progress bar, and track info.</p></div>
+      <div class="gls rounded-2xl p-6"><div class="w-11 h-11 rounded-xl bg-pk/10 flex items-center justify-center mb-4"><i class="fa-brands fa-discord text-pk"></i></div><h3 class="font-semibold text-lg mb-2">Discord Integration</h3><p class="text-mu text-sm leading-relaxed">Sync your avatar, show Discord status, and display current activity.</p></div>
+      <div class="gls rounded-2xl p-6"><div class="w-11 h-11 rounded-xl bg-pk/10 flex items-center justify-center mb-4"><i class="fa-solid fa-shield-halved text-pk"></i></div><h3 class="font-semibold text-lg mb-2">Badges System</h3><p class="text-mu text-sm leading-relaxed">Earn official badges or upload custom ones with beautiful hover effects.</p></div>
+      <div class="gls rounded-2xl p-6"><div class="w-11 h-11 rounded-xl bg-pk/10 flex items-center justify-center mb-4"><i class="fa-solid fa-chart-line text-pk"></i></div><h3 class="font-semibold text-lg mb-2">Analytics</h3><p class="text-mu text-sm leading-relaxed">Track profile views, link clicks, and visitor data with a built-in dashboard.</p></div>
     </div>
   </div>
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-20">
-    <div class="text-center mb-14 fade-up"><h2 class="font-display text-3xl sm:text-4xl font-bold mb-3">How it works</h2></div>
-    <div class="grid sm:grid-cols-3 gap-8 fade-up" data-delay="100">
-      <div class="text-center"><div class="w-14 h-14 rounded-2xl bg-ss-pink/10 flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-user-plus text-ss-pink text-xl"></i></div><h3 class="font-semibold mb-2">Claim Your Name</h3><p class="text-ss-muted text-sm">Sign up and pick a unique username that's yours forever.</p></div>
-      <div class="text-center"><div class="w-14 h-14 rounded-2xl bg-ss-pink/10 flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-sliders text-ss-pink text-xl"></i></div><h3 class="font-semibold mb-2">Make It Yours</h3><p class="text-ss-muted text-sm">Customize every detail — effects, colors, layout, music, and more.</p></div>
-      <div class="text-center"><div class="w-14 h-14 rounded-2xl bg-ss-pink/10 flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-share-nodes text-ss-pink text-xl"></i></div><h3 class="font-semibold mb-2">Share With the World</h3><p class="text-ss-muted text-sm">Your profile is live at seashell.lol/username. Share it everywhere.</p></div>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-24">
+    <div class="text-center mb-14"><h2 class="font-di text-3xl sm:text-5xl font-bold mb-4">Choose your <span class="pearl">plan</span></h2><p class="text-mu text-lg">Start free, upgrade when you're ready.</p></div>
+    <div class="grid sm:grid-cols-3 gap-5">
+      <div class="gls rounded-2xl p-7"><h3 class="font-semibold text-lg mb-1">Free</h3><p class="text-mu text-sm mb-5">Perfect to get started</p><div class="font-di text-4xl font-bold mb-6">$0<span class="text-mu text-base font-bo font-normal">/mo</span></div><ul class="space-y-3 text-sm text-mu mb-8"><li class="flex items-center gap-2"><i class="fa-solid fa-check text-pk text-xs"></i> Basic profile page</li><li class="flex items-center gap-2"><i class="fa-solid fa-check text-pk text-xs"></i> 5 link slots</li><li class="flex items-center gap-2"><i class="fa-solid fa-check text-pk text-xs"></i> 2 background effects</li><li class="flex items-center gap-2 text-dm"><i class="fa-solid fa-xmark text-xs"></i> Custom badges</li></ul><button class="bo w-full" onclick="openAuth('reg')">Get Started</button></div>
+      <div class="gls rounded-2xl p-7 ph"><h3 class="font-semibold text-lg mb-1">Premium</h3><p class="text-mu text-sm mb-5">For creators who stand out</p><div class="font-di text-4xl font-bold mb-6">$4.99<span class="text-mu text-base font-bo font-normal">/mo</span></div><ul class="space-y-3 text-sm text-mu mb-8"><li class="flex items-center gap-2"><i class="fa-solid fa-check text-pk text-xs"></i> Everything in Free</li><li class="flex items-center gap-2"><i class="fa-solid fa-check text-pk text-xs"></i> 20 link slots</li><li class="flex items-center gap-2"><i class="fa-solid fa-check text-pk text-xs"></i> All effects + music</li><li class="flex items-center gap-2"><i class="fa-solid fa-check text-pk text-xs"></i> 3 custom badges</li></ul><button class="bp w-full" onclick="toast('Select Premium during signup!','i')">Upgrade</button></div>
+      <div class="gls rounded-2xl p-7"><h3 class="font-semibold text-lg mb-1">Ultimate</h3><p class="text-mu text-sm mb-5">Unlimited everything</p><div class="font-di text-4xl font-bold mb-6">$9.99<span class="text-mu text-base font-bo font-normal">/mo</span></div><ul class="space-y-3 text-sm text-mu mb-8"><li class="flex items-center gap-2"><i class="fa-solid fa-check text-pk text-xs"></i> Everything in Premium</li><li class="flex items-center gap-2"><i class="fa-solid fa-check text-pk text-xs"></i> Unlimited links</li><li class="flex items-center gap-2"><i class="fa-solid fa-check text-pk text-xs"></i> Custom domain</li><li class="flex items-center gap-2"><i class="fa-solid fa-check text-pk text-xs"></i> 2GB file hosting</li></ul><button class="bo w-full" onclick="toast('Select Ultimate during signup!','i')">Upgrade</button></div>
     </div>
   </div>
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-20">
-    <div class="text-center mb-14 fade-up"><h2 class="font-display text-3xl sm:text-5xl font-bold mb-4">Choose your <span class="text-pearl">plan</span></h2><p class="text-ss-muted text-lg">Start free, upgrade when you're ready.</p></div>
-    <div class="grid sm:grid-cols-3 gap-5 fade-up" data-delay="100">
-      <div class="glass rounded-2xl p-7"><h3 class="font-semibold text-lg mb-1">Free</h3><p class="text-ss-muted text-sm mb-5">Get started</p><div class="font-display text-4xl font-bold mb-6">$0<span class="text-ss-muted text-base font-body font-normal">/mo</span></div><ul class="space-y-3 text-sm text-ss-muted mb-8"><li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Basic profile</li><li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 5 links</li><li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 2 effects</li><li class="flex items-center gap-2 text-ss-dim"><i class="fa-solid fa-xmark text-xs"></i> Custom badges</li></ul><button class="btn-outline w-full" onclick="openAuth('register')">Get Started</button></div>
-      <div class="glass rounded-2xl p-7 pricing-hl"><h3 class="font-semibold text-lg mb-1">Premium</h3><p class="text-ss-muted text-sm mb-5">Stand out</p><div class="font-display text-4xl font-bold mb-6">$4.99<span class="text-ss-muted text-base font-body font-normal">/mo</span></div><ul class="space-y-3 text-sm text-ss-muted mb-8"><li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Everything in Free</li><li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 20 links</li><li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> All effects</li><li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Music player</li><li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 3 custom badges</li></ul><button class="btn-pink w-full" onclick="openAuth('register')">Upgrade</button></div>
-      <div class="glass rounded-2xl p-7"><h3 class="font-semibold text-lg mb-1">Ultimate</h3><p class="text-ss-muted text-sm mb-5">Unlimited</p><div class="font-display text-4xl font-bold mb-6">$9.99<span class="text-ss-muted text-base font-body font-normal">/mo</span></div><ul class="space-y-3 text-sm text-ss-muted mb-8"><li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Everything in Premium</li><li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Unlimited links</li><li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> Custom domain</li><li class="flex items-center gap-2"><i class="fa-solid fa-check text-ss-pink text-xs"></i> 2GB hosting</li></ul><button class="btn-outline w-full" onclick="openAuth('register')">Upgrade</button></div>
+  <footer class="border-t border-pk/10 py-10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2"><i class="fa-solid fa-shrimp text-pk"></i><span class="font-di font-bold pearl">seashell.lol</span></div>
+      <div class="flex items-center gap-5"><a href="#" class="text-mu hover:text-pk transition-colors text-sm no-underline">Terms</a><a href="#" class="text-mu hover:text-pk transition-colors text-sm no-underline">Privacy</a><a href="#" class="text-mu hover:text-pk transition-colors text-sm no-underline">Support</a></div>
+      <div class="flex items-center gap-4"><a href="#" class="text-mu hover:text-pk transition-colors no-underline"><i class="fa-brands fa-x-twitter"></i></a><a href="#" class="text-mu hover:text-pk transition-colors no-underline"><i class="fa-brands fa-discord"></i></a></div>
     </div>
-  </div>
-  <footer class="border-t py-10" style="border-color:rgba(255,20,147,0.08)"><div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4"><div class="flex items-center gap-2"><i class="fa-solid fa-shrimp text-ss-pink"></i><span class="font-display font-bold text-pearl">seashell.lol</span></div><div class="flex items-center gap-5"><a href="#" class="text-ss-muted hover:text-ss-pink transition-colors text-sm no-underline">Terms</a><a href="#" class="text-ss-muted hover:text-ss-pink transition-colors text-sm no-underline">Privacy</a><a href="#" class="text-ss-muted hover:text-ss-pink transition-colors text-sm no-underline">Support</a></div><div class="flex items-center gap-4"><a href="#" class="text-ss-muted hover:text-ss-pink transition-colors no-underline" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a><a href="#" class="text-ss-muted hover:text-ss-pink transition-colors no-underline" aria-label="Discord"><i class="fa-brands fa-discord"></i></a></div></div></footer>
+  </footer>
 </section>
 
-<section id="page-profile" class="page"><div class="min-h-screen flex items-center justify-center px-4 py-20" id="profile-wrapper"></div>
-  <div class="fx-switcher" id="fx-switcher" style="display:none">
-    <button class="fx-toggle-btn" onclick="toggleFxPanel()" aria-label="Effects"><i class="fa-solid fa-sparkles"></i></button>
-    <div class="fx-panel" id="fx-panel">
-      <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-2 px-2">Background</p>
-      <button class="fx-option" data-fx="aurora" onclick="switchFx('aurora')"><i class="fa-solid fa-sun w-4 text-center mr-1"></i> Aurora</button>
-      <button class="fx-option" data-fx="petals" onclick="switchFx('petals')"><i class="fa-solid fa-leaf w-4 text-center mr-1"></i> Petals</button>
-      <button class="fx-option" data-fx="sparkles" onclick="switchFx('sparkles')"><i class="fa-solid fa-star w-4 text-center mr-1"></i> Sparkles</button>
-      <button class="fx-option" data-fx="rain" onclick="switchFx('rain')"><i class="fa-solid fa-cloud-rain w-4 text-center mr-1"></i> Rain</button>
-      <button class="fx-option" data-fx="snow" onclick="switchFx('snow')"><i class="fa-solid fa-snowflake w-4 text-center mr-1"></i> Snow</button>
-      <button class="fx-option" data-fx="orbs" onclick="switchFx('orbs')"><i class="fa-solid fa-circle w-4 text-center mr-1"></i> Orbs</button>
-      <div class="border-t my-2" style="border-color:rgba(255,20,147,0.08)"></div>
-      <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-2 px-2">Name Effect</p>
-      <button class="fx-option" data-nfx="neon" onclick="switchNameFx('neon')">Neon Glow</button>
-      <button class="fx-option" data-nfx="glitch" onclick="switchNameFx('glitch')">Glitch</button>
-      <button class="fx-option" data-nfx="gradient" onclick="switchNameFx('gradient')">Gradient</button>
-      <button class="fx-option" data-nfx="holographic" onclick="switchNameFx('holographic')">Holographic</button>
-      <button class="fx-option" data-nfx="sparkle" onclick="switchNameFx('sparkle')">Sparkle</button>
-      <div class="border-t my-2" style="border-color:rgba(255,20,147,0.08)"></div>
-      <p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-2 px-2">Card Style</p>
-      <button class="fx-option" data-cs="glass" onclick="switchCardStyle('glass')">Glass</button>
-      <button class="fx-option" data-cs="default" onclick="switchCardStyle('default')">Default</button>
-      <button class="fx-option" data-cs="minimal" onclick="switchCardStyle('minimal')">Minimal</button>
-      <button class="fx-option" data-cs="portfolio" onclick="switchCardStyle('portfolio')">Portfolio</button>
+<!-- PROFILE PAGE -->
+<section id="pgProf" class="pg">
+  <div class="min-h-screen flex items-center justify-center px-4 py-20" id="profW"></div>
+  <div id="fxSw" class="fixed bottom-6 right-6 z-50" style="display:none">
+    <button class="w-12 h-12 rounded-full bg-gradient-to-br from-pk to-dp border-none text-white text-lg cursor-pointer shadow-lg shadow-pk/40 transition-transform hover:scale-110 flex items-center justify-center" onclick="document.getElementById('fxP').classList.toggle('hidden')" aria-label="Effects"><i class="fa-solid fa-sparkles"></i></button>
+    <div id="fxP" class="hidden absolute bottom-16 right-0 bg-cd/95 backdrop-blur-xl border border-pk/20 rounded-2xl p-4 min-w-[200px] shadow-2xl shadow-black/50">
+      <p class="text-[10px] text-mu font-semibold uppercase tracking-wider mb-2 px-1">Background</p>
+      <button class="csi on" data-fx="aurora" onclick="setFx('aurora')"><i class="fa-solid fa-sun"></i> Aurora</button>
+      <button class="csi" data-fx="petals" onclick="setFx('petals')"><i class="fa-solid fa-leaf"></i> Petals</button>
+      <button class="csi" data-fx="sparkles" onclick="setFx('sparkles')"><i class="fa-solid fa-star"></i> Sparkles</button>
+      <button class="csi" data-fx="rain" onclick="setFx('rain')"><i class="fa-solid fa-cloud-rain"></i> Rain</button>
+      <button class="csi" data-fx="snow" onclick="setFx('snow')"><i class="fa-solid fa-snowflake"></i> Snow</button>
+      <button class="csi" data-fx="orbs" onclick="setFx('orbs')"><i class="fa-solid fa-circle"></i> Orbs</button>
+      <div class="border-t border-pk/10 my-2"></div>
+      <p class="text-[10px] text-mu font-semibold uppercase tracking-wider mb-2 px-1">Name</p>
+      <button class="csi on" data-nf="neon" onclick="setNf('neon')">Neon</button>
+      <button class="csi" data-nf="glitch" onclick="setNf('glitch')">Glitch</button>
+      <button class="csi" data-nf="gradient" onclick="setNf('gradient')">Gradient</button>
+      <button class="csi" data-nf="holographic" onclick="setNf('holographic')">Holo</button>
+      <button class="csi" data-nf="sparkle" onclick="setNf('sparkle')">Sparkle</button>
+      <div class="border-t border-pk/10 my-2"></div>
+      <p class="text-[10px] text-mu font-semibold uppercase tracking-wider mb-2 px-1">Card</p>
+      <button class="csi on" data-cs="glass" onclick="setCs('glass')">Glass</button>
+      <button class="csi" data-cs="default" onclick="setCs('default')">Default</button>
+      <button class="csi" data-cs="minimal" onclick="setCs('minimal')">Minimal</button>
+      <button class="csi" data-cs="portfolio" onclick="setCs('portfolio')">Portfolio</button>
     </div>
   </div>
 </section>
 
-<section id="page-customize" class="page"><div class="pt-16 min-h-screen flex" id="customize-layout"></div></section>
-<section id="page-admin" class="page"><div class="pt-16 flex min-h-screen"><aside class="w-60 flex-shrink-0" style="background:rgba(16,16,24,0.95);border-right:1px solid rgba(255,20,147,0.08);height:calc(100vh - 64px);position:sticky;top:64px"><div class="p-4"><p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-3 px-3">Admin Panel</p><nav class="space-y-1" id="admin-nav"></nav></div></aside><div class="flex-1 min-w-0 p-6 lg:p-8 overflow-y-auto" id="admin-content"></div></div></section>
-<section id="page-notfound" class="page"><div class="min-h-screen flex items-center justify-center px-4 pt-16"><div class="text-center"><div class="w-20 h-20 rounded-full bg-ss-pink/10 flex items-center justify-center mx-auto mb-6"><i class="fa-solid fa-ghost text-ss-pink text-2xl"></i></div><h1 class="font-display text-3xl font-bold mb-3">User Not Found</h1><p class="text-ss-muted text-lg mb-8">This profile doesn't exist or has been removed.</p><button class="btn-pink" onclick="navigate('/')">Go Home</button></div></div></section>
-<section id="page-unauthorized" class="page"><div class="min-h-screen flex items-center justify-center px-4 pt-16"><div class="text-center"><div class="w-20 h-20 rounded-full bg-ss-pink/10 flex items-center justify-center mx-auto mb-6"><i class="fa-solid fa-lock text-ss-pink text-2xl"></i></div><h1 class="font-display text-3xl font-bold mb-3">Access Denied</h1><p class="text-ss-muted text-lg mb-8 max-w-md" id="unauth-msg">You need to sign in to access this page.</p><button class="btn-pink" onclick="openAuth('login')">Sign In</button></div></div></section>
+<!-- CUSTOMIZE PAGE -->
+<section id="pgCust" class="pg">
+  <div class="pt-16 flex min-h-screen">
+    <aside class="csb" id="custSb">
+      <div class="py-4">
+        <p class="text-[10px] text-mu font-semibold uppercase tracking-wider mb-2 px-5">Settings</p>
+        <button class="csi on" data-cs2="general" onclick="setCustTab('general')"><i class="fa-solid fa-user"></i> General</button>
+        <button class="csi" data-cs2="assets" onclick="setCustTab('assets')"><i class="fa-solid fa-link"></i> Assets</button>
+        <button class="csi" data-cs2="colors" onclick="setCustTab('colors')"><i class="fa-solid fa-palette"></i> Colors</button>
+        <button class="csi" data-cs2="effects" onclick="setCustTab('effects')"><i class="fa-solid fa-wand-magic-sparkles"></i> Effects</button>
+        <button class="csi" data-cs2="layout" onclick="setCustTab('layout')"><i class="fa-solid fa-layer-group"></i> Layout</button>
+        <button class="csi" data-cs2="badges" onclick="setCustTab('badges')"><i class="fa-solid fa-award"></i> Badges</button>
+        <button class="csi" data-cs2="advanced" onclick="setCustTab('advanced')"><i class="fa-solid fa-sliders"></i> Advanced</button>
+      </div>
+    </aside>
+    <div class="flex-1 flex flex-col lg:flex-row">
+      <div class="flex-1 p-6 lg:p-8 overflow-y-auto" id="custCt"></div>
+      <div class="w-full lg:w-[380px] flex-shrink-0 p-6 lg:p-8 border-l border-pk/8">
+        <p class="text-[10px] text-mu font-semibold uppercase tracking-wider mb-3">Live Preview</p>
+        <div id="custPv" class="gls rounded-2xl p-4" style="transform:scale(.85);transform-origin:top center"></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-<div id="toast-container"></div>
+<!-- ADMIN PAGE -->
+<section id="pgAdmin" class="pg">
+  <div class="pt-16 flex min-h-screen">
+    <aside class="asb"><div class="p-4"><p class="text-[10px] text-mu font-semibold uppercase tracking-wider mb-3 px-3">Admin</p>
+      <button class="ani on" data-at="dash" onclick="setAdTab('dash')"><i class="fa-solid fa-chart-pie"></i> Dashboard</button>
+      <button class="ani" data-at="users" onclick="setAdTab('users')"><i class="fa-solid fa-users"></i> Users</button>
+      <button class="ani" data-at="badges" onclick="setAdTab('badges')"><i class="fa-solid fa-award"></i> Badges</button>
+      <button class="ani" data-at="mod" onclick="setAdTab('mod')"><i class="fa-solid fa-flag"></i> Moderation</button>
+      <button class="ani" data-at="audit" onclick="setAdTab('audit')"><i class="fa-solid fa-clock-rotate-left"></i> Audit Log</button>
+    </div></aside>
+    <div class="flex-1 min-w-0 p-6 lg:p-8 overflow-y-auto" id="adCt"></div>
+  </div>
+</section>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<!-- DENIED PAGE -->
+<section id="pgDeny" class="pg">
+  <div class="min-h-screen flex items-center justify-center px-4 pt-16">
+    <div class="text-center"><div class="w-20 h-20 rounded-full bg-pk/10 flex items-center justify-center mx-auto mb-6"><i class="fa-solid fa-lock text-pk text-2xl"></i></div><h1 class="font-di text-3xl font-bold mb-3">Access Denied</h1><p class="text-mu text-lg mb-8 max-w-md" id="denyMsg">You need to sign in to access this page.</p><button class="bp" onclick="openAuth('login')">Sign In</button></div>
+  </div>
+</section>
+
+<!-- NOT FOUND -->
+<section id="pg404" class="pg">
+  <div class="min-h-screen flex items-center justify-center px-4 pt-16">
+    <div class="text-center"><div class="w-20 h-20 rounded-full bg-pk/10 flex items-center justify-center mx-auto mb-6"><i class="fa-solid fa-ghost text-pk text-2xl"></i></div><h1 class="font-di text-3xl font-bold mb-3">User Not Found</h1><p class="text-mu text-lg mb-8">This profile doesn't exist or the username is incorrect.</p><a href="#/" class="bp no-underline">Back Home</a></div>
+  </div>
+</section>
+
+<div id="tC"></div>
+
 <script>
-/* ===================== Firebase Init ===================== */
-var firebaseConfig={apiKey:"AIzaSyDbvpzYvPDxzYBXr7-WLFWabmeIRkJlTnw",authDomain:"seashell-27f34.firebaseapp.com",projectId:"seashell-27f34",storageBucket:"seashell-27f34.firebasestorage.app",messagingSenderId:"225540891149",appId:"1:225540891149:web:a2dd3060fe7ab6d975ab44"};
-var fbApp,fbAuth,fbDb;
-try{fbApp=firebase.initializeApp(firebaseConfig);fbAuth=firebase.auth();fbDb=firebase.firestore();}catch(e){console.error("Firebase init error:",e)}
+/* ========== FIREBASE INIT ========== */
+var fbCfg={apiKey:"AIzaSyDbvpzYvPDxzYBXr7-WLFWabmeIRkJlTnw",authDomain:"seashell-27f34.firebaseapp.com",projectId:"seashell-27f34",storageBucket:"seashell-27f34.firebasestorage.app",messagingSenderId:"225540891149",appId:"1:225540891149:web:a2dd3060fe7ab6d975ab44"};
+var fbAuth,fbDb;
+try{firebase.initializeApp(fbCfg);fbAuth=firebase.auth();fbDb=firebase.firestore();}catch(e){console.warn("Firebase init error:",e)}
 
-/* ===================== State ===================== */
-var ROLE_LEVELS={owner:5,manager:4,admin:3,mod:2,user:1};
-var RESERVED_NAMES=['admin','owner','moderator','mod','staff','system','api','auth','login','signup','register','settings','customize','premium','terms','privacy','support','help','faq','blog','docs','dashboard','manage','account','profile','edit','delete','remove','ban','unban','suspend','featured','templates','pricing','plans','checkout','webhook','oauth','callback','redirect','verify','reset','recover','unsubscribe','notifications'];
-var authState={isLoggedIn:false,user:null};
-var DEFAULTS={displayName:'',description:'',location:'',avatar:'',banner:'',bgImage:'',bgVideo:'',bgAudio:'',customCursor:'',bgEffect:'aurora',cardStyle:'glass',nameEffect:'neon',accentColor:'#FF1493',bgColor:'#0A0A0F',textColor:'#F5F0F2',gradientEnabled:true,effectIntensity:70,borderRadius:24,cardOpacity:75,cardGlow:40,links:[],badges:[],music:null,views:0,clicks:0};
-var profileSettings=Object.assign({},DEFAULTS);
-var currentBgEffect='aurora',currentNameEffect='neon',currentCardStyle='glass';
-var currentProfileUser=null,currentProfileUsername='',musicInterval=null,musicProgress=0;
-var authMode='login',customSection='general',adminTab='dashboard';
+/* ========== STATE ========== */
+var S={logged:false,user:null,doc:null};
+var RL={owner:5,manager:4,admin:3,mod:2,user:1};
+var cFx='aurora',cNf='neon',cCs='glass',cProf=null;
+var fxp=[],fxT=0,mInt=null,mProg=0,authM='login';
 
-/* ===================== Effects Engine ===================== */
-var fxC=document.getElementById('fx-canvas'),fxCtx=fxC.getContext('2d'),fxP=[],fxE='aurora',fxT=0,fxR=false;
-var fxRM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-function fxResize(){fxC.width=window.innerWidth;fxC.height=window.innerHeight}
-fxResize();window.addEventListener('resize',fxResize);
-function fxSet(n){fxE=n;fxP=[];fxT=0;if(!fxR&&!fxRM){fxR=true;fxGo()}}
-function fxGo(){if(!fxR)return;fxT+=0.016;var w=fxC.width,h=fxC.height;fxCtx.clearRect(0,0,w,h);
-if(fxE==='aurora'){for(var l=0;l<4;l++){fxCtx.beginPath();var by=h*.3+l*60,a=80+l*20,f=.002-l*.0003,s=.3+l*.15,al=.06-l*.01;fxCtx.moveTo(0,h);for(var x=0;x<=w;x+=3){var y=by+Math.sin(x*f+fxT*s)*a+Math.sin(x*f*2.3+fxT*s*.7)*a*.4+Math.cos(x*f*.5+fxT*s*.3)*a*.3;fxCtx.lineTo(x,y)}fxCtx.lineTo(w,h);fxCtx.closePath();var g=fxCtx.createLinearGradient(0,by-a,0,h),hu=330+l*15;g.addColorStop(0,'hsla('+hu+',100%,60%,'+al+')');g.addColorStop(0.5,'hsla('+(hu+20)+',80%,40%,'+(al*.6)+')');g.addColorStop(1,'rgba(0,0,0,0)');fxCtx.fillStyle=g;fxCtx.fill()}}
-else if(fxE==='petals'){while(fxP.length<50)fxP.push({x:Math.random()*w,y:-20-Math.random()*100,sz:4+Math.random()*8,sy:.5+Math.random()*1.5,sx:-.3+Math.random()*.6,r:Math.random()*6.28,rs:(Math.random()-.5)*.03,a:.3+Math.random()*.5,hu:330+Math.random()*30,wb:Math.random()*6.28});for(var i=0;i<fxP.length;i++){var p=fxP[i];p.y+=p.sy;p.x+=p.sx+Math.sin(fxT*1.5+p.wb)*.3;p.r+=p.rs;if(p.y>h+20){p.y=-20;p.x=Math.random()*w}fxCtx.save();fxCtx.translate(p.x,p.y);fxCtx.rotate(p.r);fxCtx.globalAlpha=p.a;fxCtx.beginPath();fxCtx.ellipse(0,0,p.sz*.4,p.sz,0,0,6.28);fxCtx.fillStyle='hsla('+p.hu+',80%,70%,1)';fxCtx.fill();fxCtx.restore()}fxCtx.globalAlpha=1}
-else if(fxE==='sparkles'){while(fxP.length<60)fxP.push({x:Math.random()*w,y:Math.random()*h,sz:1+Math.random()*3,ts:1+Math.random()*3,to:Math.random()*6.28,a:0,c:Math.random()>.7?'#FCD34D':Math.random()>.5?'#FF69B4':'#FFFFFF',d:(Math.random()-.5)*.1});for(var i=0;i<fxP.length;i++){var p=fxP[i];p.x+=p.d;p.a=Math.max(0,Math.sin(fxT*p.ts+p.to));if(p.x<-10||p.x>w+10){p.x=Math.random()*w;p.y=Math.random()*h}if(p.a>.1){fxCtx.save();fxCtx.globalAlpha=p.a;fxCtx.fillStyle=p.c;var s=p.sz;fxCtx.beginPath();fxCtx.moveTo(p.x,p.y-s*2);fxCtx.lineTo(p.x+s*.4,p.y-s*.4);fxCtx.lineTo(p.x+s*2,p.y);fxCtx.lineTo(p.x+s*.4,p.y+s*.4);fxCtx.lineTo(p.x,p.y+s*2);fxCtx.lineTo(p.x-s*.4,p.y+s*.4);fxCtx.lineTo(p.x-s*2,p.y);fxCtx.lineTo(p.x-s*.4,p.y-s*.4);fxCtx.closePath();fxCtx.fill();fxCtx.restore()}}fxCtx.globalAlpha=1}
-else if(fxE==='rain'){while(fxP.length<150)fxP.push({x:Math.random()*(w+200)-100,y:Math.random()*h-h,l:15+Math.random()*25,s:12+Math.random()*8,a:.1+Math.random()*.2,w:.5+Math.random()});fxCtx.strokeStyle='rgba(255,105,180,0.25)';for(var i=0;i<fxP.length;i++){var p=fxP[i];p.y+=p.s;p.x-=1.5;if(p.y>h+30){p.y=-30;p.x=Math.random()*(w+200)-100}fxCtx.globalAlpha=p.a;fxCtx.lineWidth=p.w;fxCtx.beginPath();fxCtx.moveTo(p.x,p.y);fxCtx.lineTo(p.x+1.5,p.y-p.l);fxCtx.stroke()}fxCtx.globalAlpha=1}
-else if(fxE==='snow'){while(fxP.length<80)fxP.push({x:Math.random()*w,y:-10-Math.random()*h,sz:1+Math.random()*3,s:.5+Math.random()*1.5,wb:Math.random()*6.28,ws:.5+Math.random(),a:.3+Math.random()*.5});for(var i=0;i<fxP.length;i++){var p=fxP[i];p.y+=p.s;p.x+=Math.sin(fxT*p.ws+p.wb)*.5;if(p.y>h+10){p.y=-10;p.x=Math.random()*w}fxCtx.globalAlpha=p.a;fxCtx.fillStyle='#FDE2F3';fxCtx.beginPath();fxCtx.arc(p.x,p.y,Math.max(.5,p.sz),0,6.28);fxCtx.fill()}fxCtx.globalAlpha=1}
-else if(fxE==='orbs'){if(!fxP.length)for(var i=0;i<8;i++)fxP.push({x:Math.random()*w,y:Math.random()*h,r:80+Math.random()*180,sx:(Math.random()-.5)*.3,sy:(Math.random()-.5)*.3,hu:320+Math.random()*40,a:.04+Math.random()*.04,px:Math.random()*6.28,py:Math.random()*6.28});for(var i=0;i<fxP.length;i++){var p=fxP[i];p.x+=p.sx+Math.sin(fxT*.2+p.px)*.3;p.y+=p.sy+Math.cos(fxT*.15+p.py)*.3;if(p.x<-p.r)p.x=w+p.r;if(p.x>w+p.r)p.x=-p.r;if(p.y<-p.r)p.y=h+p.r;if(p.y>h+p.r)p.y=-p.r;var g=fxCtx.createRadialGradient(p.x,p.y,0,p.x,p.y,Math.max(1,p.r));g.addColorStop(0,'hsla('+p.hu+',80%,60%,'+p.a+')');g.addColorStop(0.5,'hsla('+(p.hu+20)+',60%,40%,'+(p.a*.4)+')');g.addColorStop(1,'rgba(0,0,0,0)');fxCtx.fillStyle=g;fxCtx.fillRect(p.x-p.r,p.y-p.r,p.r*2,p.r*2)}}
-requestAnimationFrame(fxGo)}
-fxSet('aurora');
+/* ========== EFFECTS ENGINE ========== */
+var fxC=document.getElementById('fx'),fxX=fxC.getContext('2d');
+function fxR(){fxC.width=innerWidth;fxC.height=innerHeight}
+fxR();onresize=fxR;
+(function fxL(){
+  fxT+=.016;var w=fxC.width,h=fxC.height;fxX.clearRect(0,0,w,h);
+  if(cFx==='aurora'){for(var l=0;l<4;l++){fxX.beginPath();var by=h*.3+l*60,a=80+l*20,f=.002-l*.0003,s=.3+l*.15,al=.06-l*.01;fxX.moveTo(0,h);for(var x=0;x<=w;x+=3){var y=by+Math.sin(x*f+fxT*s)*a+Math.sin(x*f*2.3+fxT*s*.7)*a*.4+Math.cos(x*f*.5+fxT*s*.3)*a*.3;fxX.lineTo(x,y)}fxX.lineTo(w,h);fxX.closePath();var g=fxX.createLinearGradient(0,by-a,0,h),hu=330+l*15;g.addColorStop(0,'hsla('+hu+',100%,60%,'+al+')');g.addColorStop(.5,'hsla('+(hu+20)+',80%,40%,'+(al*.6)+')');g.addColorStop(1,'rgba(0,0,0,0)');fxX.fillStyle=g;fxX.fill()}}
+  else if(cFx==='petals'){while(fxp.length<50)fxp.push({x:Math.random()*w,y:-20-Math.random()*100,sz:4+Math.random()*8,sy:.5+Math.random()*1.5,sx:-.3+Math.random()*.6,r:Math.random()*6.28,rs:(Math.random()-.5)*.03,a:.3+Math.random()*.5,hu:330+Math.random()*30,wb:Math.random()*6.28});for(var i=0;i<fxp.length;i++){var p=fxp[i];p.y+=p.sy;p.x+=p.sx+Math.sin(fxT*1.5+p.wb)*.3;p.r+=p.rs;if(p.y>h+20){p.y=-20;p.x=Math.random()*w}fxX.save();fxX.translate(p.x,p.y);fxX.rotate(p.r);fxX.globalAlpha=p.a;fxX.beginPath();fxX.ellipse(0,0,p.sz*.4,p.sz,0,0,6.28);fxX.fillStyle='hsla('+p.hu+',80%,70%,1)';fxX.fill();fxX.restore()}fxX.globalAlpha=1}
+  else if(cFx==='sparkles'){while(fxp.length<60)fxp.push({x:Math.random()*w,y:Math.random()*h,sz:1+Math.random()*3,ts:1+Math.random()*3,to:Math.random()*6.28,a:0,c:Math.random()>.7?'#FCD34D':Math.random()>.5?'#FF69B4':'#FFF',d:(Math.random()-.5)*.1});for(var i=0;i<fxp.length;i++){var p=fxp[i];p.x+=p.d;p.a=Math.max(0,Math.sin(fxT*p.ts+p.to));if(p.x<-10||p.x>w+10){p.x=Math.random()*w;p.y=Math.random()*h}if(p.a>.1){fxX.save();fxX.globalAlpha=p.a;fxX.fillStyle=p.c;var s=p.sz;fxX.beginPath();fxX.moveTo(p.x,p.y-s*2);fxX.lineTo(p.x+s*.4,p.y-s*.4);fxX.lineTo(p.x+s*2,p.y);fxX.lineTo(p.x+s*.4,p.y+s*.4);fxX.lineTo(p.x,p.y+s*2);fxX.lineTo(p.x-s*.4,p.y+s*.4);fxX.lineTo(p.x-s*2,p.y);fxX.lineTo(p.x-s*.4,p.y-s*.4);fxX.closePath();fxX.fill();fxX.restore()}}fxX.globalAlpha=1}
+  else if(cFx==='rain'){while(fxp.length<150)fxp.push({x:Math.random()*(w+200)-100,y:Math.random()*h-h,l:15+Math.random()*25,s:12+Math.random()*8,a:.1+Math.random()*.2,w:.5+Math.random()});fxX.strokeStyle='rgba(255,105,180,0.25)';for(var i=0;i<fxp.length;i++){var p=fxp[i];p.y+=p.s;p.x-=1.5;if(p.y>h+30){p.y=-30;p.x=Math.random()*(w+200)-100}fxX.globalAlpha=p.a;fxX.lineWidth=p.w;fxX.beginPath();fxX.moveTo(p.x,p.y);fxX.lineTo(p.x+1.5,p.y-p.l);fxX.stroke()}fxX.globalAlpha=1}
+  else if(cFx==='snow'){while(fxp.length<80)fxp.push({x:Math.random()*w,y:-10-Math.random()*h,sz:1+Math.random()*3,s:.5+Math.random()*1.5,wb:Math.random()*6.28,ws:.5+Math.random(),a:.3+Math.random()*.5});for(var i=0;i<fxp.length;i++){var p=fxp[i];p.y+=p.s;p.x+=Math.sin(fxT*p.ws+p.wb)*.5;if(p.y>h+10){p.y=-10;p.x=Math.random()*w}fxX.globalAlpha=p.a;fxX.fillStyle='#FDE2F3';fxX.beginPath();fxX.arc(p.x,p.y,Math.max(.5,p.sz),0,6.28);fxX.fill()}fxX.globalAlpha=1}
+  else if(cFx==='orbs'){if(!fxp.length)for(var i=0;i<8;i++)fxp.push({x:Math.random()*w,y:Math.random()*h,r:80+Math.random()*180,sx:(Math.random()-.5)*.3,sy:(Math.random()-.5)*.3,hu:320+Math.random()*40,a:.04+Math.random()*.04,px:Math.random()*6.28,py:Math.random()*6.28});for(var i=0;i<fxp.length;i++){var p=fxp[i];p.x+=p.sx+Math.sin(fxT*.2+p.px)*.3;p.y+=p.sy+Math.cos(fxT*.15+p.py)*.3;if(p.x<-p.r)p.x=w+p.r;if(p.x>w+p.r)p.x=-p.r;if(p.y<-p.r)p.y=h+p.r;if(p.y>h+p.r)p.y=-p.r;var g=fxX.createRadialGradient(p.x,p.y,0,p.x,p.y,Math.max(1,p.r));g.addColorStop(0,'hsla('+p.hu+',80%,60%,'+p.a+')');g.addColorStop(.5,'hsla('+(p.hu+20)+',60%,40%,'+(p.a*.4)+')');g.addColorStop(1,'rgba(0,0,0,0)');fxX.fillStyle=g;fxX.fillRect(p.x-p.r,p.y-p.r,p.r*2,p.r*2)}}
+  requestAnimationFrame(fxL);
+})();
 
-/* ===================== Toast ===================== */
-function showToast(msg,type){type=type||'info';var c=document.getElementById('toast-container'),t=document.createElement('div');t.className='toast toast-'+type;t.textContent=msg;c.appendChild(t);requestAnimationFrame(function(){t.classList.add('show')});setTimeout(function(){t.classList.remove('show');setTimeout(function(){t.remove()},400)},3500)}
-
-/* ===================== URL Validation ===================== */
-var IMG_EXT=['.jpg','.jpeg','.png','.gif','.webp','.svg','.avif'];
-var VID_EXT=['.mp4','.webm','.mov','.gif'];
-var AUD_EXT=['.mp3','.wav','.ogg','.flac','.m4a'];
-function isValidUrl(str){try{var u=new URL(str);return u.protocol==='http:'||u.protocol==='https:'}catch(e){return false}}
-function hasExtension(str,exts){var s=str.toLowerCase().split('?')[0];for(var i=0;i<exts.length;i++)if(s.endsWith(exts[i]))return true;return false}
-
-/* ===================== Auth System ===================== */
-function renderAuthFields(){
-  var f=document.getElementById('auth-form-fields');
-  if(authMode==='login'){
-    document.getElementById('auth-title').textContent='Welcome Back';
-    document.getElementById('auth-subtitle').textContent='Sign in to your seashell account';
-    document.getElementById('auth-toggle-text').textContent="Don't have an account?";
-    document.getElementById('auth-toggle-btn').textContent='Sign Up';
-    f.innerHTML='<div><label class="block text-xs font-medium text-ss-muted mb-1.5">Username</label><input type="text" class="input-field" placeholder="Your username" id="auth-username"></div><div><label class="block text-xs font-medium text-ss-muted mb-1.5">Password</label><input type="password" class="input-field" placeholder="Enter your password" id="auth-password"></div><button class="btn-pink w-full !mt-6" id="auth-submit" onclick="handleLogin()">Sign In</button>';
-  } else {
-    document.getElementById('auth-title').textContent='Join seashell.lol';
-    document.getElementById('auth-subtitle').textContent='Claim your beautiful corner of the internet';
-    document.getElementById('auth-toggle-text').textContent='Already have an account?';
-    document.getElementById('auth-toggle-btn').textContent='Sign In';
-    f.innerHTML='<div><label class="block text-xs font-medium text-ss-muted mb-1.5">Username</label><input type="text" class="input-field" placeholder="3-20 characters, letters/numbers/underscores" id="auth-username" maxlength="20"><p class="text-ss-dim text-xs mt-1">This will be your profile URL: seashell.lol/<span id="auth-un-preview" class="text-ss-pink">username</span></p></div><div><label class="block text-xs font-medium text-ss-muted mb-1.5">Email <span class="text-ss-dim">(recommended for recovery)</span></label><input type="email" class="input-field" placeholder="you@example.com" id="auth-email"><p class="text-ss-dim text-xs mt-1">Skip this and you won\'t be able to reset your password.</p></div><div><label class="block text-xs font-medium text-ss-muted mb-1.5">Password</label><input type="password" class="input-field" placeholder="Minimum 6 characters" id="auth-password"></div><div><label class="block text-xs font-medium text-ss-muted mb-1.5">Confirm Password</label><input type="password" class="input-field" placeholder="Re-enter your password" id="auth-confirm"></div><button class="btn-pink w-full !mt-6" id="auth-submit" onclick="handleSignup()">Create Account</button>';
-    var unInput=document.getElementById('auth-username');
-    if(unInput)unInput.addEventListener('input',function(){var p=document.getElementById('auth-un-preview');if(p)p.textContent=this.value||'username'});
-  }
-}
-function openAuth(mode){authMode=mode;renderAuthFields();document.getElementById('auth-modal').classList.add('open')}
-function closeAuth(){document.getElementById('auth-modal').classList.remove('open')}
-function toggleAuthMode(){openAuth(authMode==='login'?'register':'login')}
-
-function validateUsername(un){if(!un||un.length<3||un.length>20)return'Username must be 3-20 characters.';if(!/^[a-zA-Z][a-zA-Z0-9_-]*$/.test(un))return'Username must start with a letter and contain only letters, numbers, underscores, or hyphens.';if(RESERVED_NAMES.indexOf(un.toLowerCase())!==-1)return'This username is reserved.';return null}
-
-async function handleSignup(){
-  var un=document.getElementById('auth-username').value.trim().toLowerCase();
-  var email=document.getElementById('auth-email').value.trim();
-  var pw=document.getElementById('auth-password').value;
-  var confirm=document.getElementById('auth-confirm').value;
-  var err=validateUsername(un);if(err){showToast(err,'error');return}
-  if(pw.length<6){showToast('Password must be at least 6 characters.','error');return}
-  if(pw!==confirm){showToast('Passwords do not match.','error');return}
-  if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('Please enter a valid email address.','error');return}
-  var btn=document.getElementById('auth-submit');btn.textContent='Creating account...';btn.disabled=true;
-  try{
-    var usernameDoc=await fbDb.doc('usernames/'+un).get();
-    if(usernameDoc.exists){btn.textContent='Create Account';btn.disabled=false;showToast('This username is already taken.','error');return}
-    var finalEmail=email||un+'@seashell.users';
-    var cred=await fbAuth.createUserWithEmailAndPassword(finalEmail,pw);
-    var numericUid=await getNextUid();
-    var role=numericUid===1?'owner':'user';
-    var userData=Object.assign({},DEFAULTS,{numericUid:numericUid,username:un,displayName:un,email:finalEmail,role:role,createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
-    await fbDb.collection('users').doc(cred.user.uid).set(userData);
-    await fbDb.doc('usernames/'+un).set({uid:cred.user.uid});
-    closeAuth();btn.textContent='Create Account';btn.disabled=false;
-    showToast('Welcome to seashell.lol, '+un+'!','success');
-  }catch(e){
-    btn.textContent='Create Account';btn.disabled=false;
-    var msg=e.code==='auth/email-already-in-use'?'That email is already in use.':e.message;showToast(msg,'error');
-    try{if(fbAuth.currentUser)await fbAuth.currentUser.delete()}catch(e2){}
-  }
+/* ========== TOAST ========== */
+function toast(m,t){
+  t=t||'i';var c=document.getElementById('tC'),d=document.createElement('div');
+  d.className='tst ts'+(t==='s'?'o':t==='e'?'e':'i');d.textContent=m;c.appendChild(d);
+  requestAnimationFrame(function(){d.classList.add('show')});
+  setTimeout(function(){d.classList.remove('show');setTimeout(function(){d.remove()},400)},3500);
 }
 
-async function handleLogin(){
-  var un=document.getElementById('auth-username').value.trim().toLowerCase();
-  var pw=document.getElementById('auth-password').value;
-  if(!un||!pw){showToast('Please fill in all fields.','error');return}
-  var btn=document.getElementById('auth-submit');btn.textContent='Signing in...';btn.disabled=true;
-  try{
-    var usernameDoc=await fbDb.doc('usernames/'+un).get();
-    if(!usernameDoc.exists){btn.textContent='Sign In';btn.disabled=false;showToast('No account found with that username.','error');return}
-    var userDoc=await fbDb.collection('users').doc(usernameDoc.data().uid).get();
-    if(!userDoc.exists){btn.textContent='Sign In';btn.disabled=false;showToast('Account data not found. Please sign up again.','error');return}
-    await fbAuth.signInWithEmailAndPassword(userDoc.data().email,pw);
-    closeAuth();btn.textContent='Sign In';btn.disabled=false;
-    showToast('Welcome back, '+un+'!','success');
-  }catch(e){
-    btn.textContent='Sign In';btn.disabled=false;
-    var msg=e.code==='auth/wrong-password'||e.code==='auth/invalid-credential'?'Incorrect password.':e.code==='auth/user-not-found'?'Account not found.':e.message;showToast(msg,'error');
-  }
-}
-
-async function socialAuth(provider){
-  closeAuth();showToast('Connecting to '+(provider==='google'?'Google':'Discord')+'...','info');
-  try{
-    var prov=provider==='google'?new firebase.auth.GoogleAuthProvider():new firebase.auth.OAuthPopupProvider();
-    /* For Discord, Firebase doesn't have a built-in provider, so we simulate */
-    if(provider==='discord'){showToast('Discord OAuth requires server-side setup. Please use email signup.','info');return}
-    var result=await fbAuth.signInWithPopup(prov);
-    var uid=result.user.uid;
-    var doc=await fbDb.collection('users').doc(uid).get();
-    if(!doc.exists){
-      var numericUid=await getNextUid();
-      var un=result.user.email.split('@')[0].replace(/[^a-z0-9_-]/gi,'').substring(0,20).toLowerCase();
-      var base=un;var i=1;while((await fbDb.doc('usernames/'+un).get()).exists){un=base+i;i++}
-      var userData=Object.assign({},DEFAULTS,{numericUid:numericUid,username:un,displayName:result.user.displayName||un,email:result.user.email,avatar:result.user.photoURL||'',role:numericUid===1?'owner':'user',createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
-      await fbDb.collection('users').doc(uid).set(userData);
-      await fbDb.doc('usernames/'+un).set({uid:uid});
-      showToast('Account created with username: '+un,'success');
-    }else{showToast('Welcome back!','success')}
-  }catch(e){if(e.code!=='auth/popup-closed-by-user')showToast(e.message,'error')}
-}
-
-async function doLogout(){try{await fbAuth.signOut()}catch(e){showToast('Error signing out.','error')}}
-
-async function getNextUid(){
-  var ref=fbDb.doc('counters/uid');
-  return fbDb.runTransaction(function(tx){return tx.get(ref).then(function(doc){var v;if(!doc.exists){tx.set(ref,{value:1});v=1}else{v=doc.data().value+1;tx.update(ref,{value:v})}return v})});
-}
-
-/* ===================== Auth State Listener ===================== */
-firebase.auth().onAuthStateChanged(async function(fbUser){
-  if(fbUser){
-    try{
-      var doc=await fbDb.collection('users').doc(fbUser.uid).get();
-      if(doc.exists){authState.isLoggedIn=true;authState.user=Object.assign({},doc.data(),{authUid:fbUser.uid})}
-      else{await fbAuth.signOut()}
-    }catch(e){console.error('Profile load error:',e);authState.isLoggedIn=false;authState.user=null}
-  }else{authState.isLoggedIn=false;authState.user=null}
-  renderNav();handleRoute();
-});
-
-/* ===================== Navigation ===================== */
+/* ========== NAV ========== */
 function renderNav(){
-  var links=document.getElementById('nav-links'),actions=document.getElementById('nav-actions');
-  var h='<a href="#/" class="text-ss-muted hover:text-ss-text text-sm font-medium no-underline transition-colors">Home</a>';
-  if(authState.isLoggedIn){
-    h+='<a href="#/customize" class="text-ss-muted hover:text-ss-text text-sm font-medium no-underline transition-colors">Customize</a>';
-    if(ROLE_LEVELS[authState.user.role]>=ROLE_LEVELS.admin)h+='<a href="#/admin" class="text-ss-muted hover:text-ss-text text-sm font-medium no-underline transition-colors">Admin</a>';
-    actions.innerHTML='<div class="flex items-center gap-3"><a href="#/u/'+authState.user.username+'" class="flex items-center gap-2 no-underline"><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-ss-pink to-ss-deep flex items-center justify-center text-white text-xs font-bold">'+(authState.user.username||'?').substring(0,2).toUpperCase()+'</div><span class="text-sm font-medium text-ss-text hidden sm:block">'+authState.user.username+'</span></a><button class="btn-ghost text-sm" onclick="doLogout()">Sign Out</button></div>';
-  }else{actions.innerHTML='<button class="btn-ghost hidden sm:block" onclick="openAuth(\'login\')">Log In</button><button class="btn-pink text-sm !py-2 !px-5" onclick="openAuth(\'register\')">Get Started</button>'}
-  links.innerHTML=h;
+  var l=document.getElementById('navL'),r=document.getElementById('navR'),h='<a href="#/" class="text-mu hover:text-tx text-sm font-medium no-underline transition-colors">Home</a>';
+  if(S.logged){
+    h+='<a href="#/customize" class="text-mu hover:text-tx text-sm font-medium no-underline transition-colors">Customize</a>';
+    if(RL[S.user.role]>=RL.admin)h+='<a href="#/admin" class="text-mu hover:text-tx text-sm font-medium no-underline transition-colors">Admin</a>';
+    r.innerHTML='<img src="'+(S.doc&&S.doc.avatar||'')+'" class="w-8 h-8 rounded-lg object-cover" alt="" onerror="this.style.display=\'none\'"><span class="text-sm font-medium hidden sm:block">'+S.user.username+'</span><button class="bg text-sm" onclick="doLogout()">Sign Out</button>';
+  }else{
+    r.innerHTML='<button class="bg hidden sm:block" onclick="openAuth(\'login\')">Log In</button><button class="bp !py-2 !px-5 text-sm" onclick="openAuth(\'reg\')">Get Started</button>';
+  }
+  l.innerHTML=h;
+  // Logged-in banner on landing
+  var lb=document.getElementById('liBanner'),ln=document.getElementById('liName'),ll=document.getElementById('liLink');
+  if(S.logged&&lb){lb.classList.remove('hidden');ln.textContent=S.user.username;ll.href='#/u/'+S.user.username}else if(lb){lb.classList.add('hidden')}
 }
 
-function navigate(p){window.location.hash=p}
+/* ========== AUTH ========== */
+function openAuth(m){
+  authM=m;var t=document.getElementById('aT'),s=document.getElementById('aS'),b=document.getElementById('aBtn'),nf=document.getElementById('aNF'),cf=document.getElementById('aCF'),ef=document.getElementById('aEF'),tt=document.getElementById('aTt'),tb=document.getElementById('aTb'),er=document.getElementById('aErr');
+  er.classList.add('hidden');
+  if(m==='login'){t.textContent='Welcome Back';s.textContent='Sign in to your seashell account';b.textContent='Sign In';nf.style.display='none';cf.style.display='none';ef.style.display='none';tt.textContent="Don't have an account?";tb.textContent='Sign Up'}
+  else{t.textContent='Join seashell.lol';s.textContent='Claim your beautiful corner of the internet';b.textContent='Create Account';nf.style.display='block';cf.style.display='block';ef.style.display='block';tt.textContent='Already have an account?';tb.textContent='Sign In'}
+  document.getElementById('authM').classList.add('open');
+}
+function closeAuth(){document.getElementById('authM').classList.remove('open')}
+function togAuth(){openAuth(authM==='login'?'reg':'login')}
+function showErr(m){var e=document.getElementById('aErr');e.textContent=m;e.classList.remove('hidden')}
 
+function handleAuth(){
+  if(!fbAuth){showErr('Firebase not available. Check your connection.');return}
+  var un=document.getElementById('aUn').value.trim(),em=document.getElementById('aEm').value.trim(),pw=document.getElementById('aPw').value,cp=document.getElementById('aCp').value,btn=document.getElementById('aBtn'),er=document.getElementById('aErr');
+  er.classList.add('hidden');
+  if(authM==='reg'){
+    if(!un||un.length<3){showErr('Username must be at least 3 characters.');return}
+    if(!/^[a-zA-Z0-9_]+$/.test(un)){showErr('Username: letters, numbers, underscores only.');return}
+    if(pw.length<6){showErr('Password must be at least 6 characters.');return}
+    if(pw!==cp){showErr('Passwords do not match.');return}
+    var email=em||un+'@seashell.lol';
+    btn.textContent='Creating...';btn.disabled=true;
+    fbAuth.createUserWithEmailAndPassword(email,pw).then(function(cred){
+      return fbDb.runTransaction(function(tx){
+        var ref=fbDb.doc('counters/uid');return tx.get(ref).then(function(d){
+          var nv=d.exists?d.data().value+1:1;
+          if(d.exists)tx.update(ref,{value:nv});else tx.set(ref,{value:nv});
+          return nv;
+        });
+      }).then(function(nuid){
+        var role=nuid===1?'owner':'user';
+        return fbDb.doc('users/'+cred.user.uid).set({
+          numericUid:nuid,username:un,displayName:un,email:email,role:role,
+          avatar:'',banner:'',description:'',location:'',
+          bgEffect:'aurora',cardStyle:'glass',nameEffect:'neon',accentColor:'#FF1493',
+          badges:[],links:[],views:0,clicks:0,music:null,
+          createdAt:firebase.firestore.FieldValue.serverTimestamp()
+        }).then(function(){return{nuid:nuid,un:un,role:role}});
+      });
+    }).then(function(info){
+      closeAuth();btn.textContent='Create Account';btn.disabled=false;
+      toast('Welcome to seashell.lol, '+info.un+'! (#'+info.nuid+')','s');
+    }).catch(function(e){
+      btn.textContent='Create Account';btn.disabled=false;
+      if(e.code==='auth/email-already-in-use')showErr('Email already in use.');
+      else if(e.code==='auth/weak-password')showErr('Password is too weak.');
+      else showErr(e.message);
+    });
+  }else{
+    if(!un){showErr('Enter your username.');return}
+    if(!pw){showErr('Enter your password.');return}
+    btn.textContent='Signing in...';btn.disabled=true;
+    fbDb.collection('users').where('username','==',un).limit(1).get().then(function(snap){
+      if(snap.empty){throw new Error('Username not found.')}
+      var doc=snap.docs[0];
+      return fbAuth.signInWithEmailAndPassword(doc.data().email,pw);
+    }).then(function(){
+      closeAuth();btn.textContent='Sign In';btn.disabled=false;
+      toast('Welcome back!','s');
+    }).catch(function(e){
+      btn.textContent='Sign In';btn.disabled=false;
+      if(e.message==='Username not found.')showErr('Username not found.');
+      else if(e.code==='auth/wrong-password'||e.code==='auth/invalid-credential')showErr('Incorrect password.');
+      else if(e.code==='auth/user-not-found')showErr('Account not found.');
+      else showErr(e.message);
+    });
+  }
+}
+
+function doLogout(){
+  if(fbAuth)fbAuth.signOut();
+  S={logged:false,user:null,doc:null};
+  renderNav();toast('Signed out.','i');location.hash='#/';
+}
+
+// Auth state listener
+if(fbAuth){
+  fbAuth.onAuthStateChanged(function(cred){
+    if(cred){
+      fbDb.doc('users/'+cred.uid).get().then(function(doc){
+        if(doc.exists){
+          S.logged=true;S.user=cred;S.doc=doc.data();
+          renderNav();handleRoute();
+        }
+      }).catch(function(e){console.warn("Fetch user doc error:",e)});
+    }else{
+      S={logged:false,user:null,doc:null};renderNav();
+    }
+  });
+}
+
+/* ========== ROUTING ========== */
 function handleRoute(){
-  var hash=window.location.hash||'#/',fxSw=document.getElementById('fx-switcher');
-  var pages=document.querySelectorAll('.page');for(var i=0;i<pages.length;i++)pages[i].classList.remove('active');
+  var hash=location.hash||'#/',fxSw=document.getElementById('fxSw');
+  var pages=document.querySelectorAll('.pg');for(var i=0;i<pages.length;i++)pages[i].classList.remove('on');
   fxSw.style.display='none';
 
-  if(hash==='#/'||hash===''||hash==='#'){
-    if(authState.isLoggedIn){navigate('/u/'+authState.user.username);return}
-    showPage('landing');fxSet('aurora');
-  }else if(hash.startsWith('#/u/')){
-    var un=hash.replace('#/u/','').split('/')[0];currentProfileUsername=un;
-    loadAndShowProfile(un);fxSw.style.display='block';
-  }else if(hash==='#/customize'){
-    if(!authState.isLoggedIn){document.getElementById('unauth-msg').textContent='You need to sign in to customize your profile.';showPage('unauthorized');fxSet('orbs');return}
-    showPage('customize');fxSet('aurora');loadProfileSettings();renderCustomizeLayout();
-  }else if(hash==='#/admin'){
-    if(!authState.isLoggedIn){document.getElementById('unauth-msg').textContent='You need to sign in with an admin account.';showPage('unauthorized');fxSet('orbs');return}
-    if(ROLE_LEVELS[authState.user.role]<ROLE_LEVELS.admin){document.getElementById('unauth-msg').textContent='You do not have permission to access the admin panel.';showPage('unauthorized');fxSet('orbs');return}
-    showPage('admin');fxSet('orbs');renderAdminLayout();renderAdminTab('dashboard');
-  }else{showPage('notfound');fxSet('aurora')}
-
-  requestAnimationFrame(function(){var els=document.querySelectorAll('.fade-up');for(var i=0;i<els.length;i++)(function(el){var d=parseInt(el.dataset.delay||'0');setTimeout(function(){el.classList.add('visible')},d)})(els[i])});
+  if(hash==='#/'||hash===''||hash==='#'){showPg('pgLand')}
+  else if(hash.indexOf('#/u/')===0){
+    var un=hash.replace('#/u/','').split('/')[0];
+    if(!fbDb){showPg('pg404');return}
+    fbDb.collection('users').where('username','==',un).limit(1).get().then(function(snap){
+      if(snap.empty){showPg('pg404');return}
+      var d=snap.docs[0].data();cProf=d;
+      cFx=d.bgEffect||'aurora';cNf=d.nameEffect||'neon';cCs=d.cardStyle||'glass';
+      fxp=[];fxSw.style.display='block';
+      showPg('pgProf');renderProf(d);updFxBtns();
+    }).catch(function(){showPg('pg404')});
+    return;
+  }
+  else if(hash==='#/customize'){
+    if(!S.logged){document.getElementById('denyMsg').textContent='You need to sign in to customize your profile.';showPg('pgDeny');return}
+    showPg('pgCust');setCustTab('general');
+  }
+  else if(hash==='#/admin'){
+    if(!S.logged){document.getElementById('denyMsg').textContent='You need to sign in with an admin account.';showPg('pgDeny');return}
+    if(RL[S.user.role]<RL.admin){document.getElementById('denyMsg').textContent='You do not have permission to access the admin panel.';showPg('pgDeny');return}
+    showPg('pgAdmin');setAdTab('dash');
+  }
+  else{showPg('pgLand')}
   window.scrollTo(0,0);
 }
+function showPg(id){var e=document.getElementById(id);if(e)e.classList.add('on')}
+window.addEventListener('hashchange',handleRoute);
 
-function showPage(n){var el=document.getElementById('page-'+n);if(el)el.classList.add('active')}
-
-async function loadAndShowProfile(un){
-  try{
-    var unDoc=await fbDb.doc('usernames/'+un).get();
-    if(!unDoc.exists){showPage('notfound');fxSet('aurora');return}
-    var doc=await fbDb.collection('users').doc(unDoc.data().uid).get();
-    if(!doc.exists){showPage('notfound');fxSet('aurora');return}
-    currentProfileUser=Object.assign({},DEFAULTS,doc.data());
-    currentBgEffect=currentProfileUser.bgEffect;currentNameEffect=currentProfileUser.nameEffect;currentCardStyle=currentProfileUser.cardStyle;
-    showPage('profile');fxSet(currentBgEffect);renderProfile(currentProfileUser);updateFxPanelState();
-    /* Increment views */
-    fbDb.collection('users').doc(doc.id).update({views:firebase.firestore.FieldValue.increment(1)}).catch(function(){});
-  }catch(e){console.error('Load profile error:',e);showPage('notfound');fxSet('aurora')}
-}
-
-/* ===================== Profile Renderer ===================== */
-function renderProfile(u){
-  var w=document.getElementById('profile-wrapper');
-  var nc='name-'+currentNameEffect,cc='profile-card-'+currentCardStyle;
-  var ga=currentNameEffect==='glitch'?' data-text="'+u.username+'"':'';
-  var isOwn=authState.isLoggedIn&&authState.user.username===u.username;
+/* ========== PROFILE RENDERER ========== */
+function renderProf(u){
+  var w=document.getElementById('profW'),nc='n-'+cNf,cc='pc-'+cCs,ga=cNf==='glitch'?' data-t="'+u.username+'"':'';
   var h='<div class="'+cc+' w-full max-w-[420px] p-0 overflow-hidden">';
-  if(u.banner)h+='<div class="h-32 sm:h-40 relative overflow-hidden"><img src="'+escHtml(u.banner)+'" class="w-full h-full object-cover" alt="Banner"><div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div></div>';
+  if(u.banner)h+='<div class="h-32 sm:h-40 relative overflow-hidden"><img src="'+u.banner+'" class="w-full h-full object-cover" alt=""><div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div></div>';
   h+='<div class="px-6 pb-6 '+(u.banner?'-mt-12':'pt-6')+' relative">';
   h+='<div class="flex items-end gap-4 mb-4">';
-  if(u.avatar)h+='<img src="'+escHtml(u.avatar)+'" class="w-20 h-20 rounded-2xl object-cover flex-shrink-0" style="border:4px solid #0A0A0F" alt="">';
-  else h+='<div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-ss-pink to-ss-deep flex items-center justify-center text-white text-2xl font-bold flex-shrink-0" style="border:4px solid #0A0A0F">'+u.username.substring(0,2).toUpperCase()+'</div>';
-  h+='<div class="pb-1 min-w-0"><div class="uid-parent relative inline-block"><h1 class="font-display text-2xl font-bold truncate '+nc+'"'+ga+'>'+escHtml(u.username)+'</h1><div class="uid-tip"><span class="text-xs font-mono text-ss-muted bg-ss-surface px-2 py-0.5 rounded border" style="border-color:rgba(255,20,147,0.15)">#'+String(u.numericUid||0)+'</span></div></div></div></div>';
-  if(u.displayName&&u.displayName!==u.username)h+='<p class="text-ss-rose text-sm font-medium mb-1">'+escHtml(u.displayName)+'</p>';
-  if(u.description)h+='<p class="text-sm leading-relaxed mb-3" style="color:rgba(245,240,242,0.8)">'+escHtml(u.description)+'</p>';
-  if(u.location)h+='<div class="flex items-center gap-2 text-ss-muted text-xs mb-4"><i class="fa-solid fa-location-dot" style="color:rgba(255,20,147,0.6)"></i><span>'+escHtml(u.location)+'</span></div>';
-  if(u.badges&&u.badges.length){h+='<div class="flex flex-wrap gap-1.5 mb-4">';for(var i=0;i<u.badges.length;i++)h+=renderBadge(u.badges[i]);h+='</div>'}
-  if(u.links&&u.links.length){h+='<div class="space-y-2.5 mb-4">';for(var i=0;i<u.links.length;i++){var l=u.links[i];h+='<a href="'+escHtml(l.url)+'" class="link-btn" target="_blank" rel="noopener"><i class="'+escHtml(l.icon||'fa-solid fa-link')+' lIcon"></i><span>'+escHtml(l.title)+'</span><i class="fa-solid fa-arrow-right ml-auto text-ss-dim text-xs"></i></a>'}h+='</div>'}
-  if(u.music&&u.music.url){h+='<div class="flex items-center gap-3 p-3 rounded-xl" style="background:rgba(255,20,147,0.05);border:1px solid rgba(255,20,147,0.1)"><img src="'+escHtml(u.music.cover||'')+'" class="w-10 h-10 rounded-lg object-cover flex-shrink-0" alt=""><div class="flex-1 min-w-0"><div class="text-xs font-medium truncate">'+escHtml(u.music.title||'')+'</div><div class="text-xs text-ss-muted truncate">'+escHtml(u.music.artist||'')+'</div><div class="music-bar mt-1.5"><div class="music-fill" id="music-fill" style="width:'+(u.music.progress||0)*100+'%"></div></div></div><button class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background:rgba(255,20,147,0.15);border:none;color:#FF69B4;cursor:pointer" onclick="toggleMusicBtn(this)"><i class="fa-solid fa-play text-xs"></i></button></div>';startMusicProg(u.music.progress||0)}
-  if(isOwn)h+='<div class="text-center mt-4"><a href="#/customize" class="btn-ghost text-sm no-underline"><i class="fa-solid fa-pen mr-2"></i>Edit Profile</a></div>';
-  h+='<div class="text-center mt-4 text-ss-dim text-xs" style="font-family:\'JetBrains Mono\',monospace"><i class="fa-solid fa-eye mr-1"></i> '+(u.views||0).toLocaleString()+' views</div>';
+  if(u.avatar)h+='<img src="'+u.avatar+'" class="w-20 h-20 rounded-2xl object-cover flex-shrink-0" style="border:4px solid #0A0A0F" alt="">';
+  else h+='<div class="w-20 h-20 rounded-2xl bg-sf flex items-center justify-center flex-shrink-0" style="border:4px solid #0A0A0F"><i class="fa-solid fa-user text-mu text-2xl"></i></div>';
+  h+='<div class="pb-1 min-w-0"><div class="uname-wrap relative inline-block"><h1 class="font-di text-2xl font-bold truncate '+nc+'"'+ga+'>'+u.username+'</h1><span class="uid-tip">#'+u.numericUid+'</span></div></div></div>';
+  if(u.description)h+='<p class="text-sm leading-relaxed mb-3" style="color:rgba(245,240,242,.8)">'+u.description+'</p>';
+  if(u.location)h+='<div class="flex items-center gap-2 text-mu text-xs mb-4"><i class="fa-solid fa-location-dot text-pk/60"></i><span>'+u.location+'</span></div>';
+  if(u.badges&&u.badges.length){h+='<div class="flex flex-wrap gap-1.5 mb-4">';for(var i=0;i<u.badges.length;i++)h+=rBdg(u.badges[i]);h+='</div>'}
+  if(u.links&&u.links.length){h+='<div class="space-y-2.5 mb-4">';for(var i=0;i<u.links.length;i++){var l=u.links[i];h+='<a href="'+l.url+'" class="lb" target="_blank" rel="noopener"><i class="'+(l.icon||'fa-solid fa-link')+'"></i><span>'+l.title+'</span><i class="fa-solid fa-arrow-right ml-auto text-dm text-xs"></i></a>'}h+='</div>'}
+  h+='<div class="text-center mt-4 text-dm text-xs font-mo"><i class="fa-solid fa-eye mr-1"></i> '+u.views.toLocaleString()+' views</div>';
   h+='</div></div>';w.innerHTML=h;
 }
-function renderBadge(id){var m={verified:{c:'badge-verified',i:'fa-solid fa-check',t:'Verified'},premium:{c:'badge-premium',i:'fa-solid fa-crown',t:'Premium'},staff:{c:'badge-staff',i:'fa-solid fa-shield',t:'Staff'},early:{c:'badge-early',i:'fa-solid fa-heart',t:'Early Supporter'},pearl:{c:'badge-pearl',i:'fa-solid fa-gem',t:'Pink Pearl'}};var b=m[id]||{c:'badge-premium',i:'fa-solid fa-star',t:id};return'<span class="badge '+b.c+'"><i class="'+b.i+' text-[9px]"></i><span class="btip">'+b.t+'</span></span>'}
-function escHtml(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-function startMusicProg(init){if(musicInterval)clearInterval(musicInterval);musicProgress=init;musicInterval=setInterval(function(){musicProgress+=.002;if(musicProgress>1)musicProgress=0;var f=document.getElementById('music-fill');if(f)f.style.width=(musicProgress*100)+'%'},100)}
-function toggleMusicBtn(btn){var i=btn.querySelector('i');if(i.classList.contains('fa-play')){i.classList.remove('fa-play');i.classList.add('fa-pause')}else{i.classList.remove('fa-pause');i.classList.add('fa-play')}}
 
-/* ===================== Effects Switcher ===================== */
-function toggleFxPanel(){document.getElementById('fx-panel').classList.toggle('open')}
-function switchFx(f){currentBgEffect=f;fxSet(f);updateFxPanelState()}
-function switchNameFx(n){currentNameEffect=n;if(currentProfileUser)renderProfile(currentProfileUser);updateFxPanelState()}
-function switchCardStyle(c){currentCardStyle=c;if(currentProfileUser)renderProfile(currentProfileUser);updateFxPanelState()}
-function updateFxPanelState(){var b=document.querySelectorAll('.fx-option[data-fx]');for(var i=0;i<b.length;i++)b[i].classList.toggle('active',b[i].dataset.fx===currentBgEffect);b=document.querySelectorAll('.fx-option[data-nfx]');for(var i=0;i<b.length;i++)b[i].classList.toggle('active',b[i].dataset.nfx===currentNameEffect);b=document.querySelectorAll('.fx-option[data-cs]');for(var i=0;i<b.length;i++)b[i].classList.toggle('active',b[i].dataset.cs===currentCardStyle)}
-document.addEventListener('click',function(e){var s=document.getElementById('fx-switcher');if(s&&!s.contains(e.target))document.getElementById('fx-panel').classList.remove('open')});
-
-/* ===================== Customize Page ===================== */
-function loadProfileSettings(){
-  if(!authState.isLoggedIn)return;
-  profileSettings=Object.assign({},DEFAULTS);
-  for(var k in authState.user)if(k in DEFAULTS)profileSettings[k]=authState.user[k];
-  if(authState.user.links)profileSettings.links=JSON.parse(JSON.stringify(authState.user.links));
-  if(authState.user.badges)profileSettings.badges=JSON.parse(JSON.stringify(authState.user.badges));
-  if(authState.user.music)profileSettings.music=JSON.parse(JSON.stringify(authState.user.music));
-}
-function schedulePreview(){clearTimeout(schedulePreview._t);schedulePreview._t=setTimeout(renderCustomPreview,150)}
-
-var CUSTOM_SECTIONS=[
-  {id:'general',icon:'fa-user',label:'General'},
-  {id:'assets',icon:'fa-image',label:'Assets'},
-  {id:'links',icon:'fa-link',label:'Links'},
-  {id:'colors',icon:'fa-palette',label:'Colors'},
-  {id:'effects',icon:'fa-wand-magic-sparkles',label:'Effects'},
-  {id:'layout',icon:'fa-layer-group',label:'Layout'},
-  {id:'badges',icon:'fa-award',label:'Badges'},
-  {id:'advanced',icon:'fa-sliders',label:'Advanced'}
-];
-
-function renderCustomizeLayout(){
-  var layout=document.getElementById('customize-layout');
-  var h='<aside class="custom-sidebar w-60 flex-shrink-0" style="background:rgba(16,16,24,0.95);border-right:1px solid rgba(255,20,147,0.08);height:calc(100vh - 64px);position:sticky;top:64px;overflow-y:auto"><div class="p-4"><p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-3 px-3">Settings</p><nav class="space-y-1" id="custom-nav">';
-  for(var i=0;i<CUSTOM_SECTIONS.length;i++){var s=CUSTOM_SECTIONS[i];h+='<button class="sidebar-item'+(s.id===customSection?' active':'')+'" data-cs="'+s.id+'" onclick="switchCustomSection(\''+s.id+'\')"><i class="fa-solid '+s.icon+'"></i> '+s.label+'</button>'}
-  h+='</nav><div class="mt-6 px-3 space-y-2"><button class="btn-pink w-full text-sm !py-2.5" onclick="saveAllSettings()"><i class="fa-solid fa-check mr-2"></i>Save All</button><a href="#/u/'+authState.user.username+'" class="btn-outline w-full text-sm !py-2.5 block text-center no-underline"><i class="fa-solid fa-eye mr-2"></i>View Profile</a></div></div></aside>';
-  h+='<div class="flex-1 min-w-0 p-6 lg:p-8 overflow-y-auto" id="custom-content"></div>';
-  h+='<div class="custom-preview-pane w-[360px] flex-shrink-0" style="background:rgba(12,12,18,0.95);border-left:1px solid rgba(255,20,147,0.08);height:calc(100vh - 64px);position:sticky;top:64px;overflow-y:auto"><div class="p-5"><p class="text-xs text-ss-muted font-semibold uppercase tracking-wider mb-4">Live Preview</p><div id="custom-preview"></div></div></div>';
-  layout.innerHTML=h;
-  renderCustomSection(customSection);
-  renderCustomPreview();
+function rBdg(id){
+  var m={verified:{c:'bv',i:'fa-solid fa-check',t:'Verified'},premium:{c:'bpr',i:'fa-solid fa-crown',t:'Premium'},staff:{c:'bst',i:'fa-solid fa-shield',t:'Staff'},early:{c:'be',i:'fa-solid fa-heart',t:'Early Supporter'},pearl:{c:'bpe',i:'fa-solid fa-gem',t:'Pink Pearl'}};
+  var b=m[id]||{c:'bpr',i:'fa-solid fa-star',t:id};return'<span class="bd '+b.c+'"><i class="'+b.i+' text-[9px]"></i><span class="bt">'+b.t+'</span></span>';
 }
 
-function switchCustomSection(id){customSection=id;var items=document.querySelectorAll('#custom-nav .sidebar-item');for(var i=0;i<items.length;i++)items[i].classList.toggle('active',items[i].dataset.cs===id);renderCustomSection(id)}
-
-function urlField(label,placeholder,fieldKey,exts,hint){
-  var val=profileSettings[fieldKey]||'';
-  var extHint=exts?'Accepted: '+exts.join(', '):'';
-  return '<div class="mb-5"><label class="block text-xs font-medium text-ss-muted mb-1.5">'+label+'</label><input type="url" class="input-field" placeholder="'+placeholder+'" value="'+escHtml(val)+'" oninput="profileSettings[\''+fieldKey+'\']=this.value;schedulePreview()"><p class="text-ss-dim text-xs mt-1">'+hint+(extHint?' '+extHint:'')+'</p></div>';
+/* ========== FX SWITCHER ========== */
+function setFx(f){cFx=f;fxp=[];updFxBtns()}
+function setNf(f){cNf=f;if(cProf)renderProf(cProf);updFxBtns()}
+function setCs(f){cCs=f;if(cProf)renderProf(cProf);updFxBtns()}
+function updFxBtns(){
+  var b=document.querySelectorAll('[data-fx]');for(var i=0;i<b.length;i++)b[i].classList.toggle('on',b[i].dataset.fx===cFx);
+  b=document.querySelectorAll('[data-nf]');for(var i=0;i<b.length;i++)b[i].classList.toggle('on',b[i].dataset.nf===cNf);
+  b=document.querySelectorAll('[data-cs]');for(var i=0;i<b.length;i++)b[i].classList.toggle('on',b[i].dataset.cs===cCs);
 }
 
-function renderCustomSection(id){
-  var c=document.getElementById('custom-content');
-  if(id==='general'){
-    c.innerHTML='<h2 class="font-display text-xl font-bold mb-6">General</h2>'+urlField('Avatar URL','https://example.com/avatar.jpg','avatar',IMG_EXT,'Direct image link for your profile picture.')+'<div class="mb-5"><label class="block text-xs font-medium text-ss-muted mb-1.5">Display Name</label><input type="text" class="input-field" placeholder="Your display name" value="'+escHtml(profileSettings.displayName)+'" maxlength="50" oninput="profileSettings.displayName=this.value;schedulePreview()"></div><div class="mb-5"><label class="block text-xs font-medium text-ss-muted mb-1.5">Bio / Description</label><textarea class="input-field" rows="4" placeholder="Tell the world about yourself..." maxlength="500" oninput="profileSettings.description=this.value;schedulePreview()">'+escHtml(profileSettings.description)+'</textarea><p class="text-ss-dim text-xs mt-1">Supports plain text. Markdown coming soon.</p></div><div class="mb-5"><label class="block text-xs font-medium text-ss-muted mb-1.5">Location</label><input type="text" class="input-field" placeholder="Tokyo, Japan" value="'+escHtml(profileSettings.location)+'" maxlength="100" oninput="profileSettings.location=this.value;schedulePreview()"></div><button class="btn-pink text-sm" onclick="saveSection(\'general\')"><i class="fa-solid fa-check mr-2"></i>Save General</button>';
-  }else if(id==='assets'){
-    c.innerHTML='<h2 class="font-display text-xl font-bold mb-6">Assets</h2><p class="text-ss-muted text-sm mb-6">Paste direct URLs to external images, videos, or audio files.</p>'+urlField('Banner URL','https://example.com/banner.jpg','banner',IMG_EXT,'Wide image shown at the top of your profile.')+urlField('Background Image URL','https://example.com/bg.jpg','bgImage',IMG_EXT,'Image displayed behind your card.')+urlField('Background Video URL','https://example.com/bg.mp4','bgVideo',VID_EXT,'Loops behind your card. Overrides background image.')+urlField('Background Audio URL','https://example.com/music.mp3','bgAudio',AUD_EXT,'Plays automatically when someone visits your profile.')+urlField('Custom Cursor URL','https://example.com/cursor.png','cursor',IMG_EXT,'Replaces the default cursor. Recommended: 32x32 PNG.')+'<button class="btn-pink text-sm" onclick="saveSection(\'assets\')"><i class="fa-solid fa-check mr-2"></i>Save Assets</button>';
-  }else if(id==='links'){
-    var h='<h2 class="font-display text-xl font-bold mb-6">Links</h2><p class="text-ss-muted text-sm mb-6">Add social links and custom buttons to your profile.</p><div id="links-list" class="space-y-3 mb-6">';
-    for(var i=0;i<profileSettings.links.length;i++){var l=profileSettings.links[i];h+=renderLinkItem(l,i)}
-    h+='</div><div class="glass rounded-xl p-5"><h3 class="font-medium text-sm mb-3">Add New Link</h3><div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3"><input type="text" class="input-field" placeholder="Title" id="new-link-title"><input type="url" class="input-field" placeholder="https://..." id="new-link-url"><select class="input-field" id="new-link-icon"><option value="fa-solid fa-link">Link</option><option value="fa-brands fa-x-twitter">Twitter/X</option><option value="fa-brands fa-instagram">Instagram</option><option value="fa-brands fa-discord">Discord</option><option value="fa-brands fa-youtube">YouTube</option><option value="fa-brands fa-twitch">Twitch</option><option value="fa-brands fa-spotify">Spotify</option><option value="fa-brands fa-github">GitHub</option><option value="fa-brands fa-tiktok">TikTok</option><option value="fa-brands fa-steam">Steam</option><option value="fa-solid fa-globe">Website</option><option value="fa-solid fa-mug-hot">Ko-fi</option><option value="fa-solid fa-store">Shop</option></select></div><button class="btn-pink btn-sm" onclick="addLink()"><i class="fa-solid fa-plus mr-1"></i>Add Link</button></div>';
-    c.innerHTML=h;
-  }else if(id==='colors'){
-    c.innerHTML='<h2 class="font-display text-xl font-bold mb-6">Colors</h2><div class="mb-5"><label class="block text-xs font-medium text-ss-muted mb-1.5">Accent Color</label><div class="flex items-center gap-3"><input type="color" value="'+(profileSettings.accentColor||'#FF1493')+'" class="w-10 h-10 rounded-lg border-none cursor-pointer bg-transparent" oninput="profileSettings.accentColor=this.value;this.nextElementSibling.value=this.value;schedulePreview()"><input type="text" class="input-field !w-32" value="'+(profileSettings.accentColor||'#FF1493')+'" maxlength="7" oninput="profileSettings.accentColor=this.value;this.previousElementSibling.value=this.value;schedulePreview()"><div class="flex gap-2"><div class="w-8 h-8 rounded-lg cursor-pointer border border-transparent hover:border-white/30" style="background:#FF1493" onclick="setColor(\'accentColor\',\'#FF1493\')"></div><div class="w-8 h-8 rounded-lg cursor-pointer border border-transparent hover:border-white/30" style="background:#DB2777" onclick="setColor(\'accentColor\',\'#DB2777\')"></div><div class="w-8 h-8 rounded-lg cursor-pointer border border-transparent hover:border-white/30" style="background:#C084FC" onclick="setColor(\'accentColor\',\'#C084FC\')"></div><div class="w-8 h-8 rounded-lg cursor-pointer border border-transparent hover:border-white/30" style="background:#F59E0B" onclick="setColor(\'accentColor\',\'#F59E0B\')"></div></div></div></div><div class="mb-5"><label class="block text-xs font-medium text-ss-muted mb-1.5">Background Color</label><div class="flex items-center gap-3"><input type="color" value="'+(profileSettings.bgColor||'#0A0A0F')+'" class="w-10 h-10 rounded-lg border-none cursor-pointer bg-transparent" oninput="profileSettings.bgColor=this.value;this.nextElementSibling.value=this.value;schedulePreview()"><input type="text" class="input-field !w-32" value="'+(profileSettings.bgColor||'#0A0A0F')+'" maxlength="7" oninput="profileSettings.bgColor=this.value;this.previousElementSibling.value=this.value;schedulePreview()"></div></div><div class="mb-5"><label class="block text-xs font-medium text-ss-muted mb-1.5">Text Color</label><div class="flex items-center gap-3"><input type="color" value="'+(profileSettings.textColor||'#F5F0F2')+'" class="w-10 h-10 rounded-lg border-none cursor-pointer bg-transparent" oninput="profileSettings.textColor=this.value;this.nextElementSibling.value=this.value;schedulePreview()"><input type="text" class="input-field !w-32" value="'+(profileSettings.textColor||'#F5F0F2')+'" maxlength="7" oninput="profileSettings.textColor=this.value;this.previousElementSibling.value=this.value;schedulePreview()"></div></div><div class="flex items-center justify-between mb-6"><div><label class="block text-xs font-medium text-ss-muted mb-1">Gradient Accent</label><p class="text-xs text-ss-dim">Enable gradient on accent elements</p></div><button class="w-12 h-6 rounded-full relative cursor-pointer border-none" style="background:'+(profileSettings.gradientEnabled?'#FF1493':'rgba(255,20,147,0.3)')+'" onclick="profileSettings.gradientEnabled=!profileSettings.gradientEnabled;this.style.background=profileSettings.gradientEnabled?\'#FF1493\':\'rgba(255,20,147,0.3)\';this.querySelector(\'span\').style.transform=profileSettings.gradientEnabled?\'translateX(24px)\':\'translateX(0)\';schedulePreview()"><span class="block w-5 h-5 rounded-full bg-white absolute top-0.5 left-0.5 transition-transform" style="transform:translateX('+(profileSettings.gradientEnabled?'24px':'0')+')"></span></button></div><button class="btn-pink text-sm" onclick="saveSection(\'colors\')"><i class="fa-solid fa-check mr-2"></i>Save Colors</button>';
-  }else if(id==='effects'){
-    var fxs=[['aurora','fa-sun','Aurora'],['petals','fa-leaf','Petals'],['sparkles','fa-star','Sparkles'],['rain','fa-cloud-rain','Rain'],['snow','fa-snowflake','Snow'],['orbs','fa-circle','Orbs']];
-    var nes=[['neon','Neon Glow'],['glitch','Glitch'],['gradient','Gradient'],['holographic','Holographic'],['sparkle','Sparkle Sweep']];
-    var h='<h2 class="font-display text-xl font-bold mb-6">Effects</h2><h3 class="font-semibold text-sm mb-3">Background Effect</h3><div class="grid grid-cols-3 gap-3 mb-6">';
-    for(var i=0;i<fxs.length;i++){var a=fxs[i][0]===profileSettings.bgEffect;h+='<button class="p-3 rounded-xl border transition-all text-center" style="border-color:'+(a?'rgba(255,20,147,0.4)':'rgba(255,20,147,0.12)')+';background:'+(a?'rgba(255,20,147,0.08)':'transparent')+'" onclick="profileSettings.bgEffect=\''+fxs[i][0]+'\';renderCustomSection(\'effects\');schedulePreview()"><i class="fa-solid '+fxs[i][1]+' text-lg mb-1 '+(a?'text-ss-pink':'text-ss-muted')+'"></i><div class="text-xs '+(a?'text-ss-text':'text-ss-muted')+'">'+fxs[i][2]+'</div></button>'}
-    h+='</div><h3 class="font-semibold text-sm mb-3">Name Effect</h3><div class="grid grid-cols-2 gap-3 mb-6">';
-    for(var i=0;i<nes.length;i++){var a=nes[i][0]===profileSettings.nameEffect;h+='<button class="p-4 rounded-xl border transition-all text-left" style="border-color:'+(a?'rgba(255,20,147,0.4)':'rgba(255,20,147,0.12)')+';background:'+(a?'rgba(255,20,147,0.08)':'transparent')+'" onclick="profileSettings.nameEffect=\''+nes[i][0]+'\';renderCustomSection(\'effects\');schedulePreview()"><div class="text-lg font-bold font-display mb-1 name-'+nes[i][0]+'"'+(nes[i][0]==='glitch'?' data-text="username"':'')+'>username</div><div class="text-xs text-ss-dim">'+nes[i][1]+'</div></button>'}
-    h+='</div><div class="mb-6"><label class="block text-xs font-medium text-ss-muted mb-2">Effect Intensity</label><input type="range" min="0" max="100" value="'+profileSettings.effectIntensity+'" class="w-full accent-[#FF1493]" oninput="profileSettings.effectIntensity=parseInt(this.value);this.nextElementSibling.textContent=this.value+\'%\';schedulePreview()"><span class="text-xs text-ss-muted">'+profileSettings.effectIntensity+'%</span></div><button class="btn-pink text-sm" onclick="saveSection(\'effects\')"><i class="fa-solid fa-check mr-2"></i>Save Effects</button>';
-    c.innerHTML=h;
-  }else if(id==='layout'){
-    var sts=[['glass','Frosted glass blur'],['default','Standard card'],['minimal','Clean and simple'],['portfolio','Left accent border']];
-    var h='<h2 class="font-display text-xl font-bold mb-6">Layout</h2><h3 class="font-semibold text-sm mb-3">Card Style</h3><div class="grid grid-cols-2 gap-3 mb-6">';
-    for(var i=0;i<sts.length;i++){var a=sts[i][0]===profileSettings.cardStyle;h+='<button class="p-4 rounded-xl border transition-all text-left" style="border-color:'+(a?'rgba(255,20,147,0.4)':'rgba(255,20,147,0.12)')+';background:'+(a?'rgba(255,20,147,0.08)':'transparent')+'" onclick="profileSettings.cardStyle=\''+sts[i][0]+'\';renderCustomSection(\'layout\');schedulePreview()"><div class="text-sm font-medium capitalize mb-1 '+(a?'text-ss-text':'text-ss-muted')+'">'+sts[i][0]+'</div><div class="text-xs text-ss-dim">'+sts[i][1]+'</div></button>'}
-    h+='</div><div class="space-y-5"><div><label class="block text-xs font-medium text-ss-muted mb-2">Border Radius</label><input type="range" min="0" max="32" value="'+profileSettings.borderRadius+'" class="w-full accent-[#FF1493]" oninput="profileSettings.borderRadius=parseInt(this.value);this.nextElementSibling.textContent=this.value+\'px\';schedulePreview()"><span class="text-xs text-ss-muted">'+profileSettings.borderRadius+'px</span></div><div><label class="block text-xs font-medium text-ss-muted mb-2">Card Opacity</label><input type="range" min="30" max="100" value="'+profileSettings.cardOpacity+'" class="w-full accent-[#FF1493]" oninput="profileSettings.cardOpacity=parseInt(this.value);this.nextElementSibling.textContent=this.value+\'%\';schedulePreview()"><span class="text-xs text-ss-muted">'+profileSettings.cardOpacity+'%</span></div><div><label class="block text-xs font-medium text-ss-muted mb-2">Card Glow</label><input type="range" min="0" max="100" value="'+profileSettings.cardGlow+'" class="w-full accent-[#FF1493]" oninput="profileSettings.cardGlow=parseInt(this.value);this.nextElementSibling.textContent=this.value+\'%\';schedulePreview()"><span class="text-xs text-ss-muted">'+profileSettings.cardGlow+'%</span></div></div><div class="mt-6"><button class="btn-pink text-sm" onclick="saveSection(\'layout\')"><i class="fa-solid fa-check mr-2"></i>Save Layout</button></div>';
-    c.innerHTML=h;
-  }else if(id==='badges'){
-    var h='<h2 class="font-display text-xl font-bold mb-6">Badges</h2><p class="text-ss-muted text-sm mb-6">Official badges are awarded automatically. Request custom badges below.</p><h3 class="font-semibold text-sm mb-3">Your Badges</h3><div class="flex flex-wrap gap-2 mb-6">';
-    if(profileSettings.badges&&profileSettings.badges.length){for(var i=0;i<profileSettings.badges.length;i++)h+=renderBadge(profileSettings.badges[i])}else h+='<span class="text-ss-dim text-sm">No badges yet.</span>';
-    h+='</div><h3 class="font-semibold text-sm mb-3">Request Custom Badge</h3><div class="glass rounded-xl p-5"><div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3"><div><label class="block text-xs font-medium text-ss-muted mb-1.5">Badge Name</label><input type="text" class="input-field" placeholder="e.g. Pixel Artist" id="badge-name" maxlength="30"></div><div><label class="block text-xs font-medium text-ss-muted mb-1.5">Icon Image URL</label><input type="url" class="input-field" placeholder="https://example.com/badge.png" id="badge-icon"></div></div><button class="btn-pink btn-sm" onclick="requestBadge()"><i class="fa-solid fa-paper-plane mr-1"></i>Submit for Review</button></div>';
-    c.innerHTML=h;
-  }else if(id==='advanced'){
-    c.innerHTML='<h2 class="font-display text-xl font-bold mb-6">Advanced</h2><div class="glass rounded-xl p-5 mb-4"><h3 class="font-medium text-sm mb-2">Music Widget</h3><p class="text-ss-dim text-xs mb-3">Add a music player to your profile with cover art.</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3"><input type="text" class="input-field" placeholder="Song title" id="music-title" value="'+escHtml(profileSettings.music?profileSettings.music.title:'')+'"><input type="text" class="input-field" placeholder="Artist name" id="music-artist" value="'+escHtml(profileSettings.music?profileSettings.music.artist:'')+'"></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3"><input type="url" class="input-field" placeholder="Audio URL (.mp3, .wav)" id="music-url" value="'+escHtml(profileSettings.music?profileSettings.music.url:'')+'"><input type="url" class="input-field" placeholder="Cover art URL (.jpg, .png)" id="music-cover" value="'+escHtml(profileSettings.music?profileSettings.music.cover:'')+'"></div><button class="btn-ghost btn-sm" onclick="saveMusic()"><i class="fa-solid fa-check mr-1"></i>Save Music</button></div><div class="glass rounded-xl p-5 mb-4"><h3 class="font-medium text-sm mb-2 text-red-400">Danger Zone</h3><p class="text-ss-dim text-xs mb-3">Reset all customizations to their default values.</p><button class="btn-ghost btn-sm" style="color:#FCA5A5;border:1px solid rgba(239,68,68,0.2)" onclick="if(confirm(\'Reset all settings? This cannot be undone.\'))resetSettings()"><i class="fa-solid fa-rotate-left mr-1"></i
+/* ========== CUSTOMIZE PAGE ========== */
+function setCustTab(t){
+  var b=document.querySelectorAll('[data-cs2]');for(var i=0;i<b.length;i++)b[i].classList.toggle('on',b[i].dataset.cs2===t);
+  var c=document.getElementById('custCt'),u=S.doc||{},un=S.user?S.user.username:'username',av=S.doc&&S.doc.avatar||'';
+
+  if(t==='general'){
+    c.innerHTML='<h2 class="font-di text-xl font-bold mb-6">General</h2><div class="space-y-5 max-w-lg"><div><label class="block text-xs font-medium text-mu mb-1.5">Display Name</label><input class="ip" id="cDn" value="'+(u.displayName||un)+'" placeholder="Your display name"></div><div><label class="block text-xs font-medium text-mu mb-1.5">Bio / Description</label><textarea class="ip" id="cBio" rows="3" placeholder="Tell people about yourself...">'+(u.description||'')+'</textarea></div><div><label class="block text-xs font-medium text-mu mb-1.5">Location</label><input class="ip" id="cLoc" value="'+(u.location||'')+'" placeholder="City, Country"></div><button class="bp !mt-4" onclick="saveCust(\'general\')">Save Changes</button></div>';
+  }else if(t==='assets'){
+    c.innerHTML='<h2 class="font-di text-xl font-bold mb-1">Assets</h2><p class="text-mu text-sm mb-6">Paste direct URLs for images, videos, and audio. Supported: .jpg .png .gif .mp4 .mp3 .wav</p><div class="space-y-5 max-w-lg"><div><label class="block text-xs font-medium text-mu mb-1.5">Avatar URL</label><input class="ip" id="cAv" value="'+(u.avatar||'')+'" placeholder="https://example.com/avatar.jpg"></div><div><label class="block text-xs font-medium text-mu mb-1.5">Banner URL</label><input class="ip" id="cBn" value="'+(u.banner||'')+'" placeholder="https://example.com/banner.jpg"></div><div><label class="block text-xs font-medium text-mu mb-1.5">Background Image URL</label><input class="ip" id="cBg" value="" placeholder="https://example.com/background.jpg"></div><div><label class="block text-xs font-medium text-mu mb-1.5">Background Video/GIF URL</label><input class="ip" id="cVid" value="" placeholder="https://example.com/bg.mp4"></div><div><label class="block text-xs font-medium text-mu mb-1.5">Background Music URL</label><input class="ip" id="cAud" value="" placeholder="https://example.com/music.mp3"></div><div><label class="block text-xs font-medium text-mu mb-1.5">Custom Cursor URL</label><input class="ip" id="cCur" value="" placeholder="https://example.com/cursor.png"></div><button class="bp !mt-4" onclick="saveCust(\'assets\')">Save Changes</button></div>';
+  }else if(t==='colors'){
+    c.innerHTML='<h2 class="font-di text-xl font-bold mb-6">Colors</h2><div class="space-y-5 max-w-lg"><div><label class="block text-xs font-medium text-mu mb-1.5">Accent Color</label><div class="flex items-center gap-3"><input type="color" value="'+(u.accentColor||'#FF1493')+'" id="cAcc" class="w-10 h-10 rounded-lg border-none cursor-pointer bg-transparent"><input class="ip !w-32" id="cAccT" value="'+(u.accentColor||'#FF1493')+'" maxlength="7"><div class="flex gap-2"><div class="w-8 h-8 rounded-lg cursor-pointer hover:ring-1 hover:ring-white/30" style="background:#FF1493" onclick="pickC(\'cAcc\',\'#FF1493\')"></div><div class="w-8 h-8 rounded-lg cursor-pointer hover:ring-1 hover:ring-white/30" style="background:#DB2777" onclick="pickC(\'cAcc\',\'#DB2777\')"></div><div class="w-8 h-8 rounded-lg cursor-pointer hover:ring-1 hover:ring-white/30" style="background:#C084FC" onclick="pickC(\'cAcc\',\'#C084FC\')"></div></div></div></div><div><label class="block text-xs font-medium text-mu mb-1.5">Background Color</label><div class="flex items-center gap-3"><input type="color" value="#0A0A0F" id="cBgC" class="w-10 h-10 rounded-lg border-none cursor-pointer bg-transparent"><input class="ip !w-32" value="#0A0A0F" maxlength="7"></div></div><div><label class="block text-xs font-medium text-mu mb-1.5">Text Color</label><div class="flex items-center gap-3"><input type="color" value="#F5F0F2" id="cTx" class="w-10 h-10 rounded-lg border-none cursor-pointer bg-transparent"><input class="ip !w-32" value="#F5F0F2" maxlength="7"></div></div><button class="bp !mt-4" onclick="saveCust(\'colors\')">Save Changes</button></div>';
+  }else if(t==='effects'){
+    var fxs=['aurora','petals','sparkles','rain','snow','orbs'],icons=['sun','leaf','star','cloud-rain','snowflake','circle'];
+    var nfs=['neon','glitch','gradient','holographic','sparkle'],nnames=['Neon Glow','Glitch','Gradient','Holographic','Sparkle'];
+    var h='<h2 class="font-di text-xl font-bold mb-6">Effects</h2><div class="space-y-6 max-w-lg"><div><label class="block text-xs font-medium text-mu mb-2">Background Effect</label><div class="grid grid-cols-3 gap-2">';
+    for(var i=0;i<fxs.length;i++){var ac=(u.bgEffect||'aurora')===fxs[i];h+='<button class="p-3 rounded-xl border text-center transition-all" style="border-color:'+(ac?'rgba(255,20,147,.4)':'rgba(255,20,147,.12)')+';background:'+(ac?'rgba(255,20,147,.08)':'transparent')+'" onclick="pickFx(\''+fxs[i]+'\')"><i class="fa-solid fa-'+icons[i]+' text-lg mb-1 '+(ac?'text-pk':'text-mu')+'"></i><div class="text-xs capitalize '+(ac?'text-tx':'text-mu')+'">'+fxs[i]+'</div></button>'}
+    h+='</div></div><div><label class="block text-xs font-medium text-mu mb-2">Name Effect</label><div class="grid grid-cols-2 gap-2">';
+    for(var i=0;i<nfs.length;i++){var ac=(u.nameEffect||'neon')===nfs[i];h+='<button class="p-3 rounded-xl border text-left transition-all" style="border-color:'+(ac?'rgba(255,20,147,.4)':'rgba(255,20,147,.12)')+';background:'+(ac?'rgba(255,20,147,.08)':'transparent')+'" onclick="pickNf(\''+nfs[i]+'\')"><div class="text-base font-bold font-di n-'+nfs[i]+'"'+(nfs[i]==='glitch'?' data-t="preview"':'')+'>'+nnames[i]+'</div></button>'}
+    h+='</div></div><button class="bp !mt-4" onclick="saveCust(\'effects\')">Save Changes</button></div>';c.innerHTML=h;
+  }else if(t==='layout'){
+    var sts=['glass','default','minimal','portfolio'],sds=['Frosted glass blur','Standard card','Clean and simple','Left accent border'];
+    var h='<h2 class="font-di text-xl font-bold mb-6">Layout</h2><div class="space-y-5 max-w-lg"><div><label class="block text-xs font-medium text-mu mb-2">Card Style</label><div class="grid grid-cols-2 gap-2">';
+    for(var i=0;i<sts.length;i++){var ac=(u.cardStyle||'glass')===sts[i];h+='<button class="p-4 rounded-xl border text-left transition-all" style="border-color:'+(ac?'rgba(255,20,147,.4)':'rgba(255,20,147,.12)')+';background:'+(ac?'rgba(255,20,147,.08)':'transparent')+'" onclick="pickCs(\''+sts[i]+'\')"><div class="text-sm font-medium capitalize mb-1 '+(ac?'text-tx':'text-mu')+'">'+sts[i]+'</div><div class="text-xs text-dm">'+sds[i]+'</div></button>'}
+    h+='</div></div><div><label class="block text-xs font-medium text-mu mb-2">Border Radius</label><input type="range" min="0" max="32" value="24" class="w-full accent-pk"></div><div><label class="block text-xs font-medium text-mu mb-2">Card Opacity</label><input type="range" min="30" max="100" value="75" class="w-full accent-pk"></div><div><label class="block text-xs font-medium text-mu mb-2">Card Glow Intensity</label><input type="range" min="0" max="100" value="40" class="w-full accent-pk"></div><button class="bp !mt-4" onclick="saveCust(\'layout\')">Save Changes</button></div>';c.innerHTML=h;
+  }else if(t==='badges'){
+    var all=[{id:'verified',n:'Verified',i:'fa-solid fa-check',c:'#60A5FA'},{id:'premium',n:'Premium',i:'fa-solid fa-crown',c:'#FF69B4'},{id:'staff',n:'Staff',i:'fa-solid fa-shield',c:'#C084FC'},{id:'early',n:'Early Supporter',i:'fa-solid fa-heart',c:'#FCD34D'},{id:'pearl',n:'Pink Pearl',i:'fa-solid fa-gem',c:'#FDE2F3'}];
+    var myB=u.badges||[],h='<h2 class="font-di text-xl font-bold mb-1">Badges</h2><p class="text-mu text-sm mb-6">Toggle official badges. Custom badges available for Premium+.</p><div class="space-y-2 max-w-lg">';
+    for(var i=0;i<all.length;i++){var b=all[i],has=myB.indexOf(b.id)>-1;h+='<div class="flex items-center justify-between gls rounded-xl p-4"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:'+b.c+'22"><i class="'+b.i+'" style="color:'+b.c+'"></i></div><span class="text-sm font-medium">'+b.n+'</span></div><button class="w-11 h-6 rounded-full relative cursor-pointer border-none transition-colors" style="background:'+(has?'#FF1493':'rgba(255,255,255,.1)')+'" onclick="togBadge(\''+b.id+'\',this)"><span class="block w-5 h-5 rounded-full bg-white absolute top-0.5 transition-transform" style="left:'+(has?'22px':'2px')+'"></span></button></div>'}
+    h+='</div><button class="bp !mt-6" onclick="saveCust(\'badges\')">Save Badges</button>';c.innerHTML=h;
+  }else if(t==='advanced'){
+    c.innerHTML='<h2 class="font-di text-xl font-bold mb-6">Advanced</h2><div class="space-y-5 max-w-lg"><div><label class="block text-xs font-medium text-mu mb-1.5">Custom CSS</label><textarea class="ip font-mo text-xs" rows="6" placeholder="/* Custom CSS injected into your profile */\n.my-class { color: pink; }"></textarea></div><div><label class="block text-xs font-medium text-mu mb-1.5"> Spotify Track URL</label><input class="ip" value="" placeholder="https://open.spotify.com/track/..."><p class="text-dm text-xs mt-1">Paste a Spotify track URL to show a music widget.</p></div><div><label class="block text-xs font-medium text-mu mb-1.5">Discord ID (for presence widget)</label><input class="ip" value="" placeholder="Your Discord user ID"></div><div class="pt-4 border-t border-pk/10"><p class="text-xs text-mu mb-3">Danger Zone</p><button class="bg !text-red-400 hover:!bg-red-500/10" onclick="toast(\'Account deletion requires email confirmation.\',\'i\')">Delete Account</button></div></div>';
+  }
+  renderCustPv();
+}
+
+function pickC(colorId,val){var el=document.getElementById(colorId);if(el)el.value=val;var t=document.getElementById(colorId+'T');if(t)t.value=val}
+function pickFx(f){S.doc.bgEffect=f;fxp=[];cFx=f;setCustTab('effects')}
+function pickNf(f){S.doc.nameEffect=f;cNf=f;setCustTab('effects')}
+function pickCs(f){S.doc.cardStyle=f;cCs=f;setCustTab('layout')}
+function togBadge(id,btn){
+  var b=S.doc.badges||[],idx=b.indexOf(id);
+  if(idx>-1)b.splice(idx,1);else b.push(id);
+  S.doc.badges=b;setCustTab('badges');
+}
+
+function renderCustPv(){
+  var pv=document.getElementById('custPv'),u=S.doc||{},un=S.user?S.user.username:'username',av=S.doc&&S.doc.avatar||'';
+  var nc='n-'+cNf,cc='pc-'+cCs,ga=cNf==='glitch'?' data-t="'+un+'"':'';
+  var h='<div class="'+cc+' p-0 overflow-hidden"><div class="h-16 bg-gradient-to-r from-pk/30 via-ro/20 to-purple-500/30"></div><div class="px-4 pb-4 -mt-6">';
+  if(av)h+='<img src="'+av+'" class="w-12 h-12 rounded-xl object-cover" style="border:3px solid #0A0A0F" alt="">';
+  else h+='<div class="w-12 h-12 rounded-xl bg-sf flex items-center justify-center" style="border:3px solid #0A0A0F"><i class="fa-solid fa-user text-mu"></i></div>';
+  h+='<h3 class="font-di font-bold text-base mt-2 '+nc+'"'+ga+'>'+un+'</h3><p class="text-mu text-[10px] font-mo">#'+(u.numericUid||'?')+'</p>';
+  h+='<p class="text-mu text-xs mt-1">'+(u.description||'Your bio here')+'</p>';
+  if(u.badges&&u.badges.length){h+='<div class="flex gap-1 mt-2">';for(var i=0;i<Math.min(u.badges.length,3);i++)h+=rBdg(u.badges[i]);h+='</div>'}
+  h+='<div class="mt-3 space-y-1.5"><div class="lb !py-1.5 !text-xs !rounded-lg"><i class="fa-brands fa-x-twitter"></i> Link</div><div class="lb !py-1.5 !text-xs !rounded-lg"><i class="fa-brands fa-instagram"></i> Link</div></div></div></div>';
+  pv.innerHTML=h;
+}
+
+function saveCust(section){
+  if(!fbDb||!S.user){toast('Not connected.','e');return}
+  var upd={},u=S.doc;
+  if(section==='general'){
+    var dn=document.getElementById('cDn').value.trim();
+    var bio=document.getElementById('cBio').value.trim();
+    var loc=document.getElementById('cLoc').value.trim();
+    if(dn)upd.displayName=dn;if(bio!==undefined)upd.description=bio;if(loc)upd.location=loc;
+  }else if(section==='assets'){
+    var av=document.getElementById('cAv').value.trim(),bn=document.getElementById('cBn').value.trim();
+    if(av)upd.avatar=av;if(bn)upd.banner=bn;
+    // URL validation
+    var urls=[['cAv','Avatar'],['cBn','Banner'],['cBg','Background'],['cVid','Video'],['cAud','Audio'],['cCur','Cursor']];
+    for(var i=2;i<urls.length;i++){var v=document.getElementById(urls[i][0]).value.trim();if(v){if(!isValidUrl(v)){toast(urls[i][1]+' URL appears invalid.','e');return}}}
+  }else if(section==='colors'){
+    var acc=document.getElementById('cAcc').value;upd.accentColor=acc;
+  }else if(section==='effects'){
+    upd.bgEffect=cFx;upd.nameEffect=cNf;
+  }else if(section==='layout'){
+    upd.cardStyle=cCs;
+  }else if(section==='badges'){
+    upd.badges=u.badges||[];
+  }
+  fbDb.doc('users/'+S.user.uid).update(upd).then(function(){
+    S.doc=Object.assign({},S.doc,upd);renderCustPv();renderNav();toast('Saved!','s');
+  }).catch(function(e){toast('Save failed: '+e.message,'e')});
+}
+
+function isValidUrl(s){try{new URL(s);return true}catch(e){return false}}
+
+/* ========== ADMIN PAGE ========== */
+function setAdTab(t){
+  var b=document.querySelectorAll('[data-at]');for(var i=0;i<b.length;i++)b[i].classList.toggle('on',b[i].dataset.at===t);
+  var c=document.getElementById('adCt');
+  if(t==='dash'){
+    c.innerHTML='<h1 class="font-di text-2xl font-bold mb-6">Dashboard</h1><div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"><div class="sc"><div class="flex items-center justify-between mb-3"><span class="text-mu text-sm">Total Users</span><i class="fa-solid fa-users text-pk"></i></div><div class="text-2xl font-bold" id="adTu">--</div></div><div class="sc"><div class="flex items-center justify-between mb-3"><span class="text-mu text-sm">Profiles Today</span><i class="fa-solid fa-bolt text-pk"></i></div><div class="text-2xl font-bold" id="adPt">--</div></div><div class="sc"><div class="flex items-center justify-between mb-3"><span class="text-mu text-sm">Total Views</span><i class="fa-solid fa-eye text-pk"></i></div><div class="text-2xl font-bold" id="adTv">--</div></div><div class="sc"><div class="flex items-center justify-between mb-3"><span class="text-mu text-sm">Premium Users</span><i class="fa-solid fa-crown text-pk"></i></div><div class="text-2xl font-bold" id="adPu">--</div></div></div><div class="gls rounded-2xl p-6"><h2 class="font-semibold text-lg mb-4">Recent Users</h2><div class="overflow-x-auto"><table class="dt"><thead><tr><th>User</th><th>UID</th><th>Role</th><th>Views</th><th>Actions</th></tr></thead><tbody id="adUb"><tr><td colspan="5" class="text-mu text-center py-8">Loading...</td></tr></tbody></table></div></div>';
+    loadAdminStats();
+  }else if(t==='users'){
+    c.innerHTML='<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6"><h1 class="font-di text-2xl font-bold">Users</h1><div class="flex gap-3"><input class="ip !w-64" placeholder="Search username or UID..." id="adSearch" oninput="searchUsers()"></div></div><div class="gls rounded-2xl overflow-hidden"><div class="overflow-x-auto"><table class="dt"><thead><tr><th>User</th><th>UID</th><th>Role</th><th>Views</th><th>Actions</th></tr></thead><tbody id="adUb2"><tr><td colspan="5" class="text-mu text-center py-8">Loading...</td></tr></tbody></table></div></div>';
+    loadAllUsers();
+  }else if(t==='badges'){
+    c.innerHTML='<h1 class="font-di text-2xl font-bold mb-6">Badge Management</h1><div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">';
+    var all=[{id:'verified',n:'Verified',i:'fa-solid fa-check',c:'#60A5FA'},{id:'premium',n:'Premium',i:'fa-solid fa-crown',c:'#FF69B4'},{id:'staff',n:'Staff',i:'fa-solid fa-shield',c:'#C084FC'},{id:'early',n:'Early Supporter',i:'fa-solid fa-heart',c:'#FCD34D'},{id:'pearl',n:'Pink Pearl',i:'fa-solid fa-gem',c:'#FDE2F3'}];
+    for(var i=0;i<all.length;i++){var b=all[i];c.innerHTML+='<div class="gls rounded-xl p-5"><div class="flex items-center gap-3 mb-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:'+b.c+'22"><i class="'+b.i+'" style="color:'+b.c+'"></i></div><div><div class="font-medium text-sm">'+b.n+'</div><div class="text-xs text-mu">Official</div></div></div><div class="flex gap-2"><button class="bg !text-xs !py-1.5" onclick="toast(\'Badge edited.\',\'i\')">Edit</button></div></div>'}
+    c.innerHTML+='</div>';
+  }else if(t==='mod'){
+    c.innerHTML='<h1 class="font-di text-2xl font-bold mb-6">Moderation</h1><div class="gls rounded-xl p-8 text-center"><i class="fa-solid fa-check-circle text-4xl mb-4" style="color:#86EFAC"></i><h3 class="font-semibold text-lg mb-2">All Clear</h3><p class="text-mu text-sm">No pending reports or moderation queue items.</p></div>';
+  }else if(t==='audit'){
+    c.innerHTML='<h1 class="font-di text-2xl font-bold mb-6">Audit Log</h1><div class="gls rounded-xl p-8 text-center"><i class="fa-solid fa-clock-rotate-left text-4xl text-mu mb-4"></i><h3 class="font-semibold text-lg mb-2">No Activity Yet</h3><p class="text-mu text-sm">Admin actions will appear here as your platform grows.</p></div>';
+  }
+}
+
+function loadAdminStats(){
+  if(!fbDb)return;
+  fbDb.collection('users').get().then(function(snap){
+    var total=snap.size,views=0,premium=0;
+    snap.forEach(function(d){var u=d.data();views+=(u.views||0);if(u.badges&&u.badges.indexOf('premium')>-1)premium++});
+    var tu=document.getElementById('adTu');if(tu)tu.textContent=total;
+    var tv=document.getElementById('adTv');if(tv)tv.textContent=views.toLocaleString();
+    var pu=document.getElementById('adPu');if(pu)pu.textContent=premium;
+    var pt=document.getElementById('adPt');if(pt)pt.textContent=total;
+    // Fill recent users table
+    var rows='',count=0;
+    snap.forEach(function(d){if(count>=8)return;var u=d.data();count++;
+      rows+='<tr><td><div class="flex items-center gap-3">'+(u.avatar?'<img src="'+u.avatar+'" class="w-8 h-8 rounded-lg object-cover" alt="" onerror="this.style.display=\'none\'">':'')+'<span class="font-medium">'+u.username+'</span></div></td><td class="text-mu font-mo text-xs">#'+u.numericUid+'</td><td><span class="rt r-'+u.role+'">'+u.role+'</span></td><td class="text-mu">'+(u.views||0).toLocaleString()+'</td><td><div class="flex gap-1"><button class="bg !text-xs !py-1" onclick="toast(\'Editing '+u.username+'\',\'i\')">Edit</button>'+(u.role!=='owner'?'<button class="bg !text-xs !py-1 !text-red-400" onclick="toast(\'Action on '+u.username+'\',\'i\')">Ban</button>':'')+'</div></td></tr>';
+    });
+    var tb=document.getElementById('adUb');if(tb)tb.innerHTML=rows||'<tr><td colspan="5" class="text-mu text-center py-8">No users yet.</td></tr>';
+  }).catch(function(e){var tb=document.getElementById('adUb');if(tb)tb.innerHTML='<tr><td colspan="5" class="text-red-400 text-center py-8">Error loading users.</td></tr>'});
+}
+
+function loadAllUsers(){
+  if(!fbDb)return;
+  fbDb.collection('users').orderBy('numericUid','desc').get().then(function(snap){
+    var rows='';
+    snap.forEach(function(d){var u=d.data();
+      rows+='<tr><td><div class="flex items-center gap-3">'+(u.avatar?'<img src="'+u.avatar+'" class="w-8 h-8 rounded-lg object-cover" alt="" onerror="this.style.display=\'none\'">':'')+'<span class="font-medium">'+u.username+'</span></div></td><td class="text-mu font-mo text-xs">#'+u.numericUid+'</td><td><span class="rt r-'+u.role+'">'+u.role+'</span></td><td class="text-mu">'+(u.views||0).toLocaleString()+'</td><td><div class="flex gap-1"><button class="bg !text-xs !py-1" onclick="toast(\'Editing '+u.username+'\',\'i\')">Edit</button>'+(u.role!=='owner'?'<button class="bg !text-xs !py-1 !text-red-400" onclick="toast(\'Action on '+u.username+'\',\'i\')">Ban</button>':'')+'</div></td></tr>';
+    });
+    var tb=document.getElementById('adUb2');if(tb)tb.innerHTML=rows||'<tr><td colspan="5" class="text-mu text-center py-8">No users found.</td></tr>';
+  });
+}
+
+function searchUsers(){
+  var q=document.getElementById('adSearch').value.toLowerCase().trim();
+  if(!fbDb)return;
+  if(!q){loadAllUsers();return}
+  fbDb.collection('users').get().then(function(snap){
+    var rows='';
+    snap.forEach(function(d){var u=d.data();
+      if(u.username.toLowerCase().indexOf(q)>-1||String(u.numericUid).indexOf(q)>-1){
+        rows+='<tr><td><div class="flex items-center gap-3">'+(u.avatar?'<img src="'+u.avatar+'" class="w-8 h-8 rounded-lg object-cover" alt="" onerror="this.style.display=\'none\'">':'')+'<span class="font-medium">'+u.username+'</span></div></td><td class="text-mu font-mo text-xs">#'+u.numericUid+'</td><td><span class="rt r-'+u.role+'">'+u.role+'</span></td><td class="text-mu">'+(u.views||0).toLocaleString()+'</td><td><div class="flex gap-1"><button class="bg !text-xs !py-1" onclick="toast(\'Editing '+u.username+'\',\'i\')">Edit</button></div></td></tr>';
+      }
+    });
+    var tb=document.getElementById('adUb2');if(tb)tb.innerHTML=rows||'<tr><td colspan="5" class="text-mu text-center py-8">No results.</td></tr>';
+  });
+}
+
+/* ========== INIT ========== */
+renderNav();
+handleRoute();
+</script>
+</body>
+</html>
